@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Megközelítésem | VarBro - Profi Webfejlesztő</title>
+    <meta name="description" content="Ismerje meg VarBro webfejlesztési megközelítését. Szisztematikus, modern és ügyfél-központú módszertan.">
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+    <nav>
+        <div class="logo">Var<span>Bro</span></div>
+        <ul class="nav-links">
+            <li><a href="index.html#hero">Kezdőlap</a></li>
+            <li><a href="index.html#about">Rólam</a></li>
+            <li><a href="index.html#steps">Együttműködés</a></li>
+            <li><a href="index.html#services">Szolgáltatások</a></li>
+            <li><a href="index.html#contact">Kapcsolat</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section id="approach-content" class="section">
+    <div class="container">
+        <h2>Hogyan dolgozom</h2>
+        <div class="approach-intro">
+            <div class="approach-photo-wrap">
+                <img src="myworkfoto.jpg" alt="VarBro munka folyamat" class="approach-photo">
+            </div>
+            <div class="approach-intro-text">
+                <p>Webfejlesztőként hiszek abban, hogy egy jó weboldal több, mint egy esztétikus digitális névjegy. Ez egy hatékony üzleti eszköz, amelynek az a feladata, hogy ügyfeleket vonzzon, zökkenőmentesen működjön, és a nap 24 órájában téged szolgáljon.</p>
+                <p>Éppen ezért dolgozom kóddal: ez biztosítja azt a rugalmasságot, sebességet és korlátlan tervezési szabadságot, amellyel valóban egyedi, kompromisszumok nélküli megoldásokat hozhatok létre.</p>
+                <p>Munkám során a kreativitást rendszerszemlélettel ötvözöm. Mélyen elmerülök minden ügyfelem üzleti folyamataiban, hogy megértsem a valódi kihívásokat, és a legjobb vizuális, illetve funkcionális megoldást kínáljam.</p>
+                <p>A célom nem csupán egy weboldal átadása, hanem egy olyan digitális termék felépítése, amely valódi profitot és elégedettséget termel neked.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="section approach-cta-section">
+    <div class="container approach-cta">
+        <h2>Készen áll a közös munkára?</h2>
+        <p>Beszéljünk az Ön projektjéről. Nincsenek rejtett költségek, csak őszinte tanácsadás.</p>
+        <div class="cta-buttons">
+            <a href="index.html#contact" class="btn-main">Lépjen kapcsolatba velem</a>
+            <a href="index.html" class="btn-secondary btn-back-home"><i class="fas fa-arrow-left"></i> <span class="back-label">Vissza a főoldalra</span></a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>VarBro</h3>
+                <p>Profi webfejlesztés és Wix Studio szolgáltatások Magyarországon.</p>
+                <div class="social-links">
+                    <a href="https://wa.me/36307840378" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=hello@varbro.hu" target="_blank" rel="noopener noreferrer" title="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Navigáció</h4>
+                <ul>
+                    <li><a href="index.html">Kezdőlap</a></li>
+                    <li><a href="index.html#about">Rólam</a></li>
+                    <li><a href="index.html#steps">Együttműködés</a></li>
+                    <li><a href="index.html#services">Szolgáltatások</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Elérhetőség</h4>
+                <p><strong>WhatsApp:</strong> +36 30 784 0378</p>
+                <p><strong>Email:</strong> hello@varbro.hu</p>
+                <p><strong>Hely:</strong> Magyarország</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 VarBro. Minden jog fenntartva.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* Approach Page Specific Styles */
+#approach-hero {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    position: relative;
+    color: #333;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+#approach-hero .hero-content h1 {
+    font-size: clamp(2.5rem, 10vw, 5rem);
+    margin-bottom: 20px;
+}
+
+.approach-subtitle {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    color: #a29bfe;
+    margin-bottom: 30px;
+}
+
+.approach-intro {
+    display: grid;
+    grid-template-columns: minmax(220px, 350px) 1fr;
+    gap: 48px;
+    align-items: start;
+    margin: 10px 0 35px;
+}
+
+.approach-photo-wrap {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0;
+}
+
+.approach-photo {
+    width: min(100%, 350px);
+    border-radius: 18px;
+    object-fit: cover;
+    box-shadow: 0 12px 35px rgba(15, 12, 41, 0.18);
+    border: 3px solid rgba(108, 92, 231, 0.2);
+}
+
+.approach-intro-text {
+    text-align: left;
+}
+
+.approach-intro-text p {
+    color: #555;
+    line-height: 1.75;
+    margin-bottom: 14px;
+}
+
+.approach-intro-buttons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.approach-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.approach-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.approach-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(108, 92, 231, 0.2);
+}
+
+.approach-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.approach-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.approach-card p {
+    color: #666;
+    line-height: 1.8;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.benefit-item {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+}
+
+.benefit-item h3 {
+    color: var(--primary);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.benefit-item p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.approach-cta {
+    text-align: center;
+}
+
+.approach-cta-section {
+    padding-top: 0;
+    margin-top: -22px;
+}
+
+.approach-cta h2 {
+    margin-bottom: 15px;
+    font-size: clamp(2rem, 6vw, 3rem);
+}
+
+.approach-cta p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-buttons .btn-back-home {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    text-decoration: none;
+    min-width: auto;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.cta-buttons .btn-back-home .back-label {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.cta-buttons .btn-back-home:hover {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    color: #2f2f2f !important;
+}
+
+.cta-buttons .btn-back-home:hover .back-label {
+    text-decoration-thickness: 2px;
+    text-decoration-color: #2f2f2f;
+}
+
+@media (max-width: 850px) {
+    .approach-intro {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .approach-intro-buttons {
+        flex-direction: column;
+    }
+
+    .approach-intro-buttons a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .approach-photo-wrap {
+        margin-bottom: 25px;
+    }
+
+    .approach-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+    }
+    
+    .cta-buttons a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .cta-buttons .btn-back-home {
+        width: auto;
+    }
+}
+</style>
+
+</body>
+</html>
