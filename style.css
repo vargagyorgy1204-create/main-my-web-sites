@@ -20,7 +20,7 @@ nav ul li a { text-decoration: none; color: var(--dark); font-weight: 700; }
 #hero { 
     --mx: 0px;
     --my: 0px;
-    min-height: 100vh; 
+    height: 90vh; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
@@ -278,6 +278,38 @@ h1 { font-size: clamp(3.6rem, 11vw, 6.8rem); margin-bottom: 12px; line-height: 0
 @keyframes heroFloat {
     0%, 100% { transform: translate3d(0, 0, 0); }
     50% { transform: translate3d(0, -22px, 0); }
+}
+
+/* Hero Title */
+.hero-title {
+    font-size: 60px;
+    line-height: 1.2;
+}
+
+/* CTA Button */
+.cta-button {
+    display: inline-block;
+    background: #D2691E;
+    color: white;
+    font-size: 18px;
+    padding: 16px 40px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    animation: ctaPulse 2s ease-in-out infinite;
+}
+
+@keyframes ctaPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 36px;
+    }
 }
 
 @media (max-width: 900px) {
