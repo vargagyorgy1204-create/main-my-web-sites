@@ -348,6 +348,19 @@ h2 {
 .skill-box i { font-size: 3rem; margin-bottom: 15px; }
 .skill-box:hover { transform: translateY(-10px); }
 
+.service-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+}
+
 /* Grid blocks */
 .steps-grid, .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
 .step-card, .service-item { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: left; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
