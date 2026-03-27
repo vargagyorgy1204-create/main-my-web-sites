@@ -348,22 +348,9 @@ h2 {
 .skill-box i { font-size: 3rem; margin-bottom: 15px; }
 .skill-box:hover { transform: translateY(-10px); }
 
-.service-card {
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
-}
-
 /* Grid blocks */
 .steps-grid, .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
-.step-card, .service-item { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: left; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.step-card, .service-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: left; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .step-card {
     position: relative;
     overflow: hidden;
@@ -381,37 +368,36 @@ h2 {
     box-shadow: 0 20px 42px rgba(36, 64, 122, 0.16);
     border-color: rgba(108, 92, 231, 0.34);
 }
-.service-item {
+.service-card {
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 18px;
-    background:
-        radial-gradient(circle at top right, rgba(186, 223, 255, 0.34), transparent 34%),
-        linear-gradient(180deg, rgba(249, 252, 255, 0.98), rgba(238, 245, 255, 0.95));
-    border: 1px solid rgba(186, 210, 255, 0.4);
-    box-shadow: 0 18px 38px rgba(29, 52, 97, 0.08);
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.service-item::after {
+.service-card::after {
     content: '';
     position: absolute;
     top: 0;
     right: 0;
     width: 120px;
     height: 120px;
-    background: radial-gradient(circle, rgba(193, 225, 255, 0.36), transparent 68%);
+    background: radial-gradient(circle, rgba(193, 225, 255, 0.18), transparent 68%);
     pointer-events: none;
 }
 
-.service-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 22px 42px rgba(36, 64, 122, 0.12);
-    border-color: rgba(108, 92, 231, 0.24);
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
 }
 
-.service-item h3 {
+.service-card h3 {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -436,7 +422,7 @@ h2 {
     font-size: 1.05rem;
 }
 
-.service-item p {
+.service-card p {
     color: #51607f;
     line-height: 1.7;
     flex: 1;
