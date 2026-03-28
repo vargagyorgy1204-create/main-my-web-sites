@@ -16,6 +16,100 @@ nav ul { display: flex; list-style: none; }
 nav ul li { margin-left: 20px; }
 nav ul li a { text-decoration: none; color: var(--dark); font-weight: 700; }
 
+.nav-toggle {
+    display: none;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(108, 92, 231, 0.28);
+    border-radius: 10px;
+    background: rgba(108, 92, 231, 0.08);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.nav-toggle span {
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--dark);
+    transition: transform 0.25s ease, opacity 0.2s ease, background 0.25s ease;
+}
+
+.nav-toggle.active {
+    background: rgba(108, 92, 231, 0.18);
+    border-color: rgba(108, 92, 231, 0.5);
+}
+
+.nav-toggle.active span {
+    background: var(--primary);
+}
+
+.nav-toggle.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+@media (max-width: 767px) {
+    nav {
+        position: relative;
+    }
+
+    .nav-toggle {
+        display: inline-flex;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(108, 92, 231, 0.2);
+        border-radius: 14px;
+        box-shadow: 0 12px 30px rgba(15, 12, 41, 0.14);
+        opacity: 0;
+        transform: translateY(-8px);
+        pointer-events: none;
+        transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+
+    .nav-links li {
+        margin-left: 0;
+    }
+
+    .nav-links li a {
+        display: block;
+        padding: 10px 12px;
+        border-radius: 9px;
+    }
+
+    .nav-links li a:hover {
+        background: rgba(108, 92, 231, 0.08);
+        color: var(--primary);
+    }
+
+    .nav-links.active {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
+
 /* Hero Section с 3D */
 #hero { 
     --mx: 0px;
