@@ -47,7 +47,7 @@
 <section class="section approach-cta-section">
     <div class="container approach-cta">
         <h2>Készen áll a közös munkára?</h2>
-        <p>Beszéljünk az Ön projektjéről. Nincsenek rejtett költségek, csak őszinte tanácsadás.</p>
+        <p>Beszéljünk az Ön projektjéről. Mivel foglalkozi? Mik az igények?</p>
         <div class="cta-buttons">
             <a href="index.html#contact" class="btn-main">Lépjen kapcsolatba velem</a>
             <a href="index.html" class="btn-secondary btn-back-home"><i class="fas fa-arrow-left"></i> <span class="back-label">Vissza a főoldalra</span></a>
@@ -242,11 +242,26 @@
     flex-wrap: wrap;
 }
 
+.cta-buttons .btn-main {
+    border-color: #25d366;
+    background: rgba(37, 211, 102, 0.12);
+    color: #1e9f4b !important;
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.22);
+}
+
+.cta-buttons .btn-main:hover {
+    border-color: #25d366;
+    background: #25d366;
+    color: #ffffff !important;
+    box-shadow: 0 14px 30px rgba(37, 211, 102, 0.3);
+}
+
 .cta-buttons .btn-back-home {
     border: none;
     background: transparent;
     box-shadow: none;
     text-decoration: none;
+    color: #2f2f2f !important;
     min-width: auto;
     padding-left: 8px;
     padding-right: 8px;
@@ -262,12 +277,12 @@
     background: transparent;
     box-shadow: none;
     transform: none;
-    color: #2f2f2f !important;
+    color: #6c5ce7 !important;
 }
 
 .cta-buttons .btn-back-home:hover .back-label {
     text-decoration-thickness: 2px;
-    text-decoration-color: #2f2f2f;
+    text-decoration-color: #6c5ce7;
 }
 
 @media (max-width: 850px) {

@@ -28,7 +28,7 @@ nav ul li a { text-decoration: none; color: var(--dark); font-weight: 700; }
     position: relative; 
     color: #0a0a0a; 
     text-align: center; 
-    padding: 120px 20px; 
+    padding: 220px 20px 120px;
     overflow: hidden;
     perspective: 1200px;
 }
@@ -454,6 +454,22 @@ h2 {
     font-size: 1.05rem;
 }
 
+/* Service card icon color variants */
+.services-grid .service-card:nth-child(1) .service-icon {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(37, 99, 235, 0.24));
+    color: #1d4ed8;
+}
+
+.services-grid .service-card:nth-child(2) .service-icon {
+    background: linear-gradient(135deg, rgba(244, 114, 182, 0.22), rgba(249, 115, 22, 0.2));
+    color: #be123c;
+}
+
+.services-grid .service-card:nth-child(3) .service-icon {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.22), rgba(20, 184, 166, 0.2));
+    color: #0f766e;
+}
+
 .service-card p {
     color: #51607f;
     line-height: 1.7;
@@ -465,55 +481,38 @@ h2 {
     align-items: center;
     justify-content: center;
     align-self: flex-start;
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-    min-width: 132px;
-    padding: 10px 18px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: var(--gradient);
-    color: white;
+    position: static;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #2f2f2f;
     text-decoration: none;
     font-size: 0.88rem;
     font-weight: 700;
-    transition: all 0.28s ease;
-    box-shadow: 0 12px 26px rgba(108, 92, 231, 0.24), inset 0 1px 1px rgba(255, 255, 255, 0.42);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+    transition: color 0.2s ease, opacity 0.2s ease;
+    box-shadow: none;
 }
 
 .btn-service-order::before {
-    content: "";
-    position: absolute;
-    top: -140%;
-    left: -36%;
-    width: 48%;
-    height: 380%;
-    background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.72) 42%, transparent 100%);
-    transform: rotate(24deg);
-    opacity: 0;
-    pointer-events: none;
+    content: none;
 }
 
 .btn-service-order::after {
-    content: "";
-    position: absolute;
-    inset: 1px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    opacity: 0.6;
-    pointer-events: none;
+    content: none;
 }
 
 .btn-service-order:hover {
-    color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 16px 30px rgba(108, 92, 231, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.42);
+    color: var(--primary);
+    transform: none;
+    opacity: 0.72;
 }
 
 .btn-service-order:hover::before {
-    left: 120%;
-    opacity: 1;
-    transition: left 760ms ease, opacity 240ms ease;
+    content: none;
 }
 
 /* Step Number Animation */
