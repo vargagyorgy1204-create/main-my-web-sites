@@ -3,15 +3,18 @@ const heroTypedEl = document.querySelector('#typed');
 if (heroTypedEl && typeof Typed !== 'undefined') {
     new Typed('#typed', {
         strings: [
-            'Egyedi weboldalak készítése',
-            'Wix Studio fejlesztés',
+            'Egyedi weboldalak',
             'Profi Landing Page-ek',
-            'Canva vizuális design',
-            'Modern Webshopok'
+            'Vizuális design',
+            'Modern Websopok',
+            'Technikai támogatás',
+            'Tartalmi frissítések',
+            'SEO optimalizálás',
+            'Karbantartás'
         ],
-        typeSpeed: 60,
-        backSpeed: 40,
-        backDelay: 2000,
+        typeSpeed: 85,
+        backSpeed: 65,
+        backDelay: 1200,
         loop: true,
         showCursor: true,
         cursorChar: '|'
