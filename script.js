@@ -12,9 +12,9 @@ if (heroTypedEl && typeof Typed !== 'undefined') {
             'SEO optimalizálás',
             'Karbantartás'
         ],
-        typeSpeed: 120,
-        backSpeed: 95,
-        backDelay: 700,
+        typeSpeed: 50,
+        backSpeed: 30,
+        backDelay: 400,
         loop: true,
         showCursor: true,
         cursorChar: '|'
