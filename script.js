@@ -270,3 +270,56 @@ if (navToggle && navLinks) {
         }
     });
 }
+
+// Floating liquid background for header nav links
+const navLiquid = navLinks ? navLinks.querySelector('.nav-liquid') : null;
+if (navLinks && navLiquid) {
+    const navLinkItems = Array.from(navLinks.querySelectorAll('a'));
+    let lastX = 0;
+    let lastY = 0;
+
+    const moveLiquidTo = (target) => {
+        const parentRect = navLinks.getBoundingClientRect();
+        const linkRect = target.getBoundingClientRect();
+        const nextX = linkRect.left - parentRect.left;
+        const nextY = linkRect.top - parentRect.top;
+        lastX = nextX;
+        lastY = nextY;
+
+        navLiquid.style.width = `${linkRect.width}px`;
+        navLiquid.style.height = `${linkRect.height}px`;
+        navLiquid.style.transform = `translate(${nextX}px, ${nextY}px) scale(1)`;
+        navLiquid.style.opacity = '1';
+
+        navLinkItems.forEach((item) => item.classList.remove('liquid-active'));
+        target.classList.add('liquid-active');
+    };
+
+    const hideLiquid = () => {
+        navLiquid.style.opacity = '0';
+        navLiquid.style.transform = `translate(${lastX}px, ${lastY}px) scale(0.86)`;
+        navLinkItems.forEach((item) => item.classList.remove('liquid-active'));
+    };
+
+    navLinkItems.forEach((link) => {
+        link.addEventListener('mouseenter', () => moveLiquidTo(link));
+        link.addEventListener('focus', () => moveLiquidTo(link));
+    });
+
+    navLinks.addEventListener('mouseleave', () => {
+        hideLiquid();
+    });
+
+    navLinks.addEventListener('focusout', (event) => {
+        if (!navLinks.contains(event.relatedTarget)) {
+            hideLiquid();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        const activeLink = navLinks.querySelector('a.liquid-active');
+        if (activeLink) {
+            moveLiquidTo(activeLink);
+        }
+    });
+}

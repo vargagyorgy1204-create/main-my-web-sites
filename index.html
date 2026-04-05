@@ -21,13 +21,14 @@
 
 <header>
     <nav>
-        <div class="logo"><img src="logovarbro.png?v=3" alt="VarBro logo" class="logo-img">Var<span>Bro</span></div>
+        <button class="logo" type="button" onclick="window.location.reload()" aria-label="Oldal frissítése"><img src="logovarbro.png?v=3" alt="VarBro logo" class="logo-img">Var<span>Bro</span></button>
         <button class="nav-toggle" type="button" aria-label="Menü megnyitása" aria-expanded="false" aria-controls="site-nav">
             <span></span>
             <span></span>
             <span></span>
         </button>
         <ul class="nav-links" id="site-nav">
+            <span class="nav-liquid" aria-hidden="true"></span>
             <li><a href="#hero">Kezdőlap</a></li>
             <li><a href="#about">Rólam</a></li>
             <li><a href="#steps">Együttműködés</a></li>
@@ -98,26 +99,66 @@
             </div>
             <div class="skill-box skill-card">
                 <div class="card-inner">
-                    <div class="card-front"><i class="fab fa-wix" style="color:#000"></i><span>Wix Studio</span></div>
-                    <div class="card-back"><p>Wix Studio: „Egyedi design és üzleti rugalmasság. No-code platform a gyors és teljesen testreszabott megoldásokhoz.”</p></div>
+                    <div class="card-front">
+                        <img src="canva-icon.svg" alt="Canva" width="60" height="60" style="margin-bottom: 8px;">
+                        <span>Canva</span>
+                    </div>
+                    <div class="card-back"><p>Canva: „Gyors vizuális tervezés. Marketing anyagok, közösségi posztok és prezentációk percek alatt."</p></div>
                 </div>
             </div>
             <div class="skill-box skill-card">
                 <div class="card-inner">
-                    <div class="card-front"><i class="fab fa-figma" style="color:#A259FF"></i><span>Figma</span></div>
-                    <div class="card-back"><p>Figma: „Precíz tervezés. Pixelpontos prototípusokat készítek, hogy már a fejlesztés előtt lásd a végeredményt.”</p></div>
+                    <div class="card-front">
+                        <svg viewBox="0 0 100 100" width="60" height="60" style="margin-bottom: 8px;">
+                            <defs>
+                                <linearGradient id="hostinger-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#673AB7;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#A356EE;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Rounded square background -->
+                            <rect x="10" y="10" width="80" height="80" rx="16" ry="16" fill="url(#hostinger-grad)"/>
+                            <!-- Letter "H" in white -->
+                            <text x="50" y="65" font-size="52" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial, sans-serif">H</text>
+                        </svg>
+                        <span>Hostinger</span>
+                    </div>
+                    <div class="card-back"><p>Hostinger: „Profi tárhelykezelés. Domain regisztrációtól a biztonságos szerverkonfigurálásig, hogy weboldalad stabilan működjön."</p></div>
                 </div>
             </div>
             <div class="skill-box skill-card">
                 <div class="card-inner">
-                    <div class="card-front"><i class="fab fa-wordpress" style="color:#21759b"></i><span>WordPress</span></div>
-                    <div class="card-back"><p>WordPress: „Személyre szabott tartalomkezelés. Megbízható rendszerek, amiket te is könnyen tudsz frissíteni.”</p></div>
+                    <div class="card-front">
+                        <svg viewBox="0 0 100 100" width="60" height="60" style="margin-bottom: 8px;">
+                            <defs>
+                                <linearGradient id="formspree-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#EF4444;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#DC2626;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Rounded square background -->
+                            <rect x="10" y="10" width="80" height="80" rx="16" ry="16" fill="url(#formspree-grad)"/>
+                            <!-- Letter "F" in white -->
+                            <text x="50" y="65" font-size="52" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial, sans-serif">F</text>
+                        </svg>
+                        <span>Formspree</span>
+                    </div>
+                    <div class="card-back"><p>Formspree: „Automatizált űrlapkezelés. Ügyfél megkeresések biztonságosan érkeznek, azonnali válaszok."</p></div>
                 </div>
             </div>
             <div class="skill-box skill-card">
                 <div class="card-inner">
-                    <div class="card-front"><i class="fas fa-mobile-alt"></i><span>Responsive</span></div>
-                    <div class="card-back"><p>Responsive: „Tökéletes megjelenés minden eszközön: mobil, tablet és desktop optimalizálás.”</p></div>
+                    <div class="card-front"><i class="fab fa-github" style="color:#333333"></i><span>GitHub</span></div>
+                    <div class="card-back"><p>GitHub: „Verziókezelés és forráskód biztonsága. Projektek biztonságosan tárolva, nyomon követve, bármikor visszaállítható."</p></div>
+                </div>
+            </div>
+            <div class="skill-box skill-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span class="ai-logo-wrap"><img src="openai-chatgpt-icon.svg" alt="OpenAI ChatGPT logo" width="60" height="60"></span>
+                        <span>AI Integráció</span>
+                    </div>
+                    <div class="card-back"><p>AI Integráció: „AI-alapú megoldásokkal gyorsítom a tartalomkészítést, javítom a SEO szövegeket és hatékony chatbotokat építek."</p></div>
                 </div>
             </div>
         </div>
@@ -239,19 +280,39 @@
     <div class="container">
         <h2>Kapcsolat</h2>
         <p class="section-subtitle">Készen állsz a kezdésre? Beszéljük meg a projektedet, és emeljük új szintre a digitális jelenlétedet!</p>
-        <div class="contact-wrapper">
-            <div class="contact-info">
-                <div class="photo-text-wrapper">
-                    <div class="profile-photo">
+        <div class="contact-grid">
+            <div class="contact-form-panel">
+                <h3>Kérjen árajánlatot most!</h3>
+                <form class="contact-form-ui" method="post">
+                    <label class="contact-field">
+                        <input type="text" placeholder="Név" required>
+                    </label>
+                    <label class="contact-field">
+                        <input type="email" placeholder="E-mail" required>
+                    </label>
+                    <label class="contact-field">
+                        <textarea placeholder="Projekt leírása" rows="5" required></textarea>
+                    </label>
+                    <button type="submit" class="btn-submit-message">Üzenet elküldése</button>
+                </form>
+            </div>
+
+            <div class="contact-personal-panel">
+                <div class="contact-profile-header">
+                    <div class="contact-photo-square">
                         <img src="myfoto.jpg" alt="VarBro">
                     </div>
-                </div>
-                <div class="direct-contact">
-                    <p class="contact-tagline">Készen áll a közös munkára? Keressen bizalommal!</p>
-                    <div class="contact-buttons-row">
-                        <a href="https://wa.me/36307840378" class="btn-contact btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp-on írj</a>
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=hello@varbro.hu" class="btn-contact btn-email" target="_blank" rel="noopener noreferrer"><i class="fas fa-envelope"></i> Email küldése</a>
+                    <div class="contact-status">
+                        <span class="status-dot" aria-hidden="true"></span>
+                        <span class="status-text">Jelenleg online</span>
                     </div>
+                </div>
+
+                <h4>Készen áll a közös munkára? Keressen bizalommal!</h4>
+
+                <div class="contact-actions">
+                    <a href="https://wa.me/36307840378" class="btn-wa-cta" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp-on írj</a>
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=hello@varbro.hu" class="btn-email-cta" target="_blank" rel="noopener noreferrer"><i class="fas fa-envelope"></i> Email küldése</a>
                 </div>
             </div>
         </div>
