@@ -50,6 +50,23 @@ if (heroSection && window.matchMedia('(pointer: fine)').matches) {
     });
 }
 
+// Skill card click-to-flip animation
+const skillCards = document.querySelectorAll('.skill-card');
+if (skillCards.length > 0) {
+    skillCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            // Close other cards
+            skillCards.forEach(otherCard => {
+                if (otherCard !== card) {
+                    otherCard.classList.remove('flipped');
+                }
+            });
+            // Toggle current card
+            card.classList.toggle('flipped');
+        });
+    });
+}
+
 // Typing animation for benefit items
 const typeText = (el, text, speed = 70) => {
     let i = 0;
