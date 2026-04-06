@@ -21,6 +21,15 @@ if (heroTypedEl && typeof Typed !== 'undefined') {
     });
 }
 
+if (typeof AOS !== 'undefined') {
+    AOS.init({
+        duration: 700,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 60
+    });
+}
+
 // Hero pointer parallax (desktop only)
 const heroSection = document.querySelector('#hero');
 if (heroSection && window.matchMedia('(pointer: fine)').matches) {
@@ -111,7 +120,7 @@ function closeModal() {
 }
 
 // Form Submission
-const form = document.querySelector('.contact-form');
+const form = document.querySelector('.contact-form-ui, .contact-form');
 if (form) {
     form.onsubmit = async (e) => {
         e.preventDefault();
@@ -323,3 +332,54 @@ if (navLinks && navLiquid) {
         }
     });
 }
+
+// Service modals (pricing)
+const serviceModalTriggers = document.querySelectorAll('.service-modal-trigger');
+const serviceModalOverlays = document.querySelectorAll('.service-modal-overlay');
+
+const closeServiceModals = () => {
+    serviceModalOverlays.forEach((overlay) => {
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+    });
+    document.body.classList.remove('service-modal-open');
+};
+
+serviceModalTriggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+        const targetId = trigger.dataset.modalTarget;
+        const targetModal = document.getElementById(targetId);
+        if (!targetModal) return;
+
+        closeServiceModals();
+        targetModal.classList.add('is-open');
+        targetModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('service-modal-open');
+    });
+});
+
+serviceModalOverlays.forEach((overlay) => {
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+            closeServiceModals();
+        }
+    });
+
+    const closeBtn = overlay.querySelector('.service-modal-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeServiceModals);
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeServiceModals();
+    }
+});
+
+document.querySelectorAll('.modal-quote-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+        const target = button.dataset.redirect || 'whatsappcontact.html';
+        window.location.href = target;
+    });
+});

@@ -12,6 +12,7 @@
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.54/build/spline-viewer.js"></script>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -170,23 +171,26 @@
         <h2>Együttműködés</h2>
         <p class="section-subtitle">Átlátható folyamatok és szoros partnerség a közös vízió megvalósítása érdekében.</p>
         <div class="steps-grid">
-            <div class="step-card">
+            <div class="step-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-icon"><i class="fas fa-comments"></i></div>
                 <div class="step-num">01</div>
                 <h3>Egyeztetés</h3>
-                <p>Megbeszéljük az igényeket, célokat és összeállítjuk a technikai feladatot.</p>
+                <p>Részletesen átbeszéljük a céljaidat, igényeidet és az üzleti fókuszt, hogy minden döntés egy átlátható, közös stratégia mentén szülessen meg.</p>
             </div>
-            <div class="step-card">
+            <div class="step-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-icon"><i class="fas fa-code"></i></div>
                 <div class="step-num">02</div>
                 <h3>Fejlesztés</h3>
-                <p>Létrehozom a designt és megírom a kódot, folyamatos visszajelzés mellett.</p>
+                <p>Megtervezem a felületet és megírom a kódot modern technológiákkal, folyamatos visszajelzéssel, hogy a végeredmény pontosan a márkádhoz illeszkedjen.</p>
             </div>
-            <div class="step-card">
+            <div class="step-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="step-icon"><i class="fas fa-rocket"></i></div>
                 <div class="step-num">03</div>
                 <h3>Átadás</h3>
-                <p>Tesztelés után élesítjük az oldalt, és indulhat a közös siker!</p>
+                <p>Tesztelés és finomhangolás után élesítjük a weboldalt, majd támogatást is kapsz, hogy az indulás után is stabilan és eredményesen működjön.</p>
             </div>
         </div>
-        <div class="steps-cta-wrap">
+        <div class="steps-cta-wrap" data-aos="fade-up" data-aos-delay="700">
             <a href="whatsappcontact.html" class="btn-main">Kapcsolat</a>
         </div>
     </div>
@@ -240,41 +244,331 @@
                 <h3><span class="service-icon"><i class="fas fa-laptop-code"></i></span> Weboldal készítés</h3>
                 <p class="service-tagline"><em>"A digitális jelenléted alapköve"</em></p>
                 <ul class="service-list">
-                    <li><strong>Névjegykártya oldalak (Link in bio):</strong> Egyedi megoldás a közösségi média profilokhoz (Instagram, Facebook, TikTok), hogy minden fontos link egy helyen legyen.</li>
-                    <li><strong>Landing Page:</strong> Magas konverzióra kihegyezett 1-3 oldalas weboldal, kifejezetten egy termék vagy szolgáltatás eladására.</li>
-                    <li><strong>Üzleti weboldalak:</strong> Teljes körű vállalati megjelenés, amely bizalmat ébreszt és bemutatja a cégedet.</li>
-                    <li><strong>Webáruház (E-commerce) fejlesztés:</strong> Teljes körű online értékesítési rendszerek kialakítása termékkezeléssel, kosár funkcióval és biztonságos fizetési megoldásokkal.</li>
-                    <li><strong>Karbantartás és támogatás:</strong> Rendszeres frissítések, hibajavítás és technikai felügyelet a stabil működésért.</li>
+                    <li><strong>Névjegykártya oldalak (Link in bio)</strong></li>
+                    <li><strong>Landing Page</strong></li>
+                    <li><strong>Üzleti weboldalak</strong></li>
+                    <li><strong>Webáruház (E-commerce)</strong></li>
                 </ul>
-                <a href="whatsappcontact.html" class="service-cta">Kapcsolatfelvétel <span aria-hidden="true">&#8594;</span></a>
+                <button type="button" class="service-cta service-modal-trigger" data-modal-target="devModal">Részletek és árak</button>
             </div>
             <div class="service-card card">
                 <h3><span class="service-icon"><i class="fas fa-pen-ruler"></i></span> Dizájn</h3>
                 <p class="service-tagline"><em>"Modern megjelenés, amely eladja a szolgáltatásodat-terméked"</em></p>
                 <ul class="service-list">
-                    <li><strong>Új projekt tervezése:</strong> Teljesen egyedi vizuális koncepció kialakítása a nulláról, a te stílusodra szabva.</li>
-                    <li><strong>Meglévő oldal modernizálása:</strong> Elavult weboldalak frissítése és a felhasználói élmény (UX) javítása a mai trendeknek megfelelően.</li>
-                    <li><strong>Brand Identitás &amp; Logó tervezés:</strong> Egységes vizuális arculat kialakítása (színek, betűtípusok, logó), amely megkülönböztet a versenytársaidtól.</li>
-                    <li><strong>UX/UI Audit &amp; Optimalizálás:</strong> Meglévő felületek elemzése és javítása a konverzió növelése és a könnyebb kezelhetőség érdekében.</li>
-                    <li><strong>Prototípus készítés (Figma):</strong> Interaktív vázlatok készítése, hogy már a fejlesztés előtt kipróbálhasd a weboldalad működését.</li>
+                    <li><strong>Új projekt tervezése</strong></li>
+                    <li><strong>Meglévő oldal modernizálása</strong></li>
+                    <li><strong>Brand Identitás</strong></li>
+                    <li><strong>Logó dizájn</strong></li>
                 </ul>
-                <a href="whatsappcontact.html" class="service-cta">Kapcsolatfelvétel <span aria-hidden="true">&#8594;</span></a>
+                <button type="button" class="service-cta service-modal-trigger" data-modal-target="designModal">Részletek és árak</button>
             </div>
             <div class="service-card card">
                 <h3><span class="service-icon"><i class="fas fa-headset"></i></span> Szolgáltatások+</h3>
                 <p class="service-tagline"><em>"Technikai megoldások a hatékonyabb üzletmenetért."</em></p>
                 <ul class="service-list">
-                    <li><strong>Időpontfoglaló rendszerek:</strong> Automatizált naptárkezelés, amely csökkenti a manuális egyeztetést és gyorsítja az ügyfélfoglalást.</li>
-                    <li><strong>Űrlapok &amp; Adatbázisok:</strong> Egyedi kapcsolatfelvételi ívek és strukturált adatgyűjtés, hogy minden érdeklődés követhető legyen.</li>
-                    <li><strong>Cookie bannerek &amp; Analytics:</strong> GDPR kompatibilis beállítások és pontos látogatói mérés a jobb döntéstámogatásért.</li>
-                    <li><strong>Egyedi Dashboard-ok:</strong> Átlátható admin felületek a tartalom, megrendelések vagy ügyféladatok egyszerű kezeléséhez.</li>
-                    <li><strong>SEO Alapok &amp; Automatizációk:</strong> Kulcsszó-beállítások, Search Console integráció és automatikus folyamatok a hatékonyabb működésért.</li>
+                    <li><strong>Üzleti automatizációk &amp; SEO</strong></li>
+                    <li><strong>Adatkezelés &amp; Analytics</strong></li>
+                    <li><strong>Technikai háttér &amp; Hosting</strong></li>
+                    <li><strong>AI megoldások &amp; Dashboard</strong></li>
                 </ul>
-                <a href="whatsappcontact.html" class="service-cta">Kapcsolatfelvétel <span aria-hidden="true">&#8594;</span></a>
+                <button type="button" class="service-cta service-modal-trigger" data-modal-target="extraModal">Részletek és árak</button>
             </div>
         </div>
     </div>
 </section>
+
+<div class="service-modal-overlay" id="devModal" aria-hidden="true">
+    <div class="service-modal" role="dialog" aria-modal="true" aria-labelledby="devModalTitle">
+        <button type="button" class="service-modal-close" aria-label="Bezárás">&times;</button>
+        <h3 id="devModalTitle">Webfejlesztés</h3>
+        <div class="service-pricing-grid">
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Névjegykártya</h4>
+                </div>
+                <p class="pricing-subtitle">Social média profilokhoz hogy minden fontos link egy helyen legyen.</p>
+                <p class="price">Ár: 60.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Főoldal a legfontosabb információkkal</li>
+                    <li><i class="fas fa-check"></i> Bemutatkozás és szolgáltatások rövid leírása</li>
+                    <li><i class="fas fa-check"></i> Közvetlen kattintható telefonszám és e-mail</li>
+                    <li><i class="fas fa-check"></i> Social media kattintható gombok</li>
+                    <li><i class="fas fa-check"></i> Mobilra optimalizált nézet</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Landing Page</h4>
+                </div>
+                <p class="pricing-subtitle">Értékesítésre és hirdetésekre optimalizált weboldal.</p>
+                <p class="price">Ár: 120.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Profi, konverzióra kihegyezett felépítés</li>
+                    <li><i class="fas fa-check"></i> Formspree kapcsolatfelvételi űrlap</li>
+                    <li><i class="fas fa-check"></i> Termék / szolgáltatás bemutatása</li>
+                    <li><i class="fas fa-check"></i> Szekciók akár 1-7 db.</li>
+                    <li><i class="fas fa-check"></i> Dizájn (VarBro style)</li>
+                    <li><i class="fas fa-check"></i> Animált szekciók</li>
+                    <li><i class="fas fa-check"></i> Alap SEO beállítások</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Business Pro</h4>
+                </div>
+                <p class="pricing-subtitle">Teljes körű megoldás kis- és középvállalkozások részére.</p>
+                <p class="price">Ár: 320.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Akár 5-7 aloldal (Rólunk, Galéria, Referenciák stb.)</li>
+                    <li><i class="fas fa-check"></i> AI támogatott szövegírás és tartalomkezelés</li>
+                    <li><i class="fas fa-check"></i> Haladó keresőoptimalizálás (SEO)</li>
+                    <li><i class="fas fa-check"></i> Google Analytics &amp; Search Console bekötés</li>
+                    <li><i class="fas fa-check"></i> Egyedi animációk és prémium megjelenés</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Premium +</h4>
+                </div>
+                <p class="pricing-subtitle">Webshopok és egyedi funkciókkal ellátott rendszerek.</p>
+                <p class="price">Ár: 580.000 Ft (netto)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Teljes e-kereskedelmi funkciók (Stripe/PayPal fizetés)</li>
+                    <li><i class="fas fa-check"></i> Termékmenedzsment és készletkezelés</li>
+                    <li><i class="fas fa-check"></i> Vásárlói fiókok és kosár funkció</li>
+                    <li><i class="fas fa-check"></i> Egyedi adatbázis megoldások</li>
+                    <li><i class="fas fa-check"></i> Kiemelt biztonsági és sebességi beállítások</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+        </div>
+    </div>
+</div>
+
+<div class="service-modal-overlay" id="designModal" aria-hidden="true">
+    <div class="service-modal design-modal" role="dialog" aria-modal="true" aria-labelledby="designModalTitle">
+        <button type="button" class="service-modal-close" aria-label="Bezárás">&times;</button>
+        <h3 id="designModalTitle">Design &amp; Arculat</h3>
+        <div class="service-pricing-grid design-pricing-grid">
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Logo Design</h4>
+                </div>
+                <p class="pricing-subtitle">Egyedi logótervezés, amely azonnal felismerhetővé teszi a márkád.</p>
+                <p class="price">Ár: 45.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> 3 egyedi logó koncepció</li>
+                    <li><i class="fas fa-check"></i> Szín és formahangolás márkához</li>
+                    <li><i class="fas fa-check"></i> Vektoros és webes fájlformátumok</li>
+                    <li><i class="fas fa-check"></i> 2 kör módosítás</li>
+                    <li><i class="fas fa-check"></i> Brand mini útmutató</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Arculati Alapcsomag</h4>
+                </div>
+                <p class="pricing-subtitle">Stabil vizuális alapok induló vállalkozásoknak és szakértőknek.</p>
+                <p class="price">Ár: 75.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Logó + színpaletta + tipográfia</li>
+                    <li><i class="fas fa-check"></i> Social media profilkép és borítókép</li>
+                    <li><i class="fas fa-check"></i> Névjegykártya alap layout</li>
+                    <li><i class="fas fa-check"></i> Letisztult vizuális rendszer</li>
+                    <li><i class="fas fa-check"></i> Áttekinthető átadási csomag</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Teljes Arculat</h4>
+                </div>
+                <p class="pricing-subtitle">Komplett prémium arculat egységes, profi megjelenéssel minden felületen.</p>
+                <p class="price">Ár: 110.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Teljes logórendszer (fő + alternatív verziók)</li>
+                    <li><i class="fas fa-check"></i> Részletes márka szín és betűtípus rendszer</li>
+                    <li><i class="fas fa-check"></i> Social media sablon csomag (Canva)</li>
+                    <li><i class="fas fa-check"></i> Névjegykártya és prezentációs alap</li>
+                    <li><i class="fas fa-check"></i> Mini brand guide PDF</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Webmodernizáció</h4>
+                </div>
+                <p class="pricing-subtitle">Elavult weboldalak frissítése és UX javítás a mai trendekhez igazítva.</p>
+                <p class="price">Ár: 95.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Friss, modern vizuális redesign</li>
+                    <li><i class="fas fa-check"></i> UX és olvashatóság optimalizálás</li>
+                    <li><i class="fas fa-check"></i> Mobilnézet finomhangolás</li>
+                    <li><i class="fas fa-check"></i> CTA-k és konverziós elemek erősítése</li>
+                    <li><i class="fas fa-check"></i> Gyorsasági és szerkezeti javítások</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+        </div>
+    </div>
+</div>
+
+<div class="service-modal-overlay" id="extraModal" aria-hidden="true">
+    <div class="service-modal extra-modal" role="dialog" aria-modal="true" aria-labelledby="extraModalTitle">
+        <button type="button" class="service-modal-close" aria-label="Bezárás">&times;</button>
+        <h3 id="extraModalTitle">Extra Szolgáltatások</h3>
+        <div class="service-pricing-grid extra-pricing-grid">
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Időpontfoglaló rendszerek</h4>
+                </div>
+                <p class="pricing-subtitle">Automatizált és egyszerű időpontfoglalási folyamat ügyfeleid részére.</p>
+                <p class="price">Ár: 180.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Online foglalási naptár egyedi szolgáltatásokhoz</li>
+                    <li><i class="fas fa-check"></i> Szabad időpontok automatikus kezelése</li>
+                    <li><i class="fas fa-check"></i> E-mailes és opcionális emlékeztető értesítések</li>
+                    <li><i class="fas fa-check"></i> Több szolgáltatás és időtartam beállítása</li>
+                    <li><i class="fas fa-check"></i> Mobilbarát foglalási felület ügyfeleknek</li>
+                    <li><i class="fas fa-check"></i> Egyszerű admin nézet a módosításokhoz</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Űrlapok &amp; Adatbázisok</h4>
+                </div>
+                <p class="pricing-subtitle">Komplex adatgyűjtés és strukturált adatok kezelése a hatékonyságért.</p>
+                <p class="price">Ár: 120.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Egyedi űrlapmezők és beküldési logika</li>
+                    <li><i class="fas fa-check"></i> Adatok strukturált tárolása adatbázisban</li>
+                    <li><i class="fas fa-check"></i> Kapcsolati, ajánlatkérő vagy jelentkezési űrlapok</li>
+                    <li><i class="fas fa-check"></i> Szűrhető és kezelhető admin felület</li>
+                    <li><i class="fas fa-check"></i> E-mail értesítések és automatikus válaszok</li>
+                    <li><i class="fas fa-check"></i> GDPR-barát adatkezelési alapok</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Cookie bannerek &amp; Analytics</h4>
+                </div>
+                <p class="pricing-subtitle">Jogi megfelelőség és mélyreható elemzések a látogatói viselkedésről.</p>
+                <p class="price">Ár: 85.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Cookie banner jogi megfelelőségi alappal</li>
+                    <li><i class="fas fa-check"></i> Consent kezelés és felhasználói döntések mentése</li>
+                    <li><i class="fas fa-check"></i> Google Analytics bekötés és alap események</li>
+                    <li><i class="fas fa-check"></i> Search Console vagy mérési eszköz integráció</li>
+                    <li><i class="fas fa-check"></i> Források és kampányok alap követése</li>
+                    <li><i class="fas fa-check"></i> Átlátható mérési struktúra induláshoz</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Egyedi Dashboard</h4>
+                </div>
+                <p class="pricing-subtitle">Személyre szabott adatvizualizáció és üzleti jelentések egy helyen.</p>
+                <p class="price">Ár: 250.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Egyedi KPI és mutató alapú felület</li>
+                    <li><i class="fas fa-check"></i> Grafikonok, táblázatok és státusz panelek</li>
+                    <li><i class="fas fa-check"></i> Szűrési és időszak alapú riport nézetek</li>
+                    <li><i class="fas fa-check"></i> Több adatforrás összefésülése</li>
+                    <li><i class="fas fa-check"></i> Reszponzív admin vagy vezetői áttekintő</li>
+                    <li><i class="fas fa-check"></i> Jogosultság szerinti hozzáférési logika</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>SEO &amp; Automatizációk</h4>
+                </div>
+                <p class="pricing-subtitle">Hosszú távú organikus növekedés és folyamatautomatizálás.</p>
+                <p class="price">Ár: 320.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Technikai SEO audit és hibajavítási javaslatok</li>
+                    <li><i class="fas fa-check"></i> Kulcsszó stratégia és tartalmi struktúra</li>
+                    <li><i class="fas fa-check"></i> Meta adatok és belső linkelési rendszer</li>
+                    <li><i class="fas fa-check"></i> Automatizált értesítések és folyamatok</li>
+                    <li><i class="fas fa-check"></i> Lead kezelés egyszerűsítése integrációkkal</li>
+                    <li><i class="fas fa-check"></i> Növekedésre optimalizált működési alapok</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Karbantartás és támogatás</h4>
+                </div>
+                <p class="pricing-subtitle">Weboldalad technikai frissítése és megbízható működésének biztosítása.</p>
+                <p class="price">Ár: 15.000 Ft / hó (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Rendszeres technikai ellenőrzés és hibamegelőzés</li>
+                    <li><i class="fas fa-check"></i> Kisebb tartalmi módosítások havi keretben</li>
+                    <li><i class="fas fa-check"></i> Biztonsági és teljesítmény figyelés</li>
+                    <li><i class="fas fa-check"></i> Kapcsolati űrlapok és funkciók tesztelése</li>
+                    <li><i class="fas fa-check"></i> Gyors reakció kisebb hibák esetén</li>
+                    <li><i class="fas fa-check"></i> Folyamatos stabil működés támogatása</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>Hosting &amp; Domain</h4>
+                </div>
+                <p class="pricing-subtitle">Teljes technikai beállítás és üzembe helyezés.</p>
+                <p class="price">Ár: 25.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Domain és tárhely összekapcsolása</li>
+                    <li><i class="fas fa-check"></i> DNS beállítások és technikai konfiguráció</li>
+                    <li><i class="fas fa-check"></i> SSL és alap biztonsági aktiválás</li>
+                    <li><i class="fas fa-check"></i> Élesítés és ellenőrzési folyamat</li>
+                    <li><i class="fas fa-check"></i> E-mail alapbeállítások támogatása</li>
+                    <li><i class="fas fa-check"></i> Stabil induláshoz szükséges technikai alapok</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+            <article class="pricing-item">
+                <div class="pricing-plan-head">
+                    <span class="plan-check"><i class="fas fa-check"></i></span>
+                    <h4>AI Chatbot</h4>
+                </div>
+                <p class="pricing-subtitle">Intelligens ügyfélszolgálat 0-24.</p>
+                <p class="price">Ár: 55.000 Ft (nettó)</p>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Gyakori kérdésekre automatizált válaszok</li>
+                    <li><i class="fas fa-check"></i> Messenger vagy webes chatbot logika</li>
+                    <li><i class="fas fa-check"></i> Lead gyűjtés és kapcsolatfelvételi átadás</li>
+                    <li><i class="fas fa-check"></i> Egyedi kérdés-válasz struktúra kialakítása</li>
+                    <li><i class="fas fa-check"></i> 0-24 elérhető első szintű ügyfélszolgálat</li>
+                    <li><i class="fas fa-check"></i> Márkához igazított hangnem és működés</li>
+                </ul>
+                <button type="button" class="modal-quote-btn" data-redirect="whatsappcontact.html">Kérem az ajánlatot</button>
+            </article>
+        </div>
+    </div>
+</div>
 
 <section id="contact" class="section">
     <div class="container">
@@ -283,15 +577,15 @@
         <div class="contact-grid">
             <div class="contact-form-panel">
                 <h3>Kérjen árajánlatot most!</h3>
-                <form class="contact-form-ui" method="post">
+                <form class="contact-form-ui" method="post" action="https://formspree.io/f/xeerdkob">
                     <label class="contact-field">
-                        <input type="text" placeholder="Név" required>
+                        <input type="text" name="name" placeholder="Név" required>
                     </label>
                     <label class="contact-field">
-                        <input type="email" placeholder="E-mail" required>
+                        <input type="email" name="email" placeholder="E-mail" required>
                     </label>
                     <label class="contact-field">
-                        <textarea placeholder="Projekt leírása" rows="5" required></textarea>
+                        <textarea name="message" placeholder="Projekt leírása" rows="5" required></textarea>
                     </label>
                     <button type="submit" class="btn-submit-message">Üzenet elküldése</button>
                 </form>
@@ -363,6 +657,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script src="script.js?v=2"></script>
 </body>
 </html>
