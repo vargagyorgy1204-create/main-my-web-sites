@@ -383,3 +383,99 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         window.location.href = target;
     });
 });
+
+// GDPR cookie consent + GA4 lazy load
+(() => {
+    const CONSENT_KEY = 'varbro_cookie_consent';
+    const CONSENT_ACCEPTED = 'accepted';
+    const CONSENT_DECLINED = 'declined';
+    const GA_MEASUREMENT_ID = 'G-F5GJPXZWBH';
+    let gaLoaded = false;
+
+    const getStoredConsent = () => {
+        try {
+            return localStorage.getItem(CONSENT_KEY);
+        } catch (error) {
+            return null;
+        }
+    };
+
+    const saveConsent = (value) => {
+        try {
+            localStorage.setItem(CONSENT_KEY, value);
+        } catch (error) {
+            // If storage is unavailable, we still honor in-session choice.
+        }
+    };
+
+    const loadGa4 = () => {
+        if (gaLoaded || window.gtag) return;
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function gtag() {
+            window.dataLayer.push(arguments);
+        };
+
+        const gaScript = document.createElement('script');
+        gaScript.async = true;
+        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+        document.head.appendChild(gaScript);
+
+        window.gtag('js', new Date());
+        window.gtag('config', GA_MEASUREMENT_ID);
+        gaLoaded = true;
+    };
+
+    const banner = document.getElementById('cookie-consent-banner');
+    const acceptBtn = document.getElementById('cookie-accept');
+    const declineBtn = document.getElementById('cookie-decline');
+    const settingsBtn = document.getElementById('cookie-settings-trigger');
+
+    const hideBanner = () => {
+        if (!banner) return;
+        banner.classList.remove('is-visible');
+        banner.setAttribute('aria-hidden', 'true');
+    };
+
+    const showBanner = () => {
+        if (!banner) return;
+        banner.classList.add('is-visible');
+        banner.setAttribute('aria-hidden', 'false');
+    };
+
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+            showBanner();
+        });
+    }
+
+    const consent = getStoredConsent();
+
+    if (consent === CONSENT_ACCEPTED) {
+        loadGa4();
+        hideBanner();
+        return;
+    }
+
+    if (consent === CONSENT_DECLINED) {
+        hideBanner();
+        return;
+    }
+
+    if (!banner || !acceptBtn || !declineBtn) {
+        return;
+    }
+
+    showBanner();
+
+    acceptBtn.addEventListener('click', () => {
+        saveConsent(CONSENT_ACCEPTED);
+        loadGa4();
+        hideBanner();
+    });
+
+    declineBtn.addEventListener('click', () => {
+        saveConsent(CONSENT_DECLINED);
+        hideBanner();
+    });
+})();
