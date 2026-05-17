@@ -24,6 +24,7 @@ nav { display: flex; justify-content: space-between; align-items: center; max-wi
 }
 .logo-img { height: 38px; width: auto; display: block; margin-right: 9px; }
 .logo span { color: var(--primary); }
+.notranslate { unicode-bidi: isolate; }
 nav ul { display: flex; list-style: none; }
 .nav-links {
     position: relative;
