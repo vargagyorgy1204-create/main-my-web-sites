@@ -449,6 +449,21 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         });
     }
 
+    if (!banner || !acceptBtn || !declineBtn) {
+        return;
+    }
+
+    acceptBtn.addEventListener('click', () => {
+        saveConsent(CONSENT_ACCEPTED);
+        loadGa4();
+        hideBanner();
+    });
+
+    declineBtn.addEventListener('click', () => {
+        saveConsent(CONSENT_DECLINED);
+        hideBanner();
+    });
+
     const consent = getStoredConsent();
 
     if (consent === CONSENT_ACCEPTED) {
@@ -462,20 +477,5 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         return;
     }
 
-    if (!banner || !acceptBtn || !declineBtn) {
-        return;
-    }
-
     showBanner();
-
-    acceptBtn.addEventListener('click', () => {
-        saveConsent(CONSENT_ACCEPTED);
-        loadGa4();
-        hideBanner();
-    });
-
-    declineBtn.addEventListener('click', () => {
-        saveConsent(CONSENT_DECLINED);
-        hideBanner();
-    });
 })();
