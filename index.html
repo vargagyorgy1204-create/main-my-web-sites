@@ -339,46 +339,70 @@
     </div>
 </section>
 
-<section id="services" class="section grey-bg">
-    <div class="container">
-        <h2>Szolgáltatásaim</h2>
-        <p class="section-subtitle">Komplex digitális megoldások a stratégiai tervezéstől a funkcionális megvalósításig.</p>
-        <div class="services-grid">
-            <div class="service-card card">
-                <h3><span class="service-icon"><i class="fas fa-laptop-code"></i></span> Weboldal készítés</h3>
-                <p class="service-tagline"><em>"A digitális jelenléted alapköve"</em></p>
-                <ul class="service-list">
-                    <li><strong>Névjegykártya oldalak (Link in bio)</strong></li>
-                    <li><strong>Landing Page</strong></li>
-                    <li><strong>Üzleti weboldalak</strong></li>
-                    <li><strong>Webáruház (E-commerce)</strong></li>
-                </ul>
-                <button type="button" class="service-cta service-modal-trigger" data-modal-target="devModal">Részletek és árak</button>
-            </div>
-            <div class="service-card card">
-                <h3><span class="service-icon"><i class="fas fa-pen-ruler"></i></span> Dizájn</h3>
-                <p class="service-tagline"><em>"Modern megjelenés, amely eladja a szolgáltatásodat-terméked"</em></p>
-                <ul class="service-list">
-                    <li><strong>Új projekt tervezése</strong></li>
-                    <li><strong>Meglévő oldal modernizálása</strong></li>
-                    <li><strong>Brand Identitás</strong></li>
-                    <li><strong>Logó dizájn</strong></li>
-                </ul>
-                <button type="button" class="service-cta service-modal-trigger" data-modal-target="designModal">Részletek és árak</button>
-            </div>
-            <div class="service-card card">
-                <h3><span class="service-icon"><i class="fas fa-headset"></i></span> Szolgáltatások+</h3>
-                <p class="service-tagline"><em>"Technikai megoldások a hatékonyabb üzletmenetért."</em></p>
-                <ul class="service-list">
-                    <li><strong>Üzleti automatizációk &amp; SEO</strong></li>
-                    <li><strong>Adatkezelés &amp; Analytics</strong></li>
-                    <li><strong>Technikai háttér &amp; Hosting</strong></li>
-                    <li><strong>AI megoldások &amp; Dashboard</strong></li>
-                </ul>
-                <button type="button" class="service-cta service-modal-trigger" data-modal-target="extraModal">Részletek és árak</button>
-            </div>
+<section id="services" style="background:#0f1629;padding:90px 20px 100px;">
+  <div style="max-width:1100px;margin:0 auto;">
+
+    <h2 style="color:#f0f4ff;font-size:clamp(2rem,4vw,2.8rem);font-weight:800;text-align:center;margin:0 0 14px;letter-spacing:-0.02em;background:none;-webkit-text-fill-color:#f0f4ff;">Szolgáltatásaim</h2>
+    <p style="color:#7a90b8;font-size:1.05rem;line-height:1.7;text-align:center;max-width:600px;margin:0 auto 52px;">Komplex digitális megoldások a stratégiai tervezéstől a funkcionális megvalósításig.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+
+      <!-- Weboldal készítés – wide, gradient -->
+      <div style="grid-column:span 2;background:linear-gradient(135deg,#1e1b4b,#312e81);border:1px solid rgba(108,99,255,.35);border-radius:20px;padding:36px 32px;display:flex;flex-direction:column;gap:18px;transition:transform .25s,box-shadow .25s;cursor:default;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 40px rgba(108,99,255,.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <i class="fas fa-laptop-code" style="font-size:2.2rem;color:#a5b4fc;"></i>
+        <div>
+          <h3 style="color:#f0f4ff;font-size:1.25rem;font-weight:700;margin:0 0 6px;">Weboldal készítés</h3>
+          <p style="color:#818cf8;font-size:.88rem;margin:0;font-style:italic;">"A digitális jelenléted alapköve"</p>
         </div>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+          <li style="color:#c7d2fe;font-size:.92rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:#818cf8;font-size:.75rem;flex-shrink:0;"></i> Névjegykártya oldalak (Link in bio)</li>
+          <li style="color:#c7d2fe;font-size:.92rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:#818cf8;font-size:.75rem;flex-shrink:0;"></i> Landing Page</li>
+          <li style="color:#c7d2fe;font-size:.92rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:#818cf8;font-size:.75rem;flex-shrink:0;"></i> Üzleti weboldalak</li>
+          <li style="color:#c7d2fe;font-size:.92rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:#818cf8;font-size:.75rem;flex-shrink:0;"></i> Webáruház (E-commerce)</li>
+        </ul>
+        <button type="button" class="service-modal-trigger" data-modal-target="devModal" style="margin-top:auto;padding:13px 28px;background:linear-gradient(135deg,#6c63ff,#c850c0);color:#fff;font-weight:700;font-size:.95rem;border:none;border-radius:50px;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Részletek és árak</button>
+      </div>
+
+      <!-- Dizájn – orange -->
+      <div style="background:#FF8234;border-radius:20px;padding:36px 28px;display:flex;flex-direction:column;gap:18px;transition:transform .25s,box-shadow .25s;cursor:default;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 36px rgba(255,130,52,.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <i class="fas fa-pen-ruler" style="font-size:2.2rem;color:#fff;"></i>
+        <div>
+          <h3 style="color:#fff;font-size:1.15rem;font-weight:700;margin:0 0 6px;">Dizájn</h3>
+          <p style="color:rgba(255,255,255,.8);font-size:.82rem;margin:0;font-style:italic;">"Modern megjelenés, amely eladja a terméked"</p>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+          <li style="color:rgba(255,255,255,.92);font-size:.88rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:rgba(255,255,255,.7);font-size:.75rem;flex-shrink:0;"></i> Új projekt tervezése</li>
+          <li style="color:rgba(255,255,255,.92);font-size:.88rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:rgba(255,255,255,.7);font-size:.75rem;flex-shrink:0;"></i> Meglévő oldal modernizálása</li>
+          <li style="color:rgba(255,255,255,.92);font-size:.88rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:rgba(255,255,255,.7);font-size:.75rem;flex-shrink:0;"></i> Brand Identitás</li>
+          <li style="color:rgba(255,255,255,.92);font-size:.88rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:rgba(255,255,255,.7);font-size:.75rem;flex-shrink:0;"></i> Logó dizájn</li>
+        </ul>
+        <button type="button" class="service-modal-trigger" data-modal-target="designModal" style="margin-top:auto;padding:13px 28px;background:#fff;color:#FF8234;font-weight:700;font-size:.95rem;border:none;border-radius:50px;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Részletek és árak</button>
+      </div>
+
+      <!-- Szolgáltatások+ – glass -->
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:36px 28px;display:flex;flex-direction:column;gap:18px;transition:transform .25s,box-shadow .25s,border-color .25s;cursor:default;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 36px rgba(200,80,192,.2)';this.style.borderColor='rgba(200,80,192,.3)'" onmouseout="this.style.transform='';this.style.boxShadow='';this.style.borderColor='rgba(255,255,255,.1)'">
+        <i class="fas fa-headset" style="font-size:2.2rem;color:#c850c0;"></i>
+        <div>
+          <h3 style="color:#f0f4ff;font-size:1.15rem;font-weight:700;margin:0 0 6px;">Szolgáltatások+</h3>
+          <p style="color:#7a90b8;font-size:.82rem;margin:0;font-style:italic;">"Technikai megoldások a hatékonyabb üzletmenetért"</p>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+          <li style="color:#c9d3ef;font-size:.88rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:#c850c0;font-size:.75rem;flex-shrink:0;"></i> Üzleti automatizációk &amp; SEO</li>
+          <li style="color:#c9d3ef;font-size:.88rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:#c850c0;font-size:.75rem;flex-shrink:0;"></i> Adatkezelés &amp; Analytics</li>
+          <li style="color:#c9d3ef;font-size:.88rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:#c850c0;font-size:.75rem;flex-shrink:0;"></i> Technikai háttér &amp; Hosting</li>
+          <li style="color:#c9d3ef;font-size:.88rem;display:flex;align-items:center;gap:10px;"><i class="fas fa-check" style="color:#c850c0;font-size:.75rem;flex-shrink:0;"></i> AI megoldások &amp; Dashboard</li>
+        </ul>
+        <button type="button" class="service-modal-trigger" data-modal-target="extraModal" style="margin-top:auto;padding:13px 28px;background:linear-gradient(135deg,#6c63ff,#c850c0);color:#fff;font-weight:700;font-size:.95rem;border:none;border-radius:50px;cursor:pointer;transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Részletek és árak</button>
+      </div>
+
     </div>
+
+    <style>
+      @media(max-width:1024px){#services [style*="grid-template-columns"]{grid-template-columns:repeat(2,1fr)!important}}
+      @media(max-width:640px){#services [style*="grid-template-columns"]{grid-template-columns:1fr!important}#services [style*="span 2"]{grid-column:span 1!important}}
+    </style>
+
+  </div>
 </section>
 
 <div class="service-modal-overlay" id="devModal" aria-hidden="true">
