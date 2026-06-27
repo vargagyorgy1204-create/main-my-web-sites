@@ -46,6 +46,14 @@
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.54/build/spline-viewer.js"></script>
 
     <link rel="stylesheet" href="style.css">
+    <style>
+        #skills .sk-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:16px;margin-top:48px;grid-auto-flow:dense}
+        #skills .sk:hover{transform:translateY(-5px)!important;box-shadow:0 14px 36px rgba(108,99,255,.3)!important}
+        #skills .sk-orange:hover{box-shadow:0 14px 28px rgba(255,130,52,.4)!important}
+        #skills .sk-grad:hover{box-shadow:0 14px 36px rgba(108,99,255,.45)!important}
+        @media(max-width:1024px){#skills .sk-grid{grid-template-columns:repeat(2,1fr)!important}}
+        @media(max-width:640px){#skills .sk-grid{grid-template-columns:1fr!important}#skills .sk-wide{grid-column:span 1!important}}
+    </style>
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -66,8 +74,9 @@
             <span class="nav-liquid" aria-hidden="true"></span>
             <li><a href="#hero">Kezdőlap</a></li>
             <li><a href="#about">Rólam</a></li>
-            <li><a href="#steps">Együttműködés</a></li>
+            <li><a href="#bento-showcase">Referenciák</a></li>
             <li><a href="#services">Szolgáltatások</a></li>
+            <li><a href="#portfolio">Portfólió</a></li>
             <li><a href="whatsappcontact.html">Kapcsolat</a></li>
         </ul>
     </nav>
@@ -103,98 +112,141 @@
     </div>
 </section>
 
-<section id="skills" class="section grey-bg">
+<section id=”skills” class=”section skills-dark” style=”background:linear-gradient(160deg,#0f1628 0%,#1a2336 100%);padding:100px 20px;”>
+    <div class=”container” style=”max-width:1100px;margin:0 auto;”>
+        <h2 style=”color:#f2f5ff;text-align:center;”>Készségeim</h2>
+        <p class=”section-subtitle” style=”color:#8a9bbf;text-align:center;max-width:700px;margin:0 auto 48px;font-size:1.1rem;line-height:1.7;”>A legmodernebb technológiák és a precíz tervezés ötvözete a kimagasló felhasználói élményért.</p>
+
+        <div class=”sk-grid” style=”display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px;grid-auto-flow:dense;”>
+
+            <!-- HTML5 — span 2, purple glass -->
+            <div class=”sk sk-wide” style=”grid-column:span 2;background:rgba(108,99,255,.2);border:1px solid rgba(108,99,255,.35);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <i class=”fab fa-html5” style=”font-size:2.2rem;color:#e34c26;display:block;line-height:1;”></i>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>HTML5</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>A weboldalak stabil és szemantikailag pontos struktúrája. Logikusan felépített, SEO-barát kód minden projektben.</p>
+            </div>
+
+            <!-- CSS3 — glass -->
+            <div class=”sk” style=”background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <i class=”fab fa-css3-alt” style=”font-size:2.2rem;color:#60a5fa;display:block;line-height:1;”></i>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>CSS3</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Modern stílusok és látványos animációk — prémium érzetet keltő vizuális megjelenés.</p>
+            </div>
+
+            <!-- JavaScript — orange -->
+            <div class=”sk sk-orange” style=”background:#FF8234;border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <i class=”fab fa-js” style=”font-size:2.2rem;color:#fff;display:block;line-height:1;”></i>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#fff;margin:0;line-height:1.3;”>JavaScript</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(255,255,255,.85);margin:0;”>Interaktivitás és dinamikus működés — komplex funkciók, zökkenőmentes UX.</p>
+            </div>
+
+            <!-- React — span 2, cyan glass -->
+            <div class=”sk sk-wide” style=”grid-column:span 2;background:rgba(97,219,251,.12);border:1px solid rgba(97,219,251,.28);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <i class=”fab fa-react” style=”font-size:2.2rem;color:#61dbfb;display:block;line-height:1;”></i>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>React</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Nagy teljesítményű, skálázható webalkalmazások. Villámgyors betöltés és modern működés garantálva.</p>
+            </div>
+
+            <!-- Canva — glass -->
+            <div class=”sk” style=”background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <img src=”canva-icon.svg” alt=”Canva” style=”width:42px;height:42px;object-fit:contain;display:block;”>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>Canva</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Gyors vizuális tervezés — marketing anyagok és posztok percek alatt.</p>
+            </div>
+
+            <!-- Hostinger — purple glass -->
+            <div class=”sk” style=”background:rgba(108,99,255,.18);border:1px solid rgba(108,99,255,.32);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <svg viewBox=”0 0 40 40” width=”42” height=”42” style=”display:block;” xmlns=”http://www.w3.org/2000/svg”>
+                    <rect width=”40” height=”40” rx=”8” fill=”#7c3aed”/>
+                    <text x=”20” y=”27” text-anchor=”middle” fill=”white” font-size=”18” font-weight=”bold” font-family=”Arial,sans-serif”>H</text>
+                </svg>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>Hostinger</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Profi tárhelykezelés: domaintől a biztonságos szerverkonfigurálásig.</p>
+            </div>
+
+            <!-- Formspree — red glass -->
+            <div class=”sk” style=”background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.28);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <svg viewBox=”0 0 40 40” width=”42” height=”42” style=”display:block;” xmlns=”http://www.w3.org/2000/svg”>
+                    <rect width=”40” height=”40” rx=”8” fill=”#dc2626”/>
+                    <text x=”20” y=”27” text-anchor=”middle” fill=”white” font-size=”18” font-weight=”bold” font-family=”Arial,sans-serif”>F</text>
+                </svg>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>Formspree</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Automatizált űrlapkezelés — megkeresések biztonságosan, azonnali válaszokkal.</p>
+            </div>
+
+            <!-- GitHub — dark glass -->
+            <div class=”sk” style=”background:rgba(15,20,35,.55);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <i class=”fab fa-github” style=”font-size:2.2rem;color:#fff;display:block;line-height:1;”></i>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>GitHub</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Verziókezelés és forráskód biztonság — projektek bármikor visszaállíthatók.</p>
+            </div>
+
+            <!-- AI Integráció — span 2, gradient -->
+            <div class=”sk sk-wide sk-grad” style=”grid-column:span 2;background:linear-gradient(135deg,#6c63ff 0%,#c850c0 100%);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
+                <img src=”openai-chatgpt-icon.svg” alt=”AI” style=”width:42px;height:42px;object-fit:contain;display:block;filter:brightness(0) invert(1);”>
+                <h4 style=”font-size:1.05rem;font-weight:700;color:#fff;margin:0;line-height:1.3;”>AI Integráció</h4>
+                <p style=”font-size:.88rem;line-height:1.6;color:rgba(255,255,255,.85);margin:0;”>AI-alapú megoldásokkal gyorsítom a tartalomkészítést, javítom a SEO szövegeket és chatbotokat építek.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="bento-showcase" class="section bento-section">
     <div class="container">
-        <h2>Készségeim</h2>
-        <p class="section-subtitle">A legmodernebb technológiák és a precíz tervezés ötvözete a kimagasló felhasználói élményért.</p>
-        <div class="skills-container">
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front"><i class="fab fa-html5" style="color:#e34c26"></i><span>HTML5</span></div>
-                    <div class="card-back"><p>HTML5: „A weboldalak stabil és szemantikailag pontos struktúrája. Biztosítom, hogy az oldalad logikusan felépített és SEO-barát legyen.”</p></div>
+        <h2>Bizonyított eredmények</h2>
+        <p class="section-subtitle">Magyar kisvállalkozások — fodrászok, szalonok, mesterek — megbízható webfejlesztő partnere.</p>
+
+        <div class="bento-grid">
+            <div class="bento-card bento-card--span2 bento-card--row2 bento-card--gradient bento-showcase-card">
+                <div>
+                    <span class="bento-badge bento-badge--white"><i class="fas fa-globe"></i> VarBro.pro</span>
+                    <h3>Magyar kisvállalkozások digitális sikerének partnere</h3>
+                    <p>Fodrászatoktól szépségszalonokig segítem az ügyfeleimet erős online jelenlét kiépítésében — olyan weboldalakkal, amelyek valóban ügyfeleket hoznak.</p>
                 </div>
+                <a href="whatsappcontact.html" class="bento-cta">Projekt indítása <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front"><i class="fab fa-css3-alt" style="color:#264de4"></i><span>CSS3</span></div>
-                    <div class="card-back"><p>CSS3: „Modern stílusok és látványos animációk. Olyan vizuális megjelenést hozok létre, amely prémium érzetet kelt.”</p></div>
+
+            <div class="bento-card bento-card--orange">
+                <span class="bento-stat-num">50+</span>
+                <span class="bento-stat-label">Lezárt projekt</span>
+            </div>
+
+            <div class="bento-card bento-card--row2 bento-showcase-card">
+                <div>
+                    <span class="bento-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                    <blockquote>„Az új weboldal óta 3x annyi telefonhívást kapok. Teljesen profi, gyors és megbízható – mindenkinek ajánlom!"</blockquote>
                 </div>
-            </div>
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front"><i class="fab fa-js" style="color:#f7df1e"></i><span>JavaScript</span></div>
-                    <div class="card-back"><p>JavaScript: „Interaktivitás és dinamikus működés. Komplex funkciókat és zökkenőmentes felhasználói élményt fejlesztek.”</p></div>
-                </div>
-            </div>
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front"><i class="fab fa-react" style="color:#61dbfb"></i><span>React</span></div>
-                    <div class="card-back"><p>React: „Nagy teljesítményű és skálázható webalkalmazások. Villámgyors betöltést és modern működést garantálok.”</p></div>
-                </div>
-            </div>
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <img src="canva-icon.svg" alt="Canva logó ikon" width="60" height="60" style="margin-bottom: 8px;">
-                        <span>Canva</span>
+                <div class="bento-client">
+                    <div class="bento-client-avatar">LG</div>
+                    <div>
+                        <strong>Lakatos Gábor</strong>
+                        <span>Fodrász – Budapest</span>
                     </div>
-                    <div class="card-back"><p>Canva: „Gyors vizuális tervezés. Marketing anyagok, közösségi posztok és prezentációk percek alatt."</p></div>
                 </div>
             </div>
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <svg viewBox="0 0 100 100" width="60" height="60" style="margin-bottom: 8px;">
-                            <defs>
-                                <linearGradient id="hostinger-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#673AB7;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#A356EE;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <!-- Rounded square background -->
-                            <rect x="10" y="10" width="80" height="80" rx="16" ry="16" fill="url(#hostinger-grad)"/>
-                            <!-- Letter "H" in white -->
-                            <text x="50" y="65" font-size="52" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial, sans-serif">H</text>
-                        </svg>
-                        <span>Hostinger</span>
-                    </div>
-                    <div class="card-back"><p>Hostinger: „Profi tárhelykezelés. Domain regisztrációtól a biztonságos szerverkonfigurálásig, hogy weboldalad stabilan működjön."</p></div>
-                </div>
+
+            <div class="bento-card bento-card--dark">
+                <span class="bento-stat-num">3+</span>
+                <span class="bento-stat-label">Év tapasztalat</span>
             </div>
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <svg viewBox="0 0 100 100" width="60" height="60" style="margin-bottom: 8px;">
-                            <defs>
-                                <linearGradient id="formspree-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#EF4444;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#DC2626;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <!-- Rounded square background -->
-                            <rect x="10" y="10" width="80" height="80" rx="16" ry="16" fill="url(#formspree-grad)"/>
-                            <!-- Letter "F" in white -->
-                            <text x="50" y="65" font-size="52" font-weight="bold" text-anchor="middle" fill="white" font-family="Arial, sans-serif">F</text>
-                        </svg>
-                        <span>Formspree</span>
-                    </div>
-                    <div class="card-back"><p>Formspree: „Automatizált űrlapkezelés. Ügyfél megkeresések biztonságosan érkeznek, azonnali válaszok."</p></div>
-                </div>
+
+            <div class="bento-card bento-card--span2 bento-card--light">
+                <span class="bento-icon"><i class="fas fa-search"></i></span>
+                <h4>SEO-optimalizált &amp; Mobilbarát</h4>
+                <p>Minden weboldal Google-barát, villámgyors betöltésű és tökéletesen mobilra optimalizált – hogy ügyfeleid rád találjanak a keresőkben.</p>
             </div>
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front"><i class="fab fa-github" style="color:#333333"></i><span>GitHub</span></div>
-                    <div class="card-back"><p>GitHub: „Verziókezelés és forráskód biztonsága. Projektek biztonságosan tárolva, nyomon követve, bármikor visszaállítható."</p></div>
-                </div>
+
+            <div class="bento-card bento-card--green">
+                <span class="bento-icon bento-icon--white"><i class="fas fa-check-circle"></i></span>
+                <h4>Határidő garancia</h4>
+                <p>Amit megígérek, azt leszállítom – mindig időben, prémium minőségben.</p>
             </div>
-            <div class="skill-box skill-card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <span class="ai-logo-wrap"><img src="openai-chatgpt-icon.svg" alt="OpenAI ChatGPT ikon" width="60" height="60"></span>
-                        <span>AI Integráció</span>
-                    </div>
-                    <div class="card-back"><p>AI Integráció: „AI-alapú megoldásokkal gyorsítom a tartalomkészítést, javítom a SEO szövegeket és hatékony chatbotokat építek."</p></div>
-                </div>
+
+            <div class="bento-card bento-card--white">
+                <span class="bento-icon bento-icon--orange"><i class="fas fa-bolt"></i></span>
+                <h4>Gyors átadás</h4>
+                <p>Landing page akár 1–2 héten belül élesítve – üzleted online van, mielőtt gondolnád.</p>
             </div>
         </div>
     </div>
@@ -235,35 +287,41 @@
         <h2>Miért válassz engem?</h2>
         <p class="section-subtitle">Egyedi megközelítés, üzletorientált szemlélet és elkötelezettség a hosszú távú értékteremtés mellett.</p>
         
-        <div class="benefits-grid">
-            <div class="benefit-item">
-                <h3><i class="fas fa-check-circle"></i> <span class="benefit-typed" data-text="Tapasztalat"></span></h3>
-                <p>Nem csak kódot írok, hanem megoldásokat szállítok. Évek óta építek digitális termékeket, amik valóban működnek.</p>
+        <div class="bento-grid bento-why-grid">
+            <div class="bento-card bento-card--span2 bento-card--gradient">
+                <span class="bento-icon bento-icon--white"><i class="fas fa-star"></i></span>
+                <h3>Tapasztalat</h3>
+                <p>Nem csak kódot írok, hanem megoldásokat szállítok. Évek óta építek digitális termékeket, amik valóban működnek és valódi üzleti eredményeket hoznak.</p>
             </div>
-            
-            <div class="benefit-item">
-                <h3><i class="fas fa-check-circle"></i> <span class="benefit-typed" data-text="Felhasználó Központú"></span></h3>
+
+            <div class="bento-card">
+                <span class="bento-icon"><i class="fas fa-users"></i></span>
+                <h4>Felhasználó Központú</h4>
                 <p>A design nálam nem csak dísz. Olyan felületeket alkotok, amiket az ügyfeleid imádni fognak. A magas konverzió alapja a kiváló UX.</p>
             </div>
-            
-            <div class="benefit-item">
-                <h3><i class="fas fa-check-circle"></i> <span class="benefit-typed" data-text="Újítás"></span></h3>
-                    <p>A holnap technológiáival dolgozom már ma. Gyors, skálázható és modern stack - mert a lassú weboldal már a múlté.</p>
+
+            <div class="bento-card bento-card--orange">
+                <span class="bento-icon bento-icon--white"><i class="fas fa-lightbulb"></i></span>
+                <h4>Újítás</h4>
+                <p>A holnap technológiáival dolgozom már ma. Gyors, skálázható és modern stack – mert a lassú weboldal már a múlté.</p>
             </div>
-            
-            <div class="benefit-item">
-                <h3><i class="fas fa-check-circle"></i> <span class="benefit-typed" data-text="Kommunikáció"></span></h3>
-                    <p>Felejtsd el a végtelen e-maileket. Gyors visszajelzés, tiszta beszéd és teljes transzparencia a projekt során.</p>
+
+            <div class="bento-card">
+                <span class="bento-icon"><i class="fas fa-comments"></i></span>
+                <h4>Kommunikáció</h4>
+                <p>Felejtsd el a végtelen e-maileket. Gyors visszajelzés, tiszta beszéd és teljes transzparencia a projekt során.</p>
             </div>
-            
-            <div class="benefit-item">
-                <h3><i class="fas fa-check-circle"></i> <span class="benefit-typed" data-text="Megbízhatóság"></span></h3>
-                    <p>A határidő nálam szent. Amit megígérek, azt leszállítom - kifogások nélkül, prémium minőségben.</p>
+
+            <div class="bento-card bento-card--green">
+                <span class="bento-icon bento-icon--white"><i class="fas fa-shield-alt"></i></span>
+                <h4>Megbízhatóság</h4>
+                <p>A határidő nálam szent. Amit megígérek, azt leszállítom – kifogások nélkül, prémium minőségben.</p>
             </div>
-            
-            <div class="benefit-item">
-                <h3><i class="fas fa-check-circle"></i> <span class="benefit-typed" data-text="Támogatás"></span></h3>
-                    <p>A projekt átadása után is ott vagyok melletted: karbantartás, frissítések és szakmai segítség, amikor csak kell.</p>
+
+            <div class="bento-card bento-card--span2 bento-card--dark">
+                <span class="bento-icon bento-icon--white"><i class="fas fa-headset"></i></span>
+                <h3>Támogatás</h3>
+                <p>A projekt átadása után is ott vagyok melletted: karbantartás, frissítések és szakmai segítség, amikor csak kell.</p>
             </div>
         </div>
     </div>
@@ -604,6 +662,57 @@
     </div>
 </div>
 
+<section id="portfolio" class="section portfolio-section">
+    <div class="container">
+        <h2 class="portfolio-title">Portfólió</h2>
+        <p class="section-subtitle portfolio-subtitle">Nézd meg munkáimat élőben – videók, weboldalak, design elemek</p>
+
+        <div class="portfolio-grid">
+            <div class="portfolio-qr-col">
+                <div class="portfolio-qr-card">
+                    <img
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://www.instagram.com/webdeveloper_varbro/"
+                        alt="VarBro Instagram QR kód"
+                        class="portfolio-qr-img"
+                        width="200"
+                        height="200"
+                        loading="lazy"
+                    >
+                    <p class="portfolio-qr-label">Olvasd be a kódot</p>
+                    <a
+                        href="https://www.instagram.com/webdeveloper_varbro/"
+                        class="portfolio-ig-handle"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <i class="fab fa-instagram"></i>
+                        @webdeveloper_varbro
+                    </a>
+                </div>
+            </div>
+
+            <div class="portfolio-content-col">
+                <h3 class="portfolio-content-heading">Mit találsz ott?</h3>
+                <ul class="portfolio-list">
+                    <li>🎬 Weboldal buildek videón</li>
+                    <li>🖥️ Elkészült weboldalak</li>
+                    <li>🎨 Design elemek, kártyák, gombok</li>
+                    <li>⚡ Animációk és interakciók</li>
+                </ul>
+                <a
+                    href="https://www.instagram.com/webdeveloper_varbro/"
+                    class="portfolio-ig-btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <i class="fab fa-instagram"></i>
+                    Kövess Instagramon
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section id="contact" class="section">
     <div class="container">
         <h2>Kapcsolat</h2>
@@ -665,7 +774,7 @@
                 <ul>
                     <li><a href="#hero">Kezdőlap</a></li>
                     <li><a href="#about">Rólam</a></li>
-                    <li><a href="#steps">Együttműködés</a></li>
+                    <li><a href="#bento-showcase">Referenciák</a></li>
                     <li><a href="#services">Szolgáltatások</a></li>
                 </ul>
             </div>
