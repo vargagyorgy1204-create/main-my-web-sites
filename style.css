@@ -2739,31 +2739,32 @@ body.contact-page {
 
 /* ─── #skills bento – dark navy section ──────────────────────────────────── */
 #skills {
-    background: #10172a;
-    padding: 90px 20px 100px;
+    background: #10172a !important;
+    padding: 90px 20px 100px !important;
 }
 #skills h2 {
     background: none !important;
     -webkit-text-fill-color: #f0f4ff !important;
-    color: #f0f4ff;
-    font-size: clamp(2rem, 4vw, 2.8rem);
-    font-weight: 800;
-    text-align: center;
-    margin: 0 0 18px;
-    letter-spacing: -0.02em;
+    color: #f0f4ff !important;
+    font-size: clamp(2rem, 4vw, 2.8rem) !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+    margin: 0 0 18px !important;
+    letter-spacing: -0.02em !important;
 }
 #skills .sk-sub {
-    color: #7a90b8;
-    font-size: 1.05rem;
-    line-height: 1.7;
-    text-align: center;
-    max-width: 640px;
-    margin: 0 auto 52px;
+    color: #7a90b8 !important;
+    font-size: 1.05rem !important;
+    line-height: 1.7 !important;
+    text-align: center !important;
+    max-width: 640px !important;
+    margin: 0 auto 52px !important;
+    display: block !important;
 }
 #skills-bento {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 14px !important;
 }
 .sk-card {
     border-radius: 18px;
