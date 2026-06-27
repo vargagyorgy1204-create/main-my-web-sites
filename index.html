@@ -47,12 +47,10 @@
 
     <link rel="stylesheet" href="style.css">
     <style>
-        #skills .sk-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:16px;margin-top:48px;grid-auto-flow:dense}
-        #skills .sk:hover{transform:translateY(-5px)!important;box-shadow:0 14px 36px rgba(108,99,255,.3)!important}
-        #skills .sk-orange:hover{box-shadow:0 14px 28px rgba(255,130,52,.4)!important}
-        #skills .sk-grad:hover{box-shadow:0 14px 36px rgba(108,99,255,.45)!important}
-        @media(max-width:1024px){#skills .sk-grid{grid-template-columns:repeat(2,1fr)!important}}
-        @media(max-width:640px){#skills .sk-grid{grid-template-columns:1fr!important}#skills .sk-wide{grid-column:span 1!important}}
+        @media(max-width:1024px){#skills-bento{grid-template-columns:repeat(2,1fr)!important}}
+        @media(max-width:640px){#skills-bento{grid-template-columns:1fr!important}#skills-bento>[style*="span 2"]{grid-column:span 1!important}}
+        #skills-bento>div{transition:transform .25s ease,box-shadow .25s ease;cursor:default;}
+        #skills-bento>div:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(108,99,255,.25);}
     </style>
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
@@ -112,84 +110,72 @@
     </div>
 </section>
 
-<section id=”skills” class=”section skills-dark” translate=”no” style=”background:linear-gradient(160deg,#0f1628 0%,#1a2336 100%);background-color:#0f1628;padding:100px 20px;forced-color-adjust:none;color-scheme:dark;”>
-    <div class=”container” style=”max-width:1100px;margin:0 auto;”>
-        <h2 class=”notranslate” style=”color:#f2f5ff;text-align:center;forced-color-adjust:none;”>Készségeim</h2>
-        <p class=”section-subtitle notranslate” style=”color:#8a9bbf;text-align:center;max-width:700px;margin:0 auto 48px;font-size:1.1rem;line-height:1.7;”>A legmodernebb technológiák és a precíz tervezés ötvözete a kimagasló felhasználói élményért.</p>
+<section id=”skills”>
+<div style=”background:#10172a;padding:90px 20px 100px;”>
+<div style=”max-width:1100px;margin:0 auto;”>
 
-        <div class=”sk-grid” style=”display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px;grid-auto-flow:dense;”>
+  <h2 style=”font-size:clamp(2rem,4vw,2.8rem);font-weight:800;color:#f0f4ff;text-align:center;margin:0 0 18px;letter-spacing:-0.02em;”>Készségeim</h2>
+  <p style=”color:#7a90b8;font-size:1.05rem;line-height:1.7;text-align:center;max-width:640px;margin:0 auto 52px;”>A legmodernebb technológiák és a precíz tervezés ötvözete a kimagasló felhasználói élményért.</p>
 
-            <!-- HTML5 — span 2, purple glass -->
-            <div class=”sk sk-wide” style=”grid-column:span 2;background:rgba(108,99,255,.2);border:1px solid rgba(108,99,255,.35);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <i class=”fab fa-html5” style=”font-size:2.2rem;color:#e34c26;display:block;line-height:1;”></i>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>HTML5</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>A weboldalak stabil és szemantikailag pontos struktúrája. Logikusan felépített, SEO-barát kód minden projektben.</p>
-            </div>
+  <div id=”skills-bento” style=”display:grid;grid-template-columns:repeat(4,1fr);gap:14px;”>
 
-            <!-- CSS3 — glass -->
-            <div class=”sk” style=”background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <i class=”fab fa-css3-alt” style=”font-size:2.2rem;color:#60a5fa;display:block;line-height:1;”></i>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>CSS3</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Modern stílusok és látványos animációk — prémium érzetet keltő vizuális megjelenés.</p>
-            </div>
-
-            <!-- JavaScript — orange -->
-            <div class=”sk sk-orange” style=”background:#FF8234;border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <i class=”fab fa-js” style=”font-size:2.2rem;color:#fff;display:block;line-height:1;”></i>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#fff;margin:0;line-height:1.3;”>JavaScript</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(255,255,255,.85);margin:0;”>Interaktivitás és dinamikus működés — komplex funkciók, zökkenőmentes UX.</p>
-            </div>
-
-            <!-- React — span 2, cyan glass -->
-            <div class=”sk sk-wide” style=”grid-column:span 2;background:rgba(97,219,251,.12);border:1px solid rgba(97,219,251,.28);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <i class=”fab fa-react” style=”font-size:2.2rem;color:#61dbfb;display:block;line-height:1;”></i>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>React</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Nagy teljesítményű, skálázható webalkalmazások. Villámgyors betöltés és modern működés garantálva.</p>
-            </div>
-
-            <!-- Canva — glass -->
-            <div class=”sk” style=”background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <img src=”canva-icon.svg” alt=”Canva” style=”width:42px;height:42px;object-fit:contain;display:block;”>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>Canva</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Gyors vizuális tervezés — marketing anyagok és posztok percek alatt.</p>
-            </div>
-
-            <!-- Hostinger — purple glass -->
-            <div class=”sk” style=”background:rgba(108,99,255,.18);border:1px solid rgba(108,99,255,.32);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <svg viewBox=”0 0 40 40” width=”42” height=”42” style=”display:block;” xmlns=”http://www.w3.org/2000/svg”>
-                    <rect width=”40” height=”40” rx=”8” fill=”#7c3aed”/>
-                    <text x=”20” y=”27” text-anchor=”middle” fill=”white” font-size=”18” font-weight=”bold” font-family=”Arial,sans-serif”>H</text>
-                </svg>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>Hostinger</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Profi tárhelykezelés: domaintől a biztonságos szerverkonfigurálásig.</p>
-            </div>
-
-            <!-- Formspree — red glass -->
-            <div class=”sk” style=”background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.28);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <svg viewBox=”0 0 40 40” width=”42” height=”42” style=”display:block;” xmlns=”http://www.w3.org/2000/svg”>
-                    <rect width=”40” height=”40” rx=”8” fill=”#dc2626”/>
-                    <text x=”20” y=”27” text-anchor=”middle” fill=”white” font-size=”18” font-weight=”bold” font-family=”Arial,sans-serif”>F</text>
-                </svg>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>Formspree</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Automatizált űrlapkezelés — megkeresések biztonságosan, azonnali válaszokkal.</p>
-            </div>
-
-            <!-- GitHub — dark glass -->
-            <div class=”sk” style=”background:rgba(15,20,35,.55);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <i class=”fab fa-github” style=”font-size:2.2rem;color:#fff;display:block;line-height:1;”></i>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#f2f5ff;margin:0;line-height:1.3;”>GitHub</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(200,212,240,.78);margin:0;”>Verziókezelés és forráskód biztonság — projektek bármikor visszaállíthatók.</p>
-            </div>
-
-            <!-- AI Integráció — span 2, gradient -->
-            <div class=”sk sk-wide sk-grad” style=”grid-column:span 2;background:linear-gradient(135deg,#6c63ff 0%,#c850c0 100%);border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:10px;text-align:left;overflow:hidden;cursor:default;transition:transform .25s ease,box-shadow .25s ease;”>
-                <img src=”openai-chatgpt-icon.svg” alt=”AI” style=”width:42px;height:42px;object-fit:contain;display:block;filter:brightness(0) invert(1);”>
-                <h4 style=”font-size:1.05rem;font-weight:700;color:#fff;margin:0;line-height:1.3;”>AI Integráció</h4>
-                <p style=”font-size:.88rem;line-height:1.6;color:rgba(255,255,255,.85);margin:0;”>AI-alapú megoldásokkal gyorsítom a tartalomkészítést, javítom a SEO szövegeket és chatbotokat építek.</p>
-            </div>
-
-        </div>
+    <div style=”grid-column:span 2;background:rgba(108,99,255,.22);border:1px solid rgba(108,99,255,.4);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <i class=”fab fa-html5” style=”font-size:2rem;color:#e34c26;line-height:1;display:block;”></i>
+      <h4 style=”color:#f0f4ff;font-size:1rem;font-weight:700;margin:0;”>HTML5</h4>
+      <p style=”color:#8fa4cc;font-size:.85rem;line-height:1.6;margin:0;”>A weboldalak stabil és szemantikailag pontos struktúrája. SEO-barát, logikus kód minden projektben.</p>
     </div>
+
+    <div style=”background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <i class=”fab fa-css3-alt” style=”font-size:2rem;color:#60a5fa;line-height:1;display:block;”></i>
+      <h4 style=”color:#f0f4ff;font-size:1rem;font-weight:700;margin:0;”>CSS3</h4>
+      <p style=”color:#8fa4cc;font-size:.85rem;line-height:1.6;margin:0;”>Modern stílusok és animációk — prémium vizuális megjelenés.</p>
+    </div>
+
+    <div style=”background:#FF8234;border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <i class=”fab fa-js” style=”font-size:2rem;color:#fff;line-height:1;display:block;”></i>
+      <h4 style=”color:#fff;font-size:1rem;font-weight:700;margin:0;”>JavaScript</h4>
+      <p style=”color:rgba(255,255,255,.88);font-size:.85rem;line-height:1.6;margin:0;”>Interaktivitás és dinamikus működés — komplex funkciók.</p>
+    </div>
+
+    <div style=”grid-column:span 2;background:rgba(97,219,251,.1);border:1px solid rgba(97,219,251,.25);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <i class=”fab fa-react” style=”font-size:2rem;color:#61dbfb;line-height:1;display:block;”></i>
+      <h4 style=”color:#f0f4ff;font-size:1rem;font-weight:700;margin:0;”>React</h4>
+      <p style=”color:#8fa4cc;font-size:.85rem;line-height:1.6;margin:0;”>Nagy teljesítményű, skálázható webalkalmazások. Villámgyors betöltés garantálva.</p>
+    </div>
+
+    <div style=”background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <img src=”canva-icon.svg” alt=”Canva” style=”width:38px;height:38px;object-fit:contain;display:block;”>
+      <h4 style=”color:#f0f4ff;font-size:1rem;font-weight:700;margin:0;”>Canva</h4>
+      <p style=”color:#8fa4cc;font-size:.85rem;line-height:1.6;margin:0;”>Gyors vizuális tervezés — marketing anyagok percek alatt.</p>
+    </div>
+
+    <div style=”background:rgba(108,99,255,.16);border:1px solid rgba(108,99,255,.3);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <svg viewBox=”0 0 40 40” width=”38” height=”38” style=”display:block;” xmlns=”http://www.w3.org/2000/svg”><rect width=”40” height=”40” rx=”9” fill=”#7c3aed”/><text x=”20” y=”27” text-anchor=”middle” fill=”white” font-size=”18” font-weight=”bold” font-family=”Arial,sans-serif”>H</text></svg>
+      <h4 style=”color:#f0f4ff;font-size:1rem;font-weight:700;margin:0;”>Hostinger</h4>
+      <p style=”color:#8fa4cc;font-size:.85rem;line-height:1.6;margin:0;”>Profi tárhelykezelés domaintől a szerverconfigig.</p>
+    </div>
+
+    <div style=”background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <svg viewBox=”0 0 40 40” width=”38” height=”38” style=”display:block;” xmlns=”http://www.w3.org/2000/svg”><rect width=”40” height=”40” rx=”9” fill=”#dc2626”/><text x=”20” y=”27” text-anchor=”middle” fill=”white” font-size=”18” font-weight=”bold” font-family=”Arial,sans-serif”>F</text></svg>
+      <h4 style=”color:#f0f4ff;font-size:1rem;font-weight:700;margin:0;”>Formspree</h4>
+      <p style=”color:#8fa4cc;font-size:.85rem;line-height:1.6;margin:0;”>Automatizált űrlapkezelés — azonnali válaszok.</p>
+    </div>
+
+    <div style=”background:rgba(10,15,30,.6);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <i class=”fab fa-github” style=”font-size:2rem;color:#e2e8f0;line-height:1;display:block;”></i>
+      <h4 style=”color:#f0f4ff;font-size:1rem;font-weight:700;margin:0;”>GitHub</h4>
+      <p style=”color:#8fa4cc;font-size:.85rem;line-height:1.6;margin:0;”>Verziókezelés — projektek bármikor visszaállíthatók.</p>
+    </div>
+
+    <div style=”grid-column:span 2;background:linear-gradient(135deg,#6c63ff,#c850c0);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:8px;”>
+      <img src=”openai-chatgpt-icon.svg” alt=”AI” style=”width:38px;height:38px;object-fit:contain;display:block;filter:brightness(0) invert(1);”>
+      <h4 style=”color:#fff;font-size:1rem;font-weight:700;margin:0;”>AI Integráció</h4>
+      <p style=”color:rgba(255,255,255,.88);font-size:.85rem;line-height:1.6;margin:0;”>AI megoldásokkal gyorsítom a tartalomkészítést, javítom a SEO szövegeket és chatbotokat építek.</p>
+    </div>
+
+  </div>
+</div>
+</div>
 </section>
 
 <section id="bento-showcase" class="section bento-section">
