@@ -2993,3 +2993,360 @@ body.contact-page {
         max-width: 320px;
     }
 }
+
+/* ═══════════════════════════════════════════
+   HERO + ABOUT — UNIFIED BENTO BLOCK
+   ═══════════════════════════════════════════ */
+
+.hero-about-block {
+    background: #0a0e1a;
+}
+
+/* ── Override old #hero layout ── */
+#hero {
+    height: auto !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    background: transparent !important;
+    padding: 120px 20px 40px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Hero bento grid ── */
+.hero-bento-grid {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.hero-card {
+    border-radius: 20px;
+    padding: 28px;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+/* Main card: span 2 cols × 2 rows */
+.hero-card--main {
+    grid-column: span 4;
+    grid-row: span 1;
+    background: #0f1629;
+    border: 1px solid rgba(108, 99, 255, .3);
+    padding: 60px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    pointer-events: auto;
+    transform: translate3d(calc(var(--mx, 0px) * 0.18), calc(var(--my, 0px) * 0.18), 0);
+    transition: transform 180ms ease-out;
+}
+
+.hero-card--main h1 {
+    font-size: clamp(3.2rem, 8vw, 6rem);
+    margin-bottom: 14px;
+    text-align: center;
+    text-shadow: none;
+}
+
+.hero-card--main .typing-container {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    min-height: 2.4rem;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.hero-card--main .hero-p {
+    color: #c9d3ef;
+    text-shadow: none;
+    max-width: 680px;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    margin: 0 auto 36px;
+    text-align: center;
+}
+
+.hero-card--main .hero-actions {
+    margin-top: 0;
+    justify-content: center;
+}
+
+/* Stat cards */
+.hero-card--stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+}
+
+.hero-card--stat-orange {
+    background: #FF8234;
+}
+
+.hero-card--stat-orange:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(255, 130, 52, .4);
+}
+
+.hero-card--stat-indigo {
+    background: rgba(108, 99, 255, .15);
+    border: 1px solid rgba(108, 99, 255, .3);
+}
+
+.hero-card--stat-indigo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(108, 99, 255, .3);
+}
+
+.hero-stat-num {
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+}
+
+.hero-card--stat-indigo .hero-stat-num {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-stat-label {
+    color: rgba(255, 255, 255, .8);
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.hero-card--stat-indigo .hero-stat-label {
+    color: #7a90b8;
+}
+
+/* Tech badge card: span 2 cols, row 2 */
+.hero-card--tech {
+    grid-column: span 2;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .08);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.hero-card--tech:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(108, 99, 255, .15);
+    border-color: rgba(108, 99, 255, .25);
+}
+
+.hero-card-label {
+    color: #7a90b8;
+    font-size: .76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+}
+
+.hero-tech-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hero-tech-badge {
+    padding: 6px 14px;
+    background: rgba(108, 99, 255, .18);
+    border: 1px solid rgba(108, 99, 255, .3);
+    border-radius: 50px;
+    color: #c7d2fe;
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+/* ── About section ── */
+#about {
+    background: #ffffff !important;
+    padding: 80px 20px 80px !important;
+    text-align: left !important;
+}
+
+.about-bento-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.about-card {
+    border-radius: 20px;
+    padding: 28px;
+}
+
+/* Photo card */
+.about-card--photo {
+    grid-column: 1;
+    grid-row: 1;
+    overflow: hidden;
+    position: relative;
+    min-height: 400px;
+    padding: 0;
+    background: #0f1629;
+}
+
+.about-card--photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+
+/* Bio card */
+.about-card--bio {
+    grid-column: 2;
+    grid-row: 1;
+    background: #f8f9ff;
+    border: 1px solid #e8eaf0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    padding: 40px 44px;
+}
+
+.about-card--bio h2 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem) !important;
+    font-weight: 800 !important;
+    color: #0f1629 !important;
+    background: none !important;
+    -webkit-text-fill-color: #0f1629 !important;
+    text-align: left !important;
+    margin: 0 !important;
+}
+
+.about-card--bio .section-subtitle {
+    color: #5a6a8a !important;
+    text-align: left !important;
+    margin: 0 !important;
+    font-size: .98rem;
+}
+
+.about-card--bio .about-text {
+    color: #3a4a6a;
+    margin: 0;
+}
+
+.about-card--bio .btn-read-more {
+    align-self: flex-start;
+    margin-top: 6px;
+}
+
+/* Value cards: row 2, cols 2-4 */
+.about-card--value {
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: default;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.about-card--value:hover {
+    transform: translateY(-4px);
+}
+
+.about-card--value i {
+    font-size: 1.8rem;
+}
+
+.about-card--value h4 {
+    color: #f0f4ff;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.about-card--value p {
+    color: #8fa4cc;
+    font-size: .88rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.about-card--green {
+    grid-column: 2 / 3;
+    background: rgba(163, 191, 111, .12);
+    border: 1px solid rgba(163, 191, 111, .25);
+}
+
+.about-card--green:hover {
+    box-shadow: 0 12px 28px rgba(163, 191, 111, .18);
+}
+
+.about-card--green i { color: #A3BF6F; }
+
+.about-card--indigo {
+    grid-column: 3 / 5;
+    background: rgba(108, 99, 255, .12);
+    border: 1px solid rgba(108, 99, 255, .25);
+}
+
+.about-card--indigo:hover {
+    box-shadow: 0 12px 28px rgba(108, 99, 255, .22);
+}
+
+.about-card--indigo i { color: #818cf8; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .hero-bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .hero-card--main {
+        grid-column: span 2;
+        grid-row: span 1;
+    }
+    .about-card--photo {
+        grid-column: 1;
+        grid-row: 1;
+        min-height: 240px;
+    }
+    .about-card--bio {
+        grid-column: 2;
+        grid-row: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    #hero {
+        padding: 100px 16px 0 !important;
+    }
+    .hero-bento-grid,
+    .about-bento-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-card--main,
+    .hero-card--tech {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+    .about-card--photo {
+        grid-column: 1;
+        grid-row: auto;
+        max-height: 280px;
+        min-height: unset;
+    }
+    .about-card--bio {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
