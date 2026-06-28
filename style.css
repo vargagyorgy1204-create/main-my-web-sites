@@ -994,12 +994,11 @@ h2 {
     background-origin: border-box;
     background-clip: padding-box, border-box;
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.09);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease;
 }
 
 .pricing-item:hover {
-    transform: translateY(-6px);
-    animation: pricingGlowPulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.45), 0 8px 28px rgba(108, 99, 255, 0.2);
 }
 
 @keyframes pricingGlowPulse {
