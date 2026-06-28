@@ -3043,7 +3043,7 @@ body.contact-page {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 140px);
+    min-height: 420px;
     pointer-events: auto;
     transform: translate3d(calc(var(--mx, 0px) * 0.18), calc(var(--my, 0px) * 0.18), 0);
     transition: transform 180ms ease-out;
