@@ -2999,19 +2999,19 @@ body.contact-page {
    ═══════════════════════════════════════════ */
 
 .hero-about-block {
-    background: #0a0e1a;
+    background: transparent;
 }
 
 /* ── Override old #hero layout ── */
 #hero {
     height: auto !important;
-    min-height: 100vh !important;
+    min-height: unset !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
     justify-content: center !important;
     background: transparent !important;
-    padding: 120px 20px 40px !important;
+    padding: 100px 20px 40px !important;
     position: relative;
     overflow: hidden;
 }
@@ -3044,7 +3044,7 @@ body.contact-page {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 60vh;
+    min-height: calc(100vh - 140px);
     pointer-events: auto;
     transform: translate3d(calc(var(--mx, 0px) * 0.18), calc(var(--my, 0px) * 0.18), 0);
     transition: transform 180ms ease-out;
