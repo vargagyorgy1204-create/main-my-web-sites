@@ -23,6 +23,7 @@ nav { display: flex; justify-content: space-between; align-items: center; max-wi
     cursor: pointer;
     font-family: inherit;
     color: inherit;
+    text-decoration: none;
 }
 .logo-img { height: 38px; width: auto; display: block; margin-right: 9px; }
 .logo span { color: var(--primary); }
