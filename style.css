@@ -10,7 +10,7 @@
 body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
 
 /* Navigation */
-header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
+header { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 15px 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.06); }
 nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: auto; padding: 0 20px; }
 .logo {
     font-size: 1.5rem;
@@ -3128,6 +3128,14 @@ body.contact-page {
     50% { opacity: 0; }
 }
 
+
+.hero-content .hero-desc {
+    font-size: clamp(11px, 1.2vw, 15px);
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.6;
+    margin: 28px 0 0 0;
+    font-family: 'Inter', sans-serif;
+}
 
 .cta-zone {
     position: absolute;
