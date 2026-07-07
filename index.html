@@ -44,12 +44,10 @@
         }
         </script>
 
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.54/build/spline-viewer.js"></script>
-
     <link rel="stylesheet" href="style.css?v=sk3">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -76,25 +74,56 @@
     </nav>
 </header>
 
-<div class="hero-about-block">
-
 <section id="hero">
-    <canvas id="hero-particle-grid" aria-hidden="true"></canvas>
-    <div class="hero-bento-grid">
+    <div class="hero-wrap">
+        <div class="hero-card">
+            <svg viewBox="0 0 1322 680" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                    <linearGradient id="varbroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#6c63ff"/>
+                        <stop offset="100%" stop-color="#c850c0"/>
+                    </linearGradient>
+                </defs>
+                <path d="M54,65 A32,32 0 0,1 86,33 L1244,33 A32,32 0 0,1 1276,65 L1276,262 A32,32 0 0,1 1244,294 L1072,294 A42,42 0 0,0 1030,336 L1030,618 A32,32 0 0,1 998,650 L520,650 A32,32 0 0,1 488,618 L488,577 A42,42 0 0,0 446,535 L86,535 A32,32 0 0,1 54,503 L54,65 Z"/>
+            </svg>
 
-        <div class="hero-card hero-card--main">
-            <h1><span class="gradient-text">Web Developer</span></h1>
-            <div class="typing-container"><span id="typed"></span></div>
-            <p class="hero-p">Profi Webfejlesztő vagyok aki vállalkozásoknak és szakértőknek segít erős online jelenlét kiépítésében</p>
-            <div class="hero-actions">
-                <a href="whatsappcontact.html" class="btn-main hero-cta">Projekt indítása</a>
+            <div class="hero-content">
+                <p class="eyebrow">Webfejlesztés &amp; Dizájn</p>
+                <h1 class="headline">Web Developer</h1>
+                <p class="subtitle"><span id="typewriter"></span><span class="cursor" aria-hidden="true">|</span></p>
+            </div>
+
+            <div class="cta-zone">
+                <a href="whatsappcontact.html" class="cta-button">
+                    Projekt indítása
+                </a>
+            </div>
+
+            <div class="tech-zone">
+                <p class="tech-label">Tech stack</p>
+                <div class="tech-pill">HTML</div>
+                <div class="tech-pill">CSS</div>
+                <div class="tech-pill">JavaScript</div>
+                <div class="tech-pill">React</div>
+                <div class="tech-pill">Claude Code</div>
             </div>
         </div>
-
     </div>
 </section>
-
-</div>
+<script>
+(function(){
+    var words=['Weboldal készítés','Landing Page','Üzleti weboldalak','Dizájn'];
+    var el=document.getElementById('typewriter');
+    if(!el)return;
+    var TYPE=90,DEL=45,HOLD=1600,GAP=350,wi=0,ci=0,del=false;
+    function tick(){
+        var w=words[wi];
+        if(!del){ci++;el.textContent=w.slice(0,ci);if(ci===w.length){del=true;setTimeout(tick,HOLD);return;}setTimeout(tick,TYPE);}
+        else{ci--;el.textContent=w.slice(0,ci);if(ci===0){del=false;wi=(wi+1)%words.length;setTimeout(tick,GAP);return;}setTimeout(tick,DEL);}
+    }
+    tick();
+})();
+</script>
 
 <section id="about">
 
@@ -776,7 +805,6 @@
             <div class="footer-section">
                 <h4>Navigáció</h4>
                 <ul>
-                    <li><a href="#hero">Kezdőlap</a></li>
                     <li><a href="#about">Rólam</a></li>
                     <li><a href="#bento-showcase">Referenciák</a></li>
                     <li><a href="#services">Szolgáltatások</a></li>
@@ -816,8 +844,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script src="script.js?v=2"></script>
+<script src="script.js?v=3"></script>
 </body>
 </html>
