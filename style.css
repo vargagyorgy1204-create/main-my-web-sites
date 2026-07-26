@@ -2600,92 +2600,43 @@ body.contact-page {
 }
 
 .portfolio-grid {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 60px;
-    max-width: 860px;
     margin: 52px auto 0;
 }
 
-/* ── Left: QR card ── */
-.portfolio-qr-col {
+.portfolio-card {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.portfolio-qr-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 60px;
+    background: #1a1f2e;
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 24px;
-    padding: 32px 28px;
-    backdrop-filter: blur(10px);
-    transition: border-color 0.28s ease, box-shadow 0.28s ease;
-}
-
-.portfolio-qr-card:hover {
-    border-color: rgba(108, 99, 255, 0.4);
-    box-shadow: 0 12px 36px rgba(108, 99, 255, 0.18);
+    padding: 60px 80px;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .portfolio-qr-img {
+    width: 300px;
+    height: 300px;
+    border-radius: 16px;
+    flex-shrink: 0;
     display: block;
-    border-radius: 14px;
-    border: 3px solid rgba(255, 255, 255, 0.12);
 }
 
-.portfolio-qr-label {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #8a9bbf;
-    font-weight: 500;
-    text-align: center;
-}
-
-.portfolio-ig-handle {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #c850c0;
-    text-decoration: none;
-    transition: color 0.22s ease, opacity 0.22s ease;
-}
-
-.portfolio-ig-handle i {
-    font-size: 1.1rem;
-}
-
-.portfolio-ig-handle:hover {
-    color: var(--primary);
-    opacity: 0.9;
-}
-
-/* ── Right: content ── */
+.portfolio-card-right,
 .portfolio-content-col {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    text-align: center;
-    gap: 22px;
+    gap: 16px;
 }
 
-.portfolio-content-heading {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 700;
-    color: #f2f5ff;
+.portfolio-qr-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
     margin: 0;
-    line-height: 1.2;
 }
 
 .portfolio-list {
@@ -2694,36 +2645,61 @@ body.contact-page {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
 }
 
 .portfolio-list li {
-    font-size: 1.05rem;
-    color: #c9d3ef;
-    line-height: 1.5;
-    font-weight: 500;
-    padding-left: 4px;
+    font-size: 17px;
+    color: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
 }
 
-.portfolio-ig-btn {
+.pf-emoji {
+    min-width: 1.6em;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.portfolio-ig-handle {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 15px 34px;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 700;
+    gap: 7px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #c850c0;
     text-decoration: none;
-    color: #ffffff;
-    background: linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
-    border: none;
-    box-shadow: 0 10px 28px rgba(108, 99, 255, 0.4);
-    transition: transform 0.26s ease, box-shadow 0.26s ease, opacity 0.26s ease;
-    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s;
 }
 
-.portfolio-ig-btn i {
-    font-size: 1.15rem;
+.portfolio-ig-handle i {
+    font-size: 1.1rem;
+}
+
+.portfolio-ig-handle:hover {
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .portfolio-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 40px 24px;
+        gap: 32px;
+    }
+
+    .portfolio-qr-img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .portfolio-card-right,
+    .portfolio-content-col {
+        align-items: center;
+    }
 }
 
 .portfolio-ig-btn:hover {
