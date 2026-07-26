@@ -2600,10 +2600,10 @@ body.contact-page {
 }
 
 .portfolio-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 56px;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 60px;
     max-width: 860px;
     margin: 52px auto 0;
 }
@@ -2611,13 +2611,17 @@ body.contact-page {
 /* ── Left: QR card ── */
 .portfolio-qr-col {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 .portfolio-qr-card {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: 16px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -2671,7 +2675,9 @@ body.contact-page {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: center;
     gap: 22px;
+    height: 100%;
 }
 
 .portfolio-content-heading {
@@ -2728,14 +2734,19 @@ body.contact-page {
 
 @media (max-width: 768px) {
     .portfolio-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         gap: 36px;
         margin-top: 36px;
+    }
+
+    .portfolio-qr-col {
+        width: 100%;
     }
 
     .portfolio-content-col {
         align-items: center;
         text-align: center;
+        width: 100%;
     }
 
     .portfolio-list {
