@@ -3332,18 +3332,71 @@ body.contact-page {
     }
 }
 
-/* ===== Testimonial Grid ===== */
-.testimonial-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+/* ===== Testimonial Carousel ===== */
+.testimonial-carousel-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     margin-top: 48px;
 }
 
-@media (max-width: 640px) {
-    .testimonial-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
+.testimonial-carousel-viewport {
+    overflow: hidden;
+    flex: 1;
+    min-width: 0;
+}
+
+.testimonial-carousel-track {
+    display: flex;
+    column-gap: 20px;
+    will-change: transform;
+}
+
+.testimonial-carousel-track .bento-showcase-card {
+    flex-shrink: 0;
+}
+
+.tcarousel-btn {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #0f1629;
+    color: #0f1629;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    padding: 0;
+}
+
+.tcarousel-btn:hover {
+    background: #f0f2f8;
+}
+
+.tcarousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.tcarousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(15, 22, 41, 0.15);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s;
+}
+
+.tcarousel-dot.tcarousel-dot--active {
+    background: rgba(15, 22, 41, 0.55);
 }
 

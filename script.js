@@ -244,6 +244,118 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     });
 });
 
+// Testimonial carousel
+(function () {
+    var viewport = document.querySelector('.testimonial-carousel-viewport');
+    var track = document.querySelector('.testimonial-carousel-track');
+    if (!track || !viewport) return;
+
+    var GAP = 20;
+    var cards = Array.from(track.querySelectorAll('.bento-showcase-card'));
+    var total = cards.length;
+
+    // Append clones for infinite loop
+    cards.forEach(function (card) {
+        var clone = card.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        track.appendChild(clone);
+    });
+
+    var currentIndex = 0;
+    var isAnimating = false;
+
+    function getSPV() {
+        return window.innerWidth > 768 ? 4 : 1;
+    }
+
+    function getCardWidth() {
+        var spv = getSPV();
+        return (viewport.offsetWidth - GAP * (spv - 1)) / spv;
+    }
+
+    function applyWidths() {
+        var w = getCardWidth();
+        Array.from(track.querySelectorAll('.bento-showcase-card')).forEach(function (c) {
+            c.style.width = w + 'px';
+        });
+    }
+
+    function setPosition(index, animate) {
+        var w = getCardWidth();
+        var offset = index * (w + GAP);
+        track.style.transition = animate
+            ? 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+            : 'none';
+        track.style.transform = 'translateX(-' + offset + 'px)';
+    }
+
+    function updateDots(dotIndex) {
+        document.querySelectorAll('.tcarousel-dot').forEach(function (dot, i) {
+            dot.classList.toggle('tcarousel-dot--active', i === dotIndex);
+        });
+    }
+
+    function goTo(index, animate) {
+        currentIndex = index;
+        setPosition(currentIndex, animate);
+        updateDots(currentIndex % total);
+    }
+
+    function next() {
+        if (isAnimating) return;
+        isAnimating = true;
+        var nextIndex = currentIndex + 1;
+        goTo(nextIndex, true);
+        if (nextIndex >= total) {
+            setTimeout(function () {
+                goTo(nextIndex % total, false);
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () { isAnimating = false; });
+                });
+            }, 420);
+        } else {
+            setTimeout(function () { isAnimating = false; }, 420);
+        }
+    }
+
+    function prev() {
+        if (isAnimating) return;
+        isAnimating = true;
+        if (currentIndex === 0) {
+            goTo(total, false);
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    goTo(total - 1, true);
+                    setTimeout(function () { isAnimating = false; }, 420);
+                });
+            });
+        } else {
+            goTo(currentIndex - 1, true);
+            setTimeout(function () { isAnimating = false; }, 420);
+        }
+    }
+
+    document.querySelector('.tcarousel-btn--prev').addEventListener('click', prev);
+    document.querySelector('.tcarousel-btn--next').addEventListener('click', next);
+
+    document.querySelectorAll('.tcarousel-dot').forEach(function (dot, i) {
+        dot.addEventListener('click', function () {
+            if (isAnimating) return;
+            isAnimating = true;
+            goTo(i, true);
+            setTimeout(function () { isAnimating = false; }, 420);
+        });
+    });
+
+    window.addEventListener('resize', function () {
+        applyWidths();
+        setPosition(currentIndex, false);
+    });
+
+    applyWidths();
+    setPosition(0, false);
+})();
+
 // GDPR cookie consent + GA4 lazy load
 (() => {
     const CONSENT_KEY = 'varbro_cookie_consent';
