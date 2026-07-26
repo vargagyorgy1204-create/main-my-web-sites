@@ -1,3 +1,29 @@
+// Shrink-on-scroll floating header
+(function () {
+    var header = document.querySelector('header');
+    if (!header) return;
+    var ticking = false;
+    var THRESHOLD = 60;
+
+    function updateHeader() {
+        if (window.scrollY > THRESHOLD) {
+            header.classList.add('header--scrolled');
+        } else {
+            header.classList.remove('header--scrolled');
+        }
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', function () {
+        if (!ticking) {
+            requestAnimationFrame(updateHeader);
+            ticking = true;
+        }
+    }, { passive: true });
+
+    updateHeader();
+})();
+
 if (typeof AOS !== 'undefined') {
     AOS.init({
         duration: 700,
