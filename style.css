@@ -3153,11 +3153,11 @@ body.contact-page {
 .hero-headline {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(56px, 8vw, 110px);
-    line-height: 0.9;
+    font-size: clamp(36px, 4.8vw, 72px);
+    line-height: 1.05;
     color: #111;
     margin: 0 0 32px 0;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     text-shadow: none;
     -webkit-text-fill-color: #111;
     animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
@@ -3219,17 +3219,18 @@ body.contact-page {
     color: #ffffff;
 }
 
-/* Hero right: 2x2 card grid */
+/* Hero right: card grid */
 .hero-right {
-    flex: 0 0 420px;
-    width: 420px;
+    flex: 0 0 360px;
+    width: 360px;
     animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 .hero-cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: 160px 280px;
     gap: 16px;
-    aspect-ratio: 1;
+    width: 360px;
 }
 
 /* Base card */
@@ -3250,11 +3251,13 @@ body.contact-page {
     background: #f0f0f0;
     align-items: center;
     justify-content: center;
+    grid-column: 1;
+    grid-row: 1;
 }
 .stamp-wrap {
     position: relative;
-    width: 180px;
-    height: 180px;
+    width: min(180px, 85%);
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3288,15 +3291,15 @@ body.contact-page {
 .stamp-city    { font-size: 10px; color: #888; letter-spacing: 0.02em; }
 
 /* Orange card */
-.hcard--orange { background: #f97316; }
+.hcard--orange { background: #f97316; grid-column: 2; grid-row: 1; }
 .hcard-big-text { font-size: 48px; font-weight: 800; color: #fff; line-height: 1; }
 .hcard-sub-text { font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 4px; font-family: 'Inter', sans-serif; }
 
 /* Purple card */
-.hcard--purple { background: #7c3aed; }
+.hcard--purple { background: #7c3aed; grid-column: 1; grid-row: 2; }
 
 /* Pink card */
-.hcard--pink { background: #e11d74; }
+.hcard--pink { background: #e11d74; grid-column: 2; grid-row: 2; }
 
 .hcard-title {
     font-size: 22px;
@@ -3365,6 +3368,12 @@ body.contact-page {
 }
 
 /* Responsive hero */
+@media (max-width: 1024px) {
+    .hero-right {
+        flex: 0 0 420px;
+        width: 420px;
+    }
+}
 @media (max-width: 900px) {
     .hero-inner {
         flex-direction: column;
@@ -3373,18 +3382,17 @@ body.contact-page {
     .hero-right {
         flex: none;
         width: 100%;
-        max-width: 420px;
+        max-width: 460px;
         margin: 0 auto;
     }
 }
 @media (max-width: 640px) {
     #hero { padding: 90px 20px 48px; min-height: auto; }
-    .hero-headline { line-height: 0.92; }
-    .hero-right { max-width: 320px; }
-    .hcard { padding: 20px; }
-    .hcard-big-text { font-size: 36px; }
-    .hcard-title { font-size: 18px; }
-    .stamp-wrap { width: 140px; height: 140px; }
+    .hero-right { max-width: 340px; }
+    .hero-cards { height: 320px; }
+    .hcard { padding: 16px; }
+    .hcard-big-text { font-size: 32px; }
+    .hcard-title { font-size: 16px; }
 }
 
 /* ===== Scroll Animations ===== */
