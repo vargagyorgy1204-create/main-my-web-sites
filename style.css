@@ -3225,19 +3225,18 @@ body.contact-page {
     width: 446px;
     animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
-/* Hero right: card grid */
 .hero-cards {
     display: grid;
     grid-template-columns: 215px 215px;
-    grid-template-rows: 200px 250px;
+    grid-template-rows: 170px 270px;
     gap: 16px;
     width: 446px;
 }
 
-.hcard--stamp  { grid-column: 1; grid-row: 1 / 3; }
-.hcard--orange { grid-column: 2; grid-row: 1; }
-.hcard--purple { display: none !important; }
-.hcard--pink   { grid-column: 2; grid-row: 2; }
+.hcard--stamp  { grid-column: 1; grid-row: 1; background: #f0f0f0; }
+.hcard--orange { grid-column: 2; grid-row: 1; background: #f97316; }
+.hcard--purple { grid-column: 1; grid-row: 2; background: #7c3aed; text-decoration: none; display: flex !important; }
+.hcard--pink   { grid-column: 2; grid-row: 2; background: #e11d74; text-decoration: none; }
 
 .hcard {
     border-radius: 24px;
@@ -3248,9 +3247,6 @@ body.contact-page {
     overflow: hidden;
 }
 
-.hcard--stamp  { background: #f0f0f0; }
-.hcard--orange { background: #f97316; }
-.hcard--pink   { background: #e11d74; text-decoration: none; }
 
 /* Stamp internals */
 .stamp-wrap {
