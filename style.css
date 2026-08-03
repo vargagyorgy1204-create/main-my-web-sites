@@ -17,11 +17,11 @@ header {
     right: 0;
     width: 100%;
     padding: 0;
-    background: transparent;
+    background: rgba(255,255,255,0.95);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: 0 1px 20px rgba(0,0,0,0.08);
     z-index: 1000;
     transition:
         top 0.35s ease,
@@ -2656,10 +2656,13 @@ body.contact-page {
     gap: 10px;
 }
 
-.pf-emoji {
-    min-width: 1.6em;
+.pf-check {
+    min-width: 1.4em;
     text-align: center;
     flex-shrink: 0;
+    color: #6c63ff;
+    font-weight: 700;
+    font-size: 1.1em;
 }
 
 .portfolio-ig-handle {
@@ -3109,181 +3112,279 @@ body.contact-page {
     }
 }
 
-/* ── Hero section ───────────────────────────────────────────── */
+/* ── Hero ───────────────────────────────────────────── */
 #hero {
-    background: #ffffff;
-    padding: 100px 24px 60px;
+    background: #fafafa;
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    padding: 120px 40px 60px;
 }
 
-.hero-wrap {
+.hero-inner {
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 60px;
 }
 
-.hero-card {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1322 / 680;
+.hero-left {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.hero-card svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-.hero-card path {
-    fill: url(#varbroGradient);
-}
-
-.hero-content {
-    position: absolute;
-    left: 8.5%;
-    top: 15.5%;
-    width: 60%;
-    color: #ffffff;
-    z-index: 2;
-}
-
-.eyebrow {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(11px, 1.1vw, 13px);
-    letter-spacing: 0.18em;
+.hero-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.75);
-    margin: 0 0 18px 0;
-}
-
-.headline {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: clamp(40px, 7vw, 88px);
-    line-height: 1.12;
-    margin: 0 0 14px 0;
-    color: #ffffff;
-}
-
-.subtitle {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 500;
-    font-size: clamp(14px, 1.8vw, 22px);
-    color: rgba(255, 255, 255, 0.88);
-    margin: 0;
-    min-height: 1.4em;
-}
-
-.cursor {
-    display: inline-block;
-    margin-left: 2px;
-    animation: cursor-blink 0.9s step-end infinite;
-}
-
-@keyframes cursor-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-
-.hero-content .hero-desc {
-    font-size: clamp(11px, 1.2vw, 15px);
-    color: rgba(255, 255, 255, 0.72);
-    line-height: 1.6;
-    margin: 28px 0 0 0;
+    color: #aaa;
+    margin: 0 0 24px 0;
     font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0s both;
 }
 
-.cta-zone {
-    position: absolute;
-    left: 4.46%;
-    top: 82.35%;
-    width: 30.26%;
-    height: 13.09%;
+.hero-headline {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(56px, 8vw, 110px);
+    line-height: 0.9;
+    color: #111;
+    margin: 0 0 32px 0;
+    letter-spacing: -0.03em;
+    text-shadow: none;
+    -webkit-text-fill-color: #111;
+    animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
+@keyframes heroFadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-sub {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.65;
+    margin: 0 0 40px 0;
+    max-width: 460px;
+    font-family: 'Inter', sans-serif;
+    animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+/* CTA button */
 .cta-button {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
-    font-size: clamp(13px, 1.4vw, 17px);
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    font-size: 16px;
+    background: linear-gradient(135deg, #6c63ff, #c850c0);
     color: #ffffff;
     border: none;
-    border-radius: 20px;
-    padding: 0;
+    border-radius: 50px;
+    padding: 16px 40px;
     cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.28);
+    flex-shrink: 0;
+}
+.cta-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    animation: shimmerBtn 1.5s infinite;
+}
+@keyframes shimmerBtn {
+    0%   { left: -100%; }
+    100% { left: 200%; }
+}
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(200, 80, 192, 0.36);
+    color: #ffffff;
+}
+
+/* Hero right: 2x2 card grid */
+.hero-right {
+    flex: 0 0 420px;
+    width: 420px;
+    animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+.hero-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    aspect-ratio: 1;
+}
+
+/* Base card */
+.hcard {
+    border-radius: 24px;
+    padding: 28px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    text-decoration: none;
+    overflow: hidden;
+}
+.hcard:hover { transform: scale(1.03); }
+
+/* Stamp card */
+.hcard--stamp {
+    background: #f0f0f0;
+    align-items: center;
+    justify-content: center;
+}
+.stamp-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
-    transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    width: 100%;
-    height: 100%;
-    box-shadow: 0 10px 24px rgba(108, 99, 255, 0.28);
 }
-
-.cta-button:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
-    box-shadow: 0 12px 28px rgba(200, 80, 192, 0.32);
-    color: #ffffff;
-}
-
-.cta-button svg {
-    width: 16px;
-    height: 16px;
-}
-
-.tech-zone {
+.stamp-svg {
     position: absolute;
-    left: 80.11%;
-    top: 47.35%;
-    width: 16.26%;
-    height: 48.09%;
-    background: #ffffff;
-    border: 1.5px solid #ecdff5;
-    border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.12);
-    padding: 16px 14px;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+}
+.stamp-g-cw {
+    transform-origin: 100px 100px;
+    animation: stampCW 8s linear infinite;
+}
+.stamp-g-ccw {
+    transform-origin: 100px 100px;
+    animation: stampCCW 6s linear infinite;
+}
+@keyframes stampCW  { to { transform: rotate(360deg); } }
+@keyframes stampCCW { to { transform: rotate(-360deg); } }
+.stamp-center {
+    position: relative;
+    z-index: 2;
+    text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 2px;
 }
+.stamp-flag    { font-size: 22px; line-height: 1; }
+.stamp-country { font-size: 13px; font-weight: 800; color: #111; letter-spacing: 0.04em; margin-top: 4px; }
+.stamp-city    { font-size: 10px; color: #888; letter-spacing: 0.02em; }
 
-.tech-label {
+/* Orange card */
+.hcard--orange { background: #f97316; }
+.hcard-big-text { font-size: 48px; font-weight: 800; color: #fff; line-height: 1; }
+.hcard-sub-text { font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 4px; font-family: 'Inter', sans-serif; }
+
+/* Purple card */
+.hcard--purple { background: #7c3aed; }
+
+/* Pink card */
+.hcard--pink { background: #e11d74; }
+
+.hcard-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(9px, 0.9vw, 11px);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #8a86a3;
-    margin: 0;
+    line-height: 1.2;
 }
-
-.tech-pill {
-    font-size: clamp(10px, 1.1vw, 13px);
-    font-weight: 500;
-    color: var(--primary);
-    background: rgba(195, 180, 231, 0.2);
-    border-radius: 8px;
-    padding: 7px 10px;
-    text-align: center;
+.hcard-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.hbadge {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(255,255,255,0.25);
+    border-radius: 6px;
+    padding: 3px 10px;
     font-family: 'Inter', sans-serif;
 }
 
+/* Card arrows */
+.hcard-arrow {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+}
+.hcard-arrow--circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Marquee ticker */
+.hero-ticker {
+    background: #111;
+    overflow: hidden;
+    padding: 14px 0;
+    white-space: nowrap;
+}
+.hero-ticker-track {
+    display: inline-flex;
+    animation: tickerScroll 24s linear infinite;
+}
+.hero-ticker-track span {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.06em;
+    padding-right: 20px;
+}
+@keyframes tickerScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+/* Responsive hero */
+@media (max-width: 900px) {
+    .hero-inner {
+        flex-direction: column;
+        gap: 48px;
+    }
+    .hero-right {
+        flex: none;
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+}
 @media (max-width: 640px) {
-    #hero {
-        padding: 88px 16px 40px;
-    }
-    .hero-content {
-        top: 9%;
-    }
-    .tech-zone {
-        display: none;
-    }
+    #hero { padding: 90px 20px 48px; min-height: auto; }
+    .hero-headline { line-height: 0.92; }
+    .hero-right { max-width: 320px; }
+    .hcard { padding: 20px; }
+    .hcard-big-text { font-size: 36px; }
+    .hcard-title { font-size: 18px; }
+    .stamp-wrap { width: 140px; height: 140px; }
 }
 
 /* ===== Scroll Animations ===== */

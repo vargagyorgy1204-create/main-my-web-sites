@@ -47,7 +47,7 @@
     <link rel="stylesheet" href="style.css?v=sk3">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -75,56 +75,72 @@
 </header>
 
 <section id="hero">
-    <div class="hero-wrap">
-        <div class="hero-card">
-            <svg viewBox="0 0 1322 680" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <defs>
-                    <linearGradient id="varbroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#221a45"/>
-                        <stop offset="100%" stop-color="#3d1f4a"/>
-                    </linearGradient>
-                </defs>
-                <path d="M54,65 A32,32 0 0,1 86,33 L1244,33 A32,32 0 0,1 1276,65 L1276,262 A32,32 0 0,1 1244,294 L1072,294 A42,42 0 0,0 1030,336 L1030,618 A32,32 0 0,1 998,650 L520,650 A32,32 0 0,1 488,618 L488,577 A42,42 0 0,0 446,535 L86,535 A32,32 0 0,1 54,503 L54,65 Z"/>
-            </svg>
-
-            <div class="hero-content">
-                <p class="eyebrow">Webfejlesztés &amp; Dizájn</p>
-                <h1 class="headline">Web Developer</h1>
-                <p class="subtitle"><span id="typewriter"></span><span class="cursor" aria-hidden="true">|</span></p>
-                <p class="hero-desc">Profi webfejlesztő vagyok aki vállalkozásoknak és szakértőknek segít erős online jelenlét kiépítésében.</p>
-            </div>
-
-            <div class="cta-zone">
-                <a href="whatsappcontact.html" class="cta-button">
-                    Projekt indítása
+    <div class="hero-inner">
+        <div class="hero-left">
+            <p class="hero-eyebrow">Webfejlesztés &amp; Dizájn</p>
+            <h1 class="hero-headline">WEB<br>DEVELOPER</h1>
+            <p class="hero-sub">Profi Webfejlesztő vagyok, aki vállalkozásoknak segít erős online jelenlétet kiépíteni.</p>
+            <a href="whatsappcontact.html" class="cta-button">Projekt indítása</a>
+        </div>
+        <div class="hero-right">
+            <div class="hero-cards">
+                <!-- Card 1: Rotating stamp -->
+                <div class="hcard hcard--stamp">
+                    <div class="stamp-wrap">
+                        <svg viewBox="0 0 200 200" class="stamp-svg" aria-hidden="true">
+                            <defs>
+                                <path id="sOuter" d="M 22,100 a 78,78 0 1,1 156,0 a 78,78 0 1,1 -156,0"/>
+                                <path id="sInner" d="M 44,100 a 56,56 0 1,1 112,0 a 56,56 0 1,1 -112,0"/>
+                            </defs>
+                            <g class="stamp-g-cw">
+                                <text font-size="10.5" font-weight="700" fill="#444" letter-spacing="2">
+                                    <textPath href="#sOuter">varbro.pro · varbro.pro · varbro.pro · </textPath>
+                                </text>
+                            </g>
+                            <g class="stamp-g-ccw">
+                                <text font-size="10" fill="#bbb" letter-spacing="5">
+                                    <textPath href="#sInner">★ ★ ★ ★ ★ ★ </textPath>
+                                </text>
+                            </g>
+                        </svg>
+                        <div class="stamp-center">
+                            <div class="stamp-flag">🇭🇺</div>
+                            <div class="stamp-country">Hungary</div>
+                            <div class="stamp-city">Budapest / 2026</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2: 2 hét -->
+                <div class="hcard hcard--orange">
+                    <div class="hcard-big-text">2 hét</div>
+                    <div class="hcard-sub-text">alatt elkészül</div>
+                    <span class="hcard-arrow">↗</span>
+                </div>
+                <!-- Card 3: Együttmüközés -->
+                <a href="#steps" class="hcard hcard--purple">
+                    <div class="hcard-title">Együttmüközés</div>
+                    <span class="hcard-arrow hcard-arrow--circle">↗</span>
                 </a>
-            </div>
-
-            <div class="tech-zone">
-                <p class="tech-label">Tech stack</p>
-                <div class="tech-pill">HTML</div>
-                <div class="tech-pill">CSS</div>
-                <div class="tech-pill">JavaScript</div>
-                <div class="tech-pill">React</div>
-                <div class="tech-pill">Claude Code</div>
+                <!-- Card 4: Tech Stack -->
+                <a href="#skills" class="hcard hcard--pink">
+                    <div class="hcard-title">Tech Stack</div>
+                    <div class="hcard-badges">
+                        <span class="hbadge">HTML</span>
+                        <span class="hbadge">CSS</span>
+                        <span class="hbadge">JS</span>
+                    </div>
+                    <span class="hcard-arrow hcard-arrow--circle">↗</span>
+                </a>
             </div>
         </div>
     </div>
 </section>
-<script>
-(function(){
-    var words=['Weboldal készítés','Landing Page','Üzleti weboldalak','Dizájn'];
-    var el=document.getElementById('typewriter');
-    if(!el)return;
-    var TYPE=90,DEL=45,HOLD=1600,GAP=350,wi=0,ci=0,del=false;
-    function tick(){
-        var w=words[wi];
-        if(!del){ci++;el.textContent=w.slice(0,ci);if(ci===w.length){del=true;setTimeout(tick,HOLD);return;}setTimeout(tick,TYPE);}
-        else{ci--;el.textContent=w.slice(0,ci);if(ci===0){del=false;wi=(wi+1)%words.length;setTimeout(tick,GAP);return;}setTimeout(tick,DEL);}
-    }
-    tick();
-})();
-</script>
+<div class="hero-ticker" aria-hidden="true">
+    <div class="hero-ticker-track">
+        <span>Egyedi weboldal&nbsp;&nbsp;·&nbsp;&nbsp;Profi kivitelezés&nbsp;&nbsp;·&nbsp;&nbsp;Gyors átadás&nbsp;&nbsp;·&nbsp;&nbsp;Megfizethető árak&nbsp;&nbsp;·&nbsp;&nbsp;Modern design&nbsp;&nbsp;·&nbsp;&nbsp;SEO optimalizálás&nbsp;&nbsp;·&nbsp;&nbsp;</span>
+        <span>Egyedi weboldal&nbsp;&nbsp;·&nbsp;&nbsp;Profi kivitelezés&nbsp;&nbsp;·&nbsp;&nbsp;Gyors átadás&nbsp;&nbsp;·&nbsp;&nbsp;Megfizethető árak&nbsp;&nbsp;·&nbsp;&nbsp;Modern design&nbsp;&nbsp;·&nbsp;&nbsp;SEO optimalizálás&nbsp;&nbsp;·&nbsp;&nbsp;</span>
+    </div>
+</div>
 
 <section id="about">
 
@@ -768,10 +784,10 @@
                 <div class="portfolio-content-col">
                     <p class="portfolio-qr-label">Olvasd be a kódot</p>
                     <ul class="portfolio-list">
-                        <li><span class="pf-emoji">🎬</span>Weboldal buildek videón</li>
-                        <li><span class="pf-emoji">🖥️</span>Elkészült weboldalak</li>
-                        <li><span class="pf-emoji">🎨</span>Design elemek, kártyák, gombok</li>
-                        <li><span class="pf-emoji">⚡</span>Animációk és interakciók</li>
+                        <li><span class="pf-check">✓</span>Weboldal buildek videón</li>
+                        <li><span class="pf-check">✓</span>Elkészült weboldalak</li>
+                        <li><span class="pf-check">✓</span>Design elemek, kártyák, gombok</li>
+                        <li><span class="pf-check">✓</span>Animációk és interakciók</li>
                     </ul>
                     <a
                         href="https://www.instagram.com/webdeveloper_varbro/"
