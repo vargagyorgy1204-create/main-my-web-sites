@@ -3221,22 +3221,22 @@ body.contact-page {
 
 /* Hero right: card grid */
 .hero-right {
-    flex: 0 0 446px;
-    width: 446px;
+    flex: 0 0 456px;
+    width: 456px;
     animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 .hero-cards {
     display: grid;
     grid-template-columns: 215px 215px;
-    grid-template-rows: 170px 270px;
+    grid-template-rows: 140px 160px 280px;
     gap: 16px;
     width: 446px;
 }
 
-.hcard--stamp  { grid-column: 1; grid-row: 1; background: #f0f0f0; }
+.hcard--stamp  { grid-column: 1; grid-row: 1 / span 2; background: #f0f0f0; align-items: center; justify-content: center; }
 .hcard--orange { grid-column: 2; grid-row: 1; background: #f97316; }
-.hcard--purple { grid-column: 1; grid-row: 2; background: #7c3aed; text-decoration: none; display: flex !important; }
-.hcard--pink   { grid-column: 2; grid-row: 2; background: #e11d74; text-decoration: none; }
+.hcard--purple { grid-column: 1; grid-row: 3; background: #7c3aed; text-decoration: none; display: flex !important; }
+.hcard--pink   { grid-column: 2; grid-row: 2 / span 2; background: #e11d74; text-decoration: none; }
 
 .hcard {
     border-radius: 24px;
@@ -3251,12 +3251,12 @@ body.contact-page {
 /* Stamp internals */
 .stamp-wrap {
     position: relative;
-    width: 175px;
-    height: 175px;
+    width: 200px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: auto;
+    flex-shrink: 0;
 }
 .stamp-svg {
     position: absolute;
