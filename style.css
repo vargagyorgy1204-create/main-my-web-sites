@@ -3442,25 +3442,26 @@ body.contact-page {
 
 /* Marquee ticker */
 .hero-ticker {
-    background: #111;
+    background: #10172a;
     overflow: hidden;
     padding: 14px 0;
     white-space: nowrap;
 }
 .hero-ticker-track {
     display: inline-flex;
-    animation: tickerScroll 24s linear infinite;
+    white-space: nowrap;
+    animation: tickerScroll 20s linear infinite;
 }
 .hero-ticker-track span {
     font-size: 13px;
     color: rgba(255,255,255,0.65);
     font-family: 'Inter', sans-serif;
     letter-spacing: 0.06em;
-    padding-right: 20px;
+    padding-right: 0;
 }
 @keyframes tickerScroll {
     from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+    to { transform: translateX(-33.333%); }
 }
 
 /* Responsive hero */
