@@ -1534,6 +1534,11 @@ footer {
     transform: translateY(-3px);
 }
 
+.social-links a[title="WhatsApp"]  { background: #25d366; color: #fff; }
+.social-links a[title="Facebook"]  { background: #1877f2; color: #fff; }
+.social-links a[title="Instagram"] { background: var(--card-accent-warm); color: #fff; }
+.social-links a[title="Email"]     { background: #4B1956; color: #fff; }
+
 .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 20px;
