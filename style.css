@@ -3228,12 +3228,12 @@ body.contact-page {
 .hero-cards {
     display: grid;
     grid-template-columns: 195px 195px;
-    grid-template-rows: 130px 120px 250px;
+    grid-template-rows: 110px 90px 260px;
     gap: 16px;
     width: 406px;
 }
 
-.hcard--stamp  { grid-column: 1; grid-row: 1 / span 2; background: #f0f0f0; align-items: center; justify-content: center; }
+.hcard--stamp  { grid-column: 1; grid-row: 1 / span 2; background: #f0f0f0; }
 .hcard--orange { grid-column: 2; grid-row: 1; background: #f97316; }
 .hcard--purple { grid-column: 1; grid-row: 3; background: #7c3aed; text-decoration: none; display: flex !important; }
 .hcard--pink   { grid-column: 2; grid-row: 2 / span 2; background: #e11d74; text-decoration: none; }
