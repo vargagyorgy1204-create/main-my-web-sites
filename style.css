@@ -1521,23 +1521,22 @@ footer {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background: rgba(108, 92, 231, 0.2);
-    color: var(--primary);
+    background: var(--card-secondary);
+    color: rgba(255,255,255,0.85);
     border-radius: 50%;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
     text-decoration: none;
 }
 
 .social-links a:hover {
-    background: var(--primary);
-    color: white;
+    color: #fff;
     transform: translateY(-3px);
 }
 
-.social-links a[title="WhatsApp"]  { background: #25d366; color: #fff; }
-.social-links a[title="Facebook"]  { background: #1877f2; color: #fff; }
-.social-links a[title="Instagram"] { background: var(--card-accent-warm); color: #fff; }
-.social-links a[title="Email"]     { background: #4B1956; color: #fff; }
+.social-links a[title="WhatsApp"]:hover  { background: #25d366; }
+.social-links a[title="Facebook"]:hover  { background: #1877f2; }
+.social-links a[title="Instagram"]:hover { background: var(--card-accent-warm); }
+.social-links a[title="Email"]:hover     { background: #4B1956; }
 
 .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -1812,8 +1811,7 @@ body.contact-page {
 
 .contact-card__tagline {
     font-size: 0.88rem;
-    color: #888;
-    font-style: italic;
+    color: rgba(15,12,41,0.62);
     line-height: 1.65;
     margin: 0;
 }
@@ -1839,9 +1837,7 @@ body.contact-page {
 .contact-card__action {
     font-size: 1.1rem;
     font-weight: 700;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #4B1956;
     margin: 0;
 }
 
