@@ -3407,24 +3407,37 @@ body.contact-page {
     font-family: 'Inter', sans-serif;
 }
 
-/* Card arrows */
-.hcard-arrow {
+.hcard-arrow-btn {
     position: absolute;
     bottom: 20px;
     right: 20px;
-    color: #fff;
-    font-size: 22px;
-    line-height: 1;
-}
-.hcard-arrow--circle {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.5);
-    font-size: 16px;
+    border: 2px solid rgba(255,255,255,0.6);
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s ease,
+                background 0.3s ease;
+}
+
+.hcard-arrow-btn svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hcard:hover .hcard-arrow-btn {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,1);
+    transform: scale(1.1);
+}
+
+.hcard:hover .hcard-arrow-btn svg {
+    transform: translate(2px, 2px);
 }
 
 /* Marquee ticker */
