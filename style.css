@@ -1178,22 +1178,20 @@ body.service-modal-open {
     margin-top: 6px;
     width: 48%;
     align-self: flex-end;
-    border: 2px solid var(--primary);
+    background: var(--gradient);
+    color: #fff;
+    border: none;
     border-radius: 50px;
     padding: 11px 16px;
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--primary);
-    background: transparent;
-    box-shadow: none;
+    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.28);
     cursor: pointer;
-    transition: background 0.26s ease, color 0.26s ease, box-shadow 0.26s ease, transform 0.26s ease;
+    transition: opacity 0.26s ease, box-shadow 0.26s ease, transform 0.26s ease;
 }
 
 .btn-submit-message:hover {
-    background: var(--gradient);
-    color: #fff;
-    border-color: transparent;
+    opacity: 0.88;
     transform: translateY(-2px);
     box-shadow: 0 10px 28px rgba(108, 92, 231, 0.38);
 }
@@ -1892,10 +1890,10 @@ body.contact-page {
 }
 
 .btn-email-cta {
-    background: transparent;
-    color: var(--primary) !important;
-    border: 2px solid var(--primary);
-    box-shadow: none;
+    background: var(--gradient);
+    color: #fff !important;
+    border: none;
+    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.28);
 }
 
 .btn-email-cta i {
@@ -1903,9 +1901,7 @@ body.contact-page {
 }
 
 .btn-email-cta:hover {
-    background: var(--gradient);
-    color: #fff !important;
-    border-color: transparent;
+    opacity: 0.88;
     box-shadow: 0 10px 28px rgba(108, 92, 231, 0.38);
     transform: translateY(-2px);
 }
@@ -2076,17 +2072,17 @@ body.contact-page {
 }
 
 .bento-card--orange {
-    background: #FF8234;
+    background: var(--card-accent-cool);
     color: #fff;
     border: none;
-    box-shadow: 0 8px 24px rgba(255, 130, 52, 0.3);
+    box-shadow: 0 8px 24px rgba(26, 143, 163, 0.3);
 }
 
 .bento-card--green {
-    background: #A3BF6F;
+    background: var(--card-accent-warm);
     color: #fff;
     border: none;
-    box-shadow: 0 8px 24px rgba(163, 191, 111, 0.32);
+    box-shadow: 0 8px 24px rgba(200, 80, 192, 0.3);
 }
 
 .bento-card--dark {
@@ -3190,7 +3186,7 @@ body.contact-page {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
     font-size: 16px;
-    background: linear-gradient(135deg, #6c63ff, #c850c0);
+    background: linear-gradient(135deg, #c850c0, #1a8fa3);
     color: #ffffff;
     border: none;
     border-radius: 50px;
@@ -3222,7 +3218,7 @@ body.contact-page {
 }
 .cta-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(200, 80, 192, 0.36);
+    box-shadow: 0 12px 32px rgba(26, 143, 163, 0.36);
     color: #ffffff;
 }
 
@@ -3240,9 +3236,9 @@ body.contact-page {
 }
 
 .hcard--stamp  { grid-column: 1; grid-row: 1 / span 2; background: #f0f0f0; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
-.hcard--orange { grid-column: 2; grid-row: 1; background: #f97316; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both; }
-.hcard--purple { grid-column: 1; grid-row: 3; background: #7c3aed; text-decoration: none; display: flex !important; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both; }
-.hcard--pink   { grid-column: 2; grid-row: 2 / span 2; background: #e11d74; text-decoration: none; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both; }
+.hcard--orange { grid-column: 2; grid-row: 1; background: var(--card-accent-warm); animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both; }
+.hcard--purple { grid-column: 1; grid-row: 3; background: var(--card-primary); text-decoration: none; display: flex !important; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both; }
+.hcard--pink   { grid-column: 2; grid-row: 2 / span 2; background: var(--card-accent-cool); text-decoration: none; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both; }
 
 @keyframes cardFadeUp {
     from {
