@@ -3228,7 +3228,7 @@ body.contact-page {
 .hero-cards {
     display: grid;
     grid-template-columns: 195px 195px;
-    grid-template-rows: 110px 90px 260px;
+    grid-template-rows: 130px 70px 270px;
     gap: 16px;
     width: 406px;
 }
