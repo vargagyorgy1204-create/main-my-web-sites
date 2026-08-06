@@ -4,6 +4,11 @@
     --accent-green: #A3BF6F;
     --dark: #0f0c29;
     --gradient: linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
+    /* Brand card system */
+    --card-primary:      linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
+    --card-secondary:    #1a1f2e;
+    --card-accent-warm:  linear-gradient(135deg, #7c1263 0%, #c850c0 100%);
+    --card-accent-cool:  linear-gradient(135deg, #0e4d5c 0%, #1a8fa3 100%);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
