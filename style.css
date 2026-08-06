@@ -3003,7 +3003,7 @@ body.contact-page {
 .about-stat-num {
     font-size: 1.4rem;
     font-weight: 800;
-    color: var(--primary);
+    color: #4B1956;
     line-height: 1.2;
 }
 
@@ -3027,8 +3027,8 @@ body.contact-page {
     gap: 8px;
     align-self: flex-start;
     padding: 12px 32px;
-    border: 2px solid var(--primary);
-    color: var(--primary);
+    border: 2px solid #4B1956;
+    color: #4B1956;
     background: transparent;
     border-radius: 50px;
     font-size: 0.95rem;
@@ -3038,7 +3038,7 @@ body.contact-page {
 }
 
 .btn-about:hover {
-    background: var(--primary);
+    background: #4B1956;
     color: #fff;
     box-shadow: 0 8px 24px rgba(75,25,86,.3);
 }
