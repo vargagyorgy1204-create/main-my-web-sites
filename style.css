@@ -70,7 +70,7 @@ header.header--scrolled nav {
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #2d1f3d;
+    color: #5c3d8a !important;
     display: flex;
     align-items: center;
     background: none;
@@ -82,7 +82,7 @@ header.header--scrolled nav {
     text-decoration: none;
 }
 .logo-img { height: 38px; width: auto; display: block; margin-right: 9px; }
-.logo span { color: var(--primary); }
+.logo span { color: #5c3d8a !important; }
 .notranslate { unicode-bidi: isolate; }
 nav ul { display: flex; list-style: none; }
 .nav-links {
@@ -133,10 +133,10 @@ header.header--scrolled nav ul li a {
     color: #000000;
 }
 header.header--scrolled .logo {
-    color: inherit;
+    color: #5c3d8a !important;
 }
 header.header--scrolled .logo span {
-    color: var(--primary);
+    color: #5c3d8a !important;
 }
 header.header--scrolled .nav-toggle {
     border-color: rgba(108, 92, 231, 0.28);
