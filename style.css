@@ -3223,7 +3223,6 @@ body.contact-page {
 .hero-right {
     flex: 0 0 406px;
     width: 406px;
-    animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 .hero-cards {
     display: grid;
@@ -3233,10 +3232,21 @@ body.contact-page {
     width: 406px;
 }
 
-.hcard--stamp  { grid-column: 1; grid-row: 1 / span 2; background: #f0f0f0; }
-.hcard--orange { grid-column: 2; grid-row: 1; background: #f97316; }
-.hcard--purple { grid-column: 1; grid-row: 3; background: #7c3aed; text-decoration: none; display: flex !important; }
-.hcard--pink   { grid-column: 2; grid-row: 2 / span 2; background: #e11d74; text-decoration: none; }
+.hcard--stamp  { grid-column: 1; grid-row: 1 / span 2; background: #f0f0f0; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
+.hcard--orange { grid-column: 2; grid-row: 1; background: #f97316; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both; }
+.hcard--purple { grid-column: 1; grid-row: 3; background: #7c3aed; text-decoration: none; display: flex !important; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both; }
+.hcard--pink   { grid-column: 2; grid-row: 2 / span 2; background: #e11d74; text-decoration: none; animation: cardFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both; }
+
+@keyframes cardFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 .hcard {
     border-radius: 24px;
