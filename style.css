@@ -2971,7 +2971,7 @@ body.contact-page {
 }
 
 .about-bio-card .section-subtitle {
-    color: var(--primary) !important;
+    color: #7B5EA7 !important;
     font-style: italic;
     font-size: 1rem;
     text-align: left !important;
@@ -3003,7 +3003,7 @@ body.contact-page {
 .about-stat-num {
     font-size: 1.4rem;
     font-weight: 800;
-    color: #4B1956;
+    color: #C026A3;
     line-height: 1.2;
 }
 
