@@ -341,9 +341,8 @@ h2 {
     text-align: center;
     font-size: 1.05rem;
     line-height: 1.7;
-    color: #677189;
+    color: rgba(0,0,0,0.62);
     font-weight: 400;
-    font-style: italic;
 }
 
 .about-row {
@@ -2354,7 +2353,7 @@ body.contact-page {
 }
 
 .skills-dark .section-subtitle {
-    color: #8a9bbf;
+    color: rgba(255,255,255,0.72);
 }
 
 /* Glass cards for all non-accent variants (white, light, dark) */
@@ -2600,7 +2599,7 @@ body.contact-page {
 }
 
 .portfolio-subtitle {
-    color: #8a9bbf !important;
+    color: rgba(255,255,255,0.72) !important;
 }
 
 .portfolio-grid {
@@ -2808,7 +2807,7 @@ body.contact-page {
 }
 
 .about-card--bio .section-subtitle {
-    color: #5a6a8a !important;
+    color: rgba(0,0,0,0.62) !important;
     text-align: left !important;
     margin: 0 !important;
     font-size: .98rem;
@@ -2973,8 +2972,7 @@ body.contact-page {
 }
 
 .about-bio-card .section-subtitle {
-    color: #7B5EA7 !important;
-    font-style: italic;
+    color: rgba(0,0,0,0.62) !important;
     font-size: 1rem;
     text-align: left !important;
     margin: 0 !important;
