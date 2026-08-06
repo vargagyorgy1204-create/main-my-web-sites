@@ -3571,7 +3571,11 @@ body.contact-page {
 @media (max-width: 640px) {
     #hero { padding: 90px 20px 48px; min-height: auto; }
     .hero-right { max-width: 340px; }
-    .hero-cards { height: 320px; }
+    .hero-cards {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 108px 58px 224px;
+        width: 100%;
+    }
     .hcard { padding: 16px; }
     .hcard-big-text { font-size: 32px; }
     .hcard-title { font-size: 16px; }
