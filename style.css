@@ -3153,7 +3153,7 @@ body.contact-page {
 .hero-headline {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(36px, 4.8vw, 72px);
+    font-size: clamp(30px, 4vw, 62px);
     line-height: 1.05;
     color: #111;
     margin: 0 0 32px 0;
@@ -3221,16 +3221,16 @@ body.contact-page {
 
 /* Hero right: card grid */
 .hero-right {
-    flex: 0 0 456px;
-    width: 456px;
+    flex: 0 0 406px;
+    width: 406px;
     animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 .hero-cards {
     display: grid;
-    grid-template-columns: 215px 215px;
-    grid-template-rows: 140px 160px 280px;
+    grid-template-columns: 195px 195px;
+    grid-template-rows: 125px 145px 255px;
     gap: 16px;
-    width: 446px;
+    width: 406px;
 }
 
 .hcard--stamp  { grid-column: 1; grid-row: 1 / span 2; background: #f0f0f0; align-items: center; justify-content: center; }
