@@ -801,7 +801,7 @@ h2 {
     border: 1px solid transparent;
     background-image:
         linear-gradient(#ffffff, #ffffff),
-        linear-gradient(135deg, #1e40af 0%, #a855f7 100%);
+        linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
     background-origin: border-box;
     background-clip: padding-box, border-box;
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.09);
@@ -809,7 +809,7 @@ h2 {
 }
 
 .pricing-item:hover {
-    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.45), 0 8px 28px rgba(108, 99, 255, 0.2);
+    box-shadow: 0 0 0 2px rgba(192, 38, 163, 0.4), 0 8px 28px rgba(75, 25, 86, 0.2);
 }
 
 @keyframes pricingGlowPulse {
@@ -837,7 +837,7 @@ h2 {
     justify-content: center;
     font-size: 0.68rem;
     color: #ffffff;
-    background: #22c55e;
+    background: #C026A3;
 }
 
 .pricing-item h4 {
@@ -882,13 +882,15 @@ h2 {
 
 .pricing-features i {
     margin-top: 3px;
-    color: #22c55e;
+    color: #C026A3;
     flex-shrink: 0;
 }
 
 .pricing-item.is-featured {
-    border-color: rgba(168, 85, 247, 0.85);
-    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.28), 0 14px 26px rgba(88, 79, 186, 0.2);
+    border-color: #C026A3;
+    box-shadow: 0 0 0 2px rgba(192, 38, 163, 0.45), 0 18px 38px rgba(75, 25, 86, 0.28);
+    transform: scale(1.05);
+    z-index: 1;
 }
 
 .pricing-badge {
@@ -900,20 +902,20 @@ h2 {
     font-weight: 700;
     letter-spacing: 0.02em;
     color: #ffffff;
-    background: linear-gradient(135deg, #1e40af 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
 }
 
 .modal-quote-btn {
-    width: 100%;
+    align-self: center;
     margin-top: auto;
     border: none;
     border-radius: 999px;
-    padding: 10px 12px;
+    padding: 11px 30px;
     font-size: 0.88rem;
     font-weight: 700;
     color: #ffffff;
-    background: linear-gradient(135deg, #1e40af 0%, #a855f7 100%);
-    box-shadow: 0 6px 18px rgba(104, 92, 231, 0.28);
+    background: linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
+    box-shadow: 0 6px 18px rgba(192, 38, 163, 0.28);
     cursor: pointer;
     transition: box-shadow 0.22s ease, opacity 0.22s ease;
 }
@@ -924,11 +926,11 @@ h2 {
 
 .modal-quote-btn:hover {
     opacity: 0.88;
-    box-shadow: 0 10px 24px rgba(104, 92, 231, 0.42);
+    box-shadow: 0 10px 24px rgba(192, 38, 163, 0.42);
 }
 
 .pricing-item.is-featured .modal-quote-btn {
-    box-shadow: 0 10px 24px rgba(104, 92, 231, 0.4);
+    box-shadow: 0 10px 24px rgba(192, 38, 163, 0.4);
 }
 
 .design-modal {
@@ -982,13 +984,13 @@ h2 {
 }
 
 .extra-pricing-grid .modal-quote-btn {
-    background: linear-gradient(to right, #3b5bdb, #a855f7);
-    box-shadow: 0 8px 20px rgba(104, 92, 231, 0.28);
+    background: linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
+    box-shadow: 0 8px 20px rgba(192, 38, 163, 0.28);
 }
 
 .extra-pricing-grid .modal-quote-btn:hover {
     opacity: 0.92;
-    box-shadow: 0 12px 26px rgba(104, 92, 231, 0.36);
+    box-shadow: 0 12px 26px rgba(192, 38, 163, 0.36);
 }
 
 body.service-modal-open {
@@ -1028,6 +1030,10 @@ body.service-modal-open {
 
     .service-pricing-grid .pricing-item {
         width: 100%;
+    }
+
+    .pricing-item.is-featured {
+        transform: scale(1);
     }
 }
 
