@@ -3505,6 +3505,8 @@ body.contact-page {
     gap: 4px;
     margin-top: 8px;
     flex: 1;
+    justify-content: space-between;
+    padding-bottom: 56px; /* clear the absolute arrow button (40px + 20px bottom offset) */
 }
 
 .hcard-icon-item {
