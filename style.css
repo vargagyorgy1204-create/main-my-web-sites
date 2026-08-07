@@ -2607,6 +2607,7 @@ body.contact-page {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: 60px;
     max-width: 900px;
     margin: 52px auto 0;
@@ -2712,6 +2713,12 @@ body.contact-page {
     display: flex;
     align-items: baseline;
     gap: 10px;
+    transition: transform 0.25s ease;
+    cursor: default;
+}
+
+.portfolio-list li:hover {
+    transform: translateX(4px);
 }
 
 .pf-check {
@@ -2721,26 +2728,41 @@ body.contact-page {
     color: #6c63ff;
     font-weight: 700;
     font-size: 1.1em;
+    transition: color 0.25s ease;
 }
 
-.portfolio-ig-handle {
+.portfolio-list li:hover .pf-check {
+    color: #C026A3;
+}
+
+.btn-portfolio-ig {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #c850c0;
+    gap: 8px;
+    padding: 12px 28px;
+    background: transparent;
+    color: #C026A3;
+    border: 2px solid #C026A3;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 700;
     text-decoration: none;
-    margin-top: 8px;
-    transition: opacity 0.2s;
+    transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.portfolio-ig-handle i {
-    font-size: 1.1rem;
+.btn-portfolio-ig span {
+    display: inline-block;
+    transition: transform 0.25s ease;
 }
 
-.portfolio-ig-handle:hover {
-    opacity: 0.8;
+.btn-portfolio-ig:hover {
+    background: var(--card-primary);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(192, 38, 163, 0.35);
+}
+
+.btn-portfolio-ig:hover span {
+    transform: translateX(4px);
 }
 
 @media (max-width: 768px) {
@@ -2768,11 +2790,6 @@ body.contact-page {
     }
 }
 
-.portfolio-ig-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 36px rgba(200, 80, 192, 0.44);
-    opacity: 0.94;
-}
 
 @media (max-width: 768px) {
     .portfolio-content-col {
