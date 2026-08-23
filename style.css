@@ -2996,11 +2996,19 @@ body.contact-page {
     align-items: stretch;
 }
 
+/* Left column wrapper (photo + stats stacked) */
+.about-left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .about-photo-card {
     position: relative;
     border-radius: 24px;
     overflow: hidden;
-    min-height: 420px;
+    flex: 1;
+    min-height: 220px;
     background: #fff;
     border: 1px solid rgba(108,99,255,.15);
     box-shadow: 0 8px 32px rgba(108,99,255,.10);
@@ -3022,6 +3030,31 @@ body.contact-page {
     pointer-events: none;
 }
 
+/* Stats card — own card below photo */
+.about-stats-card {
+    background: #fff;
+    border: 1px solid rgba(108,99,255,.12);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(108,99,255,.08);
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+.about-stats-card .about-stats {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 0;
+}
+.about-stats-card .about-stat {
+    flex: 1;
+    align-items: center;
+    text-align: center;
+    padding: 0 12px;
+}
+.about-stats-card .about-stat:first-child { padding-left: 12px; }
+
 .about-bio-card {
     background: #fff;
     border: 1px solid rgba(108,99,255,.12);
@@ -3031,7 +3064,7 @@ body.contact-page {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .about-bio-card h2 {
@@ -3166,11 +3199,15 @@ body.contact-page {
         grid-template-columns: 1fr;
     }
     .about-photo-card {
-        min-height: 320px;
-        max-height: 320px;
+        flex: none;
+        min-height: 300px;
+        max-height: 300px;
     }
     .about-bio-card {
         padding: 32px 36px;
+    }
+    .about-stats-card {
+        padding: 18px 24px;
     }
 }
 
@@ -3184,6 +3221,20 @@ body.contact-page {
     .about-stats {
         flex-wrap: wrap;
         gap: 12px;
+    }
+    /* Keep stats in one row inside their own card on small screens */
+    .about-stats-card {
+        padding: 16px 18px;
+    }
+    .about-stats-card .about-stats {
+        flex-wrap: nowrap;
+        gap: 0;
+    }
+    .about-stats-card .about-stat-num {
+        font-size: 1.2rem;
+    }
+    .about-stats-card .about-stat-label {
+        font-size: 0.68rem;
     }
 }
 
