@@ -212,11 +212,54 @@ serviceModalTriggers.forEach((trigger) => {
         if (!targetModal) return;
 
         closeServiceModals();
+        if (targetId === 'extraModal') {
+            resetBizTabs();
+        }
         targetModal.classList.add('is-open');
         targetModal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('service-modal-open');
     });
 });
+
+// Üzleti Kiegészítők – segmented tab control
+const bizTabs = document.querySelectorAll('.biz-tab');
+const bizPanels = document.querySelectorAll('.biz-panel');
+
+function activateBizTab(tab) {
+    bizTabs.forEach((t) => {
+        const isActive = t === tab;
+        t.classList.toggle('is-active', isActive);
+        t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        t.tabIndex = isActive ? 0 : -1;
+    });
+    bizPanels.forEach((panel) => {
+        const isActive = panel.id === tab.getAttribute('aria-controls');
+        panel.classList.toggle('is-active', isActive);
+        panel.hidden = !isActive;
+    });
+}
+
+function resetBizTabs() {
+    if (bizTabs.length) activateBizTab(bizTabs[0]);
+}
+
+bizTabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => activateBizTab(tab));
+    tab.addEventListener('keydown', (event) => {
+        let newIndex = null;
+        if (event.key === 'ArrowRight') newIndex = (index + 1) % bizTabs.length;
+        if (event.key === 'ArrowLeft') newIndex = (index - 1 + bizTabs.length) % bizTabs.length;
+        if (newIndex === null) return;
+
+        event.preventDefault();
+        bizTabs[newIndex].focus();
+        activateBizTab(bizTabs[newIndex]);
+    });
+});
+
+if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+}
 
 serviceModalOverlays.forEach((overlay) => {
     overlay.addEventListener('click', (event) => {

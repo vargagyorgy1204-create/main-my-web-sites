@@ -11,6 +11,10 @@
     --card-accent-cool:  linear-gradient(135deg, #0e4d5c 0%, #1a8fa3 100%);
 }
 
+.icon { width: 20px; height: 20px; stroke-width: 1.75; }
+.icon--sm { width: 16px; height: 16px; }
+.icon--lg { width: 28px; height: 28px; }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
 
@@ -887,11 +891,115 @@ h2 {
 }
 
 .pricing-item.is-featured {
-    border-color: #C026A3;
-    box-shadow: 0 0 0 2px rgba(192, 38, 163, 0.45), 0 18px 38px rgba(75, 25, 86, 0.28);
+    border-width: 2px;
+    background-image:
+        linear-gradient(#ffffff, #ffffff),
+        var(--card-primary);
+    box-shadow: 0 0 0 1px rgba(108, 99, 255, 0.28), 0 18px 38px rgba(75, 25, 86, 0.28);
     transform: scale(1.05);
     z-index: 1;
 }
+
+.pricing-plus-label {
+    display: block;
+    margin: -2px 0 10px;
+    color: #9ca3af;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Tier 3 (3D Websites) – reuses the .qr-card rotating conic-gradient border */
+.pricing-item--rotating {
+    border: none;
+    background: transparent;
+    background-image: none;
+    box-shadow: none;
+    padding: 0;
+    position: relative;
+    isolation: isolate;
+}
+
+.pricing-item--rotating:hover {
+    box-shadow: none;
+}
+
+.pricing-item--rotating .pricing-item__bg {
+    position: absolute;
+    z-index: -1;
+    inset: -3px;
+    border-radius: 17px;
+    overflow: hidden;
+}
+
+.pricing-item--rotating .pricing-item__bg::before {
+    content: '';
+    position: absolute;
+    aspect-ratio: 1 / 1;
+    top: 50%;
+    left: 50%;
+    min-width: 220%;
+    min-height: 220%;
+    background-image: conic-gradient(
+        #4B1956 0deg,
+        #4B1956 60deg,
+        #C026A3 180deg,
+        #4B1956 300deg,
+        #4B1956 360deg
+    );
+    animation: speeen 4s linear infinite;
+    transform-origin: 0% 0%;
+    transform: rotate(0deg) translate(-50%, -50%);
+}
+
+.pricing-item--rotating .pricing-item__inner {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px 16px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.09);
+    transition: box-shadow 0.3s ease;
+}
+
+.pricing-item--rotating:hover .pricing-item__inner {
+    box-shadow: 0 12px 26px rgba(75, 25, 86, 0.22);
+}
+
+/* Per-card accent roles (Üzleti Kiegészítők tabs) — ties badge/marker/check colors together */
+.service-icon-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.service-icon-badge .icon {
+    width: 20px;
+    height: 20px;
+}
+
+.service-icon-badge--warm { background: var(--card-accent-warm); }
+.service-icon-badge--cool { background: var(--card-accent-cool); }
+.service-icon-badge--secondary { background: var(--card-secondary); }
+
+.pricing-item--warm .plan-check { background: #c850c0; }
+.pricing-item--warm .pricing-features i { color: #c850c0; }
+
+.pricing-item--cool .plan-check { background: #1a8fa3; }
+.pricing-item--cool .pricing-features i { color: #1a8fa3; }
+
+.pricing-item--secondary .plan-check { background: #6c63ff; }
+.pricing-item--secondary .pricing-features i { color: #6c63ff; }
 
 .pricing-badge {
     display: inline-block;
@@ -955,7 +1063,7 @@ h2 {
 }
 
 .extra-modal {
-    width: min(1320px, 100%);
+    width: min(1040px, 100%);
     font-family: "Montserrat", "Inter", sans-serif;
     background: #ffffff;
     border: 1px solid rgba(168, 85, 247, 0.14);
@@ -967,8 +1075,57 @@ h2 {
     font-weight: 700;
 }
 
+/* Segmented tab control */
+.biz-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 22px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.biz-tabs::-webkit-scrollbar { display: none; }
+
+.biz-tab {
+    flex: 0 0 auto;
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 2px solid rgba(168, 85, 247, 0.35);
+    background: transparent;
+    color: #6b7280;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.biz-tab:hover {
+    border-color: rgba(192, 38, 163, 0.5);
+    color: #C026A3;
+}
+
+.biz-tab.is-active {
+    background: var(--card-primary);
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(192, 38, 163, 0.32);
+}
+
+.biz-panel {
+    display: none;
+}
+
+.biz-panel.is-active {
+    display: block;
+}
+
 .extra-pricing-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
 }
 
@@ -991,6 +1148,13 @@ h2 {
 .extra-pricing-grid .modal-quote-btn:hover {
     opacity: 0.92;
     box-shadow: 0 12px 26px rgba(192, 38, 163, 0.36);
+}
+
+.services-teaser-meta {
+    margin: -6px 0 0;
+    color: #7a90b8;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
 }
 
 body.service-modal-open {
