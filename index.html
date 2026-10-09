@@ -44,7 +44,7 @@
         }
         </script>
 
-    <link rel="stylesheet" href="style.css?v=sk11">
+    <link rel="stylesheet" href="style.css?v=sk28">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&display=swap" rel="stylesheet">
@@ -75,11 +75,37 @@
 </header>
 
 <section id="hero">
+    <div class="hero-bg" aria-hidden="true">
+        <span class="hero-blob hero-blob--1"></span>
+        <span class="hero-blob hero-blob--2"></span>
+        <span class="hero-blob hero-blob--3"></span>
+        <span class="hero-grid"></span>
+        <span class="hero-glow"></span>
+    </div>
     <div class="hero-inner">
-        <div class="hero-left">
-            <p class="hero-eyebrow">Webfejlesztés &amp; Dizájn</p>
-            <h1 class="hero-headline">WEB DEVELOPER</h1>
-            <p class="hero-sub">Profi Webfejlesztő vagyok, aki vállalkozásoknak segít erős online jelenlétet kiépíteni.</p>
+        <p class="hero-eyebrow">Webfejlesztés &amp; Dizájn</p>
+        <div class="hero-title">
+            <h1 class="hero-headline">
+                <span class="hero-line hero-line--solid">WEB</span>
+                <span class="hero-line hero-line--outline">DEVELOPER</span>
+            </h1>
+            <a class="stamp hero-stamp" href="#contact" aria-label="Ugrás a Kapcsolat szakaszra">
+                <svg class="stamp__ring" viewBox="0 0 200 200" aria-hidden="true">
+                    <defs>
+                        <path id="stampCircle" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0"></path>
+                    </defs>
+                    <text class="stamp__text" xml:space="preserve" dominant-baseline="middle">
+                        <textPath href="#stampCircle" startOffset="0%" textLength="477.52" lengthAdjust="spacingAndGlyphs">VARBRO ° CREATIVE ° DEV ° VARBRO ° CREATIVE ° DEV ° </textPath>
+                    </text>
+                </svg>
+                <span class="stamp__inner" aria-hidden="true">
+                    <i data-lucide="arrow-up-right" class="icon stamp__icon"></i>
+                    <i data-lucide="arrow-up-right" class="icon stamp__icon stamp__icon--copy"></i>
+                </span>
+            </a>
+        </div>
+        <p class="hero-sub">Profi Webfejlesztő vagyok, aki vállalkozásoknak segít erős online jelenlétet kiépíteni.</p>
+        <div class="hero-ctas">
             <div class="btn-clip">
                 <a href="whatsappcontact.html" class="button type--varbro">
                     <div class="button__line"></div>
@@ -89,80 +115,18 @@
                     <div class="button__drow2"></div>
                 </a>
             </div>
+            <a href="#bento-showcase" class="btn-hero-ghost">Referenciák <span aria-hidden="true">→</span></a>
         </div>
-        <div class="hero-right">
-            <div class="hero-cards">
-                <!-- Card 1: Rotating stamp -->
-                <div class="hcard hcard--stamp">
-                    <a class="stamp" href="#contact" aria-label="Ugrás a Kapcsolat szakaszra">
-                        <svg class="stamp__ring" viewBox="0 0 200 200" aria-hidden="true">
-                            <defs>
-                                <path id="stampCircle" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0"></path>
-                            </defs>
-                            <text class="stamp__text" xml:space="preserve" dominant-baseline="middle">
-                                <textPath href="#stampCircle" startOffset="0%" textLength="477.52" lengthAdjust="spacingAndGlyphs">VARBRO ° CREATIVE ° DEV ° VARBRO ° CREATIVE ° DEV ° </textPath>
-                            </text>
-                        </svg>
-                        <span class="stamp__inner" aria-hidden="true">
-                            <i data-lucide="arrow-up-right" class="icon stamp__icon"></i>
-                            <i data-lucide="arrow-up-right" class="icon stamp__icon stamp__icon--copy"></i>
-                        </span>
-                    </a>
-                </div>
-                <!-- Card 2: 2 hét -->
-                <div class="hcard hcard--orange">
-                    <div class="hcard-big-text">2 hét</div>
-                    <div class="hcard-sub-text">alatt elkészül</div>
-                    <div class="hcard-guarantee">100% garancia</div>
-                </div>
-                <!-- Card 3: Tech Stack (purple card, bottom-left) -->
-                <a href="#skills" class="hcard hcard--purple">
-                    <div class="hcard-title">Tech Stack</div>
-                    <div class="hcard-badges">
-                        <span class="hbadge">HTML</span>
-                        <span class="hbadge">CSS</span>
-                        <span class="hbadge">JS</span>
-                        <span class="hbadge">GSAP</span>
-                        <span class="hbadge">GitHub</span>
-                        <span class="hbadge">Three.js</span>
-                        <span class="hbadge">Claude</span>
-                        <span class="hbadge">VS Code</span>
-                    </div>
-                    <div class="hcard-arrow-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="7" y1="7" x2="17" y2="17"></line>
-                            <polyline points="17 7 17 17 7 17"></polyline>
-                        </svg>
-                    </div>
-                </a>
-                <!-- Card 4: Együttműködés (teal card, right) -->
-                <a href="#steps" class="hcard hcard--pink">
-                    <div class="hcard-title">Együttműködés</div>
-                    <div class="hcard-icons-col">
-                        <div class="hcard-icon-item">
-                            <i class="fas fa-comments"></i>
-                            <span>Egyeztetés</span>
-                        </div>
-                        <div class="hcard-icon-divider">↓</div>
-                        <div class="hcard-icon-item">
-                            <i class="fas fa-code"></i>
-                            <span>Fejlesztés</span>
-                        </div>
-                        <div class="hcard-icon-divider">↓</div>
-                        <div class="hcard-icon-item">
-                            <i class="fas fa-rocket"></i>
-                            <span>Átadás</span>
-                        </div>
-                    </div>
-                    <div class="hcard-arrow-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="7" y1="7" x2="17" y2="17"></line>
-                            <polyline points="17 7 17 17 7 17"></polyline>
-                        </svg>
-                    </div>
-                </a>
-            </div>
-        </div>
+        <ul class="hero-stack" aria-label="Tech stack">
+            <li class="hero-chip" style="--d:0">HTML</li>
+            <li class="hero-chip" style="--d:1">CSS</li>
+            <li class="hero-chip" style="--d:2">JS</li>
+            <li class="hero-chip" style="--d:3">GSAP</li>
+            <li class="hero-chip" style="--d:4">GitHub</li>
+            <li class="hero-chip" style="--d:5">Three.js</li>
+            <li class="hero-chip" style="--d:6">Claude</li>
+            <li class="hero-chip" style="--d:7">VS Code</li>
+        </ul>
     </div>
 </section>
 <div class="hero-ticker" aria-hidden="true">
@@ -994,7 +958,7 @@
 
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="script.js?v=6"></script>
+<script src="script.js?v=9"></script>
 <script src="animations.js"></script>
 </body>
 </html>

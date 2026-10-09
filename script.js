@@ -546,3 +546,174 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 
     window.addEventListener('resize', update);
 })();
+
+// Hero – cursor-follow glow
+(function () {
+    var hero = document.getElementById('hero');
+    var glow = hero && hero.querySelector('.hero-glow');
+    if (!glow) return;
+    if (!window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) return;
+    var ticking = false, x = 0, y = 0;
+    hero.addEventListener('pointermove', function (e) {
+        var r = hero.getBoundingClientRect();
+        x = e.clientX - r.left;
+        y = e.clientY - r.top;
+        glow.classList.add('is-active');
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(function () {
+                glow.style.setProperty('--mx', x + 'px');
+                glow.style.setProperty('--my', y + 'px');
+                ticking = false;
+            });
+        }
+    }, { passive: true });
+    hero.addEventListener('pointerleave', function () { glow.classList.remove('is-active'); });
+})();
+
+// Hero headline – magnetic wave
+(function () {
+    var title = document.querySelector('.hero-title');
+    var h1 = title && title.querySelector('.hero-headline');
+    var outline = h1 && h1.querySelector('.hero-line--outline');
+    if (!outline) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var letters = [];
+    var centers = [];
+    var current = [];
+    var target = [];
+    var running = false;
+    var split = false;
+
+    function splitLines() {
+        if (split) return;
+        split = true;
+        h1.setAttribute('aria-label', 'WEB DEVELOPER');
+        h1.querySelectorAll('.hero-line').forEach(function (line) {
+            var text = line.textContent.trim();
+            line.textContent = '';
+            text.split('').forEach(function (ch) {
+                var s = document.createElement('span');
+                s.className = 'hl';
+                s.setAttribute('aria-hidden', 'true');
+                s.textContent = ch;
+                line.appendChild(s);
+                letters.push(s);
+                current.push(0);
+                target.push(0);
+            });
+            line.classList.add('is-split');
+        });
+        measure();
+    }
+
+    function measure() {
+        var rect = outline.getBoundingClientRect();
+        var range = document.createRange();
+        range.selectNodeContents(outline);
+        var textRect = range.getBoundingClientRect();
+        outline.querySelectorAll('.hl').forEach(function (s) {
+            s.style.setProperty('--lw', textRect.width + 'px');
+            s.style.setProperty('--lx', (s.offsetLeft - (textRect.left - rect.left)) + 'px');
+        });
+        centers = letters.map(function (s) {
+            var r = s.getBoundingClientRect();
+            return { x: r.left + r.width / 2 + window.scrollX, y: r.top + r.height / 2 + window.scrollY };
+        });
+    }
+
+    function setTargets(px, py) {
+        var R = parseFloat(getComputedStyle(h1).fontSize) * 1.9;
+        centers.forEach(function (c, i) {
+            var d = Math.hypot(px - c.x, py - c.y);
+            var p = Math.max(0, 1 - d / R);
+            target[i] = p * p;
+        });
+        start();
+    }
+
+    function clearTargets() {
+        for (var i = 0; i < target.length; i++) target[i] = 0;
+        start();
+    }
+
+    function tick() {
+        var moving = false;
+        for (var i = 0; i < letters.length; i++) {
+            var next = current[i] + (target[i] - current[i]) * 0.16;
+            if (Math.abs(target[i] - next) < 0.001) next = target[i];
+            if (next !== current[i]) {
+                current[i] = next;
+                letters[i].style.setProperty('--p', next.toFixed(4));
+            }
+            if (next !== target[i]) moving = true;
+        }
+        if (moving) requestAnimationFrame(tick);
+        else running = false;
+    }
+
+    function start() {
+        if (!running) {
+            running = true;
+            requestAnimationFrame(tick);
+        }
+    }
+
+    function sweep() {
+        if (!centers.length) return;
+        var first = centers[0];
+        var last = centers[centers.length - 1];
+        var webEnd = centers[h1.querySelector('.hero-line--solid').children.length - 1];
+        var t0 = performance.now();
+        var dur = 1100;
+        (function step(now) {
+            var t = Math.min(1, (now - t0) / dur);
+            if (t < 0.4) {
+                var a = t / 0.4;
+                setTargets(first.x + (webEnd.x - first.x) * a, first.y);
+            } else {
+                var b = (t - 0.4) / 0.6;
+                var devStart = centers[h1.querySelector('.hero-line--solid').children.length];
+                setTargets(devStart.x + (last.x - devStart.x) * b, last.y);
+            }
+            if (t < 1) requestAnimationFrame(step);
+            else clearTargets();
+        })(t0);
+    }
+
+    function init() {
+        splitLines();
+        var inside = false;
+        document.addEventListener('pointermove', function (e) {
+            if (e.pointerType !== 'mouse') return;
+            var r = title.getBoundingClientRect();
+            var pad = parseFloat(getComputedStyle(h1).fontSize) * 0.8;
+            var hit = e.clientX >= r.left - pad && e.clientX <= r.right + pad &&
+                      e.clientY >= r.top - pad && e.clientY <= r.bottom + pad;
+            if (hit) {
+                inside = true;
+                setTargets(e.pageX, e.pageY);
+            } else if (inside) {
+                inside = false;
+                clearTargets();
+            }
+        }, { passive: true });
+        document.documentElement.addEventListener('pointerleave', clearTargets);
+        h1.addEventListener('pointerdown', function (e) {
+            if (e.pointerType !== 'mouse') sweep();
+        });
+        window.addEventListener('resize', measure);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    }
+
+    var done = false;
+    function onIntroEnd(e) {
+        if (done || (e && e.animationName !== 'heroFill')) return;
+        done = true;
+        outline.removeEventListener('animationend', onIntroEnd);
+        init();
+    }
+    outline.addEventListener('animationend', onIntroEnd);
+    setTimeout(function () { onIntroEnd(); }, 3000);
+})();
