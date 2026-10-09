@@ -3512,12 +3512,13 @@ body.contact-page {
     position: relative;
     display: inline-block;
     margin: 0 0 30px 0;
+    font-size: clamp(26px, 8.3vw, 110px);
 }
 
 .hero-headline {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(26px, 8.3vw, 110px);
+    font-size: 1em;
     line-height: 0.96;
     color: #111;
     margin: 0;
@@ -3559,11 +3560,10 @@ body.contact-page {
 }
 
 .stamp.hero-stamp {
-    position: absolute;
-    top: -0.62em;
-    right: -0.55em;
-    margin: 0;
-    inline-size: clamp(64px, 9vw, 132px);
+    position: relative;
+    flex-shrink: 0;
+    margin: -22px 0;
+    inline-size: 100px;
     animation: stampPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s both;
 }
 @keyframes stampPop {
@@ -3587,6 +3587,7 @@ body.contact-page {
     justify-content: flex-start;
     gap: 18px;
     flex-wrap: wrap;
+    width: 100%;
     margin: 0 0 44px 0;
     animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
 }
@@ -3623,11 +3624,11 @@ body.contact-page {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: flex-end;
     gap: 10px;
-    max-width: 720px;
+    max-width: 420px;
     padding: 0;
-    margin: 0;
+    margin: 0 20px 0 auto;
 }
 .hero-chip {
     padding: 8px 16px;
@@ -3867,15 +3868,21 @@ body.contact-page {
 }
 
 /* Responsive hero */
+@media (max-width: 1199px) {
+    .hero-ctas { flex-wrap: wrap; }
+    .hero-stack { order: 5; flex: 0 0 100%; max-width: none; margin: 0; justify-content: flex-end; }
+    .stamp.hero-stamp { margin-left: auto; }
+}
 @media (max-width: 640px) {
     #hero { padding: 104px 20px 56px; }
     .hero-eyebrow { margin-bottom: 16px; }
     .hero-title { margin-bottom: 22px; }
-    .stamp.hero-stamp { inline-size: 54px; top: -22px; right: 0; }
+    .stamp.hero-stamp { position: absolute; top: 2px; right: 0; margin: 0; inline-size: 64px; }
     .hero-sub { margin-bottom: 28px; }
-    .hero-ctas { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 34px; width: 100%; }
+    .hero-ctas { position: relative; flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 34px; width: 100%; }
     .btn-hero-ghost { width: 100%; max-width: 260px; }
     .hero-chip { font-size: 12px; padding: 7px 13px; }
+    .hero-stack { order: 0; justify-content: flex-start; margin-top: 4px; }
 }
 
 /* ===== Scroll Animations ===== */
