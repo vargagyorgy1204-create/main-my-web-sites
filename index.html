@@ -44,10 +44,10 @@
         }
         </script>
 
-    <link rel="stylesheet" href="style.css?v=sk7">
+    <link rel="stylesheet" href="style.css?v=sk11">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -94,25 +94,20 @@
             <div class="hero-cards">
                 <!-- Card 1: Rotating stamp -->
                 <div class="hcard hcard--stamp">
-                    <div class="stamp-wrap">
-                        <svg viewBox="0 0 200 200" class="stamp-svg" aria-hidden="true">
+                    <a class="stamp" href="#contact" aria-label="Ugrás a Kapcsolat szakaszra">
+                        <svg class="stamp__ring" viewBox="0 0 200 200" aria-hidden="true">
                             <defs>
-                                <path id="sOuter" d="M 100,100 m -78,0 a 78,78 0 1,1 156,0 a 78,78 0 1,1 -156,0"/>
+                                <path id="stampCircle" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0"></path>
                             </defs>
-                            <!-- Gray ring behind the text (band from r=70 to r=94) -->
-                            <circle cx="100" cy="100" r="82" fill="none" stroke="#e5e5e5" stroke-width="24"/>
-                            <g class="stamp-g-cw">
-                                <text font-size="11.5" font-weight="600" fill="#333" letter-spacing="1.8">
-                                    <textPath href="#sOuter">varbro.pro · varbro.pro · varbro.pro · varbro.pro · varbro.pro · varbro.pro · </textPath>
-                                </text>
-                            </g>
+                            <text class="stamp__text" xml:space="preserve" dominant-baseline="middle">
+                                <textPath href="#stampCircle" startOffset="0%" textLength="477.52" lengthAdjust="spacingAndGlyphs">VARBRO ° CREATIVE ° DEV ° VARBRO ° CREATIVE ° DEV ° </textPath>
+                            </text>
                         </svg>
-                        <div class="stamp-center">
-                            <div class="stamp-city">Budapest</div>
-                            <div class="stamp-country">Hungary</div>
-                            <div class="stamp-city">2023</div>
-                        </div>
-                    </div>
+                        <span class="stamp__inner" aria-hidden="true">
+                            <i data-lucide="arrow-up-right" class="icon stamp__icon"></i>
+                            <i data-lucide="arrow-up-right" class="icon stamp__icon stamp__icon--copy"></i>
+                        </span>
+                    </a>
                 </div>
                 <!-- Card 2: 2 hét -->
                 <div class="hcard hcard--orange">
