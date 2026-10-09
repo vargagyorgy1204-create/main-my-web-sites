@@ -730,3 +730,28 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     outline.addEventListener('animationend', onIntroEnd);
     setTimeout(function () { onIntroEnd(); }, 3000);
 })();
+
+// Hero buttons – liquid fill origin + click ripple
+(function () {
+    document.querySelectorAll('.hbtn').forEach(function (btn) {
+        function setOrigin(e) {
+            var r = btn.getBoundingClientRect();
+            btn.style.setProperty('--fx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+            btn.style.setProperty('--fy', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+        }
+        btn.addEventListener('pointerenter', setOrigin);
+        btn.addEventListener('pointerleave', setOrigin);
+        btn.addEventListener('pointerdown', function (e) {
+            setOrigin(e);
+            var host = btn.querySelector('.hbtn__rip');
+            if (!host) return;
+            var r = btn.getBoundingClientRect();
+            var rip = document.createElement('span');
+            rip.className = 'hbtn__ripple';
+            rip.style.setProperty('--rx', (e.clientX - r.left) + 'px');
+            rip.style.setProperty('--ry', (e.clientY - r.top) + 'px');
+            host.appendChild(rip);
+            setTimeout(function () { rip.remove(); }, 700);
+        });
+    });
+})();
