@@ -494,3 +494,55 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 
     showBanner();
 })();
+// Skills – mobile carousel dots
+(function () {
+    var track = document.querySelector('#skills > div > div[style*="grid-template-columns"]');
+    var dots = document.querySelectorAll('.skills-dot');
+    if (!track || !dots.length) return;
+
+    var cards = Array.from(track.children);
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var ticking = false;
+
+    function isCarousel() {
+        return track.scrollWidth > track.clientWidth + 1;
+    }
+
+    function activeIndex() {
+        var center = track.scrollLeft + track.clientWidth / 2;
+        var best = 0;
+        var bestDist = Infinity;
+        cards.forEach(function (card, i) {
+            var d = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center);
+            if (d < bestDist) { bestDist = d; best = i; }
+        });
+        return best;
+    }
+
+    function update() {
+        ticking = false;
+        if (!isCarousel()) return;
+        var idx = activeIndex();
+        dots.forEach(function (dot, i) { dot.classList.toggle('is-active', i === idx); });
+    }
+
+    track.addEventListener('scroll', function () {
+        if (!ticking) {
+            requestAnimationFrame(update);
+            ticking = true;
+        }
+    }, { passive: true });
+
+    dots.forEach(function (dot, i) {
+        dot.addEventListener('click', function () {
+            var card = cards[i];
+            if (!card) return;
+            track.scrollTo({
+                left: card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2,
+                behavior: reduceMotion ? 'auto' : 'smooth'
+            });
+        });
+    });
+
+    window.addEventListener('resize', update);
+})();

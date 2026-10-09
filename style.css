@@ -3972,3 +3972,54 @@ body.contact-page {
     background: rgba(15, 22, 41, 0.55);
 }
 
+
+/* Skills (Készségeim) – mobile swipe carousel */
+.skills-dots { display: none; }
+
+@media (max-width: 640px) {
+    #skills > div > div[style*="grid-template-columns"] {
+        display: flex !important;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: 20px;
+        gap: 12px;
+        margin: 0 -20px;
+        padding: 4px 20px 12px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+    }
+
+    #skills > div > div[style*="grid-template-columns"]::-webkit-scrollbar {
+        display: none;
+    }
+
+    #skills > div > div[style*="grid-template-columns"] > div {
+        flex: 0 0 78%;
+        grid-column: auto !important;
+        scroll-snap-align: center;
+    }
+
+    .skills-dots {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .skills-dot {
+        width: 8px;
+        height: 8px;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.25);
+        cursor: pointer;
+        transition: width 0.25s ease, background 0.25s ease;
+    }
+
+    .skills-dot.is-active {
+        width: 22px;
+        background: var(--card-primary);
+    }
+}
