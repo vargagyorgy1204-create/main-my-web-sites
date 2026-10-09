@@ -584,31 +584,6 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 
     window.addEventListener('resize', update);
 })();
-
-// Hero – cursor-follow glow
-(function () {
-    var hero = document.getElementById('hero');
-    var glow = hero && hero.querySelector('.hero-glow');
-    if (!glow) return;
-    if (!window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) return;
-    var ticking = false, x = 0, y = 0;
-    hero.addEventListener('pointermove', function (e) {
-        var r = hero.getBoundingClientRect();
-        x = e.clientX - r.left;
-        y = e.clientY - r.top;
-        glow.classList.add('is-active');
-        if (!ticking) {
-            ticking = true;
-            requestAnimationFrame(function () {
-                glow.style.setProperty('--mx', x + 'px');
-                glow.style.setProperty('--my', y + 'px');
-                ticking = false;
-            });
-        }
-    }, { passive: true });
-    hero.addEventListener('pointerleave', function () { glow.classList.remove('is-active'); });
-})();
-
 // Hero headline – magnetic wave
 (function () {
     var title = document.querySelector('.hero-title');

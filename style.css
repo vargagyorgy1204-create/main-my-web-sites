@@ -3472,22 +3472,6 @@ body.contact-page {
     mask-image: radial-gradient(ellipse 70% 60% at 50% 48%, #000 20%, transparent 78%);
 }
 
-.hero-glow {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 520px;
-    height: 520px;
-    margin: -260px 0 0 -260px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(200, 80, 192, 0.22), rgba(108, 99, 255, 0.10) 45%, transparent 70%);
-    transform: translate3d(var(--mx, 50vw), var(--my, 40vh), 0);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    will-change: transform;
-}
-.hero-glow.is-active { opacity: 1; }
-
 .hero-inner {
     width: 100%;
     max-width: 1152px;
@@ -3654,7 +3638,6 @@ body.contact-page {
 
 @media (prefers-reduced-motion: reduce) {
     .hero-blob { animation: none; }
-    .hero-glow { display: none; }
     .hero-line,
     .hero-line--outline,
     .hero-eyebrow, .hero-sub, .hero-ctas, .hero-chip, .hero-stamp { animation: none; }
@@ -4171,3 +4154,95 @@ body.contact-page {
 @media (prefers-reduced-motion: reduce) {
     .hl { transform: none; }
 }
+
+/* Custom cursor: dot + morphing ring (cursor.js) */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+html.has-cursor input, html.has-cursor textarea, html.has-cursor [contenteditable="true"] { cursor: text !important; }
+
+.cursor-ring, .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100000;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.cursor-ring { width: 0; height: 0; }
+.cursor-dot  { width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #111; transition: opacity 0.2s ease, background 0.25s ease, transform 0s; }
+
+.cursor-ring::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(17, 17, 17, 0.55);
+    background: transparent;
+    box-sizing: border-box;
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                margin 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease,
+                border-radius 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+}
+
+.cursor-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* link / button */
+.cursor-ring.is-link::before {
+    width: 58px; height: 58px; margin: -29px 0 0 -29px;
+    border-color: transparent;
+    background: var(--card-primary);
+    opacity: 0.9;
+    box-shadow: 0 6px 24px rgba(192, 38, 163, 0.35);
+}
+.cursor-ring.is-link + .cursor-dot { opacity: 0; }
+
+/* image / card */
+.cursor-ring.is-view::before {
+    width: 92px; height: 92px; margin: -46px 0 0 -46px;
+    border-color: transparent;
+    background: var(--card-primary);
+    opacity: 0.94;
+    box-shadow: 0 10px 34px rgba(108, 99, 255, 0.4);
+}
+.cursor-ring.is-view .cursor-label { opacity: 1; }
+.cursor-ring.is-view + .cursor-dot { opacity: 0; }
+
+/* text */
+.cursor-ring.is-text::before {
+    width: 2px; height: 28px; margin: -14px 0 0 -1px;
+    border: 0; border-radius: 1px;
+    background: rgba(17, 17, 17, 0.7);
+}
+.cursor-ring.is-text + .cursor-dot { opacity: 0; }
+
+/* press */
+html.cursor-press .cursor-ring::before { transform: scale(0.82); }
+html.cursor-press .cursor-dot { background: #C026A3; }
+
+/* dark sections */
+html.cursor-dark .cursor-dot { background: #fff; }
+html.cursor-dark .cursor-ring::before { border-color: rgba(255, 255, 255, 0.6); }
+html.cursor-dark .cursor-ring.is-text::before { background: rgba(255, 255, 255, 0.85); }
+html.cursor-dark .cursor-ring.is-link::before,
+html.cursor-dark .cursor-ring.is-view::before { border-color: transparent; }
+
+/* hidden / over form fields */
+html.cursor-hidden .cursor-ring, html.cursor-hidden .cursor-dot { opacity: 0; }
+html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0; }
