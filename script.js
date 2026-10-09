@@ -1,16 +1,22 @@
-// Shrink-on-scroll floating header
+// Floating glass header: scrolled state + smart hide
 (function () {
     var header = document.querySelector('header');
     if (!header) return;
     var ticking = false;
-    var THRESHOLD = 60;
+    var lastY = window.scrollY;
 
     function updateHeader() {
-        if (window.scrollY > THRESHOLD) {
-            header.classList.add('header--scrolled');
-        } else {
-            header.classList.remove('header--scrolled');
+        var y = window.scrollY;
+        header.classList.toggle('header--scrolled', y > 40);
+        var menuOpen = document.body.classList.contains('nav-open');
+        if (menuOpen || header.contains(document.activeElement) && y < lastY + 1) {
+            header.classList.remove('header--hidden');
+        } else if (y > lastY + 4 && y > 140) {
+            header.classList.add('header--hidden');
+        } else if (y < lastY - 4 || y <= 140) {
+            header.classList.remove('header--hidden');
         }
+        lastY = y;
         ticking = false;
     }
 
@@ -117,26 +123,26 @@ const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
 
 if (navToggle && navLinks) {
-    navToggle.addEventListener('click', () => {
-        navToggle.classList.toggle('active');
-        navLinks.classList.toggle('active');
-        navToggle.setAttribute('aria-expanded', navLinks.classList.contains('active') ? 'true' : 'false');
-    });
+    const setMenu = (open) => {
+        navToggle.classList.toggle('active', open);
+        navLinks.classList.toggle('active', open);
+        document.body.classList.toggle('nav-open', open);
+        navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        navToggle.setAttribute('aria-label', open ? 'Menü bezárása' : 'Menü megnyitása');
+    };
+
+    navToggle.addEventListener('click', () => setMenu(!navLinks.classList.contains('active')));
 
     navLinks.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => {
-            navToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-            navToggle.setAttribute('aria-expanded', 'false');
-        });
+        link.addEventListener('click', () => setMenu(false));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && navLinks.classList.contains('active')) setMenu(false);
     });
 
     window.addEventListener('resize', () => {
-        if (window.innerWidth >= 768) {
-            navToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-            navToggle.setAttribute('aria-expanded', 'false');
-        }
+        if (window.innerWidth >= 900) setMenu(false);
     });
 }
 
@@ -175,13 +181,45 @@ if (navLinks && navLiquid) {
         link.addEventListener('focus', () => moveLiquidTo(link));
     });
 
+    // Scrollspy: pill rests on the link of the section currently in view
+    const spyMap = {};
+    navLinkItems.forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        const hash = href.indexOf('#') > -1 ? href.slice(href.indexOf('#')) : '';
+        if (hash.length > 1 && document.querySelector(hash)) spyMap[hash] = link;
+    });
+    let spyLink = null;
+    let hovering = false;
+
+    const restOnSpy = () => {
+        if (spyLink) moveLiquidTo(spyLink);
+        else hideLiquid();
+    };
+
+    if ('IntersectionObserver' in window && Object.keys(spyMap).length) {
+        const visible = new Set();
+        const spy = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                const id = '#' + entry.target.id;
+                if (entry.isIntersecting) visible.add(id); else visible.delete(id);
+            });
+            const order = Object.keys(spyMap);
+            const current = order.filter((id) => visible.has(id)).pop();
+            spyLink = current ? spyMap[current] : null;
+            if (!hovering) restOnSpy();
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        Object.keys(spyMap).forEach((id) => spy.observe(document.querySelector(id)));
+    }
+
+    navLinks.addEventListener('mouseenter', () => { hovering = true; });
     navLinks.addEventListener('mouseleave', () => {
-        hideLiquid();
+        hovering = false;
+        restOnSpy();
     });
 
     navLinks.addEventListener('focusout', (event) => {
         if (!navLinks.contains(event.relatedTarget)) {
-            hideLiquid();
+            restOnSpy();
         }
     });
 
