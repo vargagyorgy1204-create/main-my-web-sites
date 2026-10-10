@@ -4265,15 +4265,23 @@ html.has-cursor input, html.has-cursor textarea, html.has-cursor [contenteditabl
     transition: opacity 0.2s ease;
 }
 
-/* link / button */
-.cursor-ring.is-link::before {
-    width: 58px; height: 58px; margin: -29px 0 0 -29px;
-    border-color: transparent;
-    background: var(--card-primary);
-    opacity: 0.9;
-    box-shadow: 0 6px 24px rgba(192, 38, 163, 0.35);
+/* link / button / chip: ring morphs into a frame around the element (text stays visible) */
+.cursor-ring.is-frame::before {
+    width: var(--rw, 44px);
+    height: var(--rh, 44px);
+    margin: calc(var(--rh, 44px) / -2) 0 0 calc(var(--rw, 44px) / -2);
+    border-radius: var(--rr, 12px);
+    border-color: rgba(192, 38, 163, 0.7);
+    background: rgba(200, 80, 192, 0.05);
+    box-shadow: 0 0 0 4px rgba(200, 80, 192, 0.07), 0 6px 18px rgba(192, 38, 163, 0.12);
 }
-.cursor-ring.is-link + .cursor-dot { opacity: 0; }
+.cursor-ring.is-frame + .cursor-dot { opacity: 0.9; transform-origin: center; }
+.cursor-ring.is-link-small::before {
+    width: 46px; height: 46px; margin: -23px 0 0 -23px;
+    border-color: rgba(192, 38, 163, 0.7);
+    background: rgba(200, 80, 192, 0.05);
+}
+.cursor-ring.is-link-small + .cursor-dot { opacity: 0.9; }
 
 /* image / card */
 .cursor-ring.is-view::before {
@@ -4302,7 +4310,8 @@ html.cursor-press .cursor-dot { background: #C026A3; }
 html.cursor-dark .cursor-dot { background: #fff; }
 html.cursor-dark .cursor-ring::before { border-color: rgba(255, 255, 255, 0.6); }
 html.cursor-dark .cursor-ring.is-text::before { background: rgba(255, 255, 255, 0.85); }
-html.cursor-dark .cursor-ring.is-link::before,
+html.cursor-dark .cursor-ring.is-frame::before,
+html.cursor-dark .cursor-ring.is-link-small::before { border-color: rgba(255, 255, 255, 0.75); background: rgba(255, 255, 255, 0.06); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05); }
 html.cursor-dark .cursor-ring.is-view::before { border-color: transparent; }
 
 /* hidden / over form fields */

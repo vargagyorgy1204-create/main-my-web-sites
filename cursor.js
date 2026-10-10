@@ -28,10 +28,33 @@
     var mx = -100, my = -100, rx = -100, ry = -100;
     var running = false;
     var magnet = null;
+    var frameEl = null;
+    var frameRadius = 10;
+
+    function setFrame(el) {
+        if (el === frameEl) return;
+        frameEl = el;
+        if (!el) {
+            ring.classList.remove('is-frame');
+            return;
+        }
+        var r = el.getBoundingClientRect();
+        var br = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+        frameRadius = br > 0 ? Math.min(br + 6, (r.height + 12) / 2) : 10;
+        ring.style.setProperty('--rr', frameRadius + 'px');
+        ring.classList.add('is-frame');
+    }
 
     function loop() {
         var tx = mx, ty = my;
-        if (magnet) {
+        if (frameEl) {
+            var fr = frameEl.getBoundingClientRect();
+            var cx = fr.left + fr.width / 2, cy = fr.top + fr.height / 2;
+            tx = cx + (mx - cx) * 0.1;
+            ty = cy + (my - cy) * 0.1;
+            ring.style.setProperty('--rw', (fr.width + 12).toFixed(1) + 'px');
+            ring.style.setProperty('--rh', (fr.height + 12).toFixed(1) + 'px');
+        } else if (magnet) {
             var r = magnet.getBoundingClientRect();
             tx = r.left + r.width / 2 + (mx - (r.left + r.width / 2)) * 0.25;
             ty = r.top + r.height / 2 + (my - (r.top + r.height / 2)) * 0.25;
@@ -39,7 +62,7 @@
         rx += (tx - rx) * 0.2;
         ry += (ty - ry) * 0.2;
         ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
-        if (Math.abs(tx - rx) > 0.1 || Math.abs(ty - ry) > 0.1 || magnet) {
+        if (Math.abs(tx - rx) > 0.1 || Math.abs(ty - ry) > 0.1 || magnet || frameEl) {
             requestAnimationFrame(loop);
         } else {
             running = false;
@@ -77,9 +100,11 @@
 
     function setState(target) {
         var t = target instanceof Element ? target : null;
-        ring.classList.remove('is-link', 'is-view', 'is-text', 'is-magnetic');
+        ring.classList.remove('is-link-small', 'is-view', 'is-text', 'is-magnetic');
         root.classList.remove('cursor-on-field');
         label.textContent = '';
+        var linkEl = t && !t.closest(FIELD) ? t.closest(LINK) : null;
+        if (!linkEl) setFrame(null);
         if (!t) return;
 
         root.classList.toggle('cursor-dark', !!t.closest(DARK));
@@ -97,7 +122,13 @@
         if (link) {
             ring.classList.remove('is-view');
             label.textContent = '';
-            ring.classList.add('is-link');
+            var lr = link.getBoundingClientRect();
+            if (lr.width > 420 || lr.height > 160) {
+                setFrame(null);
+                ring.classList.add('is-link-small');
+            } else {
+                setFrame(link);
+            }
             var mag = t.closest(MAGNETIC);
             if (mag !== magnet) {
                 releaseMagnet();
@@ -125,6 +156,7 @@
     document.documentElement.addEventListener('pointerleave', function () {
         root.classList.add('cursor-hidden');
         releaseMagnet();
+        setFrame(null);
     });
 
     window.addEventListener('scroll', function () {
