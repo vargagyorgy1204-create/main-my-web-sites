@@ -3268,8 +3268,12 @@ body.contact-page {
 }
 
 .about-bio-card .section-subtitle {
-    color: rgba(0,0,0,0.62) !important;
-    font-size: 1rem;
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: clamp(26px, 3.2vw, 42px) !important;
+    line-height: 1.12 !important;
+    letter-spacing: -0.02em !important;
+    color: #1a1a2e !important;
     text-align: left !important;
     margin: 0 !important;
 }
