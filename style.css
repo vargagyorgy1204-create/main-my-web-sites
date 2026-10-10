@@ -3335,9 +3335,6 @@ body.contact-page {
     box-shadow: 0 8px 24px rgba(75,25,86,.3);
 }
 
-.btn-about span { transition: transform .25s ease; }
-.btn-about:hover span { transform: translateX(4px); }
-
 .about-values {
     max-width: 1100px;
     margin: 20px auto 0;
