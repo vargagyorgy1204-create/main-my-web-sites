@@ -3921,10 +3921,11 @@ body.contact-page {
     #hero { padding: 104px 20px 56px; }
     .hero-eyebrow { margin-bottom: 16px; }
     .hero-title { margin-bottom: 22px; }
-    .hero-sub { margin-bottom: 28px; }
-    .hero-ctas { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 18px; width: 100%; }
+    .hero-sub { margin-bottom: 0; }
+    .hero-tech { order: 1; margin-bottom: 30px; }
+    .hero-ctas { order: 2; flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 18px; width: 100%; }
     .hero-ctas .hbtn { width: auto; }
-    .hero-tech { max-width: 100%; margin-top: 48px; padding: 16px 16px 18px; border-radius: 24px; }
+    .hero-tech { max-width: 100%; margin-top: 56px; padding: 16px 16px 18px; border-radius: 24px; }
     .stamp.hero-stamp { inline-size: 76px; top: -46px; right: -6px; }
     .hero-tech__list { gap: 8px; }
     .hero-chip { height: 34px; padding: 0 13px; font-size: 12px; }
