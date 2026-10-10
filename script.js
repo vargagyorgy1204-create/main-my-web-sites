@@ -532,58 +532,6 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 
     showBanner();
 })();
-// Skills – mobile carousel dots
-(function () {
-    var track = document.querySelector('#skills > div > div[style*="grid-template-columns"]');
-    var dots = document.querySelectorAll('.skills-dot');
-    if (!track || !dots.length) return;
-
-    var cards = Array.from(track.children);
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var ticking = false;
-
-    function isCarousel() {
-        return track.scrollWidth > track.clientWidth + 1;
-    }
-
-    function activeIndex() {
-        var center = track.scrollLeft + track.clientWidth / 2;
-        var best = 0;
-        var bestDist = Infinity;
-        cards.forEach(function (card, i) {
-            var d = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center);
-            if (d < bestDist) { bestDist = d; best = i; }
-        });
-        return best;
-    }
-
-    function update() {
-        ticking = false;
-        if (!isCarousel()) return;
-        var idx = activeIndex();
-        dots.forEach(function (dot, i) { dot.classList.toggle('is-active', i === idx); });
-    }
-
-    track.addEventListener('scroll', function () {
-        if (!ticking) {
-            requestAnimationFrame(update);
-            ticking = true;
-        }
-    }, { passive: true });
-
-    dots.forEach(function (dot, i) {
-        dot.addEventListener('click', function () {
-            var card = cards[i];
-            if (!card) return;
-            track.scrollTo({
-                left: card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2,
-                behavior: reduceMotion ? 'auto' : 'smooth'
-            });
-        });
-    });
-
-    window.addEventListener('resize', update);
-})();
 // Hero headline – magnetic wave
 (function () {
     var title = document.querySelector('.hero-title');
@@ -753,5 +701,44 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
             host.appendChild(rip);
             setTimeout(function () { rip.remove(); }, 700);
         });
+    });
+})();
+
+// Skills – floating logo preview following the cursor
+(function () {
+    var list = document.querySelector('.skills-list');
+    var preview = document.querySelector('.skills-preview');
+    if (!list || !preview) return;
+    var ok = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 901px) and (prefers-reduced-motion: no-preference)');
+    var inner = preview.querySelector('.skills-preview__inner');
+    var mx = 0, my = 0, px = 0, py = 0, rot = 0, running = false, active = null;
+
+    function loop() {
+        var dx = mx - px;
+        px += dx * 0.16;
+        py += (my - py) * 0.16;
+        rot += ((Math.max(-12, Math.min(12, dx * 0.15))) - rot) * 0.12;
+        preview.style.transform = 'translate3d(' + (px + 130).toFixed(1) + 'px,' + py.toFixed(1) + 'px,0) rotate(' + rot.toFixed(2) + 'deg)';
+        if (active || Math.abs(dx) > 0.2) requestAnimationFrame(loop);
+        else running = false;
+    }
+
+    list.addEventListener('pointermove', function (e) {
+        if (!ok.matches || e.pointerType !== 'mouse') return;
+        mx = e.clientX; my = e.clientY;
+        var row = e.target.closest('.skill-row');
+        if (row && row !== active) {
+            if (!active) { px = mx; py = my; }
+            active = row;
+            var logo = row.querySelector('.skill-row__logo');
+            inner.innerHTML = logo ? logo.innerHTML : '';
+            preview.classList.add('is-visible');
+        }
+        if (!running) { running = true; requestAnimationFrame(loop); }
+    }, { passive: true });
+
+    list.addEventListener('pointerleave', function () {
+        active = null;
+        preview.classList.remove('is-visible');
     });
 })();

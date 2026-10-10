@@ -45,15 +45,11 @@
     }
 
     // Skills
-    var skillsWrap = document.querySelector('#skills > div');
-    if (skillsWrap) {
-        add(skillsWrap.querySelector('h2'), null, 0);
-        add(skillsWrap.querySelector('p'),  null, 80);
-        var skillGrid = skillsWrap.querySelector('div[style*="grid-template-columns"]');
-        if (skillGrid) {
-            Array.from(skillGrid.children).forEach(function (c, i) { add(c, null, i * 80); });
-        }
+    var skillsHead = document.querySelector('#skills .skills-head');
+    if (skillsHead) {
+        Array.from(skillsHead.children).forEach(function (c, i) { add(c, null, i * 80); });
     }
+    document.querySelectorAll('#skills .skills-list > li').forEach(function (c, i) { add(c, null, i * 70); });
 
     // Why
     var whyEl = document.querySelector('#why');
