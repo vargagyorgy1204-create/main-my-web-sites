@@ -3,7 +3,7 @@
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    var LINK = 'a, button, [role="button"], label, summary, select, .hero-chip, .skills-dot';
+    var LINK = 'a, button, [role="button"], label, summary, select, .hero-chip, .skills-dot, .about-sign';
     var MAGNETIC = '.hbtn, .nav-cta, .modal-quote-btn, .stamp, nav ul li a, .service-modal-trigger, .btn-portfolio-ig, .btn-about';
     var VIEW = '.qr-card, .about-photo-card, .bento-showcase-card, [data-cursor="view"]';
     var TEXT = 'p, h1, h2, h3, h4, li, blockquote';
