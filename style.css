@@ -3343,6 +3343,23 @@ body.contact-page {
     transition: background .25s ease, color .25s ease, box-shadow .25s ease;
 }
 
+.about-bio-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 6px;
+}
+.about-bio-foot .btn-about { align-self: auto; }
+.about-sign {
+    font-family: 'Sacramento', cursive;
+    font-size: 12px;
+    line-height: 1;
+    color: #4B1956;
+    white-space: nowrap;
+    user-select: none;
+}
+
 .btn-about:hover {
     background: #4B1956;
     color: #fff;
