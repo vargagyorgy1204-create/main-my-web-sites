@@ -4505,7 +4505,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     -webkit-text-fill-color: #fff !important;
     background: none !important;
     text-align: left !important;
-    max-width: 1000px;
+    max-width: none;
     margin: 0 !important;
 }
 
