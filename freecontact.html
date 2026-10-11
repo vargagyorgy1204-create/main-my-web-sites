@@ -24,9 +24,35 @@
         "serviceType": "Web Design"
     }
     </script>
-    <link rel="stylesheet" href="style.css?v=sk45">
+    <link rel="stylesheet" href="style.css?v=sk64">
 </head>
-<body style="background: #0f0c29; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;">
+<body data-theme="dark" style="background: #0f0c29; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 84px 20px 20px;">
+<header class="nav" id="nav">
+    <a class="nav__logo" href="index.html" aria-label="VarBro - vissza a főoldalra">
+        <img class="nav__logo-img nav__logo-img--dark" src="logowhite.png" alt="VarBro" width="44" height="44">
+        <img class="nav__logo-img nav__logo-img--light" src="logoblack.png" alt="" aria-hidden="true" width="44" height="44">
+        <span class="nav__logo-fallback" aria-hidden="true">Vb</span>
+    </a>
+
+    <button class="burger" id="burger" type="button" aria-label="Menü megnyitása" aria-expanded="false" aria-controls="menu">
+        <span class="burger__line"></span>
+        <span class="burger__line"></span>
+        <span class="burger__line"></span>
+    </button>
+</header>
+
+<div class="menu" id="menu" inert>
+    <nav class="menu__inner" aria-label="Főmenü">
+        <ul class="menu__list">
+            <li class="menu__item"><a class="menu__link" href="index.html#about">Rólam</a></li>
+            <li class="menu__item"><a class="menu__link" href="index.html#bento-showcase">Referenciák</a></li>
+            <li class="menu__item"><a class="menu__link" href="index.html#services">Szolgáltatások</a></li>
+            <li class="menu__item"><a class="menu__link" href="index.html#portfolio">Portfólió</a></li>
+        </ul>
+        <a class="menu__cta" href="whatsappcontact.html">Kapcsolat</a>
+    </nav>
+</div>
+
     <div style="background: white; padding: 40px; border-radius: 30px; width: 100%; max-width: 500px;">
         <a href="index.html" style="display:inline-block; margin-bottom:20px; color:#6c5ce7; text-decoration:none; font-weight:bold;">← Vissza</a>
         <h1 style="margin-bottom: 20px;">Kérjen ajánlatot</h1>
@@ -37,6 +63,7 @@
             <button type="submit" class="btn-main">Küldés</button>
         </form>
     </div>
-<script src="cursor.js?v=3" defer></script>
+<script src="nav.js?v=1" defer></script>
+<script src="cursor.js?v=4" defer></script>
 </body>
 </html>

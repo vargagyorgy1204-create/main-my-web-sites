@@ -26,15 +26,37 @@
         "serviceType": "Web Design"
     }
     </script>
-    <link rel="stylesheet" href="style.css?v=sk45">
+    <link rel="stylesheet" href="style.css?v=sk64">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="contact-page">
+<body class="contact-page" data-theme="light">
 
-<a href="index.html" class="back-nav">
-    <i class="fas fa-arrow-left"></i> Vissza a főoldalra
-</a>
+<header class="nav nav--on-light" id="nav">
+    <a class="nav__logo" href="index.html" aria-label="VarBro - vissza a főoldalra">
+        <img class="nav__logo-img nav__logo-img--dark" src="logowhite.png" alt="VarBro" width="44" height="44">
+        <img class="nav__logo-img nav__logo-img--light" src="logoblack.png" alt="" aria-hidden="true" width="44" height="44">
+        <span class="nav__logo-fallback" aria-hidden="true">Vb</span>
+    </a>
+
+    <button class="burger" id="burger" type="button" aria-label="Menü megnyitása" aria-expanded="false" aria-controls="menu">
+        <span class="burger__line"></span>
+        <span class="burger__line"></span>
+        <span class="burger__line"></span>
+    </button>
+</header>
+
+<div class="menu" id="menu" inert>
+    <nav class="menu__inner" aria-label="Főmenü">
+        <ul class="menu__list">
+            <li class="menu__item"><a class="menu__link" href="index.html#about">Rólam</a></li>
+            <li class="menu__item"><a class="menu__link" href="index.html#bento-showcase">Referenciák</a></li>
+            <li class="menu__item"><a class="menu__link" href="index.html#services">Szolgáltatások</a></li>
+            <li class="menu__item"><a class="menu__link" href="index.html#portfolio">Portfólió</a></li>
+        </ul>
+        <a class="menu__cta" href="whatsappcontact.html" aria-current="page">Kapcsolat</a>
+    </nav>
+</div>
 
 <main class="contact-page-wrapper">
     <div class="contact-card">
@@ -78,7 +100,8 @@
     </div>
 </div>
 
-<script src="script.js?v=11"></script>
-<script src="cursor.js?v=3" defer></script>
+<script src="script.js?v=22"></script>
+<script src="nav.js?v=1" defer></script>
+<script src="cursor.js?v=4" defer></script>
 </body>
 </html>
