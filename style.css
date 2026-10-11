@@ -4505,7 +4505,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     -webkit-text-fill-color: #fff !important;
     background: none !important;
     text-align: left !important;
-    max-width: 880px;
+    max-width: 1000px;
     margin: 0 !important;
 }
 
@@ -4614,6 +4614,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
 @media (max-width: 767px) {
     #steps { padding: 88px 20px; }
     .steps-head { margin-bottom: 44px; }
+    #steps .section-heading { font-size: clamp(19px, 5.6vw, 26px) !important; }
     .process { grid-template-columns: 1fr; gap: 40px; }
     .process__line {
         top: 28px;
