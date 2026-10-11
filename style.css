@@ -3371,6 +3371,91 @@ body.contact-page {
     min-height: 0;
 }
 
+/* ── Hogyan dolgozom (myapproach.html) – About-style editorial split ── */
+.ap { background: #f8f7ff; padding: 120px 20px 90px; }
+.ap-wrap { max-width: 1100px; margin: 0 auto; }
+.ap-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-bottom: 28px;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+    color: #6b6b80; text-decoration: none; transition: color .2s ease;
+}
+.ap-back:hover { color: #4B1956; }
+.ap-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 20px;
+    align-items: start;
+}
+.ap-photo {
+    position: sticky;
+    top: 100px;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+}
+.ap-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.ap-card {
+    background: #fff;
+    border: 1px solid rgba(108,99,255,.12);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(108,99,255,.08);
+    padding: 44px 48px;
+    display: flex; flex-direction: column; gap: 16px;
+}
+.ap-eyebrow {
+    margin: 0;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase; line-height: 1.6;
+    color: #8a8a8a; -webkit-text-fill-color: #8a8a8a; background: none; text-shadow: none;
+}
+.ap-title {
+    margin: 0;
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(20px, 2vw, 27px); overflow-wrap: break-word; hyphens: manual; line-height: 1.12; letter-spacing: -0.02em;
+    color: #1a1a2e; -webkit-text-fill-color: #1a1a2e; background: none; text-align: left;
+}
+.ap-text { margin: 0; color: #3d3d5c; line-height: 1.8; font-size: 1rem; }
+.ap-label {
+    margin: 10px 0 0;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase; color: #4B1956;
+}
+.ap-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(26,26,46,.1); }
+.ap-row {
+    display: grid;
+    grid-template-columns: 34px 44px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(26,26,46,.1);
+}
+.ap-row__num {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; padding-top: 10px;
+    background: var(--card-primary); -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent;
+}
+.ap-row__icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--card-secondary); color: #fff;
+}
+.ap-row__body h3 { margin: 0 0 4px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: #1a1a2e; }
+.ap-row__body p { margin: 0; color: #3d3d5c; font-size: .92rem; line-height: 1.65; }
+.ap-closing { margin-top: 4px; }
+.ap-card .about-bio-foot { margin-top: 2px; }
+
+@media (max-width: 900px) {
+    .ap { padding: 104px 20px 72px; }
+    .ap-grid { grid-template-columns: minmax(0, 1fr); }
+    .ap-photo { position: relative; top: 0; aspect-ratio: auto; height: min(420px, 100vw); }
+    .ap-card { padding: 32px 28px; }
+}
+@media (max-width: 640px) {
+    .ap-card { padding: 28px 22px; }
+    .ap-row { grid-template-columns: 40px minmax(0, 1fr); }
+    .ap-row__num { display: none; }
+}
+
 /* ── Hero ───────────────────────────────────────────── */
 #hero {
     position: relative;
