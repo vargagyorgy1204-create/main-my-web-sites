@@ -37,11 +37,6 @@
     if (bioCard) {
         prep(bioCard, 'right', 100);
         toObserve.push(bioCard);
-        bioCard.addEventListener('transitionend', function onDone(e) {
-            if (e.propertyName !== 'opacity' || e.target !== bioCard) return;
-            bioCard.removeEventListener('transitionend', onDone);
-            countUp();
-        });
     }
 
     // Skills
@@ -122,25 +117,4 @@
             toObserve.forEach(function (el) { if (el) observer.observe(el); });
         });
     });
-
-    // Count-up for about stat numbers (triggered when bio card finishes animating in)
-    function countUp() {
-        document.querySelectorAll('.about-stat-num').forEach(function (el) {
-            var raw = el.textContent.trim();
-            var m = raw.match(/^(\d+)/);
-            if (!m) return;
-            var target = parseInt(m[1], 10);
-            var suffix = raw.slice(m[1].length);
-            var t0 = null;
-            var dur = 1200;
-            function step(ts) {
-                if (!t0) t0 = ts;
-                var p = Math.min((ts - t0) / dur, 1);
-                var eased = 1 - Math.pow(1 - p, 3);
-                el.textContent = Math.round(eased * target) + suffix;
-                if (p < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-        });
-    }
 })();

@@ -3152,31 +3152,6 @@ body.contact-page {
     pointer-events: none;
 }
 
-/* Stats card — own card below photo */
-.about-stats-card {
-    background: #fff;
-    border: 1px solid rgba(108,99,255,.12);
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(108,99,255,.08);
-    padding: 22px 28px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-}
-.about-stats-card .about-stats {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    margin-top: 0;
-}
-.about-stats-card .about-stat {
-    flex: 1;
-    align-items: center;
-    text-align: center;
-    padding: 0 12px;
-}
-.about-stats-card .about-stat:first-child { padding-left: 12px; }
-
 .about-bio-card {
     background: #fff;
     border: 1px solid rgba(108,99,255,.12);
@@ -3218,42 +3193,6 @@ body.contact-page {
     line-height: 1.8;
     font-size: 1rem;
     margin: 0;
-}
-
-.about-stats {
-    display: inline-flex;
-    align-items: center;
-    margin-top: 4px;
-}
-
-.about-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0 20px;
-}
-
-.about-stat:first-child { padding-left: 0; }
-
-.about-stat-num {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #C026A3;
-    line-height: 1.2;
-}
-
-.about-stat-label {
-    font-size: 0.75rem;
-    color: #7a7a9a;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.about-stat-divider {
-    width: 1px;
-    height: 36px;
-    background: rgba(75,25,86,.12);
-    flex-shrink: 0;
 }
 
 .btn-about {
@@ -3353,9 +3292,6 @@ body.contact-page {
     .about-bio-card {
         padding: 32px 36px;
     }
-    .about-stats-card {
-        padding: 18px 24px;
-    }
 }
 
 @media (max-width: 640px) {
@@ -3364,24 +3300,6 @@ body.contact-page {
     }
     .about-bio-card {
         padding: 28px 24px;
-    }
-    .about-stats {
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-    /* Keep stats in one row inside their own card on small screens */
-    .about-stats-card {
-        padding: 16px 18px;
-    }
-    .about-stats-card .about-stats {
-        flex-wrap: nowrap;
-        gap: 0;
-    }
-    .about-stats-card .about-stat-num {
-        font-size: 1.2rem;
-    }
-    .about-stats-card .about-stat-label {
-        font-size: 0.68rem;
     }
 }
 
