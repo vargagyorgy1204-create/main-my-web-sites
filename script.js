@@ -770,31 +770,49 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     });
 })();
 
-// Steps - process line drawn by scroll progress
+// Steps - process line drawn by scroll progress (pinned step-by-step on large screens)
 (function () {
+    var section = document.getElementById('steps');
     var process = document.querySelector('.process');
-    if (!process) return;
+    if (!section || !process) return;
     var steps = Array.prototype.slice.call(process.querySelectorAll('.process__step'));
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var pinQuery = window.matchMedia('(min-width: 768px) and (min-height: 720px) and (prefers-reduced-motion: no-preference)');
     var ticking = false;
 
     function setProgress(p) {
         process.style.setProperty('--progress', p.toFixed(3));
         steps.forEach(function (step, i) {
             var threshold = steps.length > 1 ? i / (steps.length - 1) : 0;
-            step.classList.toggle('is-active', i === 0 ? p > 0.001 : p >= threshold - 0.02);
+            step.classList.toggle('is-active', i === 0 ? p > 0.001 || pinQuery.matches : p >= threshold - 0.02);
         });
+    }
+
+    function staged(t) {
+        if (t < 0.08) return 0;
+        if (t < 0.46) return (t - 0.08) / 0.38 * 0.5;
+        if (t < 0.54) return 0.5;
+        if (t < 0.92) return 0.5 + (t - 0.54) / 0.38 * 0.5;
+        return 1;
     }
 
     function update() {
         ticking = false;
-        if (reduce) { setProgress(1); return; }
-        var r = process.getBoundingClientRect();
+        if (reduce) { setProgress(1); section.classList.add('steps-done'); return; }
+        var r = section.getBoundingClientRect();
         var vh = window.innerHeight;
-        var start = vh * 0.85;
-        var span = Math.max(r.height, 120) + vh * 0.3;
-        var p = (start - r.top) / span;
-        setProgress(Math.max(0, Math.min(1, p)));
+        if (pinQuery.matches) {
+            var total = Math.max(1, r.height - vh);
+            var t = Math.max(0, Math.min(1, -r.top / total));
+            setProgress(staged(t));
+            section.classList.toggle('steps-done', t >= 0.94);
+        } else {
+            var pr = process.getBoundingClientRect();
+            var start = vh * 0.85;
+            var span = Math.max(pr.height, 120) + vh * 0.3;
+            setProgress(Math.max(0, Math.min(1, (start - pr.top) / span)));
+            section.classList.add('steps-done');
+        }
     }
 
     function onScroll() {

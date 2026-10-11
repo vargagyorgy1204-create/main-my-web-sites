@@ -64,7 +64,6 @@
     if (stepsHead) {
         Array.from(stepsHead.children).forEach(function (c, i) { add(c, null, i * 80); });
     }
-    add(document.querySelector('#steps .process-cta'), null, 0);
 
     // Testimonial
     var showcaseEl = document.querySelector('#bento-showcase');
