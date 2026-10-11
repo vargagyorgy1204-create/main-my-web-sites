@@ -3305,7 +3305,36 @@ body.contact-page {
 
 /* ── #about photo: four-photo scroll sequence + pinned section ── */
 .about-pin { width: 100%; }
-.about-photo-stack { position: absolute; inset: 0; }
+.about-photo-card {
+    display: flex;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    padding: 6px;
+    border-radius: 28px;
+    overflow: visible;
+    background:
+        linear-gradient(var(--card-secondary), var(--card-secondary)) padding-box,
+        var(--card-primary) border-box;
+    box-shadow:
+        0 30px 60px -20px rgb(0 0 0 / 0.35),
+        0 18px 50px -18px rgb(200 80 192 / 0.45);
+}
+.about-photo-stack {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    border-radius: 20px;
+    overflow: hidden;
+}
+@media (max-width: 767px) {
+    .about-photo-card {
+        padding: 4px;
+        box-shadow:
+            0 18px 40px -16px rgb(0 0 0 / 0.3),
+            0 10px 30px -14px rgb(200 80 192 / 0.35);
+    }
+    .about-photo-stack { border-radius: 22px; }
+}
 .about-img--2,
 .about-img--3,
 .about-img--4 { opacity: 0; }
