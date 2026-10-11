@@ -717,3 +717,98 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     window.addEventListener('load', fit);
     fit();
 })();
+
+/* ── About – four-photo scroll sequence (sticky pin, no library) ───────── */
+(function () {
+    var section = document.getElementById('about');
+    if (!section) return;
+    var pin = section.querySelector('.about-pin');
+    var grid = section.querySelector('.about-premium-grid');
+    var imgs = Array.prototype.slice.call(section.querySelectorAll('.about-img'));
+    if (!pin || !grid || imgs.length !== 4) return;
+
+    var BANDS = [[0.18, 0.32], [0.46, 0.60], [0.72, 0.86]];
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var pinned = false, ready = false, loading = false, failed = false, warned = false, ticking = false, io = null;
+
+    function warnOnce(msg) { if (warned) return; warned = true; console.warn('[VarBro] ' + msg); }
+
+    function fits() {
+        var cs = getComputedStyle(pin);
+        var need = grid.getBoundingClientRect().height + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+        return need <= window.innerHeight + 0.5;
+    }
+
+    function resetOpacity() {
+        for (var i = 1; i < 4; i++) imgs[i].style.opacity = '';
+    }
+
+    function setPinned(on) {
+        if (on === pinned) return;
+        pinned = on;
+        section.classList.toggle('is-pinned', on);
+        if (on) { watch(); update(); } else { resetOpacity(); if (io) { io.disconnect(); io = null; } }
+    }
+
+    function evaluate() {
+        var ok = !failed && window.innerWidth >= 768 && !reduce.matches;
+        if (ok) {
+            var was = pinned;
+            if (!was) section.classList.add('is-pinned');
+            ok = fits();
+            if (!was) section.classList.remove('is-pinned');
+        }
+        setPinned(ok);
+    }
+
+    /* Images 2-4 load only while the pin is active, ~1.5 viewports before it starts. */
+    function watch() {
+        if (ready || loading || io || !('IntersectionObserver' in window)) { if (!io && !ready && !loading) load(); return; }
+        io = new IntersectionObserver(function (es) {
+            if (es[0].isIntersecting) { io.disconnect(); io = null; load(); }
+        }, { rootMargin: '150% 0px 150% 0px' });
+        io.observe(section);
+    }
+
+    function load() {
+        if (loading || ready) return;
+        loading = true;
+        Promise.all(imgs.slice(1).map(function (img) {
+            return new Promise(function (resolve, reject) {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', reject, { once: true });
+                img.src = img.getAttribute('data-src');
+            }).then(function () { return img.decode ? img.decode().catch(function () {}) : null; });
+        })).then(function () {
+            ready = true; update();
+        }, function () {
+            failed = true;
+            warnOnce('About photo sequence disabled: one of the photos failed to load.');
+            setPinned(false);
+        });
+    }
+
+    function update() {
+        ticking = false;
+        if (!pinned || !ready) return;
+        var r = section.getBoundingClientRect();
+        var span = r.height - window.innerHeight;
+        var p = span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0;
+        for (var i = 0; i < 3; i++) {
+            var a = BANDS[i][0], b = BANDS[i][1];
+            imgs[i + 1].style.opacity = p <= a ? 0 : p >= b ? 1 : (p - a) / (b - a);
+        }
+        section.style.setProperty('--about-p', p.toFixed(4));
+    }
+
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    var rt;
+    function onResize() { cancelAnimationFrame(rt); rt = requestAnimationFrame(function () { evaluate(); update(); }); }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    window.addEventListener('load', onResize);
+    if (reduce.addEventListener) reduce.addEventListener('change', onResize);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
+    evaluate();
+})();
