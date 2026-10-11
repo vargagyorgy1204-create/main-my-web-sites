@@ -4430,6 +4430,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
 
 @media (max-width: 767px) {
     .why-head { margin-bottom: 32px; }
+    #why .section-heading { font-size: clamp(19px, 5.6vw, 26px) !important; }
     .why-panels { flex-direction: column; height: auto; gap: 10px; }
     .why-panel { flex: none; border-radius: 20px; }
     .why-panel__tab {
