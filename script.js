@@ -777,7 +777,7 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     if (!section || !process) return;
     var steps = Array.prototype.slice.call(process.querySelectorAll('.process__step'));
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var pinQuery = window.matchMedia('(min-width: 768px) and (min-height: 720px) and (prefers-reduced-motion: no-preference)');
+    var pinQuery = window.matchMedia('(min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)');
     var ticking = false;
 
     function setProgress(p) {
@@ -794,6 +794,16 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         if (t < 0.54) return 0.5;
         if (t < 0.92) return 0.5 + (t - 0.54) / 0.38 * 0.5;
         return 1;
+    }
+
+    function fit() {
+        var inner = section.querySelector('.steps-inner');
+        if (!inner) return;
+        if (!pinQuery.matches) { section.style.removeProperty('--fit'); return; }
+        var avail = window.innerHeight - 96 - 28;
+        var natural = inner.offsetHeight;
+        var s = natural > 0 ? Math.max(0.55, Math.min(1, avail / natural)) : 1;
+        section.style.setProperty('--fit', s.toFixed(3));
     }
 
     function update() {
@@ -823,6 +833,32 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', function () { fit(); onScroll(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(); update(); });
+    fit();
     update();
+})();
+
+// Why section - scale content to fit the viewport height on desktop
+(function () {
+    var section = document.getElementById('why');
+    var inner = section && section.querySelector('.why-inner');
+    if (!inner) return;
+    var q = window.matchMedia('(min-width: 768px) and (min-height: 520px)');
+
+    function fit() {
+        if (!q.matches) { section.style.removeProperty('--fit'); section.style.removeProperty('--fit-h'); return; }
+        section.style.setProperty('--fit-h', 'auto');
+        section.style.setProperty('--fit', '1');
+        var avail = window.innerHeight - 96 - 28;
+        var natural = inner.offsetHeight;
+        var s = natural > 0 ? Math.max(0.55, Math.min(1, avail / natural)) : 1;
+        section.style.setProperty('--fit', s.toFixed(3));
+        section.style.setProperty('--fit-h', Math.round(natural * s) + 'px');
+    }
+
+    window.addEventListener('resize', fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    window.addEventListener('load', fit);
+    fit();
 })();

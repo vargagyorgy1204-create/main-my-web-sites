@@ -4718,7 +4718,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
 }
 
 /* Steps – pinned (sticky) mode: section stays on screen while the line draws step by step */
-@media (min-width: 768px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps { height: 320vh; height: 320svh; padding: 0; }
     .steps-pin {
         position: sticky;
@@ -4727,10 +4727,14 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
         height: 100svh;
         display: flex;
         align-items: center;
-        padding: 104px 24px 40px;
+        padding: 96px 24px 28px;
         box-sizing: border-box;
     }
-    .steps-pin .steps-inner { width: 100%; }
+    .steps-pin .steps-inner {
+        width: 100%;
+        transform: scale(var(--fit, 1));
+        transform-origin: left center;
+    }
     .steps-head { margin-bottom: 44px; }
     .process__body { margin-top: 22px; }
     .process-cta {
@@ -4742,4 +4746,25 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
         transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
     #steps.steps-done .process-cta { opacity: 1; transform: none; pointer-events: auto; }
+}
+
+/* Why – fit the section to the viewport height (same proportions as the pinned Steps section) */
+@media (min-width: 768px) and (min-height: 520px) {
+    #why {
+        min-height: 100vh;
+        min-height: 100svh;
+        display: flex;
+        align-items: center;
+        padding: 96px 24px 28px !important;
+        box-sizing: border-box;
+    }
+    #why .why-inner {
+        width: calc(min(1152px, 100vw - 48px) / var(--fit, 1));
+        max-width: none;
+        flex: 0 0 auto;
+        margin: 0 0 0 max(0px, calc((100vw - 1152px) / 2 - 24px));
+        height: var(--fit-h, auto);
+        transform: scale(var(--fit, 1));
+        transform-origin: left top;
+    }
 }
