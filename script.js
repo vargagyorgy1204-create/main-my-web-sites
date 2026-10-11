@@ -742,3 +742,30 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         preview.classList.remove('is-visible');
     });
 })();
+
+// Why section – expanding panels / mobile accordion
+(function () {
+    var panels = Array.prototype.slice.call(document.querySelectorAll('.why-panel'));
+    if (!panels.length) return;
+    var desktopHover = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 768px)');
+
+    function activate(panel) {
+        panels.forEach(function (p) {
+            var on = p === panel;
+            p.classList.toggle('is-active', on);
+            var tab = p.querySelector('.why-panel__tab');
+            if (tab) tab.setAttribute('aria-expanded', on ? 'true' : 'false');
+        });
+    }
+
+    panels.forEach(function (panel) {
+        panel.addEventListener('pointerenter', function (e) {
+            if (e.pointerType === 'mouse' && desktopHover.matches) activate(panel);
+        });
+        var tab = panel.querySelector('.why-panel__tab');
+        if (tab) {
+            tab.addEventListener('click', function () { activate(panel); });
+            tab.addEventListener('focus', function () { activate(panel); });
+        }
+    });
+})();

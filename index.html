@@ -44,7 +44,7 @@
         }
         </script>
 
-    <link rel="stylesheet" href="style.css?v=sk55">
+    <link rel="stylesheet" href="style.css?v=sk56">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
@@ -258,46 +258,102 @@
 </section>
 
 <section id="why" class="section grey-bg">
-    <div class="container">
-        <h2>Miért válassz engem?</h2>
-        <p class="section-subtitle">Egyedi megközelítés, üzletorientált szemlélet és elkötelezettség a hosszú távú értékteremtés mellett.</p>
-
-        <div class="bento-grid bento-why-grid">
-            <div class="bento-card bento-card--span2 bento-card--gradient">
-                <span class="bento-icon bento-icon--white"><i class="fas fa-star"></i></span>
-                <h3>Tapasztalat 3+ év</h3>
-                <p>Nem csak kódot írok, hanem megoldásokat szállítok. Évek óta építek digitális termékeket, amik valóban működnek és valódi üzleti eredményeket hoznak.</p>
-            </div>
-
-            <div class="bento-card">
-                <span class="bento-icon"><i class="fas fa-users"></i></span>
-                <h4>Felhasználó Központú</h4>
-                <p>A design nálam nem csak dísz. Olyan felületeket alkotok, amiket az ügyfeleid imádni fognak. A magas konverzió alapja a kiváló UX.</p>
-            </div>
-
-            <div class="bento-card bento-card--orange">
-                <span class="bento-icon bento-icon--white"><i class="fas fa-lightbulb"></i></span>
-                <h4>Újítás</h4>
-                <p>A holnap technológiáival dolgozom már ma. Gyors, skálázható és modern stack – mert a lassú weboldal már a múlté.</p>
-            </div>
-
-            <div class="bento-card">
-                <span class="bento-icon"><i class="fas fa-comments"></i></span>
-                <h4>Kommunikáció</h4>
-                <p>Felejtsd el a végtelen e-maileket. Gyors visszajelzés, tiszta beszéd és teljes transzparencia a projekt során.</p>
-            </div>
-
-            <div class="bento-card bento-card--green">
-                <span class="bento-icon bento-icon--white"><i class="fas fa-shield-alt"></i></span>
-                <h4>Megbízhatóság</h4>
-                <p>A határidő nálam szent. Amit megígérek, azt leszállítom – kifogások nélkül, prémium minőségben.</p>
-            </div>
-
-            <div class="bento-card bento-card--span2 bento-card--dark">
-                <span class="bento-icon bento-icon--white"><i class="fas fa-headset"></i></span>
-                <h3>Támogatás</h3>
-                <p>A projekt átadása után is ott vagyok melletted: karbantartás, frissítések és szakmai segítség, amikor csak kell.</p>
-            </div>
+    <div class="why-inner">
+        <div class="why-head">
+            <p class="section-eyebrow">Miért válassz engem?</p>
+            <h2 class="section-heading">Egyedi megközelítés, üzletorientált szemlélet és elkötelezettség a hosszú távú értékteremtés mellett.</h2>
+        </div>
+        <div class="why-panels">
+            <article class="why-panel is-active" style="--panel-bg: var(--card-primary)">
+                <button class="why-panel__tab" type="button" aria-expanded="true" aria-controls="why-p1">
+                    <span class="why-panel__num">01</span>
+                    <span class="why-panel__label">Tapasztalat 3+ év</span>
+                    <span class="why-panel__plus" aria-hidden="true"></span>
+                </button>
+                <div class="why-panel__body" id="why-p1">
+                    <div class="why-panel__content">
+                        <span class="why-panel__icon"><i data-lucide="award" class="icon"></i></span>
+                        <h3 class="why-panel__title">Tapasztalat 3+ év</h3>
+                        <p class="why-panel__text">Nem csak kódot írok, hanem megoldásokat szállítok. Évek óta építek digitális termékeket, amik valóban működnek és valódi üzleti eredményeket hoznak.</p>
+                    </div>
+                    <span class="why-panel__big" aria-hidden="true">01</span>
+                </div>
+            </article>
+            <article class="why-panel" style="--panel-bg: var(--card-accent-cool)">
+                <button class="why-panel__tab" type="button" aria-expanded="false" aria-controls="why-p2">
+                    <span class="why-panel__num">02</span>
+                    <span class="why-panel__label">Felhasználó Központú</span>
+                    <span class="why-panel__plus" aria-hidden="true"></span>
+                </button>
+                <div class="why-panel__body" id="why-p2">
+                    <div class="why-panel__content">
+                        <span class="why-panel__icon"><i data-lucide="users" class="icon"></i></span>
+                        <h3 class="why-panel__title">Felhasználó Központú</h3>
+                        <p class="why-panel__text">A design nálam nem csak dísz. Olyan felületeket alkotok, amiket az ügyfeleid imádni fognak. A magas konverzió alapja a kiváló UX.</p>
+                    </div>
+                    <span class="why-panel__big" aria-hidden="true">02</span>
+                </div>
+            </article>
+            <article class="why-panel" style="--panel-bg: var(--card-accent-warm)">
+                <button class="why-panel__tab" type="button" aria-expanded="false" aria-controls="why-p3">
+                    <span class="why-panel__num">03</span>
+                    <span class="why-panel__label">Újítás</span>
+                    <span class="why-panel__plus" aria-hidden="true"></span>
+                </button>
+                <div class="why-panel__body" id="why-p3">
+                    <div class="why-panel__content">
+                        <span class="why-panel__icon"><i data-lucide="lightbulb" class="icon"></i></span>
+                        <h3 class="why-panel__title">Újítás</h3>
+                        <p class="why-panel__text">A holnap technológiáival dolgozom már ma. Gyors, skálázható és modern stack – mert a lassú weboldal már a múlté.</p>
+                    </div>
+                    <span class="why-panel__big" aria-hidden="true">03</span>
+                </div>
+            </article>
+            <article class="why-panel" style="--panel-bg: #1a1f2e">
+                <button class="why-panel__tab" type="button" aria-expanded="false" aria-controls="why-p4">
+                    <span class="why-panel__num">04</span>
+                    <span class="why-panel__label">Kommunikáció</span>
+                    <span class="why-panel__plus" aria-hidden="true"></span>
+                </button>
+                <div class="why-panel__body" id="why-p4">
+                    <div class="why-panel__content">
+                        <span class="why-panel__icon"><i data-lucide="messages-square" class="icon"></i></span>
+                        <h3 class="why-panel__title">Kommunikáció</h3>
+                        <p class="why-panel__text">Felejtsd el a végtelen e-maileket. Gyors visszajelzés, tiszta beszéd és teljes transzparencia a projekt során.</p>
+                    </div>
+                    <span class="why-panel__big" aria-hidden="true">04</span>
+                </div>
+            </article>
+            <article class="why-panel" style="--panel-bg: var(--card-primary)">
+                <button class="why-panel__tab" type="button" aria-expanded="false" aria-controls="why-p5">
+                    <span class="why-panel__num">05</span>
+                    <span class="why-panel__label">Megbízhatóság</span>
+                    <span class="why-panel__plus" aria-hidden="true"></span>
+                </button>
+                <div class="why-panel__body" id="why-p5">
+                    <div class="why-panel__content">
+                        <span class="why-panel__icon"><i data-lucide="badge-check" class="icon"></i></span>
+                        <h3 class="why-panel__title">Megbízhatóság</h3>
+                        <p class="why-panel__text">A határidő nálam szent. Amit megígérek, azt leszállítom – kifogások nélkül, prémium minőségben.</p>
+                    </div>
+                    <span class="why-panel__big" aria-hidden="true">05</span>
+                </div>
+            </article>
+            <article class="why-panel" style="--panel-bg: var(--card-accent-cool)">
+                <button class="why-panel__tab" type="button" aria-expanded="false" aria-controls="why-p6">
+                    <span class="why-panel__num">06</span>
+                    <span class="why-panel__label">Támogatás</span>
+                    <span class="why-panel__plus" aria-hidden="true"></span>
+                </button>
+                <div class="why-panel__body" id="why-p6">
+                    <div class="why-panel__content">
+                        <span class="why-panel__icon"><i data-lucide="headphones" class="icon"></i></span>
+                        <h3 class="why-panel__title">Támogatás</h3>
+                        <p class="why-panel__text">A projekt átadása után is ott vagyok melletted: karbantartás, frissítések és szakmai segítség, amikor csak kell.</p>
+                    </div>
+                    <span class="why-panel__big" aria-hidden="true">06</span>
+                </div>
+            </article>
         </div>
     </div>
 </section>
@@ -940,8 +996,8 @@
 
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="script.js?v=15"></script>
-<script src="animations.js?v=2"></script>
+<script src="script.js?v=16"></script>
+<script src="animations.js?v=3"></script>
 <script src="cursor.js?v=3" defer></script>
 </body>
 </html>

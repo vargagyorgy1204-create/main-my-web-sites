@@ -54,8 +54,9 @@
     // Why
     var whyEl = document.querySelector('#why');
     if (whyEl) {
-        add(whyEl.querySelector('h2'), null, 0);
-        whyEl.querySelectorAll('.bento-card').forEach(function (c, i) { add(c, null, i * 80); });
+        var whyHead = whyEl.querySelector('.why-head');
+        if (whyHead) Array.from(whyHead.children).forEach(function (c, i) { add(c, null, i * 80); });
+        whyEl.querySelectorAll('.why-panel').forEach(function (c, i) { add(c, null, i * 80); });
     }
 
     // Steps
