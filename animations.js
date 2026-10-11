@@ -60,15 +60,11 @@
     }
 
     // Steps
-    var stepsWrap = document.querySelector('#steps > div');
-    if (stepsWrap) {
-        add(stepsWrap.querySelector('h2'), null, 0);
-        add(stepsWrap.querySelector('p'),  null, 80);
-        var stepGrid = stepsWrap.querySelector('div[style*="grid-template-columns"]');
-        if (stepGrid) {
-            Array.from(stepGrid.children).forEach(function (c, i) { add(c, null, i * 90); });
-        }
+    var stepsHead = document.querySelector('#steps .steps-head');
+    if (stepsHead) {
+        Array.from(stepsHead.children).forEach(function (c, i) { add(c, null, i * 80); });
     }
+    add(document.querySelector('#steps .process-cta'), null, 0);
 
     // Testimonial
     var showcaseEl = document.querySelector('#bento-showcase');

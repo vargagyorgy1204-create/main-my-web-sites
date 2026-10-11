@@ -769,3 +769,42 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         }
     });
 })();
+
+// Steps - process line drawn by scroll progress
+(function () {
+    var process = document.querySelector('.process');
+    if (!process) return;
+    var steps = Array.prototype.slice.call(process.querySelectorAll('.process__step'));
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var ticking = false;
+
+    function setProgress(p) {
+        process.style.setProperty('--progress', p.toFixed(3));
+        steps.forEach(function (step, i) {
+            var threshold = steps.length > 1 ? i / (steps.length - 1) : 0;
+            step.classList.toggle('is-active', i === 0 ? p > 0.001 : p >= threshold - 0.02);
+        });
+    }
+
+    function update() {
+        ticking = false;
+        if (reduce) { setProgress(1); return; }
+        var r = process.getBoundingClientRect();
+        var vh = window.innerHeight;
+        var start = vh * 0.85;
+        var span = Math.max(r.height, 120) + vh * 0.3;
+        var p = (start - r.top) / span;
+        setProgress(Math.max(0, Math.min(1, p)));
+    }
+
+    function onScroll() {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+})();
