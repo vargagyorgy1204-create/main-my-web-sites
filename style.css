@@ -4268,6 +4268,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
 @media (max-width: 640px) {
     #skills { padding: 88px 20px; }
     .skills-head { margin-bottom: 36px; }
+    #skills .section-heading { font-size: clamp(19px, 5.6vw, 26px) !important; }
     .skill-row {
         grid-template-columns: 44px minmax(0, 1fr);
         column-gap: 16px;
