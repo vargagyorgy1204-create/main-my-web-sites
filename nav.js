@@ -68,6 +68,7 @@
         var sbw = window.innerWidth - root.clientWidth;
         root.style.setProperty('--sbw', sbw > 0 ? sbw + 'px' : '0px');
         document.body.classList.add('menu-open');
+        if (window.VB && VB.lenis) VB.lenis.stop();   /* measured above, before Lenis hides the scrollbar */
         Array.prototype.slice.call(document.body.children).forEach(function (el) {
             if (el === nav || el === menu || el.tagName === 'SCRIPT' || el.tagName === 'NOSCRIPT') return;
             if (el.classList.contains('cursor-ring') || el.classList.contains('cursor-dot')) return;
@@ -81,6 +82,7 @@
     function unlockPage() {
         document.body.classList.remove('menu-open');
         root.style.removeProperty('--sbw');
+        if (window.VB && VB.lenis) VB.lenis.start();
         inerted.forEach(function (el) { el.inert = false; });
         inerted = [];
     }
@@ -148,7 +150,8 @@
     function scrollToHash(hash) {
         var target = hash.length > 1 ? document.querySelector(hash) : null;
         if (!target) return false;
-        target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        if (window.VB && VB.lenis) VB.lenis.scrollTo(target, { offset: 0 });
+        else target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
         if (window.history && history.pushState) history.pushState(null, '', hash);
         return true;
     }
@@ -173,7 +176,10 @@
             if (menuOpen) closeMenu(false);
             if (href.charAt(0) === '#') {
                 e.preventDefault();
-                if (!scrollToHash(href)) window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+                if (!scrollToHash(href)) {
+                    if (window.VB && VB.lenis) VB.lenis.scrollTo(0);
+                    else window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+                }
             }
         });
     }

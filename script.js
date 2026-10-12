@@ -96,6 +96,7 @@ const closeServiceModals = () => {
         overlay.setAttribute('aria-hidden', 'true');
     });
     document.body.classList.remove('service-modal-open');
+    if (window.VB && VB.lenis) VB.lenis.start();
 };
 
 serviceModalTriggers.forEach((trigger) => {
@@ -111,6 +112,7 @@ serviceModalTriggers.forEach((trigger) => {
         targetModal.classList.add('is-open');
         targetModal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('service-modal-open');
+        if (window.VB && VB.lenis) VB.lenis.stop();
     });
 });
 
