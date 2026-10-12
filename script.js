@@ -62,26 +62,81 @@ document.querySelectorAll('.benefit-typed').forEach((span) => {
     }
 });
 
-// Modal Logic
-function closeModal() {
-    document.getElementById('thankYouModal').style.display = 'none';
+// Thank-you modal
+let thankYouOpener = null;
+function openThankYou(opener) {
+    const m = document.getElementById('thankYouModal');
+    if (!m) return;
+    thankYouOpener = opener || null;
+    m.style.display = 'flex';
+    const btn = m.querySelector('button');
+    if (btn) btn.focus({ preventScroll: true });
 }
+function closeModal() {
+    const m = document.getElementById('thankYouModal');
+    if (!m) return;
+    m.style.display = 'none';
+    if (thankYouOpener) thankYouOpener.focus({ preventScroll: true });
+    thankYouOpener = null;
+}
+document.addEventListener('keydown', (e) => {
+    const m = document.getElementById('thankYouModal');
+    if (e.key === 'Escape' && m && m.style.display === 'flex') closeModal();
+});
 
-// Form Submission
+// Contact form (Formspree): Hungarian validation messages, honeypot, inline status
 const form = document.querySelector('.contact-form-ui, .contact-form');
 if (form) {
+    const status = form.querySelector('.contact-form-status');
+    const submitBtn = form.querySelector('[type="submit"]');
+    const MESSAGES = {
+        name: 'Kérjük, adja meg a nevét.',
+        email: 'Kérjük, adja meg az e-mail-címét.',
+        service: 'Kérjük, válasszon a listából.',
+        message: 'Kérjük, írja le röviden a projektet.',
+        consent: 'A küldéshez kérjük, fogadja el az Adatkezelési tájékoztatót.'
+    };
+    form.querySelectorAll('input, select, textarea').forEach((el) => {
+        el.addEventListener('invalid', () => {
+            let msg = '';
+            if (el.validity.valueMissing) msg = MESSAGES[el.name] || 'Kérjük, töltse ki ezt a mezőt.';
+            else if (el.validity.typeMismatch) msg = 'Kérjük, érvényes e-mail-címet adjon meg.';
+            el.setCustomValidity(msg);
+        });
+        const clear = () => el.setCustomValidity('');
+        el.addEventListener('input', clear);
+        el.addEventListener('change', clear);
+    });
+    const setStatus = (text, kind) => {
+        if (!status) return;
+        status.textContent = text;
+        status.classList.toggle('is-error', kind === 'error');
+        status.classList.toggle('is-ok', kind === 'ok');
+    };
     form.onsubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch(form.action, {
-            method: 'POST',
-            body: new FormData(form),
-            headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-            document.getElementById('thankYouModal').style.display = 'flex';
+        if (submitBtn && submitBtn.disabled) return;
+        const hp = form.querySelector('[name="_gotcha"]');
+        if (hp && hp.value) {            // bot: pretend success, send nothing
             form.reset();
-        } else {
-            alert('Hiba történt a küldés során.');
+            openThankYou(submitBtn);
+            return;
+        }
+        setStatus('', '');
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.setAttribute('aria-busy', 'true'); }
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            form.reset();
+            openThankYou(submitBtn);
+        } catch (err) {
+            setStatus('Az üzenetet most nem sikerült elküldeni. Kérjük, próbálja újra, vagy írjon a info@varbro.pro címre.', 'error');
+        } finally {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.removeAttribute('aria-busy'); }
         }
     };
 }
@@ -138,10 +193,20 @@ document.addEventListener('keydown', (event) => {
 
 document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     button.addEventListener('click', () => {
-        const target = button.dataset.redirect || 'whatsappcontact.html';
-        window.location.href = target;
+        const target = button.dataset.redirect || '#contact';
+        if (target.charAt(0) !== '#') {
+            window.location.href = target;
+            return;
+        }
+        closeServiceModals();                      // closes the dialog and restarts Lenis
+        const el = document.querySelector(target);
+        if (!el) return;
+        if (window.VB && VB.lenis) VB.lenis.scrollTo(el, { offset: 0 });
+        else el.scrollIntoView({ behavior: 'auto', block: 'start' });
+        if (window.history && history.pushState) history.pushState(null, '', target);
     });
 });
+
 
 // Testimonial carousel
 (function () {
