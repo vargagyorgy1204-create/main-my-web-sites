@@ -109,7 +109,7 @@
         '<p class="pf-ig__handle">@webdeveloper_varbro</p>' +
         '<div class="pf-ig__cta">' +
           '<figure class="pf-ig__qr"><img src="instaqr.png" width="132" height="132" alt="Instagram QR kód" loading="lazy" decoding="async">' +
-            '<figcaption>Olvasd be a kódot</figcaption></figure>' +
+            '<figcaption>Olvassa be a kódot</figcaption></figure>' +
           '<a class="pf-btn pf-ig__btn" href="' + IG_URL + '" target="_blank" rel="noopener">Megnézem az Instagramon ' +
             '<i data-lucide="arrow-up-right" class="icon"></i></a>' +
         '</div>' +

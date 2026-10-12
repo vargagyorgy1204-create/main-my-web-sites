@@ -117,7 +117,7 @@
         var link = t.closest(LINK);
         if (view && (!link || view.contains(link) === false || link === view)) {
             ring.classList.add('is-view');
-            label.textContent = view.getAttribute('data-cursor-label') || 'Nézd';
+            label.textContent = view.getAttribute('data-cursor-label') || 'Nézze';
         }
         if (link) {
             ring.classList.remove('is-view');
