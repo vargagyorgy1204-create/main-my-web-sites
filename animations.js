@@ -67,17 +67,6 @@
         add(showcaseEl.querySelector('.bento-card'),'scale', 100);
     }
 
-    // Services
-    var servicesWrap = document.querySelector('#services > div');
-    if (servicesWrap) {
-        add(servicesWrap.querySelector('h2'), null, 0);
-        add(servicesWrap.querySelector('p'),  null, 80);
-        var servGrid = servicesWrap.querySelector('div[style*="grid-template-columns"]');
-        if (servGrid) {
-            Array.from(servGrid.children).forEach(function (c, i) { add(c, null, i * 80); });
-        }
-    }
-
     // Portfolio: reveals are handled by js/portfolio.js (no AOS / animations.js here)
 
     // Contact

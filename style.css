@@ -1116,13 +1116,6 @@ h2 {
     box-shadow: 0 12px 26px rgba(192, 38, 163, 0.36);
 }
 
-.services-teaser-meta {
-    margin: -6px 0 0;
-    color: #7a90b8;
-    font-size: 0.78rem;
-    letter-spacing: 0.02em;
-}
-
 body.service-modal-open {
     overflow: hidden;
 }
@@ -5409,3 +5402,240 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
 /* ===== /LENIS ===== */
+
+/* ===== SERVICES — TYPE REVEAL ===== */
+#services.svt {
+  --svt-bg: rgb(15, 22, 41);
+  --svt-line: rgb(255 255 255 / 0.14);
+  position: relative;
+  background: var(--svt-bg);
+  color: #fff;
+  padding-block: clamp(72px, 10svh, 120px);
+  overflow-x: clip;
+  text-align: left;
+}
+
+.svt__inner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+@media (min-width: 768px) { .svt__inner { padding-inline: 32px; } }
+
+/* ---------- intro ---------- */
+.svt-intro { max-width: 720px; margin-block-end: clamp(32px, 6svh, 64px); }
+.svt-eyebrow {
+  margin: 0 0 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.6);
+}
+.svt-title {
+  margin: 0 0 16px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 3.4vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  background: none;
+  text-align: left;
+}
+.svt-sub {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.7;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* ---------- row ---------- */
+.svt-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-block-size: 78svh;
+  padding-block: clamp(40px, 8svh, 96px);
+  border-block-start: 1px solid var(--svt-line);
+}
+
+.svt-label {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.6);
+}
+
+/* The word: one real text node (outline). The aria-hidden duplicate sits on
+   top, filled with the gradient and revealed left to right by JS. The size is
+   fitted so WEBOLDAL (the longest) fills the content width and never overflows. */
+.svt-word {
+  position: relative;
+  display: block;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  margin: clamp(8px, 1.5svh, 16px) 0 clamp(20px, 4svh, 40px);
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: min(calc((100vw - 32px) / 9.75), 125px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.35);
+  background: none;
+  text-align: left;
+}
+@media (min-width: 768px) {
+  .svt-word { font-size: min(calc((100vw - 64px) / 9.75), 125px); }
+}
+.svt-word__fill {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 0;
+  background: var(--card-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+}
+
+.svt-details { display: grid; gap: 32px; }
+@media (min-width: 1024px) {
+  .svt-details {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
+  }
+}
+
+.svt-tagline {
+  margin: 0 0 28px;
+  max-inline-size: 34ch;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.85);
+}
+
+.svt-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.svt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-block-start: 1px solid var(--svt-line);
+}
+.svt-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding-block: 14px;
+  border-block-end: 1px solid var(--svt-line);
+}
+.svt-list__n {
+  flex: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: rgb(255 255 255 / 0.55);
+}
+.svt-list__t {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  color: #fff;
+}
+
+/* ---------- buttons: the site's single outline style ---------- */
+.svt-btn {
+  position: relative;
+  display: inline-block;
+  padding: 15px 34px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  color: rgb(255 255 255 / 0.92);
+  text-decoration: none;
+  border: 2px solid rgb(255 255 255 / 0.85);
+  border-radius: 50px;
+  background: transparent;
+  isolation: isolate;
+  overflow: hidden;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.svt-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--card-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.svt-btn:hover,
+.svt-btn:focus-visible { color: #fff; border-color: transparent; }
+.svt-btn:hover::before,
+.svt-btn:focus-visible::before { opacity: 1; }
+.svt-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+/* the one emphasised variant: filled gradient */
+.svt-btn--fill { color: #fff; border-color: transparent; background: var(--card-primary); }
+.svt-btn--fill::before { display: none; }
+.svt-btn--fill:hover,
+.svt-btn--fill:focus-visible { box-shadow: 0 10px 28px rgb(200 80 192 / 0.4); }
+
+/* ---------- closing block ---------- */
+.svt-close {
+  padding-block: clamp(72px, 14svh, 160px) 0;
+  border-block-start: 1px solid var(--svt-line);
+}
+.svt-close__title {
+  margin: 0 0 20px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(36px, 8vw, 120px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  background: none;
+  text-align: left;
+}
+.svt-close__text {
+  margin: 0 0 32px;
+  max-inline-size: 36ch;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* ---------- narrow and short windows ---------- */
+@media (max-width: 1023px) {
+  .svt-row { min-block-size: auto; padding-block: 72px; }
+}
+@media (max-height: 559px) {
+  #services.svt { padding-block: 56px; }
+  .svt-row { min-block-size: auto; padding-block: 32px; }
+  .svt-word { margin-block: 8px 16px; }
+  .svt-details { gap: 20px; }
+  .svt-tagline { margin-block-end: 16px; }
+  .svt-list li { padding-block: 9px; }
+  .svt-close { padding-block-start: 56px; }
+}
+/* ===== /SERVICES ===== */
