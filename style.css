@@ -2707,223 +2707,10 @@ body.contact-page {
 /* ─── Override: benefit-item accent bar removed (now bento) ─── */
 #why .bento-card::before { display: none; }
 
-/* ═══════════════════════════════════════════
-   PORTFÓLIÓ SECTION
-   ═══════════════════════════════════════════ */
-
-.portfolio-section {
-    background: linear-gradient(160deg, #10192d 0%, #1a2336 100%);
-    color: #ffffff;
-}
-
-.portfolio-title {
-    color: #f2f5ff;
-}
-
-.portfolio-subtitle {
-    color: rgba(255,255,255,0.72) !important;
-}
-
-.portfolio-grid {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 60px;
-    max-width: 900px;
-    margin: 52px auto 0;
-}
-
-/* --- Rotating-border QR card --- */
-.qr-card {
-    position: relative;
-    isolation: isolate;
-    width: 340px;
-    height: 340px;
-    background: #171217;
-    border-radius: 30px;
-    flex-shrink: 0;
-}
-
-.qr-card .bg {
-    position: absolute;
-    z-index: -1;
-    inset: -10px;
-    border-radius: 38px;
-    overflow: hidden;
-}
-
-.qr-card .uwu {
-    filter: blur(8px);
-    transition: filter 0.3s;
-}
-
-.qr-card .bg::before {
-    content: '';
-    position: absolute;
-    aspect-ratio: 1/1;
-    top: 50%;
-    left: 50%;
-    min-width: 150%;
-    min-height: 150%;
-    background-image: conic-gradient(
-        #4B1956 0deg,
-        #4B1956 60deg,
-        #C026A3 180deg,
-        #4B1956 300deg,
-        #4B1956 360deg
-    );
-    animation: speeen 4s linear infinite;
-    transform-origin: 0% 0%;
-    transform: rotate(0deg) translate(-50%, -50%);
-}
-
+/* kept from the old portfolio block: the rotating-border animation is still used by the pricing tier 3 card */
 @keyframes speeen {
     from { transform: rotate(0deg)   translate(-50%, -50%); }
     to   { transform: rotate(360deg) translate(-50%, -50%); }
-}
-
-.qr-card .content {
-    position: relative;
-    padding: 10px;
-    height: 100%;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #111;
-    border-radius: 24px;
-}
-
-/* instaqr.png inside the dark passepartout */
-.qr-card__img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 20px;
-    object-fit: contain;
-}
-
-.portfolio-card-right,
-.portfolio-content-col {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 16px;
-}
-
-.portfolio-qr-label {
-    font-size: 14px;
-    color: rgba(255,255,255,0.5);
-    margin: 0;
-}
-
-.portfolio-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.portfolio-list li {
-    font-size: 17px;
-    color: rgba(255,255,255,0.9);
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    transition: transform 0.25s ease;
-    cursor: default;
-}
-
-.portfolio-list li:hover {
-    transform: translateX(4px);
-}
-
-.pf-check {
-    min-width: 1.4em;
-    text-align: center;
-    flex-shrink: 0;
-    color: #6c63ff;
-    font-weight: 700;
-    font-size: 1.1em;
-    transition: color 0.25s ease;
-}
-
-.portfolio-list li:hover .pf-check {
-    color: #C026A3;
-}
-
-.btn-portfolio-ig {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 15px 34px;
-    background: transparent;
-    color: #C026A3;
-    border: 2px solid #C026A3;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 700;
-    text-decoration: none;
-    transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.btn-portfolio-ig span {
-    display: inline-block;
-    transition: transform 0.25s ease;
-}
-
-.btn-portfolio-ig:hover {
-    background: var(--card-primary);
-    color: #fff;
-    box-shadow: 0 8px 24px rgba(192, 38, 163, 0.35);
-}
-
-.btn-portfolio-ig:hover span {
-    transform: translateX(4px);
-}
-
-@media (max-width: 768px) {
-    .portfolio-grid {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 36px;
-        margin-top: 36px;
-    }
-
-    .qr-card {
-        width: 280px;
-        height: 280px;
-    }
-
-    .qr-card__img {
-        width: 100%;
-        height: auto;
-    }
-
-    .portfolio-card-right,
-    .portfolio-content-col {
-        align-items: center;
-    }
-}
-
-
-@media (max-width: 768px) {
-    .portfolio-content-col {
-        align-items: center;
-        text-align: center;
-        width: 100%;
-    }
-
-    .portfolio-list {
-        align-items: flex-start;
-        width: 100%;
-        max-width: 320px;
-    }
 }
 
 /* ── About section ── */
@@ -4771,3 +4558,847 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
         transform-origin: left top;
     }
 }
+
+/* ===== PORTFOLIO — STACKING CASES (ported from demovarbro) ===== */
+
+/* Tokens the demo defines globally; the main site does not have them, so they
+   live only inside the portfolio block (the global :root is untouched). */
+#portfolio,
+#pf-modal {
+  --card-primary-a: #6c63ff;
+  --card-secondary-light: #f6f3fa;
+  --dur: 0.3s;
+  --font-display: 'Syne', 'Trebuchet MS', sans-serif;
+  --font-accent: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Montserrat', 'Segoe UI', sans-serif;
+  --font-ui: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* The site's single outline button: transparent, outlined, fills with
+   --card-primary and turns white on hover (0.3s ease). All portfolio buttons
+   sit on dark surfaces, so the outline is white until hovered. */
+.pf-btn {
+  position: relative;
+  display: inline-block;
+  padding: 15px 34px;
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  color: rgb(255 255 255 / 0.92);
+  border: 2px solid rgb(255 255 255 / 0.85);
+  border-radius: 50px;
+  background: transparent;
+  isolation: isolate;
+  overflow: hidden;
+  cursor: pointer;
+  transition: color var(--dur) ease, border-color var(--dur) ease;
+}
+/* gradients can't be interpolated: the fill is a pseudo-element that fades in */
+.pf-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--card-primary);
+  opacity: 0;
+  transition: opacity var(--dur) ease;
+}
+.pf-btn:hover:not(:disabled),
+.pf-btn:focus-visible { color: var(--pure-white); border-color: transparent; }
+.pf-btn:hover:not(:disabled)::before,
+.pf-btn:focus-visible::before { opacity: 1; }
+.pf-btn:focus-visible { outline: 3px solid var(--pure-white); outline-offset: 3px; }
+
+
+#portfolio {
+  padding-block: clamp(80px, 12vh, 140px) 24px;
+  background: var(--card-secondary-light);
+}
+
+.pf__inner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+
+.pf__head { margin-block-end: clamp(32px, 5vh, 56px); max-width: 720px; }
+
+.pf__eyebrow {
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: color-mix(in srgb, var(--card-secondary) 60%, transparent);
+}
+
+.pf__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(30px, 3.4vw, 52px);
+  line-height: 1.1;
+  color: var(--card-secondary);
+  margin: 14px 0 20px;
+}
+
+.pf__sub {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--card-secondary) 62%, transparent);
+}
+
+/* ---------- Deck ---------- */
+.pf-deck {
+  --dwell: 60svh;
+  --hold: 80svh;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-inline: 16px;
+}
+
+.pf-hold { display: none; }
+
+/* ---------- Shared bits ---------- */
+.pf-tag {
+  display: inline-flex;
+  align-items: center;
+  block-size: 28px;
+  padding: 0 12px;
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--pure-white);
+  background: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.pf-tag--ghost {
+  background: transparent;
+  color: rgb(255 255 255 / 0.55);
+  border-color: rgb(255 255 255 / 0.3);
+}
+
+/* Browser-window mockup (cards and dialog). */
+.pf-win {
+  display: block;
+  inline-size: 100%;
+  margin-inline: auto;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0b0c12;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  box-shadow:
+    0 40px 80px -30px color-mix(in srgb, var(--accent, #6c63ff) 45%, transparent),
+    0 20px 40px -20px rgb(0 0 0 / 0.5);
+}
+.pf-win--static { cursor: inherit; }
+.pf-win:focus-visible { outline: 3px solid var(--accent, var(--card-primary-a)); outline-offset: 4px; }
+
+.pf-win__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  block-size: 36px;
+  padding-inline: 14px;
+  background: #1d1f2b;
+}
+
+.pf-win__dots { display: flex; gap: 7px; flex: none; }
+.pf-win__dots i { display: block; inline-size: 10px; block-size: 10px; border-radius: 999px; }
+.pf-win__dots i:nth-child(1) { background: #ff5f57; }
+.pf-win__dots i:nth-child(2) { background: #febc2e; }
+.pf-win__dots i:nth-child(3) { background: #28c840; }
+
+.pf-win__addr {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  max-inline-size: 66%;
+  margin-inline: auto;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.06);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.2;
+  color: rgb(255 255 255 / 0.55);
+}
+.pf-win__addr .pf-win__lock { flex: none; inline-size: 12px; block-size: 12px; }
+.pf-addr-text { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* link variant — only in the dialog, only when a project has addressLabel + addressHref */
+.pf-win__addr--link { text-decoration: none; cursor: pointer; transition: color 0.2s ease; }
+.pf-win__addr--link:hover,
+.pf-win__addr--link:focus-visible { color: rgb(255 255 255 / 0.9); }
+
+.pf-win__view {
+  display: block;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #0b0c12;
+}
+.pf-win__view--contain { aspect-ratio: 16 / 10; }
+
+.pf-win__view img,
+.pf-win__video {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+.pf-win__view--contain img { object-fit: contain; }
+
+.pf-win__video { opacity: 0; transition: opacity 0.4s ease; }
+.pf-win.has-video .pf-win__video { opacity: 1; }
+
+/* ---------- Case card — one-column layout (mobile / flow) ----------
+   Order: meta row, name, window, task, solution, chips, button. The
+   wrappers dissolve (display: contents) so every piece is a flex item of
+   .pf-case__inner and can be ordered. */
+.pf-case {
+  --u: 8px;
+  --s1: var(--u);
+  --s2: calc(var(--u) * 2);
+  --s3: calc(var(--u) * 3);
+  --s4: calc(var(--u) * 4);
+  --s5: calc(var(--u) * 6);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 24px;
+  color: var(--pure-white);
+  background:
+    radial-gradient(ellipse 70% 80% at 75% 40%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    #12131c;
+  transform-origin: 50% 0;
+}
+
+.pf-case__bgname {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 50%;
+  translate: 0 -50%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(80px, 13vw, 240px);
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.055);
+}
+.pf-case__bgname span { display: inline-block; margin-inline-start: -1vw; }
+
+.pf-case__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding: var(--s3);
+  box-sizing: border-box;
+}
+
+.pf-case__content,
+.pf-case__stage,
+.pf-case__text,
+.pf-case__top,
+.pf-case__mid,
+.pf-case__bottom { display: contents; }
+
+.pf-case__meta   { order: 1; }
+.pf-case__name   { order: 2; }
+.pf-case__media  { order: 3; min-inline-size: 0; }
+.pf-case__block  { order: 4; }
+.pf-case__chips  { order: 5; }
+.pf-case__btn    { order: 6; }
+
+.pf-case__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) 10px;
+  min-block-size: 36px;
+}
+
+.pf-case__num {
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  line-height: 1;
+  color: rgb(255 255 255 / 0.6);
+  margin-inline-end: 6px;
+}
+
+.pf-case__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 7vw, 40px);
+  line-height: 1.05;
+  margin: 0;
+  color: var(--pure-white);
+}
+
+.pf-case__label {
+  font-family: var(--font-accent);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--accent);
+  margin-block-end: var(--s1);
+}
+
+.pf-case__block p {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.75);
+}
+
+.pf-case__chips { display: flex; flex-wrap: wrap; gap: var(--s1); list-style: none; padding: 0; margin: 0; }
+.pf-case__chips li {
+  padding: 5px 13px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.3;
+  color: rgb(255 255 255 / 0.85);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 999px;
+}
+
+.pf-case__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  inline-size: 100%;
+  min-block-size: 48px;
+  padding-block: 0;
+}
+
+/* ---------- Instagram card ---------- */
+.pf-ig {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 24px;
+  min-block-size: 420px;
+  padding: 40px 24px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--pure-white);
+  background: var(--card-primary);
+  transform-origin: 50% 0;
+}
+
+/* Slowly drifting soft glow. */
+.pf-ig::before,
+.pf-ig::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inline-size: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.pf-ig::before {
+  inset-block-start: -25%;
+  inset-inline-start: -10%;
+  background: radial-gradient(circle, rgb(255 255 255 / 0.55), transparent 65%);
+  animation: pfGlowA 16s ease-in-out infinite alternate;
+}
+.pf-ig::after {
+  inset-block-end: -35%;
+  inset-inline-end: -10%;
+  background: radial-gradient(circle, #4B1956, transparent 65%);
+  animation: pfGlowB 20s ease-in-out infinite alternate;
+}
+@keyframes pfGlowA { to { transform: translate(30%, 22%) scale(1.15); } }
+@keyframes pfGlowB { to { transform: translate(-28%, -20%) scale(1.2); } }
+
+.pf-ig__inner { display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6svh, 14px); max-inline-size: 1100px; }
+
+/* The wrapper floats (6px travel); the svg inside is free for the entrance tween. */
+.pf-ig__float { display: block; animation: pfFloat 5s ease-in-out infinite alternate; }
+@keyframes pfFloat { from { transform: translateY(-3px); } to { transform: translateY(3px); } }
+.pf-ig__glyph { display: block; inline-size: 56px; block-size: 56px; color: rgb(255 255 255 / 0.9); }
+
+.pf-ig__kicker {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.2vw, 17px);
+  color: rgb(255 255 255 / 0.7);
+}
+
+.pf-ig__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(32px, min(4.6vw, 7.2svh), 76px);
+  line-height: 1.05;
+  text-wrap: balance;
+  color: var(--pure-white);
+}
+
+.pf-ig__handle {
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: clamp(15px, 1.4vw, 20px);
+  letter-spacing: 0.5px;
+  color: rgb(255 255 255 / 0.9);
+}
+
+.pf-ig__btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+
+/* QR tile + button row */
+.pf-ig__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px 32px;
+  margin-block-start: 8px;
+}
+.pf-ig__qr {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: rgb(255 255 255 / 0.85);
+}
+.pf-ig__qr img {
+  display: block;
+  inline-size: 132px;
+  block-size: 132px;
+  padding: 8px;
+  box-sizing: border-box;
+  object-fit: contain;
+  background: #111;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 20px;
+}
+@media (max-height: 599px) { .pf-ig__qr { display: none; } }
+
+/* ---------- Desktop: meta bar + two-column stage ----------
+   Row 1 (36px): "01 / 06" + chips. Row 2: the stage — text column left
+   (~36%), browser window right (~64%). The window is the height
+   reference: the stage is as tall as the window, and the text column
+   stretches to it, so name/window share a top edge and button/window a
+   bottom edge. Text uses the same left edge as the meta bar. */
+@media (min-width: 900px) {
+  .pf-case {
+    --u: clamp(5px, 0.9svh, 8px);
+    --padx: 48px;
+    border-radius: 32px;
+  }
+
+  .pf-case__inner {
+    display: grid;
+    grid-template-rows: 36px minmax(0, 1fr);
+    row-gap: var(--s3);
+    /* top meta row 32px from the card top; the left padding also clears the fixed nav logo */
+    padding: var(--s4) var(--padx) var(--s4) max(var(--padx), 84px);
+  }
+
+  .pf-case__content {
+    display: grid;
+    align-content: center;
+    min-block-size: 0;
+    min-inline-size: 0;
+  }
+
+  .pf-case__stage {
+    display: grid;
+    grid-template-columns: minmax(0, 36fr) minmax(0, 64fr);
+    column-gap: var(--s5);
+    align-items: stretch;
+    min-inline-size: 0;
+  }
+
+  .pf-case__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--s2);
+    min-inline-size: 0;
+  }
+  .pf-case__top,
+  .pf-case__mid,
+  .pf-case__bottom { display: flex; flex-direction: column; min-inline-size: 0; }
+  .pf-case__mid    { gap: var(--s3); }
+  .pf-case__bottom { gap: var(--s3); }
+
+  .pf-case__meta, .pf-case__name, .pf-case__media, .pf-case__block, .pf-case__chips, .pf-case__btn { order: 0; }
+
+  .pf-case__meta { flex-wrap: nowrap; min-block-size: 0; block-size: 36px; gap: var(--s1); }
+  .pf-case__num { margin-inline-end: var(--s1); }
+
+  .pf-case__name {
+    font-size: clamp(26px, 2.7vw, 52px);
+    line-height: 1.02;
+    /* optical: pulls the cap-height up to the window's top edge */
+    margin: -0.03em 0 0;
+  }
+
+  .pf-case__block p { font-size: clamp(12.5px, 1.05vw, 16px); }
+  .pf-case__chips li { padding: 4px 12px; font-size: clamp(11.5px, 0.95vw, 13px); }
+
+  .pf-case__btn {
+    inline-size: auto;
+    align-self: flex-start;
+    min-block-size: 0;
+    padding: clamp(10px, 1.3svh, 14px) 28px;
+    font-size: clamp(13px, 1vw, 15px);
+  }
+
+  .pf-case__media { display: flex; align-items: flex-start; }
+  .pf-case .pf-win { margin-inline: auto 0; }
+
+  .pf-ig { border-radius: 32px; }
+}
+
+@media (min-width: 900px) and (max-width: 1279px) {
+  .pf-case { --padx: 32px; }
+}
+
+/* ---------- Compact tiers: SHORT desktop windows ----------
+   Width alone decides the layout (>= 900px = desktop + stacking). A short
+   window (e.g. a non-fullscreen browser, ~1097x480) only shrinks or hides
+   things — the alignment grid itself never changes. */
+@media (min-width: 900px) and (max-height: 699px) {
+  .pf-case {
+    --u: clamp(3.5px, 0.85svh, 6px);
+    --padx: 32px;
+  }
+  .pf-case__inner {
+    grid-template-rows: 28px minmax(0, 1fr);
+    padding: 24px var(--padx) 24px max(var(--padx), 84px);
+  }
+  .pf-case__meta { block-size: 28px; }
+  .pf-case__name { font-size: clamp(24px, calc(3.2svh + 1vw), 40px); }
+  .pf-case__block p { font-size: 13px; line-height: 1.45; }
+  .pf-case__chips li { padding: 3px 10px; font-size: 11.5px; }
+  .pf-case__btn { padding: 9px 22px; font-size: 13px; }
+}
+
+@media (min-width: 900px) and (max-height: 559px) {
+  /* the three feature chips stay in the case-study dialog */
+  .pf-case__chips { display: none; }
+  .pf-case__text { gap: var(--s1); }
+  .pf-case__mid, .pf-case__bottom { gap: var(--s2); }
+}
+
+@media (min-width: 900px) and (max-height: 439px) {
+  /* keep "A feladat" + the button */
+  .pf-case__mid .pf-case__block:nth-child(2) { display: none; }
+  .pf-case__inner { padding: 16px var(--padx) 16px max(var(--padx), 84px); }
+}
+
+/* ---------- Stacking: sticky cards, dwell, hold ---------- */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .pf-deck { gap: 0; }
+
+  .pf-case {
+    position: sticky;
+    inset-block-start: 16px;
+    block-size: calc(100svh - 32px);
+    /* the dwell: space after a settled card before the next one enters
+       (+16px because the settled card sits 16px below the viewport top) */
+    margin-block-end: calc(var(--dwell) + 16px);
+  }
+  .pf-case__inner { block-size: 100%; }
+
+  /* the window can never grow taller than the content row */
+  .pf-case__content { container-type: size; }
+  .pf-case .pf-win { max-inline-size: calc((100cqh - 36px) * 16 / 9); }
+
+  .pf-ig {
+    position: sticky;
+    inset-block-start: 16px;
+    block-size: 70svh;
+    min-block-size: 0;
+  }
+
+  /* the hold: the Instagram card stays stuck for this much scroll */
+  .pf-hold { display: block; block-size: var(--hold); }
+}
+
+/* ---------- Case-study dialog (one screen) ---------- */
+html.pf-lock,
+html.pf-lock body { overflow: hidden; }
+html.pf-lock body { padding-right: var(--pf-sbw, 0px); }
+html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
+
+.pf-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2800;           /* above the nav (1950) and the cookie banner, below the cursor */
+  perspective: 1400px;
+  --accent: #6c63ff;
+}
+.pf-modal[hidden] { display: none; }
+
+.pf-modal__scrim { position: absolute; inset: 0; background: rgb(10 10 20 / 0.92); }
+
+.pf-modal__panel {
+  position: absolute;
+  inset: 24px;
+  max-inline-size: 1600px;
+  margin-inline: auto;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background:
+    radial-gradient(ellipse 70% 70% at 75% 30%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    #12131c;
+}
+
+/* header (auto) + body (the rest) */
+.pf-modal__inner {
+  block-size: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  box-sizing: border-box;
+  transform-origin: 50% 0;
+}
+
+.pf-modal__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-block-size: 72px;
+  padding: 14px 32px 14px;
+  box-sizing: border-box;
+}
+.pf-modal__titles { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-inline-size: 0; }
+
+.pf-modal__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(24px, 2.6vw, 40px);
+  line-height: 1.05;
+  margin: 0;
+  color: var(--pure-white);
+}
+
+/* The site's one outline button, squared up to a 44px hit area. */
+.pf-modal__close,
+.pf-gallery__nav {
+  flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 0;
+}
+
+/* Mobile / narrow: one column, the body scrolls inside the panel. */
+.pf-modal__body {
+  min-block-size: 0;
+  padding: 0 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.pf-modal__body::-webkit-scrollbar { display: none; }
+
+.pf-modal__gal {
+  flex: none;
+  block-size: 45dvh;
+  min-block-size: 220px;
+  min-inline-size: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.pf-gallery {
+  min-block-size: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 16px;
+}
+
+.pf-gallery__track {
+  min-inline-size: 0;
+  block-size: 100%;
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  cursor: grab;
+  container-type: size;
+}
+.pf-gallery__track::-webkit-scrollbar { display: none; }
+.pf-gallery__track.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
+.pf-gallery__track:focus-visible { outline-offset: -3px; }
+
+.pf-slide {
+  flex: 0 0 100%;
+  min-inline-size: 0;
+  block-size: 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  display: grid;
+  place-items: center;
+}
+
+/* The window scales to the track: never wider than it, never taller than it
+   (36px title bar + a 16:10 viewport). */
+.pf-slide .pf-win {
+  margin: 0;
+  inline-size: min(100cqw, (100cqh - 36px) * 1.6);
+  /* a tight shadow: the track clips anything that spreads past its edges */
+  box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--accent, #6c63ff) 55%, transparent);
+}
+
+/* Arrows sit outside the image edges (desktop); hidden on phones — swipe + dots remain. */
+.pf-gallery__nav { display: none; align-self: center; }
+.pf-gallery__nav:disabled { opacity: 0.3; cursor: default; }
+
+.pf-modal__foot { display: flex; justify-content: center; align-items: center; gap: 16px; min-block-size: 24px; }
+
+.pf-counter {
+  font-family: var(--font-accent);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: rgb(255 255 255 / 0.8);
+  min-inline-size: 3.5em;
+  text-align: center;
+}
+
+.pf-dots { display: flex; gap: 0; }
+.pf-dot {
+  inline-size: 24px;
+  block-size: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.pf-dot::before {
+  content: "";
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.35);
+  transition: inline-size 0.3s ease, background 0.3s ease;
+}
+.pf-dot.is-active::before { inline-size: 22px; background: var(--accent); }
+
+.pf-modal__story { display: grid; gap: 24px; align-content: start; min-inline-size: 0; }
+
+.pf-story__block h4 {
+  font-family: var(--font-accent);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--accent);
+  margin-block-end: 8px;
+}
+.pf-story__block p {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.78);
+}
+
+/* Wide: two columns — gallery | text — and nothing scrolls. 1024px, not 1100,
+   so a 1097px laptop gets the two-column dialog too. */
+@media (min-width: 1024px) {
+  .pf-modal__head { padding-inline: 32px; }
+
+  .pf-modal__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(340px, 26vw, 400px);
+    gap: 32px;
+    padding: 0 32px 32px;
+    overflow: hidden;
+  }
+
+  .pf-modal__gal { block-size: auto; min-block-size: 0; }
+
+  .pf-gallery { grid-template-columns: 44px minmax(0, 1fr) 44px; }
+  .pf-gallery__nav { display: grid; }
+
+  /* text column: fits by construction, vertically centred */
+  .pf-modal__story {
+    align-content: center;
+    overflow: hidden;
+    min-block-size: 0;
+  }
+  .pf-story__block p { font-size: clamp(13px, 1.7svh, 16px); }
+}
+
+/* Short windows: smaller margins and header, tighter text — still one screen. */
+@media (max-height: 599px) {
+  .pf-modal__panel { inset: 12px; }
+  .pf-modal__head { min-block-size: 56px; padding-block: 6px; }
+  .pf-modal__title { font-size: clamp(20px, 2.2vw, 28px); }
+}
+
+@media (min-width: 1024px) and (max-height: 599px) {
+  .pf-modal__body { padding: 0 24px 16px; gap: 24px; }
+  .pf-modal__story { gap: 12px; }
+  .pf-story__block h4 { margin-block-end: 4px; }
+  .pf-story__block p { font-size: clamp(12px, 2.2svh, 14px); line-height: 1.45; }
+}
+
+/* No Flip (reduced motion / GSAP missing): plain fade. */
+.pf-modal.pf-modal--fade { opacity: 0; transition: opacity 0.3s ease; }
+.pf-modal.pf-modal--fade.is-open { opacity: 1; }
+
+@media (max-width: 639px) {
+  .pf__inner { padding-inline: 16px; }
+  .pf-deck { padding-inline: 16px; }
+  .pf-modal__panel { inset: 12px; border-radius: 20px; }
+  .pf-modal__head { padding-inline: 16px; }
+  .pf-win__addr { max-inline-size: 78%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-ig::before, .pf-ig::after, .pf-ig__float { animation: none; }
+  .pf-win__video { display: none; }
+}
+
+/* ===== /PORTFOLIO ===== */

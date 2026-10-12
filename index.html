@@ -854,38 +854,16 @@
     </div>
 </div>
 
-<section id="portfolio" class="section portfolio-section" data-theme="dark">
-    <div class="container">
-        <h2 class="portfolio-title">Portfólió</h2>
-        <p class="section-subtitle portfolio-subtitle">Nézd meg munkáimat élőben – videók, weboldalak, design elemek</p>
-
-        <div class="portfolio-grid">
-            <div class="qr-card">
-                <div class="bg uwu"></div>
-                <div class="bg"></div>
-                <div class="content">
-                    <img src="instaqr.png" alt="Instagram QR kód" class="qr-card__img">
-                </div>
-            </div>
-            <div class="portfolio-content-col">
-                <p class="portfolio-qr-label">Olvasd be a kódot</p>
-                <ul class="portfolio-list">
-                    <li><span class="pf-check">✓</span>Weboldal buildek videón</li>
-                    <li><span class="pf-check">✓</span>Elkészült weboldalak</li>
-                    <li><span class="pf-check">✓</span>Design elemek, kártyák, gombok</li>
-                    <li><span class="pf-check">✓</span>Animációk és interakciók</li>
-                </ul>
-                <a
-                    href="https://www.instagram.com/webdeveloper_varbro/"
-                    class="btn-portfolio-ig"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <i class="fab fa-instagram"></i> Kövess Instagramon <span>→</span>
-                </a>
-            </div>
-        </div>
+<section id="portfolio" class="pf-section" data-theme="light">
+    <div class="pf__inner">
+        <header class="pf__head">
+            <p class="pf__eyebrow">PORTFÓLIÓ</p>
+            <h2 class="pf__title">Válogatott projektek</h2>
+            <p class="pf__sub">Minden projekt egy valós iparág igényeire épül – nézd meg, hogyan dolgozom.</p>
+        </header>
     </div>
+    <!-- Case cards + the Instagram card are rendered here from js/portfolio-data.js -->
+    <div class="pf-deck" id="pf-deck" data-theme="dark"></div>
 </section>
 
 <section id="contact" class="section" data-theme="light">
@@ -987,6 +965,50 @@
     </div>
 </div>
 
+<!-- Portfolio case-study dialog (js/portfolio.js). Lives directly under <body> so the
+     rest of the page can be made inert while it is open. -->
+<div class="pf-modal" id="pf-modal" data-theme="dark" role="dialog" aria-modal="true" aria-labelledby="pf-modal-title" hidden>
+  <div class="pf-modal__scrim" data-pf-close></div>
+  <div class="pf-modal__panel" id="pf-panel">
+    <div class="pf-modal__inner" id="pf-inner">
+      <header class="pf-modal__head">
+        <div class="pf-modal__titles">
+          <h3 class="pf-modal__title" id="pf-modal-title"></h3>
+          <span class="pf-tag" id="pf-modal-cat"></span>
+          <span class="pf-tag pf-tag--ghost" id="pf-modal-type"></span>
+        </div>
+        <button type="button" class="pf-btn pf-modal__close" id="pf-close" aria-label="Bezárás"><i data-lucide="x" class="icon"></i></button>
+      </header>
+      <div class="pf-modal__body">
+        <div class="pf-modal__gal">
+          <div class="pf-gallery">
+            <button type="button" class="pf-btn pf-gallery__nav pf-gallery__nav--prev" id="pf-prev" aria-label="Előző kép"><i data-lucide="chevron-left" class="icon"></i></button>
+            <div class="pf-gallery__track" id="pf-track" tabindex="0" aria-label="Képgaléria" role="group">
+              <figure class="pf-slide"><div class="pf-win pf-win--static"><div class="pf-win__bar"><span class="pf-win__dots" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="pf-win__view pf-win__view--contain"><img alt="" draggable="false" width="1440" height="900"></div></div></figure>
+              <figure class="pf-slide"><div class="pf-win pf-win--static"><div class="pf-win__bar"><span class="pf-win__dots" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="pf-win__view pf-win__view--contain"><img alt="" draggable="false" width="1440" height="900"></div></div></figure>
+              <figure class="pf-slide"><div class="pf-win pf-win--static"><div class="pf-win__bar"><span class="pf-win__dots" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="pf-win__view pf-win__view--contain"><img alt="" draggable="false" width="1440" height="900"></div></div></figure>
+            </div>
+            <button type="button" class="pf-btn pf-gallery__nav pf-gallery__nav--next" id="pf-next" aria-label="Következő kép"><i data-lucide="chevron-right" class="icon"></i></button>
+          </div>
+          <div class="pf-modal__foot">
+            <span class="pf-counter" id="pf-counter" aria-live="polite">1 / 3</span>
+            <div class="pf-dots" id="pf-dots">
+              <button type="button" class="pf-dot" aria-label="1. kép"></button>
+              <button type="button" class="pf-dot" aria-label="2. kép"></button>
+              <button type="button" class="pf-dot" aria-label="3. kép"></button>
+            </div>
+          </div>
+        </div>
+        <div class="pf-modal__story">
+          <section class="pf-story__block"><h4>Kiindulás</h4><p id="pf-story-start"></p></section>
+          <section class="pf-story__block"><h4>Megoldás</h4><p id="pf-story-solution"></p></section>
+          <section class="pf-story__block"><h4>Eredmény</h4><p id="pf-story-result"></p></section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
@@ -994,9 +1016,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/Flip.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" defer></script>
 <script src="js/gsap-setup.js?v=1" defer></script>
+<script src="js/portfolio-data.js?v=1" defer></script>
+<script src="js/portfolio.js?v=2" defer></script>
 <script src="script.js?v=23"></script>
-<script src="animations.js?v=6"></script>
+<script src="animations.js?v=7"></script>
 <script src="nav.js?v=1" defer></script>
-<script src="cursor.js?v=4" defer></script>
+<script src="cursor.js?v=5" defer></script>
 </body>
 </html>

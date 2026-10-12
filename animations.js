@@ -78,11 +78,7 @@
         }
     }
 
-    // Portfolio
-    add(document.querySelector('.portfolio-title'),       null,    0);
-    add(document.querySelector('.portfolio-subtitle'),    null,   80);
-    add(document.querySelector('.portfolio-qr-col'),      'left',  0);
-    add(document.querySelector('.portfolio-content-col'), 'right', 100);
+    // Portfolio: reveals are handled by js/portfolio.js (no AOS / animations.js here)
 
     // Contact
     add(document.querySelector('#contact h2'),             null,    0);
