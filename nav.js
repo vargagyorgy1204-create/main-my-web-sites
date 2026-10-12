@@ -47,6 +47,7 @@
             ? themed[themed.length - 1].getAttribute('data-theme')
             : themed[0].getAttribute('data-theme');
         nav.classList.toggle('nav--on-light', theme === 'light');
+        nav.classList.toggle('nav--scrolled', (window.pageYOffset || document.documentElement.scrollTop) > 24);
     }
 
     function onScroll() {

@@ -41,6 +41,32 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
 }
 .nav > * { pointer-events: auto; }
 
+/* Soft backdrop under the header so the logo/burger stay readable over text
+   scrolling beneath. Tinted by theme (dark by default, light with
+   .nav--on-light), always on at <=768px, after 24px of scroll up to 1023px,
+   never on desktop, never over the open menu. It is absolutely positioned
+   inside the fixed header, so it cannot shift layout. */
+.nav::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 -28px 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgb(16 19 33 / 0.78) 0%, rgb(16 19 33 / 0) 100%);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.nav--on-light::before {
+    background: linear-gradient(to bottom, rgb(248 247 255 / 0.82) 0%, rgb(248 247 255 / 0) 100%);
+}
+@media (max-width: 1023px) { .nav--scrolled::before { opacity: 1; } }
+@media (max-width: 768px) { .nav::before { opacity: 1; } }
+.nav--menu-open::before { opacity: 0 !important; }
+
 .nav__logo {
     position: relative;
     display: block;
@@ -5316,6 +5342,10 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
   .pf-win__video { display: none; }
 }
 
+@media (max-width: 899px) {
+  /* "Instagramon" (Syne, wide) must fit the card on 360px phones */
+  .pf-ig__title { font-size: clamp(20px, calc((100vw - 88px) / 11), 40px); }
+}
 /* ===== /PORTFOLIO ===== */
 
 /* ===== LENIS (index.html only; classes are added by the library) ===== */
@@ -5360,7 +5390,7 @@ html.lenis, html.lenis body { height: auto; }
   margin: 0 0 16px;
   font-family: 'Syne', sans-serif;
   font-weight: 800;
-  font-size: clamp(30px, 3.4vw, 52px);
+  font-size: clamp(22px, calc((100vw - 32px) / 13.8), 30px);
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: #fff;
@@ -5368,6 +5398,7 @@ html.lenis, html.lenis body { height: auto; }
   background: none;
   text-align: left;
 }
+@media (min-width: 768px) { .svt-title { font-size: clamp(30px, 3.4vw, 52px); } }
 .svt-sub {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
