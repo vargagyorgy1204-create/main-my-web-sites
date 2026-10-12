@@ -4278,10 +4278,11 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
 }
 
 .process {
-    --gap: 40px;
+    --gap: 32px;
+    --n: 4;
     position: relative;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--gap);
     margin: 0;
     padding: 0;
@@ -4291,7 +4292,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     position: absolute;
     top: 27px;
     left: 28px;
-    right: calc(100% / 3 - var(--gap) * 2 / 3 - 28px);
+    right: calc((100% - var(--gap) * (var(--n) - 1)) / var(--n) - 28px);
     height: 2px;
     border-radius: 2px;
     background: rgba(255, 255, 255, 0.12);
@@ -4351,6 +4352,33 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     background: none;
     text-shadow: none;
 }
+/* four columns: smaller titles that may wrap to two lines; the reserved height keeps every paragraph on the same y */
+@media (min-width: 768px) {
+    .process__title { font-size: clamp(19px, 1.9vw, 25px); min-height: 2.2em; overflow-wrap: break-word; }
+    .process__text { max-width: none; }
+}
+/* tablet: 2 x 2 columns, one line per row (node 1-2 and node 3-4) */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .process { --n: 2; grid-template-columns: repeat(2, 1fr); row-gap: 48px; }
+    .process__fill { transform: scaleX(clamp(0, calc(var(--progress, 0) * 3), 1)); }
+    .process__step:nth-child(4)::before,
+    .process__step:nth-child(4)::after {
+        content: "";
+        position: absolute;
+        top: 27px;
+        left: 28px;
+        width: calc(100% + var(--gap) - 0px);
+        height: 2px;
+        border-radius: 2px;
+    }
+    .process__step:nth-child(4)::before { background: rgba(255, 255, 255, 0.12); }
+    .process__step:nth-child(4)::after {
+        background: var(--card-primary);
+        box-shadow: 0 0 14px rgba(200, 80, 192, 0.55);
+        transform: scaleX(clamp(0, calc((var(--progress, 0) - 0.6667) * 3), 1));
+        transform-origin: left center;
+    }
+}
 .process__text {
     margin: 0;
     max-width: 320px;
@@ -4384,6 +4412,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     .steps-head { margin-bottom: 44px; }
     #steps .section-heading { font-size: clamp(19px, 5.6vw, 26px) !important; }
     .process { grid-template-columns: 1fr; gap: 40px; }
+    .process__title { min-height: 0; }
     .process__line {
         top: 28px;
         bottom: 28px;

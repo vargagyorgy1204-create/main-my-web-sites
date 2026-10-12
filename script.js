@@ -606,11 +606,23 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         });
     }
 
+    /* Fill 0 -> 1 across the nodes: a short hold on every node (the hold lengths
+       reproduce the original 3-step timing when there are 3 steps). */
     function staged(t) {
-        if (t < 0.08) return 0;
-        if (t < 0.46) return (t - 0.08) / 0.38 * 0.5;
-        if (t < 0.54) return 0.5;
-        if (t < 0.92) return 0.5 + (t - 0.54) / 0.38 * 0.5;
+        var n = Math.max(2, steps.length), segs = n - 1;
+        var start = 0.08, end = 0.92, hold = 0.08;
+        var seg = (end - start - (segs - 1) * hold) / segs;
+        if (t < start) return 0;
+        if (t >= end) return 1;
+        var x = t - start;
+        for (var i = 0; i < segs; i++) {
+            if (x < seg) return (i + x / seg) / segs;
+            x -= seg;
+            if (i < segs - 1) {
+                if (x < hold) return (i + 1) / segs;
+                x -= hold;
+            }
+        }
         return 1;
     }
 
