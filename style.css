@@ -5684,3 +5684,251 @@ html.lenis, html.lenis body { height: auto; }
     .footer-bottom-links .cookie-settings-link { display: inline-flex; align-items: center; min-height: 36px; padding: 0 4px; }
 }
 /* ===== /FOOTER ===== */
+
+/* ===== CONTACT — DESIGN PASS (ÜZENJEN., glass cards, glows) ===== */
+#contact.ctc {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(72px, 12svh, 130px) 0 clamp(72px, 12svh, 120px);
+    text-align: left;
+    color: #fff;
+    background: linear-gradient(180deg, rgb(15, 22, 41) 0%, rgb(30, 17, 46) 52%, rgb(15, 22, 41) 100%);
+}
+.ctc > .container { position: relative; z-index: 1; max-width: 1100px; padding-inline: 16px; }
+.ctc__head { position: relative; z-index: 1; max-width: 1280px; margin-inline: auto; padding-inline: 16px; }
+@media (min-width: 768px) { .ctc__head { padding-inline: 32px; } .ctc > .container { padding-inline: 32px; } }
+
+/* slow drifting glows (radial gradients, no blur filter); paused off-screen by JS */
+.ctc__glow {
+    position: absolute;
+    z-index: 0;
+    width: min(60vw, 720px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle at center, var(--c) 0%, transparent 66%);
+    animation: ctcDrift var(--d, 28s) ease-in-out infinite alternate;
+    animation-play-state: paused;
+    will-change: transform;
+}
+.ctc.is-live .ctc__glow { animation-play-state: running; }
+.ctc__glow--1 { --c: rgb(108 99 255 / 0.42); --d: 26s; top: -14%; left: -12%; }
+.ctc__glow--2 { --c: rgb(200 80 192 / 0.32); --d: 32s; top: 22%; right: -16%; animation-direction: alternate-reverse; }
+.ctc__glow--3 { --c: rgb(26 143 163 / 0.36); --d: 24s; bottom: -22%; left: 22%; }
+@keyframes ctcDrift { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(9%, 7%, 0) scale(1.16); } }
+@media (prefers-reduced-motion: reduce) { .ctc__glow { animation: none; } }
+
+/* ---------- headline ---------- */
+.ctc-eyebrow {
+    margin: 0 0 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.7);
+}
+.ctc-word {
+    margin: 0;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: min(calc((100vw - 32px) / 8.75), 16rem, 34svh);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+    background: none;
+    min-height: 1.12em;
+}
+@media (min-width: 768px) { .ctc-word { font-size: min(calc((min(100vw, 1280px) - 64px) / 8.75), 16rem, 34svh); } }
+.ctc-word [class*="ctc-mask"] { display: inline-block; overflow: clip; padding-block: 0.14em; margin-block: -0.14em; vertical-align: top; }
+.ctc-char { display: inline-block; position: relative; transform: translateY(calc(var(--p, 0) * -6px)) scale(calc(1 + var(--p, 0) * 0.04)); will-change: transform; }
+.ctc-char::after {
+    content: attr(data-c);
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: var(--card-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    opacity: var(--p, 0);
+    pointer-events: none;
+}
+.ctc-dot { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
+.ctc-dot::after { display: none; }
+.ctc-sub {
+    max-width: 62ch;
+    margin: clamp(10px, 2svh, 22px) 0 clamp(32px, 6svh, 56px);
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(15px, 1.25vw, 18px);
+    line-height: 1.7;
+    color: rgb(255 255 255 / 0.72);
+}
+
+/* ---------- glass cards ---------- */
+.ctc .contact-grid { margin-top: 0; }
+.ctc .contact-form-panel,
+.ctc .contact-personal-panel {
+    border-radius: 24px;
+    background: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.55);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    color: rgb(255 255 255 / 0.75);
+}
+.ctc .contact-form-panel h3 { color: #fff; text-align: left; }
+
+/* ---------- fields: dark glass, floating labels, gradient underline ---------- */
+.ctc .contact-field { position: relative; }
+.ctc .contact-field > label {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    margin: 0;
+    z-index: 1;
+    max-width: calc(100% - 32px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgb(255 255 255 / 0.72);
+    pointer-events: none;
+    transform-origin: left top;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.ctc .contact-field.is-filled > label,
+.ctc .contact-field:focus-within > label,
+.ctc .contact-field--select > label { transform: translateY(-10px) scale(0.78); color: #d9ccff; }
+.ctc .contact-optional { color: inherit; opacity: 0.85; }
+.ctc .contact-field input,
+.ctc .contact-field select,
+.ctc .contact-field textarea {
+    padding: 25px 16px 8px;
+    color: #fff;
+    background-color: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    box-shadow: none;
+}
+.ctc .contact-field textarea { padding-top: 27px; min-height: 120px; }
+.ctc .contact-field input:hover,
+.ctc .contact-field select:hover,
+.ctc .contact-field textarea:hover { border-color: rgb(255 255 255 / 0.3); box-shadow: none; }
+.ctc .contact-field input:focus,
+.ctc .contact-field select:focus,
+.ctc .contact-field textarea:focus { border-color: rgb(180 172 255 / 0.6); background-color: rgb(255 255 255 / 0.09); box-shadow: none; }
+.ctc .contact-field select {
+    color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+.ctc .contact-field select:invalid { color: rgb(255 255 255 / 0.72); }
+.ctc .contact-field select option { color: #2d3550; }
+.ctc .contact-field input:-webkit-autofill,
+.ctc .contact-field textarea:-webkit-autofill {
+    -webkit-text-fill-color: #fff;
+    caret-color: #fff;
+    box-shadow: 0 0 0 100px rgb(32 38 66) inset;
+}
+.ctc .contact-field::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--card-primary);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.35s ease;
+    pointer-events: none;
+}
+.ctc .contact-field:focus-within::after { transform: scaleX(1); }
+.ctc .contact-field input:user-invalid,
+.ctc .contact-field select:user-invalid,
+.ctc .contact-field textarea:user-invalid { border-color: #ff8aa8; }
+.ctc .contact-field.is-shake { animation: ctcShake 0.3s ease; }
+@keyframes ctcShake { 20% { transform: translateX(-4px); } 45% { transform: translateX(4px); } 70% { transform: translateX(-3px); } 100% { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .ctc .contact-field.is-shake { animation: none; } .ctc .contact-field::after { transition: none; } }
+
+/* custom checkbox with a drawn check */
+.ctc .contact-consent { color: rgb(255 255 255 / 0.8); }
+.ctc .contact-consent input {
+    position: relative;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    border: 1.5px solid rgb(255 255 255 / 0.4);
+    border-radius: 7px;
+    background: rgb(255 255 255 / 0.06);
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+.ctc .contact-consent input::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    background: #fff;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.3s ease 0.05s;
+}
+.ctc .contact-consent input:checked { background: var(--card-primary); border-color: transparent; }
+.ctc .contact-consent input:checked::after { clip-path: inset(0 0 0 0); }
+.ctc .contact-consent input:focus-visible { outline: 2px solid #b4acff; outline-offset: 3px; }
+
+.ctc .contact-form-status.is-error { color: #ffb3c6; }
+.btn-submit-message.is-sent { background: var(--card-primary); color: #fff; border-color: transparent; }
+.btn-submit-message .sent-check { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: 4px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 24; stroke-dashoffset: 24; animation: ctcCheck 0.4s ease 0.05s forwards; }
+@keyframes ctcCheck { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .btn-submit-message .sent-check { animation: none; stroke-dashoffset: 0; } }
+
+/* ---------- personal card: circular photo with gradient ring ---------- */
+.ctc .contact-photo-square {
+    width: 220px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    padding: 3px;
+    border: 0;
+    border-radius: 50%;
+    overflow: visible;
+    background: var(--card-primary);
+    box-shadow: 0 20px 40px rgb(0 0 0 / 0.35), 0 0 40px rgb(108 99 255 / 0.25);
+    transform: perspective(800px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg));
+    transition: transform 0.25s ease-out;
+    will-change: transform;
+}
+.ctc .contact-photo-square picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: #131a2e;
+}
+.ctc .contact-photo-square img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.ctc .status-dot { animation-duration: 2.4s; }
+.ctc .contact-personal-panel h4 { color: #fff; }
+.ctc .contact-status { color: rgb(255 255 255 / 0.75); }
+.ctc .contact-note { color: rgb(255 255 255 / 0.72); }
+@media (max-width: 899px) { .ctc .contact-photo-square { width: 160px; } }
+@media (prefers-reduced-motion: reduce) { .ctc .contact-photo-square { transition: none; } .ctc .status-dot { animation: none; } }
+
+/* compact tier: short windowed browsers (e.g. 1097x480) */
+@media (max-height: 560px) {
+    #contact.ctc { padding-block: 56px; }
+    .ctc-word { font-size: min(calc((min(100vw, 1280px) - 64px) / 8.75), 16rem, 24svh); }
+    .ctc-sub { margin-block: 8px 24px; }
+    .ctc .contact-form-panel, .ctc .contact-personal-panel { padding: 20px; }
+    .ctc .contact-form-ui { gap: 8px; }
+    .ctc .contact-grid { gap: 20px; }
+}
+@media (max-height: 560px) and (min-width: 900px) { .ctc .contact-photo-square { width: 170px; } }
+/* ===== /CONTACT DESIGN PASS ===== */

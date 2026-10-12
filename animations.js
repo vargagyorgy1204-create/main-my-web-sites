@@ -70,10 +70,7 @@
     // Portfolio: reveals are handled by js/portfolio.js (no AOS / animations.js here)
 
     // Contact
-    add(document.querySelector('#contact h2'),             null,    0);
-    add(document.querySelector('#contact .section-subtitle'), null, 80);
-    add(document.querySelector('.contact-form-panel'),    'left',  0);
-    add(document.querySelector('.contact-personal-panel'),'right', 100);
+    // Contact: entrance handled by js/contact-footer.js
 
     // Footer
     document.querySelectorAll('.footer-section').forEach(function (s, i) { add(s, null, i * 100); });

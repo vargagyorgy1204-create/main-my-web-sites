@@ -45,7 +45,7 @@
         }
         </script>
 
-    <link rel="stylesheet" href="style.css?v=ft1">
+    <link rel="stylesheet" href="style.css?v=dp1b">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
@@ -851,11 +851,17 @@
     <div class="pf-deck" id="pf-deck" data-theme="dark"></div>
 </section>
 
-<section id="contact" class="section" data-theme="light">
-    <div class="container">
-        <h2>Beszéljük meg a projektjét</h2>
-        <p class="section-subtitle">Írjon pár sort az elképzeléséről, és 24 órán belül válaszolok. A konzultáció ingyenes.</p>
-        <div class="contact-grid">
+<section id="contact" class="section ctc" data-theme="dark">
+        <div class="ctc__glow ctc__glow--1" aria-hidden="true"></div>
+        <div class="ctc__glow ctc__glow--2" aria-hidden="true"></div>
+        <div class="ctc__glow ctc__glow--3" aria-hidden="true"></div>
+        <div class="ctc__head">
+            <p class="ctc-eyebrow">Kapcsolat</p>
+            <h2 class="ctc-word">Üzenjen.</h2>
+            <p class="ctc-sub">Beszéljük meg a projektjét. Írjon pár sort az elképzeléséről, és 24 órán belül válaszolok. A konzultáció ingyenes.</p>
+        </div>
+        <div class="container">
+            <div class="contact-grid">
             <div class="contact-form-panel">
                 <h3>Kérjen árajánlatot</h3>
                 <form class="contact-form-ui" method="post" action="https://formspree.io/f/xeerdkob">
@@ -865,17 +871,17 @@
                     </div>
                     <div class="contact-field">
                         <label for="cf-name">Név</label>
-                        <input type="text" id="cf-name" name="name" autocomplete="name" required>
+                        <input type="text" id="cf-name" name="name" autocomplete="name" placeholder=" " required>
                     </div>
                     <div class="contact-field">
                         <label for="cf-email">E-mail</label>
-                        <input type="email" id="cf-email" name="email" autocomplete="email" required>
+                        <input type="email" id="cf-email" name="email" autocomplete="email" placeholder=" " required>
                     </div>
                     <div class="contact-field">
                         <label for="cf-phone">Telefonszám <span class="contact-optional">(nem kötelező)</span></label>
-                        <input type="tel" id="cf-phone" name="phone" autocomplete="tel" inputmode="tel">
+                        <input type="tel" id="cf-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder=" ">
                     </div>
-                    <div class="contact-field">
+                    <div class="contact-field contact-field--select">
                         <label for="cf-service">Mire van szüksége?</label>
                         <select id="cf-service" name="service" required>
                             <option value="" selected disabled>Válasszon…</option>
@@ -887,7 +893,7 @@
                     </div>
                     <div class="contact-field">
                         <label for="cf-message">Röviden írja le a projektet</label>
-                        <textarea id="cf-message" name="message" rows="4" required></textarea>
+                        <textarea id="cf-message" name="message" rows="4" placeholder=" " required></textarea>
                     </div>
                     <label class="contact-consent">
                         <input type="checkbox" name="consent" value="Elfogadva" required>
@@ -903,8 +909,8 @@
                 <div class="contact-profile-header">
                     <div class="contact-photo-square">
                         <picture>
-                            <source type="image/webp" srcset="contact-640.webp 640w, contact-1000.webp 1000w" sizes="140px">
-                            <img src="contact-640.jpg" srcset="contact-640.jpg 640w, contact-1000.jpg 1000w" sizes="140px" width="640" height="640" loading="lazy" decoding="async" alt="Varga György – VarBro webfejlesztő">
+                            <source type="image/webp" srcset="contact-640.webp 640w, contact-1000.webp 1000w" sizes="(min-width: 900px) 220px, 160px">
+                            <img src="contact-640.jpg" srcset="contact-640.jpg 640w, contact-1000.jpg 1000w" sizes="(min-width: 900px) 220px, 160px" width="640" height="640" loading="lazy" decoding="async" alt="Varga György – VarBro webfejlesztő">
                         </picture>
                     </div>
                     <div class="contact-status">
@@ -931,22 +937,14 @@
             <div class="footer-section">
                 <h3 class="notranslate" translate="no"><span style="color:#fff;">Var</span>Bro</h3>
                 <p>Weboldalak, arculat és digitális megoldások magyar vállalkozásoknak.</p>
-                <div class="social-links">
-                    <a href="https://wa.me/36307840378" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
-                    <a href="https://www.facebook.com/profile.php?id=61590279064624" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-                    <a href="https://www.instagram.com/webdeveloper_varbro?igsh=NWV2dGl3bXI2ZXU0" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-                    <a href="mailto:info@varbro.pro" title="Email" aria-label="E-mail"><i class="fas fa-envelope" aria-hidden="true"></i></a>
-                </div>
             </div>
             <div class="footer-section">
                 <h4>Navigáció</h4>
                 <ul>
-                    <li><a href="#hero">Kezdőlap</a></li>
                     <li><a href="#about">Rólam</a></li>
                     <li><a href="#bento-showcase">Referenciák</a></li>
                     <li><a href="#services">Szolgáltatások</a></li>
                     <li><a href="#portfolio">Portfólió</a></li>
-                    <li><a href="#contact">Kapcsolat</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -958,12 +956,24 @@
         </div>
         <!-- IMPRESSZUM: add provider data (név, székhely/cím, adószám, nyilvántartási szám) here when the sole-proprietorship is registered -->
         <div class="footer-bottom">
-            <p>&copy; 2026 Varga György – <span class="notranslate" translate="no">VarBro</span>. Minden jog fenntartva.</p>
-            <div class="footer-bottom-links">
-                <a href="adatvedelem.html" class="cookie-settings-link">Adatkezelési Tájékoztató</a>
-                <button id="cookie-settings-trigger" class="cookie-settings-link" type="button">Cookie beállítások</button>
+            <div class="footer-bottom-main">
+                <p>&copy; 2026 Varga György – <span class="notranslate" translate="no">VarBro</span>. Minden jog fenntartva.</p>
+                <div class="footer-bottom-links">
+                    <a href="adatvedelem.html" class="cookie-settings-link">Adatkezelési Tájékoztató</a>
+                    <button id="cookie-settings-trigger" class="cookie-settings-link" type="button">Cookie beállítások</button>
+                </div>
+            </div>
+            <div class="footer-bottom-side">
+                <div class="social-links">
+                    <a href="https://wa.me/36307840378" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61590279064624" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/webdeveloper_varbro?igsh=NWV2dGl3bXI2ZXU0" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="mailto:info@varbro.pro" title="Email" aria-label="E-mail"><i class="fas fa-envelope" aria-hidden="true"></i></a>
+                </div>
+                <button type="button" class="footer-top-btn">Vissza a tetejére <span aria-hidden="true">↑</span></button>
             </div>
         </div>
+        <div class="footer-wordmark" aria-hidden="true"><span>VARBRO</span></div>
     </div>
 </footer>
 
@@ -1038,11 +1048,12 @@
 <script src="js/gsap-setup.js?v=1" defer></script>
 <script src="js/lenis-setup.js?v=1" defer></script>
 <script src="js/services.js?v=1" defer></script>
+<script src="js/contact-footer.js?v=1" defer></script>
 <script src="js/portfolio-data.js?v=1" defer></script>
 <script src="js/portfolio.js?v=3" defer></script>
-<script src="script.js?v=27"></script>
-<script src="animations.js?v=8"></script>
+<script src="script.js?v=28"></script>
+<script src="animations.js?v=9"></script>
 <script src="nav.js?v=3" defer></script>
-<script src="cursor.js?v=7" defer></script>
+<script src="cursor.js?v=8" defer></script>
 </body>
 </html>

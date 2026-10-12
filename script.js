@@ -96,29 +96,60 @@ if (form) {
         message: 'Kérjük, írja le röviden a projektet.',
         consent: 'A küldéshez kérjük, fogadja el az Adatkezelési tájékoztatót.'
     };
-    form.querySelectorAll('input, select, textarea').forEach((el) => {
-        el.addEventListener('invalid', () => {
-            let msg = '';
-            if (el.validity.valueMissing) msg = MESSAGES[el.name] || 'Kérjük, töltse ki ezt a mezőt.';
-            else if (el.validity.typeMismatch) msg = 'Kérjük, érvényes e-mail-címet adjon meg.';
-            el.setCustomValidity(msg);
-        });
-        const clear = () => el.setCustomValidity('');
-        el.addEventListener('input', clear);
-        el.addEventListener('change', clear);
-    });
     const setStatus = (text, kind) => {
         if (!status) return;
         status.textContent = text;
         status.classList.toggle('is-error', kind === 'error');
         status.classList.toggle('is-ok', kind === 'ok');
     };
+    // floating labels: .is-filled on the field wrapper while it holds a value
+    const syncField = (el) => {
+        const f = el.closest('.contact-field');
+        if (f) f.classList.toggle('is-filled', el.value !== '');
+    };
+    let firstInvalid = false;
+    if (submitBtn) submitBtn.addEventListener('click', () => { firstInvalid = true; });
+    form.querySelectorAll('input, select, textarea').forEach((el) => {
+        el.addEventListener('invalid', () => {
+            let msg = '';
+            if (el.validity.valueMissing) msg = MESSAGES[el.name] || 'Kérjük, töltse ki ezt a mezőt.';
+            else if (el.validity.typeMismatch) msg = 'Kérjük, érvényes e-mail-címet adjon meg.';
+            el.setCustomValidity(msg);
+            const f = el.closest('.contact-field');
+            if (f) {                       // small shake on the offending field
+                f.classList.remove('is-shake');
+                void f.offsetWidth;
+                f.classList.add('is-shake');
+                f.addEventListener('animationend', () => f.classList.remove('is-shake'), { once: true });
+            }
+            if (firstInvalid && msg) { setStatus(msg, 'error'); firstInvalid = false; }
+        });
+        const clear = () => {
+            el.setCustomValidity('');
+            syncField(el);
+            if (status && status.classList.contains('is-error')) setStatus('', '');
+        };
+        el.addEventListener('input', clear);
+        el.addEventListener('change', clear);
+        el.addEventListener('blur', () => syncField(el));
+        syncField(el);
+    });
+    const syncAll = () => form.querySelectorAll('input, select, textarea').forEach(syncField);
+    // success: the button turns into a check + "Elküldve" for a moment, then the thank-you modal opens
+    const sentMorph = (btn) => new Promise((resolve) => {
+        if (!btn) { resolve(); return; }
+        const original = btn.innerHTML;
+        btn.classList.add('is-sent');
+        btn.innerHTML = '<svg class="sent-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Elküldve';
+        setTimeout(() => { btn.classList.remove('is-sent'); btn.innerHTML = original; resolve(); }, 1200);
+    });
     form.onsubmit = async (e) => {
         e.preventDefault();
         if (submitBtn && submitBtn.disabled) return;
         const hp = form.querySelector('[name="_gotcha"]');
         if (hp && hp.value) {            // bot: pretend success, send nothing
             form.reset();
+            syncAll();
             openThankYou(submitBtn);
             return;
         }
@@ -132,6 +163,8 @@ if (form) {
             });
             if (!response.ok) throw new Error('HTTP ' + response.status);
             form.reset();
+            syncAll();
+            await sentMorph(submitBtn);
             openThankYou(submitBtn);
         } catch (err) {
             setStatus('Az üzenetet most nem sikerült elküldeni. Kérjük, próbálja újra, vagy írjon a info@varbro.pro címre.', 'error');
@@ -852,3 +885,16 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
     evaluate();
 })();
+
+
+// Footer: back to top (Lenis when present, native smooth otherwise), focus follows
+document.querySelectorAll('.footer-top-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (window.VB && VB.lenis) VB.lenis.scrollTo(0);
+        else window.scrollTo({ top: 0, behavior: calm ? 'auto' : 'smooth' });
+        const target = document.getElementById('hero') || document.body;
+        if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+    });
+});
