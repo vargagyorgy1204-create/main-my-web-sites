@@ -3022,36 +3022,76 @@ body.contact-page {
 .about-img--3,
 .about-img--4 { opacity: 0; }
 
-/* Pinned mode is switched on by script.js (#about.is-pinned) only when the
-   viewport is wide enough, motion is allowed and the content fits in 100svh. */
-#about.is-pinned {
+/* About stage. script.js turns on #about.is-pinned (sticky pin + photo sequence) at WIDTH >= 900px,
+   whatever the height. Reduced motion / a failed photo load at that width gets #about.is-fit:
+   the same fitted stage, no pin. Cards are sized FROM the viewport height, never from their content. */
+#about.is-pinned,
+#about.is-fit {
+    --about-pad: clamp(72px, 10svh, 96px);              /* clears the fixed header; same value top and bottom */
+    --about-h: min(640px, calc(100vh - 2 * var(--about-pad)));
+    --about-h: min(640px, calc(100svh - 2 * var(--about-pad)));
     display: block;
-    height: 340svh;
     min-height: 0;
     padding: 0 !important;
 }
-#about.is-pinned .about-pin {
-    position: sticky;
-    top: 0;
+#about.is-pinned { height: 340vh; height: 340svh; }
+#about.is-pinned .about-pin { position: sticky; top: 0; }
+#about.is-pinned .about-pin,
+#about.is-fit .about-pin {
     height: 100vh;
     height: 100svh;
     box-sizing: border-box;
-    padding: 84px 20px 28px;
+    padding: var(--about-pad) 20px;
     display: flex;
     align-items: center;
 }
-#about.is-pinned .about-bio-card { padding-block: 30px; gap: 12px; }
-#about.is-pinned .about-premium-grid {
+#about.is-pinned .about-premium-grid,
+#about.is-fit .about-premium-grid {
+    height: var(--about-h);
     min-height: 0;
+    grid-template-columns: min(calc(var(--about-h) * 0.8), 44%) minmax(0, 1fr);
     align-items: stretch;
 }
-/* Photo card and text card share the same height (set by the text card). */
-#about.is-pinned .about-left-col { justify-content: stretch; }
-#about.is-pinned .about-photo-card {
+#about.is-pinned .about-left-col,
+#about.is-fit .about-left-col { justify-content: stretch; min-height: 0; }
+#about.is-pinned .about-photo-card,
+#about.is-fit .about-photo-card {
     flex: 1;
     width: 100%;
+    height: auto;
+    max-height: none;
     aspect-ratio: auto;
     min-height: 0;
+    margin: 0;
+}
+#about.is-pinned .about-bio-card,
+#about.is-fit .about-bio-card {
+    min-height: 0;
+    justify-content: center;
+    padding: clamp(18px, 4.2svh, 44px) clamp(24px, 3.6vw, 48px);
+    gap: clamp(8px, 1.8svh, 16px);
+}
+/* type scales with the available height, so the paragraph never has to be clipped */
+#about.is-pinned .about-bio-card .section-subtitle,
+#about.is-fit .about-bio-card .section-subtitle { font-size: clamp(22px, min(3.2vw, 4.4svh), 42px) !important; }
+#about.is-pinned .about-bio-card .about-text,
+#about.is-fit .about-bio-card .about-text { font-size: clamp(14px, 1.9svh, 16px); line-height: 1.65; }
+#about.is-pinned .btn-about,
+#about.is-fit .btn-about { padding: clamp(8px, 1.4svh, 11px) clamp(18px, 2.4svh, 26px); font-size: clamp(0.8rem, 1.9svh, 0.88rem); }
+
+/* compact tiers by height (same idea as the Portfolio deck) */
+@media (min-width: 900px) and (max-height: 699px) {
+    #about.is-pinned .about-bio-card, #about.is-fit .about-bio-card { padding: 20px 32px; gap: 10px; }
+    #about.is-pinned .about-bio-foot, #about.is-fit .about-bio-foot { margin-top: 2px; }
+}
+@media (min-width: 900px) and (max-height: 559px) {
+    #about.is-pinned .about-bio-card .about-text, #about.is-fit .about-bio-card .about-text { font-size: 14px; line-height: 1.5; }
+    #about.is-pinned .about-bio-card, #about.is-fit .about-bio-card { padding: 16px 28px; gap: 8px; }
+    #about.is-pinned .btn-about, #about.is-fit .btn-about { padding: 7px 18px; font-size: 0.8rem; }
+}
+@media (min-width: 900px) and (max-height: 439px) {
+    #about.is-pinned .about-sign, #about.is-fit .about-sign { display: none; }
+    #about.is-pinned .about-bio-card .about-text, #about.is-fit .about-bio-card .about-text { line-height: 1.42; }
 }
 
 /* ── Hogyan dolgozom (myapproach.html) – About-style editorial split ── */

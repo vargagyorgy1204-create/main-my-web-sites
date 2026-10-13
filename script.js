@@ -806,12 +806,6 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 
     function warnOnce(msg) { if (warned) return; warned = true; console.warn('[VarBro] ' + msg); }
 
-    function fits() {
-        var cs = getComputedStyle(pin);
-        var need = grid.getBoundingClientRect().height + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-        return need <= window.innerHeight + 0.5;
-    }
-
     function resetOpacity() {
         for (var i = 1; i < 4; i++) imgs[i].style.opacity = '';
     }
@@ -823,15 +817,12 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         if (on) { watch(); update(); } else { resetOpacity(); if (io) { io.disconnect(); io = null; } }
     }
 
+    /* Pinning depends on WIDTH only (>= 900px), never on the viewport height.
+       Reduced motion or a failed photo load at that width: the same stage without the pin (.is-fit). */
     function evaluate() {
-        var ok = !failed && window.innerWidth >= 768 && !reduce.matches;
-        if (ok) {
-            var was = pinned;
-            if (!was) section.classList.add('is-pinned');
-            ok = fits();
-            if (!was) section.classList.remove('is-pinned');
-        }
-        setPinned(ok);
+        var wide = window.innerWidth >= 900;
+        setPinned(wide && !failed && !reduce.matches);
+        section.classList.toggle('is-fit', wide && !pinned);
     }
 
     /* Images 2-4 load only while the pin is active, ~1.5 viewports before it starts. */
@@ -871,7 +862,6 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
             var a = BANDS[i][0], b = BANDS[i][1];
             imgs[i + 1].style.opacity = p <= a ? 0 : p >= b ? 1 : (p - a) / (b - a);
         }
-        section.style.setProperty('--about-p', p.toFixed(4));
     }
 
     function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
