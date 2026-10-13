@@ -298,20 +298,6 @@ h1 { font-size: clamp(3.6rem, 11vw, 6.8rem); margin-bottom: 12px; line-height: 0
     margin-top: 50px;
 }
 
-#about .btn-read-more {
-    border-color: rgba(73, 107, 201, 0.45);
-    background: linear-gradient(135deg, rgba(30, 64, 175, 0.12) 0%, rgba(168, 85, 247, 0.12) 100%);
-    color: #3555b4 !important;
-    box-shadow: 0 10px 22px rgba(53, 85, 180, 0.16);
-}
-
-#about .btn-read-more:hover {
-    background: linear-gradient(135deg, rgba(30, 64, 175, 0.88) 0%, rgba(168, 85, 247, 0.84) 100%);
-    border-color: rgba(72, 99, 190, 0.85);
-    color: #ffffff !important;
-    box-shadow: 0 14px 28px rgba(78, 64, 175, 0.24);
-}
-
 .btn-read-more .btn-arrow {
     font-size: 1.05em;
     transition: transform 0.28s ease;
@@ -341,63 +327,7 @@ h2 {
     font-weight: 400;
 }
 
-.about-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 48px;
-    max-width: 960px;
-    margin: 0 auto 48px;
-    text-align: left;
-}
 
-.about-photo {
-    flex-shrink: 0;
-    width: 240px;
-    aspect-ratio: 1 / 1;
-    border-radius: 28px;
-    overflow: hidden;
-    border: 3px solid rgba(255, 255, 255, 0.9);
-    box-shadow:
-        0 0 0 5px rgba(108, 92, 231, 0.28),
-        0 0 0 9px rgba(168, 85, 247, 0.11),
-        0 20px 48px rgba(15, 23, 42, 0.16);
-}
-
-.about-photo img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-}
-
-.about-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
-    padding-top: 8px;
-}
-
-
-
-.about-text {
-    margin: 0;
-    font-size: 1.06rem;
-    line-height: 1.9;
-    color: #4d5568;
-}
-
-@media (max-width: 680px) {
-    .about-row {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    .about-body {
-        align-items: center;
-    }
-}
 
 /* Contact Section Subtitle */
 #contact .section-subtitle {
@@ -2609,175 +2539,6 @@ body.contact-page {
 /* ─── Override: benefit-item accent bar removed (now bento) ─── */
 #why .bento-card::before { display: none; }
 
-/* ── About section ── */
-#about {
-    background: #ffffff !important;
-    padding: 80px 20px 80px !important;
-    text-align: left !important;
-}
-
-.about-bento-grid {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 14px;
-    align-items: stretch;
-}
-
-.about-card {
-    border-radius: 20px;
-    padding: 28px;
-}
-
-/* Photo card */
-.about-card--photo {
-    grid-column: 1;
-    grid-row: 1;
-    overflow: hidden;
-    position: relative;
-    min-height: 400px;
-    padding: 0;
-    background: #0f1629;
-    border: 1.5px solid rgba(108, 99, 255, 0.18);
-    box-shadow: 0 4px 20px rgba(108, 99, 255, 0.07);
-}
-
-.about-card--photo img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
-}
-
-/* Bio card */
-.about-card--bio {
-    grid-column: 2;
-    grid-row: 1;
-    background: #f8f9ff;
-    border: 1px solid #e8eaf0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 16px;
-    padding: 40px 44px;
-}
-
-.about-card--bio h2 {
-    font-size: clamp(2rem, 4vw, 2.8rem) !important;
-    font-weight: 800 !important;
-    color: #0f1629 !important;
-    background: none !important;
-    -webkit-text-fill-color: #0f1629 !important;
-    text-align: left !important;
-    margin: 0 !important;
-}
-
-.about-card--bio .section-subtitle {
-    color: rgba(0,0,0,0.62) !important;
-    text-align: left !important;
-    margin: 0 !important;
-    font-size: .98rem;
-}
-
-.about-card--bio .about-text {
-    color: #3a4a6a;
-    margin: 0;
-}
-
-.about-card--bio .btn-read-more {
-    align-self: flex-start;
-    margin-top: 6px;
-}
-
-/* Value cards: row 2, cols 2-4 */
-.about-card--value {
-    grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    cursor: default;
-    transition: transform .25s ease, box-shadow .25s ease;
-}
-
-.about-card--value:hover {
-    transform: translateY(-4px);
-}
-
-.about-card--value i {
-    font-size: 1.8rem;
-}
-
-.about-card--value h4 {
-    color: #f0f4ff;
-    font-size: 1rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.about-card--value p {
-    color: #8fa4cc;
-    font-size: .88rem;
-    line-height: 1.6;
-    margin: 0;
-}
-
-.about-card--green {
-    grid-column: 2 / 3;
-    background: rgba(163, 191, 111, .12);
-    border: 1px solid rgba(163, 191, 111, .25);
-}
-
-.about-card--green:hover {
-    box-shadow: 0 12px 28px rgba(163, 191, 111, .18);
-}
-
-.about-card--green i { color: #A3BF6F; }
-
-.about-card--indigo {
-    grid-column: 3 / 5;
-    background: rgba(108, 99, 255, .12);
-    border: 1px solid rgba(108, 99, 255, .25);
-}
-
-.about-card--indigo:hover {
-    box-shadow: 0 12px 28px rgba(108, 99, 255, .22);
-}
-
-.about-card--indigo i { color: #818cf8; }
-
-/* ── Responsive ── */
-@media (max-width: 1024px) {
-    .about-card--photo {
-        grid-column: 1;
-        grid-row: 1;
-        min-height: 240px;
-    }
-    .about-card--bio {
-        grid-column: 2;
-        grid-row: 1;
-    }
-}
-
-@media (max-width: 640px) {
-    .about-bento-grid {
-        grid-template-columns: 1fr;
-    }
-    .about-card--photo {
-        grid-column: 1;
-        grid-row: auto;
-        max-height: 280px;
-        min-height: unset;
-    }
-    .about-card--bio {
-        grid-column: 1;
-        grid-row: auto;
-    }
-}
-
 /* ── #about redesign ── */
 #about {
     background: #f8f7ff !important;
@@ -2847,37 +2608,6 @@ body.contact-page {
     justify-content: center;
 }
 
-.about-bio-card h2 {
-    font-family: 'Inter', sans-serif !important;
-    font-size: 12px !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.2em !important;
-    text-transform: uppercase !important;
-    line-height: 1.6 !important;
-    color: #8a8a8a !important;
-    -webkit-text-fill-color: #8a8a8a !important;
-    background: none !important;
-    margin: 0 !important;
-}
-
-.about-bio-card .section-subtitle {
-    font-family: 'Syne', sans-serif !important;
-    font-weight: 800 !important;
-    font-size: clamp(26px, 3.2vw, 42px) !important;
-    line-height: 1.12 !important;
-    letter-spacing: -0.02em !important;
-    color: #1a1a2e !important;
-    text-align: left !important;
-    margin: 0 !important;
-}
-
-.about-bio-card .about-text {
-    color: #3d3d5c;
-    line-height: 1.8;
-    font-size: 1rem;
-    margin: 0;
-}
-
 .btn-about {
     display: inline-flex;
     align-items: center;
@@ -2917,49 +2647,6 @@ body.contact-page {
     box-shadow: 0 8px 24px rgba(75,25,86,.3);
 }
 
-.about-values {
-    max-width: 1100px;
-    margin: 20px auto 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.about-value-card {
-    background: #fff;
-    border-radius: 20px;
-    border: 1px solid rgba(108,99,255,.10);
-    box-shadow: 0 4px 16px rgba(108,99,255,.07);
-    padding: 28px 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: transform .25s ease, box-shadow .25s ease;
-}
-
-.about-value-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(108,99,255,.15);
-}
-
-.about-value-card i {
-    font-size: 2rem;
-}
-
-.about-value-card h4 {
-    color: #1a1a2e;
-    font-size: 1rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.about-value-card p {
-    color: #6a6a8a;
-    font-size: 0.9rem;
-    line-height: 1.65;
-    margin: 0;
-}
-
 @media (max-width: 1024px) {
     .about-premium-grid {
         grid-template-columns: 1fr;
@@ -2978,9 +2665,6 @@ body.contact-page {
 }
 
 @media (max-width: 640px) {
-    .about-values {
-        grid-template-columns: 1fr;
-    }
     .about-bio-card {
         padding: 28px 24px;
     }
@@ -3022,22 +2706,171 @@ body.contact-page {
 .about-img--3,
 .about-img--4 { opacity: 0; }
 
-/* About stage. script.js turns on #about.is-pinned (sticky pin + photo sequence) at WIDTH >= 900px,
-   whatever the height. Reduced motion / a failed photo load at that width gets #about.is-fit:
-   the same fitted stage, no pin. Cards are sized FROM the viewport height, never from their content. */
-#about.is-pinned,
-#about.is-fit {
-    --about-pad: clamp(72px, 10svh, 96px);              /* clears the fixed header; same value top and bottom */
+/* ===== ABOUT — CHAPTERS STORY (Dizájn / Kód / Mozgás / Eredmény) =====
+   Default (no JS, reduced motion, GSAP/SplitText missing, < 900px): a plain list —
+   photo, heading, intro, four chapters, "→ eredmény.", button + signature.
+   js/about-story.js adds #about.is-pinned at >= 900px: sticky stage, cards sized from the
+   viewport height, chapters stacked in one cell and driven by the scroll. */
+.abt {
+    --abt-ink: #1a1a2e;
+    --abt-design: #C026A3;
+    --abt-code: #12829a;
+    --abt-motion: #6c63ff;
+    --about-accent: var(--abt-motion);
+}
+.abt-eyebrow {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    color: #8a8a8a;
+}
+.abt-heading {
+    margin: 0;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 3.2vw, 42px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    text-align: left;
+    color: var(--abt-ink);
+    -webkit-text-fill-color: var(--abt-ink);
+    background: none;
+}
+.abt-w { position: relative; display: inline-block; color: var(--abt-ink); -webkit-text-fill-color: currentColor; }
+.abt-c { display: inline-block; }
+.abt-w--design { --fx: var(--abt-design); }
+.abt-w--code { --fx: var(--abt-code); }
+.abt-w--motion { --fx: var(--abt-motion); }
+/* gradient overlay used by the Eredmény chapter (opacity driven by --g) */
+.abt-w--design::after, .abt-w--code::after, .abt-w--motion::after {
+    content: attr(data-w);
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: var(--card-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    opacity: var(--g, 0);
+    pointer-events: none;
+}
+
+/* chapters */
+.abt-chapters { display: grid; gap: 22px; }
+.abt-ch { min-width: 0; }
+.abt-ch__title {
+    margin: 0 0 6px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 7vw, 38px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ch, var(--abt-ink));
+    -webkit-text-fill-color: var(--ch, var(--abt-ink));
+    background: none;
+    position: relative;
+    display: inline-block;
+}
+.abt-ch--design { --ch: var(--abt-design); --fx: var(--abt-design); }
+.abt-ch--code { --ch: var(--abt-code); --fx: var(--abt-code); }
+.abt-ch--motion { --ch: var(--abt-motion); --fx: var(--abt-motion); }
+.abt-ch--result .abt-ch__title {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: var(--card-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+.abt-lead { margin: 0 0 6px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.05rem; line-height: 1.45; color: var(--abt-ink); }
+.abt-lead::after { content: ""; display: block; width: 40px; height: 3px; margin-top: 8px; border-radius: 2px; background: var(--ch, var(--about-accent)); transform: scaleX(var(--bar, 1)); transform-origin: left center; }
+.abt-ch--result .abt-lead::after { background: var(--card-primary); }
+.abt-body { margin: 0; font-family: 'Montserrat', sans-serif; font-size: 1rem; line-height: 1.7; color: #3d3d5c; }
+.abt-line { display: block; }
+
+/* "→ eredmény." */
+.abt-result {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.35em;
+    position: relative;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(22px, 5vw, 30px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    width: fit-content;
+}
+.abt-result__arrow { display: inline-block; color: var(--abt-motion); }
+.abt-result__mask { display: inline-block; overflow: clip; padding-block: 0.12em; margin-block: -0.12em; }
+.abt-result__word {
+    display: inline-block;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: var(--card-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+.abt-result__line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--card-primary);
+}
+.abt-progress { display: none; }
+.abt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* decorative signature layers (aria-hidden, created by JS) */
+.abt-fx { position: absolute; inset: 0; pointer-events: none; }
+.abt-fx--design { opacity: 0; }
+.abt-fx--design .g { position: absolute; left: -12px; right: -12px; height: 1px; background: color-mix(in srgb, var(--fx) 50%, transparent); transform-origin: center; }
+.abt-fx--design .g--top { top: 16%; }
+.abt-fx--design .g--base { top: 84%; }
+.abt-fx--design .box { position: absolute; inset: -4px -6px; border: 1px solid var(--fx); }
+.abt-fx--design .box b { position: absolute; width: 6px; height: 6px; background: #fff; border: 1px solid var(--fx); box-sizing: border-box; }
+.abt-fx--design .box b:nth-child(1) { left: -3px; top: -3px; }
+.abt-fx--design .box b:nth-child(2) { right: -3px; top: -3px; }
+.abt-fx--design .box b:nth-child(3) { left: -3px; bottom: -3px; }
+.abt-fx--design .box b:nth-child(4) { right: -3px; bottom: -3px; }
+.abt-fx--code { opacity: 1; }
+.abt-fx--code .lt, .abt-fx--code .gt { position: absolute; top: 0; font-family: ui-monospace, Consolas, monospace; font-weight: 600; color: var(--fx); opacity: 0; }
+.abt-fx--code .lt::before { content: "<"; }
+.abt-fx--code .gt::before { content: ">"; }
+.abt-fx--ghost::before { content: attr(data-t); }
+.abt-fx--code .lt { right: 100%; margin-right: 4px; }
+.abt-fx--code .gt { left: 100%; margin-left: 14px; }
+.abt-fx--code .caret { position: absolute; left: 100%; top: 14%; width: 2px; height: 72%; margin-left: 4px; background: var(--fx); opacity: 0; }
+.abt-fx--ghost { color: var(--fx); -webkit-text-fill-color: var(--fx); opacity: 0; white-space: nowrap; }
+
+/* ---------- photo stack: 5 layers (1 base, 2-4 chapters, 5 = photo 1 again) ---------- */
+.about-img { transform: scale(calc(var(--s, 1) * var(--z, 1))); filter: brightness(var(--dim, 1)); }
+.about-img--2, .about-img--3, .about-img--4, .about-img--5 { opacity: 0; }
+
+/* ---------- list layout (default / fallback) ---------- */
+.abt-chapters .abt-ch + .abt-ch { padding-top: 22px; border-top: 1px solid rgba(26, 26, 46, 0.08); }
+.abt-ch--intro .abt-body { font-size: 1.05rem; }
+
+/* ---------- story layout (>= 900px, pinned) ---------- */
+#about.is-pinned {
+    --about-pad: clamp(72px, 10svh, 96px);
     --about-h: min(640px, calc(100vh - 2 * var(--about-pad)));
     --about-h: min(640px, calc(100svh - 2 * var(--about-pad)));
     display: block;
     min-height: 0;
     padding: 0 !important;
+    height: 550vh;
+    height: 550svh;
 }
-#about.is-pinned { height: 340vh; height: 340svh; }
-#about.is-pinned .about-pin { position: sticky; top: 0; }
-#about.is-pinned .about-pin,
-#about.is-fit .about-pin {
+#about.is-pinned .about-pin {
+    position: sticky;
+    top: 0;
     height: 100vh;
     height: 100svh;
     box-sizing: border-box;
@@ -3045,17 +2878,14 @@ body.contact-page {
     display: flex;
     align-items: center;
 }
-#about.is-pinned .about-premium-grid,
-#about.is-fit .about-premium-grid {
+#about.is-pinned .about-premium-grid {
     height: var(--about-h);
     min-height: 0;
     grid-template-columns: min(calc(var(--about-h) * 0.8), 44%) minmax(0, 1fr);
     align-items: stretch;
 }
-#about.is-pinned .about-left-col,
-#about.is-fit .about-left-col { justify-content: stretch; min-height: 0; }
-#about.is-pinned .about-photo-card,
-#about.is-fit .about-photo-card {
+#about.is-pinned .about-left-col { justify-content: stretch; min-height: 0; }
+#about.is-pinned .about-photo-card {
     flex: 1;
     width: 100%;
     height: auto;
@@ -3063,36 +2893,60 @@ body.contact-page {
     aspect-ratio: auto;
     min-height: 0;
     margin: 0;
+    box-shadow:
+        0 30px 60px -20px rgb(0 0 0 / 0.35),
+        0 18px 50px -18px color-mix(in srgb, var(--about-accent) 55%, transparent),
+        0 0 calc(var(--ring, 0) * 56px) rgb(200 80 192 / calc(var(--ring, 0) * 0.45));
 }
-#about.is-pinned .about-bio-card,
-#about.is-fit .about-bio-card {
+#about.is-pinned .about-bio-card {
     min-height: 0;
-    justify-content: center;
+    display: grid;
+    align-content: center;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(8px, 1.8svh, 16px);
     padding: clamp(18px, 4.2svh, 44px) clamp(24px, 3.6vw, 48px);
-    gap: clamp(8px, 1.8svh, 16px);
 }
-/* type scales with the available height, so the paragraph never has to be clipped */
-#about.is-pinned .about-bio-card .section-subtitle,
-#about.is-fit .about-bio-card .section-subtitle { font-size: clamp(22px, min(3.2vw, 4.4svh), 42px) !important; }
-#about.is-pinned .about-bio-card .about-text,
-#about.is-fit .about-bio-card .about-text { font-size: clamp(14px, 1.9svh, 16px); line-height: 1.65; }
-#about.is-pinned .btn-about,
-#about.is-fit .btn-about { padding: clamp(8px, 1.4svh, 11px) clamp(18px, 2.4svh, 26px); font-size: clamp(0.8rem, 1.9svh, 0.88rem); }
+#about.is-pinned .abt-heading { font-size: clamp(22px, min(3.2vw, 4.4svh), 42px); }
+#about.is-pinned .abt-w { color: var(--abt-ink); }
+#about.is-pinned .abt-chapters { display: grid; gap: 0; }
+#about.is-pinned .abt-ch { grid-area: 1 / 1; padding: 0; border: 0; }
+#about.is-pinned .abt-ch__title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
+#about.is-pinned .abt-lead { font-size: clamp(14px, 2svh, 17px); }
+#about.is-pinned .abt-body { font-size: clamp(14px, 1.9svh, 16px); line-height: 1.6; }
+#about.is-pinned .abt-ch--intro .abt-body { font-size: clamp(14px, 2svh, 17px); }
+#about.is-pinned .abt-result { font-size: clamp(16px, min(2.4vw, 3.2svh), 30px); margin-top: -4px; }
+#about.is-pinned .abt-progress {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+#about.is-pinned .abt-progress i { position: relative; height: 3px; border-radius: 2px; overflow: hidden; background: rgba(26, 26, 46, 0.12); }
+#about.is-pinned .abt-progress b { position: absolute; inset: 0; background: var(--about-accent); transform: scaleX(0); transform-origin: left center; }
+#about.is-pinned .btn-about { padding: clamp(8px, 1.4svh, 11px) clamp(18px, 2.4svh, 26px); font-size: clamp(0.8rem, 1.9svh, 0.88rem); }
 
 /* compact tiers by height (same idea as the Portfolio deck) */
 @media (min-width: 900px) and (max-height: 699px) {
-    #about.is-pinned .about-bio-card, #about.is-fit .about-bio-card { padding: 20px 32px; gap: 10px; }
-    #about.is-pinned .about-bio-foot, #about.is-fit .about-bio-foot { margin-top: 2px; }
+    #about.is-pinned .about-bio-card { padding: 20px 32px; row-gap: 8px; }
+    #about.is-pinned .abt-body { line-height: 1.5; }
 }
 @media (min-width: 900px) and (max-height: 559px) {
-    #about.is-pinned .about-bio-card .about-text, #about.is-fit .about-bio-card .about-text { font-size: 14px; line-height: 1.5; }
-    #about.is-pinned .about-bio-card, #about.is-fit .about-bio-card { padding: 16px 28px; gap: 8px; }
-    #about.is-pinned .btn-about, #about.is-fit .btn-about { padding: 7px 18px; font-size: 0.8rem; }
+    #about.is-pinned .about-bio-card { padding: 14px 28px; row-gap: 6px; }
+    #about.is-pinned .abt-lead::after { margin-top: 4px; height: 2px; }
+    #about.is-pinned .abt-body { font-size: 14px; line-height: 1.45; }
+    #about.is-pinned .btn-about { padding: 7px 18px; font-size: 0.8rem; }
 }
 @media (min-width: 900px) and (max-height: 439px) {
-    #about.is-pinned .about-sign, #about.is-fit .about-sign { display: none; }
-    #about.is-pinned .about-bio-card .about-text, #about.is-fit .about-bio-card .about-text { line-height: 1.42; }
+    #about.is-pinned .about-sign { display: none; }
 }
+/* ===== /ABOUT CHAPTERS ===== */
+
+/* story: visual order = eyebrow, heading, "→ eredmény.", chapters, progress, button row */
+#about.is-pinned .abt-eyebrow { order: 1; }
+#about.is-pinned .abt-head { order: 2; }
+#about.is-pinned .abt-result { order: 3; }
+#about.is-pinned .abt-chapters { order: 4; }
+#about.is-pinned .abt-progress { order: 5; }
+#about.is-pinned .about-bio-foot { order: 6; }
 
 /* ── Hogyan dolgozom (myapproach.html) – About-style editorial split ── */
 .ap { background: #f8f7ff; padding: 120px 20px 90px; }

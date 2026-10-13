@@ -45,7 +45,7 @@
         }
         </script>
 
-    <link rel="stylesheet" href="style.css?v=ab1">
+    <link rel="stylesheet" href="style.css?v=as3">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
@@ -149,12 +149,12 @@
     </div>
 </div>
 
-<section id="about" data-theme="light">
+<section id="about" data-theme="light" aria-labelledby="abt-eyebrow">
 
     <div class="about-pin">
     <div class="about-premium-grid">
 
-        <!-- Left column: photo + stats stacked -->
+        <!-- Left column: photo (5 layers: 1 base, 2-4 chapters, 5 = photo 1 again) -->
         <div class="about-left-col">
 
             <div class="about-photo-card">
@@ -163,6 +163,7 @@
                     <img class="about-img about-img--2" data-src="about-2.jpg" width="960" height="1200" alt="" decoding="async">
                     <img class="about-img about-img--3" data-src="about-3.jpg" width="960" height="1200" alt="" decoding="async">
                     <img class="about-img about-img--4" data-src="about-4.jpg" width="960" height="1200" alt="" decoding="async">
+                    <img class="about-img about-img--5" data-src="about-1.jpg" width="960" height="1200" alt="" decoding="async">
                     <div class="about-photo-overlay"></div>
                 </div>
             </div>
@@ -170,12 +171,40 @@
         </div>
 
         <!-- Right column: text card -->
-        <div class="about-bio-card">
-            <h2>Rólam</h2>
-            <p class="section-subtitle">Dizájn, kód és mozgás</p>
-            <p class="about-text">Szenvedélyem a digitális élmények megteremtése. Kreatív webfejlesztőként nem csupán weboldalakat építek, hanem olyan egyedi digitális termékeket hozok létre, amelyek vizuálisan lenyűgözőek és üzletileg eredményesek. A koncepciótervtől a precíz kódoláson át a finom animációkig minden részletre odafigyelek. Nálam nincsenek technikai korlátok. Vizuálisan erőteljes és technológiailag kifogástalan és 100%-ban reszponzív megoldásokat szállítok az Ön számára.</p>
+        <div class="about-bio-card abt">
+            <p class="abt-eyebrow" id="abt-eyebrow">Rólam</p>
+            <div class="abt-head">
+                <h2 class="abt-heading"><span class="abt-w abt-w--design">Dizájn,</span> <span class="abt-w abt-w--code">kód</span> <span class="abt-w abt-w--and">és</span> <span class="abt-w abt-w--motion">mozgás</span></h2>
+            </div>
+            <div class="abt-chapters">
+                <div class="abt-ch abt-ch--intro">
+                    <p class="abt-body">Helló! Kreatív webfejlesztő vagyok Budapestről. Magyar vállalkozásoknak tervezek és építek weboldalakat – az első vázlattól az élesítésig.</p>
+                </div>
+                <article class="abt-ch abt-ch--design">
+                    <h3 class="abt-ch__title">Dizájn</h3>
+                    <p class="abt-lead">Az első benyomás számít.</p>
+                    <p class="abt-body">Az Ön márkájára szabott, kreatív és modern dizájnt tervezek, amely első látásra lenyűgözi az ügyfeleit.</p>
+                </article>
+                <article class="abt-ch abt-ch--code">
+                    <h3 class="abt-ch__title">Kód</h3>
+                    <p class="abt-lead">Gyors és stabil alapok.</p>
+                    <p class="abt-body">Tiszta kóddal építem fel az oldalt, hogy minden eszközön gyorsan betöltsön és megbízhatóan működjön.</p>
+                </article>
+                <article class="abt-ch abt-ch--motion">
+                    <h3 class="abt-ch__title">Mozgás</h3>
+                    <p class="abt-lead">Élő, emlékezetes élmény.</p>
+                    <p class="abt-body">Finom animációkkal vezetem a figyelmet, hogy a látogató érdeklődése megmaradjon, és a tekintete oda irányuljon, ahol a lényeg van.</p>
+                </article>
+                <article class="abt-ch abt-ch--result">
+                    <h3 class="abt-ch__title">Eredmény</h3>
+                    <p class="abt-lead">Egy oldal, amely Önnek dolgozik.</p>
+                    <p class="abt-body">A három együtt adja azt, ami igazán számít: egy weboldalt, amely bizalmat kelt, és segít új ügyfeleket szerezni.</p>
+                </article>
+            </div>
+            <p class="abt-result"><span class="abt-result__arrow" aria-hidden="true">→</span> <span class="abt-result__mask"><span class="abt-result__word">eredmény.</span></span><i class="abt-result__line" aria-hidden="true"></i></p>
+            <div class="abt-progress" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
             <div class="about-bio-foot">
-                <a href="myapproach.html" class="btn-about">Olvass tovább</a>
+                <a href="myapproach.html" class="btn-about">Hogyan dolgozom</a>
                 <span class="about-sign">VargaGyörgy</span>
             </div>
         </div>
@@ -1049,10 +1078,11 @@
 <script src="js/lenis-setup.js?v=1" defer></script>
 <script src="js/services.js?v=1" defer></script>
 <script src="js/contact-footer.js?v=2" defer></script>
+<script src="js/about-story.js?v=5" defer></script>
 <script src="js/portfolio-data.js?v=1" defer></script>
 <script src="js/portfolio.js?v=3" defer></script>
-<script src="script.js?v=30"></script>
-<script src="animations.js?v=9"></script>
+<script src="script.js?v=31"></script>
+<script src="animations.js?v=10"></script>
 <script src="nav.js?v=3" defer></script>
 <script src="cursor.js?v=8" defer></script>
 </body>

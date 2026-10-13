@@ -31,13 +31,7 @@
     add(document.querySelector('.cta-button'), null,  400);
     add(document.querySelector('.tech-zone'),  'scale', 300);
 
-    // About
-    add(document.querySelector('.about-photo-card'), 'left', 0);
-    var bioCard = document.querySelector('.about-bio-card');
-    if (bioCard) {
-        prep(bioCard, 'right', 100);
-        toObserve.push(bioCard);
-    }
+    // About: handled by js/about-story.js
 
     // Skills
     var skillsHead = document.querySelector('#skills .skills-head');
