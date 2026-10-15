@@ -2702,9 +2702,6 @@ body.contact-page {
     }
     .about-photo-stack { border-radius: 22px; }
 }
-.about-img--2,
-.about-img--3,
-.about-img--4 { opacity: 0; }
 
 /* ===== ABOUT — CHAPTERS STORY (Dizájn / Kód / Mozgás / Eredmény) =====
    Default (no JS, reduced motion, GSAP/SplitText missing, < 900px): a plain list —
@@ -2790,6 +2787,8 @@ body.contact-page {
 .abt-ch--result .abt-lead::after { background: var(--card-primary); }
 .abt-body { margin: 0; font-family: 'Montserrat', sans-serif; font-size: 1rem; line-height: 1.7; color: #3d3d5c; }
 .abt-line { display: block; }
+/* line masks (SplitText) get breathing room so accents (É, Ő) and descenders (g, j, y) are never cut */
+.abt-chapters [class*="-mask"] { padding-block: 0.22em; margin-block: -0.22em; }
 
 /* "→ eredmény." */
 .abt-result {
@@ -2850,8 +2849,17 @@ body.contact-page {
 .abt-fx--ghost { color: var(--fx); -webkit-text-fill-color: var(--fx); opacity: 0; white-space: nowrap; }
 
 /* ---------- photo stack: 5 layers (1 base, 2-4 chapters, 5 = photo 1 again) ---------- */
-.about-img { transform: scale(calc(var(--s, 1) * var(--z, 1))); filter: brightness(var(--dim, 1)); }
-.about-img--2, .about-img--3, .about-img--4, .about-img--5 { opacity: 0; }
+/* photo stack: layer (clip-path reveal + dim) > picture (slow zoom via --z) > img (scrubbed zoom, fades in once decoded).
+   The stack's own background is the photos' dark tone, so even a late layer never flashes a black card. */
+.about-photo-stack { background: #141a2e url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABIMDRANCxIQDhAUExIVGywdGxgYGzYnKSAsQDlEQz85Pj1HUGZXR0thTT0+WXlaYWltcnNyRVV9hnxvhWZwcm7/2wBDARMUFBsXGzQdHTRuST5Jbm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm7/wAARCAAZABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAMFAQb/xAAoEAACAQQABAUFAAAAAAAAAAABAgMABBESITFBQgUUFTJhIlFxgZH/xAAXAQADAQAAAAAAAAAAAAAAAAAAAgMB/8QAGxEAAgIDAQAAAAAAAAAAAAAAAAECEQMhImH/2gAMAwEAAhEDEQA/AM6SygmskSKRTcPLjUntyTk/FQ9LuLG5RJNJIs7EKcD95q0MkTKQNvZnde09c1wOjXBADZRBjPdy4/iqSfSExQiouzKNrLN9cUDlT9lpW0/iIU6yOgZeBz1+RSm0U49PPJdyo6Or+w5A6fyklyW20QRh+YU1AcqVIVaK+alONm2xwy3GlQPOlFmn/9k=") center 18% / cover no-repeat; }   /* tiny blurred copy of photo 1: the card is never empty while photo 1 downloads */
+.about-layer { position: absolute; inset: 0; }
+.about-layer picture { display: block; position: absolute; inset: 0; transform: scale(var(--z, 1)); transform-origin: 50% 50%; }
+.about-layer .about-img { transform-origin: 50% 50%; color: transparent; }
+/* chapter photos (2-5) are hidden until JS has decoded them; they only exist in the story layout */
+.about-layer--2, .about-layer--3, .about-layer--4, .about-layer--5 { opacity: 0; }
+.about-layer--2 .about-img, .about-layer--3 .about-img, .about-layer--4 .about-img, .about-layer--5 .about-img { opacity: 0; transition: opacity 0.25s ease; }
+.about-layer .about-img.is-decoded { opacity: 1; }
+#about.is-pinned .about-layer--2, #about.is-pinned .about-layer--3, #about.is-pinned .about-layer--4, #about.is-pinned .about-layer--5 { will-change: clip-path; }
 
 /* ---------- list layout (default / fallback) ---------- */
 .abt-chapters .abt-ch + .abt-ch { padding-top: 22px; border-top: 1px solid rgba(26, 26, 46, 0.08); }

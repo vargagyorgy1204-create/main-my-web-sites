@@ -45,7 +45,7 @@
         }
         </script>
 
-    <link rel="stylesheet" href="style.css?v=as3">
+    <link rel="stylesheet" href="style.css?v=ph6">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
@@ -159,11 +159,36 @@
 
             <div class="about-photo-card">
                 <div class="about-photo-stack">
-                    <img class="about-img about-img--1" src="about-1.jpg" width="960" height="1200" alt="Varga György – a VarBro tulajdonosa munka közben" decoding="async">
-                    <img class="about-img about-img--2" data-src="about-2.jpg" width="960" height="1200" alt="" decoding="async">
-                    <img class="about-img about-img--3" data-src="about-3.jpg" width="960" height="1200" alt="" decoding="async">
-                    <img class="about-img about-img--4" data-src="about-4.jpg" width="960" height="1200" alt="" decoding="async">
-                    <img class="about-img about-img--5" data-src="about-1.jpg" width="960" height="1200" alt="" decoding="async">
+                    <div class="about-layer about-layer--1">
+                        <picture>
+                            <source type="image/webp" srcset="about-1-640.webp 640w, about-1.webp 960w" sizes="(min-width: 900px) 520px, 100vw">
+                            <img class="about-img about-img--1" src="about-1.jpg" srcset="about-1.jpg 960w" sizes="(min-width: 900px) 520px, 100vw" width="960" height="1200" alt="Varga György – a VarBro tulajdonosa munka közben" decoding="async">
+                        </picture>
+                    </div>
+                    <div class="about-layer about-layer--2" aria-hidden="true">
+                        <picture>
+                            <source type="image/webp" data-srcset="about-2-640.webp 640w, about-2.webp 960w" sizes="(min-width: 900px) 520px, 100vw">
+                            <img class="about-img about-img--2" data-src="about-2.jpg" data-srcset="about-2.jpg 960w" sizes="(min-width: 900px) 520px, 100vw" width="960" height="1200" alt="" decoding="async">
+                        </picture>
+                    </div>
+                    <div class="about-layer about-layer--3" aria-hidden="true">
+                        <picture>
+                            <source type="image/webp" data-srcset="about-3-640.webp 640w, about-3.webp 960w" sizes="(min-width: 900px) 520px, 100vw">
+                            <img class="about-img about-img--3" data-src="about-3.jpg" data-srcset="about-3.jpg 960w" sizes="(min-width: 900px) 520px, 100vw" width="960" height="1200" alt="" decoding="async">
+                        </picture>
+                    </div>
+                    <div class="about-layer about-layer--4" aria-hidden="true">
+                        <picture>
+                            <source type="image/webp" data-srcset="about-4-640.webp 640w, about-4.webp 960w" sizes="(min-width: 900px) 520px, 100vw">
+                            <img class="about-img about-img--4" data-src="about-4.jpg" data-srcset="about-4.jpg 960w" sizes="(min-width: 900px) 520px, 100vw" width="960" height="1200" alt="" decoding="async">
+                        </picture>
+                    </div>
+                    <div class="about-layer about-layer--5" aria-hidden="true">
+                        <picture>
+                            <source type="image/webp" data-srcset="about-1-640.webp 640w, about-1.webp 960w" sizes="(min-width: 900px) 520px, 100vw">
+                            <img class="about-img about-img--5" data-src="about-1.jpg" data-srcset="about-1.jpg 960w" sizes="(min-width: 900px) 520px, 100vw" width="960" height="1200" alt="" decoding="async">
+                        </picture>
+                    </div>
                     <div class="about-photo-overlay"></div>
                 </div>
             </div>
@@ -1078,7 +1103,7 @@
 <script src="js/lenis-setup.js?v=1" defer></script>
 <script src="js/services.js?v=1" defer></script>
 <script src="js/contact-footer.js?v=2" defer></script>
-<script src="js/about-story.js?v=5" defer></script>
+<script src="js/about-story.js?v=9" defer></script>
 <script src="js/portfolio-data.js?v=1" defer></script>
 <script src="js/portfolio.js?v=3" defer></script>
 <script src="script.js?v=31"></script>

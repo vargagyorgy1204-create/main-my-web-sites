@@ -138,7 +138,7 @@
       word: q('.abt-result__word'),
       line: q('.abt-result__line'),
       sign: q('.about-sign'),
-      img5: q('.about-img--5'),
+      img5: q('.about-layer--5 picture'),   /* slow zoom runs on the picture, the scrub zoom on the img */
       card: q('.about-photo-card')
     };
   }
@@ -180,24 +180,40 @@
     return tl;
   }
 
-  /* ------------------------------------------------------------ photos (2-5 load only near the section) */
+  /* ------------------------------------------------------------ photos
+     Photos 2-5 start loading once the page has loaded and the section is within ~2 viewports.
+     A chapter photo stays invisible (opacity 0) until img.decode() has resolved, then fades in:
+     a half-downloaded / half-decoded image can never be painted. Until then the outgoing photo
+     simply stays visible under the reveal (the stack background is the photos' dark tone). */
+  var photosStarted = false;
+  function startPhotos() {
+    if (photosStarted) return;
+    photosStarted = true;
+    var jobs = qa('.about-layer').slice(1).map(function (layer) {
+      var img = layer.querySelector('img'), src = layer.querySelector('source');
+      if (src && src.getAttribute('data-srcset')) src.srcset = src.getAttribute('data-srcset');
+      if (img.getAttribute('data-srcset')) img.srcset = img.getAttribute('data-srcset');
+      img.src = img.getAttribute('data-src');
+      var ready = img.decode ? img.decode() : new Promise(function (res, rej) { img.onload = res; img.onerror = rej; });
+      return ready.then(function () { img.classList.add('is-decoded'); }, function () { throw img; });
+    });
+    Promise.allSettled(jobs).then(function (res) {
+      if (res.some(function (r) { return r.status === 'rejected'; }) && !warned) {
+        warned = true;
+        console.warn('[VarBro] An About photo failed to load; its chapter keeps showing the previous photo.');
+      }
+    });
+  }
   function watchPhotos() {
-    var imgs = qa('.about-img').slice(1);
-    var load = function () {
-      imgs.forEach(function (img) {
-        if (img.getAttribute('src') || !img.getAttribute('data-src')) return;
-        img.addEventListener('error', function () {
-          if (warned) return; warned = true;
-          console.warn('[VarBro] An About photo failed to load; the chapter will show the previous photo.');
-        }, { once: true });
-        img.src = img.getAttribute('data-src');
-      });
+    if (photosStarted) return;
+    var go = function () {
+      if (!('IntersectionObserver' in window)) { startPhotos(); return; }
+      io = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { io.disconnect(); io = null; startPhotos(); }
+      }, { rootMargin: '200% 0px 200% 0px' });
+      io.observe(section);
     };
-    if (!('IntersectionObserver' in window)) { load(); return; }
-    io = new IntersectionObserver(function (es) {
-      if (es[0].isIntersecting) { io.disconnect(); io = null; load(); }
-    }, { rootMargin: '150% 0px 150% 0px' });
-    io.observe(section);
+    if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true });
   }
 
   /* ------------------------------------------------------------ story (>= 900px) */
@@ -205,7 +221,8 @@
     mode = 'story';
     section.classList.add('is-pinned');
     var card = q('.about-bio-card');
-    var imgs = [1, 2, 3, 4, 5].map(function (n) { return q('.about-img--' + n); });
+    var layers = [1, 2, 3, 4, 5].map(function (n) { return q('.about-layer--' + n); });
+    var imgs = layers.map(function (l) { return l.querySelector('img'); });
     var W = { design: q('.abt-w--design'), code: q('.abt-w--code'), motion: q('.abt-w--motion'), and: q('.abt-w--and') };
     var h2 = q('.abt-heading');
     h2.setAttribute('aria-label', 'Dizájn, kód és mozgás');
@@ -228,7 +245,8 @@
     var p = resultParts();
 
     /* initial (hidden) states, set from JS only */
-    gsap.set(imgs.slice(1), { opacity: 1, clipPath: 'inset(100% 0% 0% 0%)', '--s': 1.08 });
+    gsap.set(layers.slice(1), { opacity: 1, clipPath: 'inset(100% 0% 0% 0%)' });
+    gsap.set(imgs.slice(1), { scale: 1.08 });
     gsap.set(lines.slice(1).reduce(function (a, b) { return a.concat(b); }, []), { yPercent: 115 });
     gsap.set(segs, { scaleX: 0 });
     gsap.set(chapters.slice(1), { '--bar': 0 });
@@ -264,8 +282,9 @@
       tl.fromTo(card, { '--about-accent': prevAccent }, { '--about-accent': t.accent, duration: 30 }, S);
       prevAccent = t.accent;
       /* photo: incoming rises bottom -> top while scaling 1.08 -> 1; outgoing dims */
-      tl.fromTo(imgs[i + 1], { clipPath: 'inset(100% 0% 0% 0%)', '--s': 1.08 }, { clipPath: 'inset(0% 0% 0% 0%)', '--s': 1, duration: 30 }, S)
-        .fromTo(imgs[i], { '--dim': 1 }, { '--dim': 0.7, duration: 30 }, S);
+      tl.fromTo(layers[i + 1], { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 30 }, S)
+        .fromTo(imgs[i + 1], { scale: 1.08 }, { scale: 1, duration: 30 }, S)
+        .fromTo(layers[i], { filter: 'brightness(1)' }, { filter: 'brightness(0.7)', duration: 30 }, S);   /* real filter values: a custom property restored as 0 on rewind painted the layers black */
       /* text: outgoing lines up + fade, incoming lines rise from their masks */
       if (i > 0) tl.to(chapters[i], { '--bar': 0, duration: 14 }, S);
       tl.fromTo(chapters[i + 1], { '--bar': 0 }, { '--bar': 1, duration: 20 }, S + 9);
