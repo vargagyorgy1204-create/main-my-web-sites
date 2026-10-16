@@ -3590,6 +3590,8 @@ body.contact-page {
 
 /* Custom cursor: dot + morphing ring (cursor.js) */
 html.has-cursor, html.has-cursor * { cursor: none !important; }
+/* the custom cursor is switched on by real mouse input (cursor.js), never by a media query */
+html:not(.has-cursor) .cursor-ring, html:not(.has-cursor) .cursor-dot { display: none; }
 html.has-cursor input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), html.has-cursor textarea, html.has-cursor [contenteditable="true"] { cursor: text !important; }
 
 .cursor-ring, .cursor-dot {

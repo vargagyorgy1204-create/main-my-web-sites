@@ -26,8 +26,12 @@
     try { init(); } catch (err) { restoreNative(err); }
 
     function init() {
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    /* Activation is based on REAL INPUT, not on media queries (touch-screen laptops report pointer: coarse / hover: none
+       even with a mouse in hand): the native cursor stays until the first mouse / pen pointermove; a touch turns the
+       custom cursor off again. Only prefers-reduced-motion keeps it off for good. */
+    var reducedMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reducedMq.matches) return;
+    var enabled = false, broken = false, lastTouch = 0;
 
     var LINK = 'a, button, [role="button"], label, summary, select, input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="button"], [data-cursor="frame"], .hero-chip, .skills-dot, .about-sign';
     var MAGNETIC = '.hbtn, .burger, .nav__logo, .menu__link, .modal-quote-btn, .stamp, .service-modal-trigger, .svt-btn, .pf-btn, .btn-about';
@@ -38,19 +42,21 @@
     var HOLD = 90;              /* ms the frame is kept when the pointer crosses a gap between two targets */
 
     var root = document.documentElement;
-    root.classList.add('has-cursor');
-
-    var dot = document.createElement('div');
-    dot.className = 'cursor-dot';
-    var ring = document.createElement('div');
-    ring.className = 'cursor-ring';
-    var label = document.createElement('span');
-    label.className = 'cursor-label';
-    ring.appendChild(label);
-    [ring, dot].forEach(function (el) {
-        el.setAttribute('aria-hidden', 'true');
-        document.body.appendChild(el);
-    });
+    var dot = null, ring = null, label = null;      /* created on the first real mouse move */
+    function ensureElements() {
+        if (ring) return;
+        dot = document.createElement('div');
+        dot.className = 'cursor-dot';
+        ring = document.createElement('div');
+        ring.className = 'cursor-ring';
+        label = document.createElement('span');
+        label.className = 'cursor-label';
+        ring.appendChild(label);
+        [ring, dot].forEach(function (el) {
+            el.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(el);
+        });
+    }
 
     var mx = -100, my = -100, rx = -100, ry = -100;
     var running = false;
@@ -134,6 +140,7 @@
     }
 
     function measure() {
+        if (!enabled) return;
         if (frame) computeBox(frame);
         if (magnet) magRect = layoutRect(magnet);
         kick();
@@ -205,15 +212,48 @@
     }
 
     var watchdog = 0;
-    document.addEventListener('pointermove', function (e) {
-        if (e.pointerType && e.pointerType !== 'mouse') return;
+    function enable(x, y) {
+        ensureElements();
+        enabled = true;
+        mx = rx = x;
+        my = ry = y;                                   /* start at the pointer: no jump from 0,0 */
+        dot.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+        ring.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+        root.classList.add('has-cursor');
+        root.classList.remove('cursor-hidden');
         if (!watchdog) {
-            /* self-check: after the first real mouse move the ring must exist and have been positioned */
+            /* self-check: 1.5 s after the first mouse move the ring must exist and have been positioned */
             watchdog = setTimeout(function () {
-                if (document.hidden) return;
-                if (!ring.isConnected || !ring.style.transform || getComputedStyle(ring).display === 'none') restoreNative('ring did not render');
+                if (document.hidden || !enabled) { watchdog = 0; return; }
+                if (!ring.isConnected || !ring.style.transform || getComputedStyle(ring).display === 'none') { broken = true; restoreNative('ring did not render'); }
             }, 1500);
         }
+        setState(document.elementFromPoint(x, y));
+        kick();
+    }
+    function disable() {
+        if (!enabled) return;
+        enabled = false;
+        cancelHold();
+        releaseMagnet();
+        setFrame(null);
+        mode = 'hover';
+        if (ring) ring.classList.remove('is-link-small', 'is-text', 'is-view', 'is-magnetic');
+        root.classList.remove('has-cursor', 'cursor-keyboard', 'cursor-on-field', 'cursor-press');
+    }
+    /* touch: switch off at once; the compat mouse events browsers fire right after a tap are ignored for 500 ms */
+    function touched() { lastTouch = Date.now(); disable(); }
+    ['touchstart', 'touchend', 'touchcancel'].forEach(function (n) { document.addEventListener(n, touched, { passive: true, capture: true }); });
+    ['pointerdown', 'pointerup'].forEach(function (n) { document.addEventListener(n, function (e) { if (e.pointerType === 'touch') touched(); }, true); });
+    if (reducedMq.addEventListener) reducedMq.addEventListener('change', function () { if (reducedMq.matches) { broken = true; disable(); } });
+
+    document.addEventListener('pointermove', function (e) {
+        if (broken) return;
+        if (e.pointerType === 'touch') { touched(); return; }
+        if (e.pointerType && e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+        if (Date.now() - lastTouch < 500) return;
+        if (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents) return;
+        if (!enabled) { enable(e.clientX, e.clientY); return; }
         mx = e.clientX;
         my = e.clientY;
         dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
@@ -265,7 +305,7 @@
     function setState(target) {
         try { setStateInner(target); } catch (err) {
             /* one bad element must not stop the cursor: drop the frame and carry on; repeated failures give the native cursor back */
-            if (++failures > 5) { restoreNative(err); return; }
+            if (++failures > 5) { broken = true; disable(); restoreNative(err); return; }
             try { setFrame(null); ring.classList.remove('is-link-small', 'is-text', 'is-view', 'is-magnetic'); } catch (e2) { /* ignore */ }
         }
     }
@@ -314,16 +354,18 @@
     }
 
     document.addEventListener('pointerover', function (e) {
-        if (e.pointerType && e.pointerType !== 'mouse') return;
+        if (!enabled) return;
+        if (e.pointerType && e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
         if (mode === 'focus') return;
         setState(e.target);
         kick();
     });
 
-    document.addEventListener('pointerdown', function () { root.classList.add('cursor-press'); });
+    document.addEventListener('pointerdown', function (e) { if (enabled && e.pointerType !== 'touch') root.classList.add('cursor-press'); });
     document.addEventListener('pointerup', function () { root.classList.remove('cursor-press'); });
 
     document.documentElement.addEventListener('pointerleave', function () {
+        if (!enabled) return;
         root.classList.add('cursor-hidden');
         cancelHold();
         releaseMagnet();
@@ -332,6 +374,7 @@
 
     /* ------------------------------------------------------------ keyboard: :focus-visible gets the same frame */
     document.addEventListener('focusin', function (e) {
+        if (!enabled) return;
         var t = e.target;
         if (!(t instanceof Element) || !focusVisible(t)) return;
         var el = resolve(t);
@@ -347,7 +390,7 @@
         kick();
     });
     document.addEventListener('focusout', function () {
-        if (mode !== 'focus') return;
+        if (!enabled || mode !== 'focus') return;
         setTimeout(function () {
             if (mode !== 'focus' || (document.activeElement && focusVisible(document.activeElement))) return;
             mode = 'hover';
@@ -364,6 +407,7 @@
         scrollTicking = true;
         requestAnimationFrame(function () {
             scrollTicking = false;
+            if (!enabled) return;
             if (mode === 'hover' && mx > 0) setState(document.elementFromPoint(mx, my));
             measure();
         });
@@ -372,12 +416,12 @@
     /* hover effects / reveals that finish under a resting pointer (menu items, modals) change the box */
     ['transitionend', 'animationend'].forEach(function (n) {
         document.addEventListener(n, function (e) {
-            if (frame && (e.target === frame.el || frame.el.contains(e.target) || e.target.contains(frame.el))) measure();
+            if (enabled && frame && (e.target === frame.el || frame.el.contains(e.target) || e.target.contains(frame.el))) measure();
         }, true);
     });
     /* what is under a resting pointer changes without pointer events (menu / modal opens and closes, elements removed) */
     setInterval(function () {
-        if (mode !== 'hover' || mx < 0 || root.classList.contains('cursor-hidden')) return;
+        if (!enabled || mode !== 'hover' || mx < 0 || root.classList.contains('cursor-hidden')) return;
         if (frame && !frame.el.isConnected) { setFrame(null); }
         var under = document.elementFromPoint(mx, my);
         var el = resolve(under);
