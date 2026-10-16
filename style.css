@@ -3303,7 +3303,7 @@ body.contact-page {
     border: 1px solid rgba(17, 17, 17, 0.08);
     background: rgba(255, 255, 255, 0.72);
     color: #333;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Inter Fallback', sans-serif;
     font-size: clamp(11.5px, 1.2svh, 13px);
     font-weight: 600;
     letter-spacing: 0.01em;
@@ -4198,7 +4198,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
         height: 100svh;
         display: flex;
         align-items: center;
-        padding: 96px 24px 28px;
+        padding: var(--sec-top) 24px var(--sec-bottom);
         box-sizing: border-box;
     }
     .steps-pin .steps-inner {
@@ -4226,7 +4226,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
         min-height: 100svh;
         display: flex;
         align-items: center;
-        padding: 96px 24px 28px !important;
+        padding: var(--sec-top) 24px var(--sec-bottom) !important;
         box-sizing: border-box;
     }
     #why .why-inner {
@@ -5910,3 +5910,42 @@ footer {
     .footer-wordmark { margin-top: clamp(16px, min(4vw, 4.4svh), 48px); }
 }
 /* ===== /FOOTER DESIGN PASS ===== */
+
+/* ===== SECTION TOP OFFSETS + height-aware proportions (why, portfolio, steps) =====
+   One shared clearance: fixed header (92px; 76px on phones) + a height-aware gap, so an eyebrow
+   always sits >= 48px below the logo wherever an in-page link lands (the sections start at the top). */
+:root {
+    --sec-top: calc(92px + clamp(24px, 4svh, 56px));
+    --sec-bottom: clamp(20px, 3svh, 28px);
+}
+@media (max-width: 767px) { :root { --sec-top: calc(76px + clamp(24px, 4svh, 56px)); } }
+
+/* Portfolio: head clears the header; head type follows the height */
+#portfolio { padding-block-start: var(--sec-top); }
+.pf__head { margin-block-end: clamp(24px, 5svh, 56px); }
+.pf__title { font-size: clamp(30px, min(3.4vw, 4.8svh), 52px); margin-block: clamp(8px, 1.3svh, 14px) clamp(12px, 1.9svh, 20px); }
+.pf__sub { font-size: clamp(15px, min(1.25vw, 1.9svh), 18px); }
+
+/* Why: desktop panels scale with the window height (460px at >= 1080px) */
+@media (min-width: 768px) {
+    .why-head { margin-bottom: clamp(24px, 5.2svh, 56px); }
+    #why .section-heading { font-size: clamp(26px, min(3.2vw, 3.9svh), 42px) !important; }
+    .why-panels { height: clamp(300px, 42.6svh, 460px); }
+    .why-panel__tab { padding-block: clamp(18px, 2.6svh, 28px) clamp(20px, 3svh, 32px); }
+    .why-panel__body { padding: clamp(20px, 3.3svh, 36px); }
+    .why-panel__icon { width: clamp(40px, 4.8svh, 52px); height: clamp(40px, 4.8svh, 52px); margin-bottom: clamp(12px, 2svh, 22px); }
+    .why-panel__title { font-size: clamp(24px, min(2.4vw, 3.4svh), 36px); margin-bottom: clamp(8px, 1.1svh, 12px); }
+    .why-panel__text { font-size: clamp(14px, 1.5svh, 16px); line-height: 1.6; }
+    .why-panel__big { font-size: clamp(80px, 11svh, 120px); }
+}
+/* ===== /SECTION TOP OFFSETS ===== */
+
+/* Metric-matched fallback for Inter: the hero chips wrap the same way before and after the web font arrives (no layout shift) */
+@font-face {
+    font-family: 'Inter Fallback';
+    src: local('Arial');
+    size-adjust: 107.4%;
+    ascent-override: 90.2%;
+    descent-override: 22.5%;
+    line-gap-override: 0%;
+}

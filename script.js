@@ -616,7 +616,9 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         var inner = section.querySelector('.steps-inner');
         if (!inner) return;
         if (!pinQuery.matches) { section.style.removeProperty('--fit'); return; }
-        var avail = window.innerHeight - 96 - 28;
+        var pin = section.querySelector('.steps-pin') || section;
+        var pcs = window.getComputedStyle(pin);
+        var avail = window.innerHeight - parseFloat(pcs.paddingTop) - parseFloat(pcs.paddingBottom);
         var natural = inner.offsetHeight;
         var s = natural > 0 ? Math.max(0.55, Math.min(1, avail / natural)) : 1;
         section.style.setProperty('--fit', s.toFixed(3));
@@ -666,7 +668,8 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         if (!q.matches) { section.style.removeProperty('--fit'); section.style.removeProperty('--fit-h'); return; }
         section.style.setProperty('--fit-h', 'auto');
         section.style.setProperty('--fit', '1');
-        var avail = window.innerHeight - 96 - 28;
+        var wcs = window.getComputedStyle(section);
+        var avail = window.innerHeight - parseFloat(wcs.paddingTop) - parseFloat(wcs.paddingBottom);
         var natural = inner.offsetHeight;
         var s = natural > 0 ? Math.max(0.55, Math.min(1, avail / natural)) : 1;
         section.style.setProperty('--fit', s.toFixed(3));
