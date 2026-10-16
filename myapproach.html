@@ -24,7 +24,8 @@
         "serviceType": "Web Design"
     }
     </script>
-    <link rel="stylesheet" href="style.css?v=of1">
+    <script>if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("ap-pre");</script>
+    <link rel="stylesheet" href="style.css?v=ap1">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -69,31 +70,34 @@
     <div class="ap-grid">
       <div class="ap-photo about-photo-card">
         <div class="about-photo-stack">
-          <img src="myworkfoto.jpg" width="960" height="1200" alt="Varga György – VarBro webfejlesztő munkában" decoding="async">
+          <img src="myworkfoto.jpg" width="896" height="1014" alt="Varga György – VarBro webfejlesztő munkában" decoding="async" fetchpriority="high">
         </div>
       </div>
 
       <div class="ap-card">
         <h1 class="ap-eyebrow">Hogyan dolgozom</h1>
         <h2 class="ap-title">Átlátható folyamatok, kompromisszum&shy;mentes minőség</h2>
-        <p class="ap-text">A koncepciótervtől a precíz kódoláson át a finom animációkig minden részletre kiemelt figyelmet fordítok. Nálam nincsenek technikai korlátok — a legújabb webes technológiákkal dolgozom, hogy a legmerészebb elképzelések is valósággá váljanak.</p>
+        <p class="ap-text ap-intro">A koncepciótervtől a <span class="hl">precíz kódoláson</span> át a <span class="hl">finom animációkig</span> minden részletre kiemelt figyelmet fordítok. A legújabb webes megoldásokkal dolgozom, hogy az Ön elképzelései a lehető legpontosabban valósuljanak meg.</p>
 
         <p class="ap-label">Miben hiszek és mit garantálok Önnek?</p>
         <ol class="ap-list">
           <li class="ap-row">
             <span class="ap-row__num">01</span>
             <span class="ap-row__icon"><i data-lucide="target" class="icon"></i></span>
-            <div class="ap-row__body"><h3>Eredményorientált tervezés</h3><p>Nemcsak esztétikus, hanem konverzióra optimalizált felületeket építek, amelyek valódi üzleti előnyt biztosítanak az Ön vállalkozása számára.</p></div>
+            <div class="ap-row__body"><h3>Eredményorientált tervezés</h3><p>Nemcsak esztétikus, hanem konverzióra optimalizált felületeket építek, amelyek az Ön vállalkozásának valódi üzleti előnyt jelenthetnek.</p></div>
+            <span class="ap-row__rule" aria-hidden="true"></span>
           </li>
           <li class="ap-row">
             <span class="ap-row__num">02</span>
             <span class="ap-row__icon"><i data-lucide="gauge" class="icon"></i></span>
-            <div class="ap-row__body"><h3>Tökéletes reszponzivitás &amp; SEO</h3><p>Minden oldal villámgyors, mobilra finomhangolt és keresőbarát alapokra épül.</p></div>
+            <div class="ap-row__body"><h3>Reszponzív kialakítás &amp; SEO</h3><p>Minden oldalt gyors betöltésre, mobilra hangolt megjelenésre és keresőbarát alapokra építek.</p></div>
+            <span class="ap-row__rule" aria-hidden="true"></span>
           </li>
           <li class="ap-row">
             <span class="ap-row__num">03</span>
             <span class="ap-row__icon"><i data-lucide="eye" class="icon"></i></span>
             <div class="ap-row__body"><h3>Átlátható folyamat</h3><p>A tervezéstől az élesítésig folyamatos visszajelzést és transzparens kommunikációt kap.</p></div>
+            <span class="ap-row__rule" aria-hidden="true"></span>
           </li>
         </ol>
 
@@ -154,6 +158,14 @@
 
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/Flip.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js" defer></script>
+<script src="js/gsap-setup.js?v=1" defer></script>
+<script src="js/lenis-setup.js?v=1" defer></script>
+<script src="js/approach.js?v=1" defer></script>
 <script src="script.js?v=33"></script>
 <script src="nav.js?v=4" defer></script>
 <script src="cursor.js?v=10" defer></script>

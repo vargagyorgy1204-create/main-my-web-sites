@@ -2851,7 +2851,7 @@ body.contact-page {
 #about.is-pinned .about-bio-foot { order: 6; }
 
 /* ── Hogyan dolgozom (myapproach.html) – About-style editorial split ── */
-.ap { background: #f8f7ff; padding: 120px 20px 90px; }
+.ap { background: #f8f7ff; padding: var(--sec-top) 20px 90px; }
 .ap-wrap { max-width: 1100px; margin: 0 auto; }
 .ap-back {
     display: inline-flex; align-items: center; gap: 8px;
@@ -2860,6 +2860,8 @@ body.contact-page {
     color: #6b6b80; text-decoration: none; transition: color .2s ease;
 }
 .ap-back:hover { color: #4B1956; }
+.ap-back .icon { transition: transform .25s ease; }
+.ap-back:hover .icon, .ap-back:focus-visible .icon { transform: translateX(-4px); }
 .ap-grid {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -2867,12 +2869,27 @@ body.contact-page {
     align-items: start;
 }
 .ap-photo {
-    position: sticky;
-    top: 100px;
+    --ap-gap: clamp(16px, 3svh, 32px);
+    --ap-h: min(calc(100svh - 92px - 2 * var(--ap-gap)), 680px);   /* never taller than what is left under the header */
+    position: relative;
     width: 100%;
+    max-width: calc(var(--ap-h) * 0.8);
+    max-height: var(--ap-h);
     aspect-ratio: 4 / 5;
+    /* the frame breathes: the gradient angle drifts slowly (paint only, no layout) */
+    background:
+        linear-gradient(var(--card-secondary), var(--card-secondary)) padding-box,
+        linear-gradient(var(--ap-ang), #6c63ff 0%, #c850c0 100%) border-box;
+    animation: apBreath 8s ease-in-out infinite alternate;
 }
-.ap-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+@property --ap-ang { syntax: '<angle>'; inherits: false; initial-value: 135deg; }
+@keyframes apBreath { from { --ap-ang: 120deg; } to { --ap-ang: 170deg; } }
+.ap-photo.is-paused { animation-play-state: paused; }
+@media (min-width: 900px) {
+    .ap-photo { position: sticky; top: calc(92px + var(--ap-gap)); }
+}
+.ap-photo .about-photo-stack { background: #141a2e; }   /* dark fallback while the photo loads (not the About blur) */
+.ap-photo img { position: absolute; left: 0; top: -6%; width: 100%; height: 112%; object-fit: cover; object-position: center top; display: block; transform-origin: center; }
 .ap-card {
     background: #fff;
     border: 1px solid rgba(108,99,255,.12);
@@ -2906,7 +2923,36 @@ body.contact-page {
     gap: 14px;
     align-items: start;
     padding: 18px 0;
-    border-bottom: 1px solid rgba(26,26,46,.1);
+    position: relative;
+    isolation: isolate;
+}
+/* divider: drawn left to right when the row enters (scaleX) */
+.ap-row__rule {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: rgba(26,26,46,.1);
+    transform-origin: left center;
+    pointer-events: none;
+}
+/* hover (pointer devices): soft brand tint, icon box gets a gradient ring and moves, title shifts */
+.ap-row::before {
+    content: ""; position: absolute; inset: 0 -14px; z-index: -1;
+    border-radius: 14px; background: var(--card-primary); opacity: 0;
+    transition: opacity .3s ease; pointer-events: none;
+}
+.ap-row__icon { position: relative; transition: translate .3s ease; }
+.ap-row__icon::after {
+    content: ""; position: absolute; inset: -2px; border-radius: 14px; padding: 2px;
+    background: var(--card-primary);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0; transition: opacity .3s ease; pointer-events: none;
+}
+.ap-row__body h3 { transition: translate .3s ease; }
+@media (hover: hover) and (pointer: fine) {
+    .ap-row:hover::before { opacity: .07; }
+    .ap-row:hover .ap-row__icon { translate: 4px 0; }
+    .ap-row:hover .ap-row__icon::after { opacity: 1; }
+    .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 }
 .ap-row__num {
     font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; padding-top: 10px;
@@ -2921,12 +2967,37 @@ body.contact-page {
 .ap-row__body h3 { margin: 0 0 4px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: #1a1a2e; }
 .ap-row__body p { margin: 0; color: #3d3d5c; font-size: .92rem; line-height: 1.65; }
 .ap-closing { margin-top: 4px; }
+
+/* intro: key phrases get a brand-gradient underline that draws with the scroll (--u: 0 -> 1) */
+.ap-intro .hl {
+    --u: 0;
+    padding-bottom: .1em;
+    background: var(--card-primary) 0 100% / calc(var(--u) * 100%) 3px no-repeat;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+/* headline / title masks: padding keeps accents and descenders from being clipped */
+.ap-title .ap-word { vertical-align: top; }
+/* line masks: .22em padding keeps accents/descenders unclipped; the negative margin cancels it. Adjacent negative margins
+   collapse to the larger one, so the between-lines margin is doubled (-.44em) and the outer ones are -.22em. */
+.ap-title [class*="-mask"], .ap-row__body [class*="-mask"] { display: block; padding-block: .22em; margin-block: -.44em 0; }
+.ap-title [class*="-mask"]:first-child, .ap-row__body [class*="-mask"]:first-child { margin-block-start: -.22em; }
+.ap-title [class*="-mask"]:last-child, .ap-row__body [class*="-mask"]:last-child { margin-block-end: -.22em; }
+
+/* pre-hide until js/approach.js takes over; the failsafe reveals everything after 4s if it never does */
+.ap-pre .ap-back, .ap-pre .ap-photo, .ap-pre .ap-card { opacity: 0; animation: apFailsafe .01s linear 4s forwards; }
+@keyframes apFailsafe { to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+    .ap-photo { animation: none; position: relative; top: 0; }
+    .ap-photo img { top: 0; height: 100%; }
+    .ap-back .icon, .ap-row::before, .ap-row__icon, .ap-row__icon::after, .ap-row__body h3 { transition: none; }
+}
 .ap-card .about-bio-foot { margin-top: 2px; }
 
 @media (max-width: 900px) {
     .ap { padding: 104px 20px 72px; }
     .ap-grid { grid-template-columns: minmax(0, 1fr); }
-    .ap-photo { position: relative; top: 0; aspect-ratio: auto; height: min(420px, 100vw); }
+    .ap-photo { position: relative; top: 0; aspect-ratio: auto; height: min(420px, 100vw); max-width: none; max-height: none; }
     .ap-card { padding: 32px 28px; }
 }
 @media (max-width: 640px) {
