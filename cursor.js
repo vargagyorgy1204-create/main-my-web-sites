@@ -15,6 +15,17 @@
 // Keyboard: :focus-visible gets the same frame. Dark/light contrast comes from the background colour under the
 // pointer (nearest ancestor with a solid background), so it holds on overlays, modals and gradients.
 (function () {
+    /* the custom cursor must never leave a user without a pointer: any failure restores the native one */
+    function restoreNative(why) {
+        try {
+            document.documentElement.classList.remove('has-cursor', 'cursor-hidden', 'cursor-keyboard');
+            Array.prototype.forEach.call(document.querySelectorAll('.cursor-ring, .cursor-dot'), function (e) { e.remove(); });
+            if (window.console) console.warn('[VarBro] custom cursor off:', why);
+        } catch (e) { /* nothing left to do */ }
+    }
+    try { init(); } catch (err) { restoreNative(err); }
+
+    function init() {
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -193,8 +204,16 @@
         }
     }
 
+    var watchdog = 0;
     document.addEventListener('pointermove', function (e) {
         if (e.pointerType && e.pointerType !== 'mouse') return;
+        if (!watchdog) {
+            /* self-check: after the first real mouse move the ring must exist and have been positioned */
+            watchdog = setTimeout(function () {
+                if (document.hidden) return;
+                if (!ring.isConnected || !ring.style.transform || getComputedStyle(ring).display === 'none') restoreNative('ring did not render');
+            }, 1500);
+        }
         mx = e.clientX;
         my = e.clientY;
         dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)';
@@ -241,7 +260,16 @@
         }
     }
 
+    function focusVisible(el) { try { return el.matches(':focus-visible'); } catch (e) { return false; } }   /* older Safari throws on the selector */
+    var failures = 0;
     function setState(target) {
+        try { setStateInner(target); } catch (err) {
+            /* one bad element must not stop the cursor: drop the frame and carry on; repeated failures give the native cursor back */
+            if (++failures > 5) { restoreNative(err); return; }
+            try { setFrame(null); ring.classList.remove('is-link-small', 'is-text', 'is-view', 'is-magnetic'); } catch (e2) { /* ignore */ }
+        }
+    }
+    function setStateInner(target) {
         var t = target instanceof Element ? target : null;
         if (t) root.classList.toggle('cursor-dark', isDark(t));
         root.classList.remove('cursor-on-field');
@@ -305,7 +333,7 @@
     /* ------------------------------------------------------------ keyboard: :focus-visible gets the same frame */
     document.addEventListener('focusin', function (e) {
         var t = e.target;
-        if (!(t instanceof Element) || !t.matches(':focus-visible')) return;
+        if (!(t instanceof Element) || !focusVisible(t)) return;
         var el = resolve(t);
         if (!el) { if (t.closest(FIELD)) { setFrame(null); root.classList.add('cursor-on-field'); } return; }
         mode = 'focus';
@@ -321,7 +349,7 @@
     document.addEventListener('focusout', function () {
         if (mode !== 'focus') return;
         setTimeout(function () {
-            if (mode !== 'focus' || (document.activeElement && document.activeElement.matches(':focus-visible'))) return;
+            if (mode !== 'focus' || (document.activeElement && focusVisible(document.activeElement))) return;
             mode = 'hover';
             root.classList.remove('cursor-keyboard');
             setFrame(null);
@@ -355,4 +383,5 @@
         var el = resolve(under);
         if (el !== lastEl) setState(under);
     }, 150);
+    }
 })();
