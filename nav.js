@@ -7,7 +7,8 @@
 
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var logo = nav.querySelector('.nav__logo');
-    var menuLinks = Array.prototype.slice.call(menu.querySelectorAll('.menu__link, .menu__cta'));
+    var menuLinks = Array.prototype.slice.call(menu.querySelectorAll('.menu__link'));
+    var menuSocial = Array.prototype.slice.call(menu.querySelectorAll('.menu__social a'));
     var root = document.documentElement;
     var menuOpen = false;
     var inerted = [];
@@ -127,7 +128,7 @@
             return;
         }
         if (e.key !== 'Tab') return;
-        var items = [logo, burger].concat(menuLinks).filter(Boolean);
+        var items = [logo, burger].concat(menuLinks, menuSocial).filter(Boolean);
         var first = items[0];
         var last = items[items.length - 1];
         var active = document.activeElement;
@@ -145,7 +146,7 @@
 
     /* Click on the empty menu background closes it. */
     menu.addEventListener('click', function (e) {
-        if (!e.target.closest('.menu__link, .menu__cta')) closeMenu();
+        if (!e.target.closest('.menu__link, .menu__social a')) closeMenu();
     });
 
     function scrollToHash(hash) {

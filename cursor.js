@@ -4,7 +4,7 @@
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     var LINK = 'a, button, [role="button"], label, summary, select, .hero-chip, .skills-dot, .about-sign';
-    var MAGNETIC = '.hbtn, .burger, .nav__logo, .menu__link, .menu__cta, .modal-quote-btn, .stamp, .service-modal-trigger, .svt-btn, .pf-btn, .btn-about';
+    var MAGNETIC = '.hbtn, .burger, .nav__logo, .menu__link, .modal-quote-btn, .stamp, .service-modal-trigger, .svt-btn, .pf-btn, .btn-about';
     var VIEW = '.about-photo-card, [data-cursor="view"]';
     var TEXT = 'p, h1, h2, h3, h4, li, blockquote';
     var FIELD = 'input, textarea, [contenteditable="true"]';
