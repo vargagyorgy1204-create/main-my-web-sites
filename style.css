@@ -2705,7 +2705,7 @@ body.contact-page {
 
 /* ===== ABOUT — CHAPTERS STORY (Dizájn / Kód / Mozgás / Eredmény) =====
    Default (no JS, reduced motion, GSAP/SplitText missing, < 900px): a plain list —
-   photo, heading, intro, four chapters, "→ eredmény.", button + signature.
+   photo, heading, intro, four chapters, button + signature.
    js/about-story.js adds #about.is-pinned at >= 900px: sticky stage, cards sized from the
    viewport height, chapters stacked in one cell and driven by the scroll. */
 .abt {
@@ -2790,39 +2790,6 @@ body.contact-page {
 /* line masks (SplitText) get breathing room so accents (É, Ő) and descenders (g, j, y) are never cut */
 .abt-chapters [class*="-mask"] { padding-block: 0.22em; margin-block: -0.22em; }
 
-/* "→ eredmény." */
-.abt-result {
-    margin: 0;
-    display: flex;
-    align-items: baseline;
-    gap: 0.35em;
-    position: relative;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(22px, 5vw, 30px);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    width: fit-content;
-}
-.abt-result__arrow { display: inline-block; color: var(--abt-motion); }
-.abt-result__mask { display: inline-block; overflow: clip; padding-block: 0.12em; margin-block: -0.12em; }
-.abt-result__word {
-    display: inline-block;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    background: var(--card-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-}
-.abt-result__line {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -4px;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--card-primary);
-}
 .abt-progress { display: none; }
 .abt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
@@ -2922,7 +2889,6 @@ body.contact-page {
 #about.is-pinned .abt-lead { font-size: clamp(14px, 2svh, 17px); }
 #about.is-pinned .abt-body { font-size: clamp(14px, 1.9svh, 16px); line-height: 1.6; }
 #about.is-pinned .abt-ch--intro .abt-body { font-size: clamp(14px, 2svh, 17px); }
-#about.is-pinned .abt-result { font-size: clamp(16px, min(2.4vw, 3.2svh), 30px); margin-top: -4px; }
 #about.is-pinned .abt-progress {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -2948,10 +2914,9 @@ body.contact-page {
 }
 /* ===== /ABOUT CHAPTERS ===== */
 
-/* story: visual order = eyebrow, heading, "→ eredmény.", chapters, progress, button row */
+/* story: visual order = eyebrow, heading, chapters, progress, button row */
 #about.is-pinned .abt-eyebrow { order: 1; }
 #about.is-pinned .abt-head { order: 2; }
-#about.is-pinned .abt-result { order: 3; }
 #about.is-pinned .abt-chapters { order: 4; }
 #about.is-pinned .abt-progress { order: 5; }
 #about.is-pinned .about-bio-foot { order: 6; }

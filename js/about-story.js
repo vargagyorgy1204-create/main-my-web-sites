@@ -2,7 +2,7 @@
 
    >= 900px wide: the section is a sticky stage (width-only, any height). One scrubbed
    ScrollTrigger timeline drives everything that must be reversible (photo change, text swap,
-   word dimming/colour, --about-accent, progress, the "→ eredmény." line). Each chapter's
+   word dimming/colour, --about-accent, progress, the progress bar). Each chapter's
    signature word animation is a short time-based timeline started by ScrollTrigger callbacks:
    restarted (never stacked) on entry, forced to its end state when leaving, reset when scrolling
    back past it, so fast flicking can never leave letters scrambled or offset.
@@ -134,18 +134,12 @@
   function resultParts() {
     return {
       words: qa('.abt-w--design, .abt-w--code, .abt-w--motion'),
-      arrow: q('.abt-result__arrow'),
-      word: q('.abt-result__word'),
-      line: q('.abt-result__line'),
       sign: q('.about-sign'),
       img5: q('.about-layer--5 picture'),   /* slow zoom runs on the picture, the scrub zoom on the img */
       card: q('.about-photo-card')
     };
   }
   function resultNeutral(p, storyMode) {
-    gsap.set(p.arrow, { x: -16, opacity: 0 });
-    gsap.set(p.word, { yPercent: 110 });
-    gsap.set(p.line, { scaleX: 0, transformOrigin: 'left center' });
     if (storyMode) {
       gsap.set(p.words, { '--g': 0, scale: 1 });
       if (p.img5) gsap.set(p.img5, { '--z': 1.06 });
@@ -154,9 +148,6 @@
     }
   }
   function resultEnd(p, storyMode) {
-    gsap.set(p.arrow, { x: 0, opacity: 1 });
-    gsap.set(p.word, { yPercent: 0 });
-    gsap.set(p.line, { scaleX: 1 });
     if (storyMode) {
       gsap.set(p.words, { '--g': 1, scale: 1 });
       if (p.img5) gsap.set(p.img5, { '--z': 1 });
@@ -174,9 +165,6 @@
         .to(p.card, { '--ring': 1, duration: 0.9, ease: 'power2.out' }, 0);
       if (p.sign) tl.to(p.sign, { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease: 'power2.inOut' }, 0.5);
     }
-    tl.to(p.arrow, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 0.2)
-      .to(p.word, { yPercent: 0, duration: 0.6, ease: 'power3.out' }, 0.3)
-      .to(p.line, { scaleX: 1, duration: 0.6, ease: 'power2.out' }, 0.7);
     return tl;
   }
 
@@ -241,7 +229,6 @@
       return out;
     });
     var segs = qa('.abt-progress b');
-    var result = q('.abt-result');
     var p = resultParts();
 
     /* initial (hidden) states, set from JS only */
@@ -250,7 +237,6 @@
     gsap.set(lines.slice(1).reduce(function (a, b) { return a.concat(b); }, []), { yPercent: 115 });
     gsap.set(segs, { scaleX: 0 });
     gsap.set(chapters.slice(1), { '--bar': 0 });
-    gsap.set(result, { opacity: 0, y: 6 });
     gsap.set(card, { '--about-accent': COL.motion });
     resultNeutral(p, true);
     qa('.abt-fx').forEach(function (n) { n.remove(); });
@@ -292,7 +278,6 @@
         .fromTo(lines[i + 1], { yPercent: 115, opacity: 1 }, { yPercent: 0, duration: 20, stagger: 3 }, S + 9);
       tl.fromTo(segs[i], { scaleX: 0 }, { scaleX: 1, duration: 30 }, S);
     });
-    tl.to(result, { opacity: 1, y: 0, duration: 30 }, VH[3]);
     tl.set({}, {}, 450);
 
     /* signature animations: one ScrollTrigger per chapter */
@@ -335,9 +320,6 @@
     mode = 'list';
     var h2 = q('.abt-heading');
     if (h2) h2.removeAttribute('aria-label');
-    var p = resultParts();
-    var resultEl = q('.abt-result');
-    resultNeutral(p, false);
     var arts = qa('.abt-ch').slice(1);
     arts.forEach(function (art, i) {
       var k = i + 1;
@@ -362,10 +344,6 @@
           onEnter: function () {
             gsap.to(textEls, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', stagger: 0.1, delay: 0.1 });
           }
-        });
-        ST.create({
-          trigger: resultEl, start: 'top 88%', once: true,
-          onEnter: function () { anims[4] = resultTL(p, false); }
         });
       }
     });
