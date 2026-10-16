@@ -130,9 +130,10 @@
         function cacheCentres() {
           centres = chars.map(function (c) { var r = c.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
         }
-        var scrollT;
+        var scrollT, resizeT;
         window.addEventListener('scroll', function () { clearTimeout(scrollT); scrollT = setTimeout(function () { if (ready) cacheCentres(); }, 140); }, { passive: true });
-        window.addEventListener('resize', function () { if (ready) cacheCentres(); });
+        /* the word is sized from the viewport height too, so letter centres move on every resize */
+        window.addEventListener('resize', function () { clearTimeout(resizeT); resizeT = setTimeout(function () { if (ready) cacheCentres(); }, 150); });
         function tick() {
           loop = 0;
           var busy = false;

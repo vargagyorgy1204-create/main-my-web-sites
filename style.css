@@ -5840,14 +5840,51 @@ html.lenis, html.lenis body { height: auto; }
 
 /* compact tier: short windowed browsers (e.g. 1097x480) */
 @media (max-height: 560px) {
-    #contact.ctc { padding-block: 56px; }
-    .ctc-word { font-size: min(calc((min(100vw, 1280px) - 64px) / 8.75), 16rem, 24svh); }
+    #contact.ctc { padding-bottom: 56px; }
     .ctc-sub { margin-block: 8px 24px; }
     .ctc .contact-form-panel, .ctc .contact-personal-panel { padding: 20px; }
     .ctc .contact-form-ui { gap: 8px; }
     .ctc .contact-grid { gap: 20px; }
 }
-@media (max-height: 560px) and (min-width: 900px) { .ctc .contact-photo-square { width: 170px; } }
+@media (max-height: 560px) and (min-width: 900px) { .ctc .contact-photo-square { width: 150px; } }
+
+/* ---------- height-aware proportions ----------
+   Reference look at >= 1080px tall; everything scales down with the window height (~78% at 840).
+   Top padding = fixed header (92px, 76px on phones) + a height-aware gap, so the eyebrow always
+   clears the logo, also when an in-page #contact link lands the section at the top. */
+#contact.ctc { padding-top: calc(92px + clamp(24px, 4svh, 56px)); }
+@media (max-width: 767px) { #contact.ctc { padding-top: calc(76px + clamp(24px, 4svh, 56px)); } }
+.ctc-eyebrow { margin-bottom: clamp(8px, 1.1svh, 12px); }
+.ctc-word { font-size: min(calc((100vw - 32px) / 8.75), 16rem, clamp(56px, 12.9svh, 16rem)); }
+@media (min-width: 768px) { .ctc-word { font-size: min(calc((min(100vw, 1280px) - 64px) / 8.75), clamp(56px, 12.9svh, 16rem)); } }
+.ctc-sub {
+    margin-block: clamp(8px, 2svh, 22px) clamp(20px, 5.2svh, 56px);
+    font-size: clamp(15px, min(1.25vw, 1.67svh), 18px);
+}
+@media (min-width: 900px) {
+    .ctc .contact-form-panel,
+    .ctc .contact-personal-panel { padding: clamp(20px, 2.8svh, 30px); }
+}
+.ctc .contact-form-panel h3 { margin-bottom: clamp(12px, 1.85svh, 20px); font-size: clamp(1.25rem, 2.2svh, 1.5rem); }
+.ctc .contact-form-ui { gap: clamp(8px, 1.1svh, 12px); }
+/* inputs keep a 16px font (no iOS zoom); only the vertical padding follows the height */
+.ctc .contact-field > label { top: clamp(13px, 1.5svh, 16px); }
+.ctc .contact-field input,
+.ctc .contact-field select { padding-block: clamp(21px, 2.3svh, 25px) clamp(6px, 0.74svh, 8px); }
+.ctc .contact-field textarea { padding-top: clamp(23px, 2.5svh, 27px); min-height: clamp(88px, 11.1svh, 120px); }
+.ctc .btn-submit-message { margin-top: clamp(2px, 0.55svh, 6px); padding-block: clamp(9px, 1svh, 11px); }
+.ctc .contact-personal-panel { gap: clamp(14px, 2.2svh, 24px); }
+@media (min-width: 900px) { .ctc .contact-photo-square { width: clamp(150px, 20.4svh, 220px); } }
+.ctc .contact-profile-header { gap: clamp(10px, 1.3svh, 14px); }
+.ctc .contact-personal-panel h4 { font-size: clamp(1.12rem, 2svh, 1.36rem); }
+.ctc .contact-actions { gap: clamp(8px, 1.1svh, 12px); }
+#contact .contact-actions .btn-wa-cta,
+#contact .contact-actions .btn-email-cta { padding-block: clamp(10px, 1.1svh, 12px); }
+/* compact tier for short windows (e.g. 1366x768) */
+@media (min-width: 900px) and (max-height: 799px) {
+    .ctc .contact-field textarea { min-height: 88px; }
+    .ctc .contact-grid { gap: 24px; }
+}
 /* ===== /CONTACT DESIGN PASS ===== */
 
 /* ===== FOOTER — DESIGN PASS (graphite, link underlines, socials in the bottom row, VARBRO wordmark) ===== */
@@ -6000,5 +6037,15 @@ footer {
     .footer-bottom-side { flex-direction: column; gap: 14px; }
     .footer-bottom .social-links { justify-content: center; }
     .footer-top-btn { min-height: 44px; }
+}
+
+/* height-aware spacing (desktop): 1080 is the reference, shorter windows tighten the gaps */
+@media (min-width: 851px) {
+    footer { padding-top: clamp(36px, 6svh, 64px); }
+    .footer-content { margin-bottom: clamp(24px, 3.7svh, 40px); }
+    .footer-section h3,
+    .footer-section h4 { margin-bottom: clamp(10px, 1.4svh, 15px); }
+    .footer-section ul li { margin-bottom: clamp(6px, 0.93svh, 10px); }
+    .footer-wordmark { margin-top: clamp(16px, min(4vw, 4.4svh), 48px); }
 }
 /* ===== /FOOTER DESIGN PASS ===== */
