@@ -2562,19 +2562,30 @@ body.contact-page {
 .about-bio-foot {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 16px;
     margin-top: 6px;
 }
 .about-bio-foot .btn-about { align-self: auto; }
+/* signature "Varga György": always visible, bottom-right corner of the text card (absolute inside the card; the button row
+   reserves its width). Static #4B1956 here; the pinned story layout adds the scroll-linked gradient + rewrite. */
+.about-bio-card { position: relative; --sign-w: clamp(100px, 28vw, 140px); }
 .about-sign {
+    --sig: 0;
+    position: absolute;
+    right: var(--bio-pad, 24px);
+    bottom: var(--bio-pad, 24px);
     font-family: 'Sacramento', cursive;
-    font-size: 12px;
+    font-size: calc(var(--sign-w) / 4.92);
     line-height: 1;
+    padding: 0.08em 0.12em;
     color: #4B1956;
+    opacity: 0.85;
     white-space: nowrap;
     user-select: none;
 }
+/* list layout: the signature sits below the button row, bottom-right (room reserved under the row) */
+.about-bio-foot { margin-bottom: calc(var(--sign-w) / 4.92 * 1.25 + 4px); }
 
 .btn-about:hover {
     background: #4B1956;
@@ -2707,10 +2718,10 @@ body.contact-page {
     -webkit-background-clip: text;
     background-clip: text;
 }
-.abt-lead { margin: 0 0 6px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.05rem; line-height: 1.45; color: var(--abt-ink); }
-.abt-lead::after { content: ""; display: block; width: 40px; height: 3px; margin-top: 8px; border-radius: 2px; background: var(--ch, var(--about-accent)); transform: scaleX(var(--bar, 1)); transform-origin: left center; }
+.abt-lead { display: flow-root; margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.05rem; line-height: 1.45; color: var(--abt-ink); }
+.abt-lead::after { content: ""; display: block; width: 60px; height: 3px; margin-top: 16px; margin-bottom: 18px; border-radius: 2px; background: var(--ch, var(--about-accent)); transform: scaleX(var(--bar, 1)); transform-origin: left center; }
 .abt-ch--result .abt-lead::after { background: var(--card-primary); }
-.abt-body { margin: 0; font-family: 'Montserrat', sans-serif; font-size: 1rem; line-height: 1.7; color: #3d3d5c; }
+.abt-body { display: flow-root; margin: 0; font-family: 'Montserrat', sans-serif; font-size: 1rem; line-height: 1.7; color: #3d3d5c; }
 .abt-line { display: block; }
 /* line masks (SplitText) get breathing room so accents (É, Ő) and descenders (g, j, y) are never cut */
 .abt-chapters [class*="-mask"] { padding-block: 0.22em; margin-block: -0.22em; }
@@ -2760,8 +2771,10 @@ body.contact-page {
 /* ---------- story layout (>= 900px, pinned) ---------- */
 #about.is-pinned {
     --about-pad: clamp(72px, 10svh, 96px);
-    --about-h: min(640px, calc(100vh - 2 * var(--about-pad)));
-    --about-h: min(640px, calc(100svh - 2 * var(--about-pad)));
+    /* composition height (photo card = text card): 640px up to ~900px tall windows (1440x800 / 1440x900 unchanged), then
+       eases down to 570px (-11%) on tall / large screens (1920x1080, 2560x1440) */
+    --about-h: min(calc(640px - clamp(0px, (100vh - 900px) * 0.4, 70px)), calc(100vh - 2 * var(--about-pad)));
+    --about-h: min(calc(640px - clamp(0px, (100svh - 900px) * 0.4, 70px)), calc(100svh - 2 * var(--about-pad)));
     display: block;
     min-height: 0;
     padding: 0 !important;
@@ -2799,17 +2812,20 @@ body.contact-page {
         0 0 calc(var(--ring, 0) * 56px) rgb(200 80 192 / calc(var(--ring, 0) * 0.45));
 }
 #about.is-pinned .about-bio-card {
+    --bio-pad: clamp(32px, 4vw, 64px);
+    --sign-w: clamp(130px, 11vw, 190px);
     min-height: 0;
-    display: grid;
-    align-content: center;
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: clamp(8px, 1.8svh, 16px);
-    padding: clamp(18px, 4.2svh, 44px) clamp(24px, 3.6vw, 48px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;          /* the stack is vertically centred; chapters share one grid cell so its height never changes */
+    padding: var(--bio-pad);
 }
 #about.is-pinned .abt-heading { font-size: clamp(22px, min(3.2vw, 4.4svh), 42px); }
+#about.is-pinned .abt-head, #about.is-pinned .abt-chapters { max-width: 60ch; }
 #about.is-pinned .abt-w { color: var(--abt-ink); }
 #about.is-pinned .abt-chapters { display: grid; gap: 0; }
 #about.is-pinned .abt-ch { grid-area: 1 / 1; padding: 0; border: 0; }
+#about.is-pinned .abt-ch:not(.abt-ch--intro) { --bar: 0; }
 #about.is-pinned .abt-ch__title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
 #about.is-pinned .abt-lead { font-size: clamp(14px, 2svh, 17px); }
 #about.is-pinned .abt-body { font-size: clamp(14px, 1.9svh, 16px); line-height: 1.6; }
@@ -2818,6 +2834,7 @@ body.contact-page {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 6px;
+    margin-top: clamp(28px, 4svh, 44px);
 }
 #about.is-pinned .abt-progress i { position: relative; height: 3px; border-radius: 2px; overflow: hidden; background: rgba(26, 26, 46, 0.12); }
 #about.is-pinned .abt-progress b { position: absolute; inset: 0; background: var(--about-accent); transform: scaleX(0); transform-origin: left center; }
@@ -2825,26 +2842,35 @@ body.contact-page {
 
 /* compact tiers by height (same idea as the Portfolio deck) */
 @media (min-width: 900px) and (max-height: 699px) {
-    #about.is-pinned .about-bio-card { padding: 20px 32px; row-gap: 8px; }
+    #about.is-pinned .about-bio-card { --bio-pad: 24px; }
     #about.is-pinned .abt-body { line-height: 1.5; }
+    #about.is-pinned .abt-progress { margin-top: 20px; }
+    #about.is-pinned .about-bio-foot { margin-top: 16px; }
 }
 @media (min-width: 900px) and (max-height: 559px) {
-    #about.is-pinned .about-bio-card { padding: 14px 28px; row-gap: 6px; }
-    #about.is-pinned .abt-lead::after { margin-top: 4px; height: 2px; }
+    #about.is-pinned .about-bio-card { --bio-pad: 16px; }
+    #about.is-pinned .abt-lead::after { margin-top: 8px; margin-bottom: 8px; height: 2px; }
+    #about.is-pinned .abt-progress { margin-top: 12px; }
     #about.is-pinned .abt-body { font-size: 14px; line-height: 1.45; }
     #about.is-pinned .btn-about { padding: 7px 18px; font-size: 0.8rem; }
 }
-@media (min-width: 900px) and (max-height: 439px) {
-    #about.is-pinned .about-sign { display: none; }
-}
+
 /* ===== /ABOUT CHAPTERS ===== */
 
 /* story: visual order = eyebrow, heading, chapters, progress, button row */
-#about.is-pinned .abt-eyebrow { order: 1; }
-#about.is-pinned .abt-head { order: 2; }
+#about.is-pinned .abt-eyebrow { order: 1; margin: 0 0 18px; }
+#about.is-pinned .abt-head { order: 2; margin: 0 0 16px; }
 #about.is-pinned .abt-chapters { order: 4; }
 #about.is-pinned .abt-progress { order: 5; }
-#about.is-pinned .about-bio-foot { order: 6; }
+#about.is-pinned .about-bio-foot { order: 6; margin: 26px 0 0; padding-inline-end: calc(var(--sign-w) + 16px); }   /* story: button and signature share the bottom row */
+/* signature in the story: colour flows with the scroll progress (--sig, scrubbed in about-story.js), rewrite reveal per chapter */
+#about.is-pinned .about-sign {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg, #4B1956 0%, #6c63ff 25%, #c850c0 50%, #6c63ff 75%, #4B1956 100%) calc(var(--sig) * 100%) 0 / 400% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
 
 /* ── Hogyan dolgozom (myapproach.html) – About-style editorial split ── */
 .ap { background: #f8f7ff; padding: var(--sec-top) 20px 90px; }

@@ -144,7 +144,6 @@
       gsap.set(p.words, { '--g': 0, scale: 1 });
       if (p.img5) gsap.set(p.img5, { '--z': 1.06 });
       gsap.set(p.card, { '--ring': 0 });
-      if (p.sign) gsap.set(p.sign, { clipPath: 'inset(0 100% 0 0)' });
     }
   }
   function resultEnd(p, storyMode) {
@@ -152,7 +151,6 @@
       gsap.set(p.words, { '--g': 1, scale: 1 });
       if (p.img5) gsap.set(p.img5, { '--z': 1 });
       gsap.set(p.card, { '--ring': 1 });
-      if (p.sign) gsap.set(p.sign, { clipPath: 'inset(0 0% 0 0)' });
     }
   }
   function resultTL(p, storyMode) {
@@ -163,7 +161,6 @@
         .to(p.words, { '--g': 1, duration: 0.7, ease: 'power2.inOut' }, 0.35)
         .to(p.img5, { '--z': 1, duration: 1.8, ease: 'power2.out' }, 0)
         .to(p.card, { '--ring': 1, duration: 0.9, ease: 'power2.out' }, 0);
-      if (p.sign) tl.to(p.sign, { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease: 'power2.inOut' }, 0.5);
     }
     return tl;
   }
@@ -279,10 +276,25 @@
       tl.fromTo(segs[i], { scaleX: 0 }, { scaleX: 1, duration: 30 }, S);
     });
     tl.set({}, {}, 450);
+    /* signature: the gradient flows across it with the pinned scroll progress */
+    if (p.sign) tl.fromTo(p.sign, { '--sig': 0 }, { '--sig': 1, duration: 450 }, 0);
+
+    /* signature: always visible; a gentle left-to-right "rewrite" once per chapter change */
+    function rewriteSign() {
+      if (!p.sign) return;
+      gsap.killTweensOf(p.sign, 'clipPath');
+      gsap.fromTo(p.sign, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
+    }
+    function signFinal() {
+      if (!p.sign) return;
+      gsap.killTweensOf(p.sign, 'clipPath');
+      gsap.set(p.sign, { clipPath: 'inset(0 0% 0 0)' });
+    }
 
     /* signature animations: one ScrollTrigger per chapter */
     function play(k) {
       killAnim(k);
+      rewriteSign();
       if (k === 4) { resultNeutral(p, true); anims[k] = resultTL(p, true); return; }
       var key = ['design', 'code', 'motion'][k - 1];
       KIND[k][1](W[key], chars[key]);
@@ -290,12 +302,14 @@
     }
     function finish(k) {
       killAnim(k);
+      signFinal();
       if (k === 4) { resultEnd(p, true); return; }
       var key = ['design', 'code', 'motion'][k - 1];
       KIND[k][1](W[key], chars[key]);
     }
     function reset(k) {
       killAnim(k);
+      signFinal();
       if (k === 4) { resultNeutral(p, true); return; }
       var key = ['design', 'code', 'motion'][k - 1];
       KIND[k][1](W[key], chars[key]);

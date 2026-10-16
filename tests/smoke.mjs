@@ -319,6 +319,47 @@ async function layoutChecks(vp) {
   await ctx.close();
 }
 
+// ---------------------------------------------------------------- Rólam (About): composition size, in-flow stack, signature
+async function aboutChecks(vp, wantH) {
+  const tag = `about ${vp.w}x${vp.h}`;
+  const errs = [];
+  const mobile = vp.w < 900;
+  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(vp.w < 500 ? { hasTouch: true, isMobile: true } : {}) });
+  const p = await open(ctx, 'index', tag, errs);
+  await sleep(1200);
+  const top = await topOf(p, '#about'); const sh = await p.evaluate(() => document.getElementById('about').offsetHeight);
+  const stops = mobile ? [0, 0.35, 0.7, 0.95] : [0.02, 0.2, 0.4, 0.62, 0.85];
+  const rows = [];
+  for (const s of stops) {
+    await scrollTo(p, mobile ? top + (sh - vp.h * 0.6) * s : top + (sh - vp.h) * s); await sleep(2300);
+    rows.push(await p.evaluate(() => {
+      const R = e => e.getBoundingClientRect(); const q = s => document.querySelector(s);
+      const card = R(q('.about-bio-card')), photo = R(q('.about-photo-card')), sign = R(q('.about-sign')), btn = R(q('.btn-about')), prog = R(q('.abt-progress'));
+      const inter = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      const bodies = [...document.querySelectorAll('.abt-ch')].map(ch => { const l = ch.querySelector('.abt-lead'), b = ch.querySelector('.abt-body'); return l && b ? R(b).top - R(l).bottom : 99; });
+      const sgs = getComputedStyle(q('.about-sign'));
+      const textBoxes = [...document.querySelectorAll('.abt-heading, .abt-body, .abt-lead, .abt-eyebrow')].filter(e => { const r = R(e); return r.height > 0 && getComputedStyle(e).visibility !== 'hidden'; }).map(R);
+      return {
+        cardH: Math.round(card.height), photoH: Math.round(photo.height),
+        signInside: sign.left >= card.left && sign.right <= card.right && sign.bottom <= card.bottom + 1 && sign.top >= card.top,
+        signHitsBtn: inter(sign, btn), signHitsProg: inter(sign, prog), signW: Math.round(sign.width),
+        signHitsText: textBoxes.some(t => inter(sign, t) && !(t.height < 2)),
+        barFlowGap: Math.min(...bodies), signOpacity: parseFloat(sgs.opacity), signClip: sgs.clipPath,
+        h2lines: Math.round(R(q('.abt-heading')).height / parseFloat(getComputedStyle(q('.abt-heading')).lineHeight)),
+      };
+    }));
+  }
+  const hs = new Set(rows.map(r => r.cardH));
+  if (!mobile) rec(tag, 'composition height', rows.every(r => r.photoH === wantH && r.cardH === wantH), `photo ${rows.map(r => r.photoH).join('/')} card ${rows.map(r => r.cardH).join('/')} (want ${wantH})`);
+  rec(tag, 'text card height constant across chapters', hs.size === 1, [...hs].join(','));
+  rec(tag, 'signature inside the card, not over the button / segments / text', rows.every(r => r.signInside && !r.signHitsBtn && !r.signHitsProg && !r.signHitsText), JSON.stringify(rows.map(r => [r.signInside, r.signHitsBtn, r.signHitsProg, r.signHitsText])));
+  rec(tag, 'signature visible in every chapter', rows.every(r => r.signOpacity > 0.5 && !/inset\(0px 100%/.test(r.signClip.replace(/ /g, ''))), rows.map(r => `${r.signOpacity}`).join(','));
+  rec(tag, 'accent bar stays in flow (body starts below the lead + bar)', rows.every(r => r.barFlowGap >= -1)   /* the lead block includes the bar + its 18px margin, so the body must start at or below its bottom edge */, rows.map(r => Math.round(r.barFlowGap)).join(','));
+  rec(tag, 'heading max two lines', rows.every(r => r.h2lines <= 2), rows.map(r => r.h2lines).join(','));
+  rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
+  await ctx.close();
+}
+
 async function mobileHeader() {
   const tag = 'mobile header 390x844';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
@@ -374,6 +415,9 @@ try {
   await layoutChecks({ w: 1440, h: 900 });
   await layoutChecks({ w: 1280, h: 720 });
   await mobileHeader();
+  await aboutChecks({ w: 1440, h: 900 }, 640);
+  await aboutChecks({ w: 1920, h: 1080 }, 570);
+  await aboutChecks({ w: 390, h: 844 }, 0);
   }
 } catch (e) {
   rec('harness', 'test run completed', false, String(e).slice(0, 200));
