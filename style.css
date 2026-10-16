@@ -5935,34 +5935,6 @@ footer {
 .footer-top-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 [tabindex="-1"]:focus { outline: none; }
 
-/* giant wordmark: spans the container, cut off by the footer's bottom edge, behind the bottom row */
-.footer-wordmark {
-    --wm: min(calc((100vw - 40px) / 7.1), 170px);
-    position: relative;
-    z-index: 0;
-    margin-top: clamp(24px, 4vw, 48px);
-    height: calc(var(--wm) * 0.5);
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
-}
-.footer-wordmark span {
-    display: block;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: var(--wm);
-    line-height: 0.85;
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-    background: var(--card-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    opacity: 0.9;
-    will-change: transform;
-}
-@media (max-height: 560px) { .footer-wordmark { --wm: min(calc((100vw - 40px) / 7.1), 96px); } }
 
 @media (max-width: 850px) {
     .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 14px; }
@@ -5980,7 +5952,6 @@ footer {
     .footer-section h3,
     .footer-section h4 { margin-bottom: clamp(10px, 1.4svh, 15px); }
     .footer-section ul li { margin-bottom: clamp(6px, 0.93svh, 10px); }
-    .footer-wordmark { margin-top: clamp(16px, min(4vw, 4.4svh), 48px); }
 }
 /* ===== /FOOTER DESIGN PASS ===== */
 
@@ -6022,3 +5993,108 @@ footer {
     descent-override: 22.5%;
     line-gap-override: 0%;
 }
+
+/* ===== FOOTER FLOOR — bottom-bleed VARBRO wordmark fading into the dark, legal row on its dark zone ===== */
+.footer-bottom { justify-content: space-between; }
+.footer-bottom-side { width: 100%; justify-content: space-between; }
+.footer-floor {
+    --wm: min(calc(min(100vw - 40px, 1200px) / 7.15), 30svh);   /* JS refits this to the exact container width */
+    position: relative;
+    margin-top: clamp(20px, 3.4svh, 40px);
+}
+.footer-wordmark {
+    position: relative;
+    z-index: 0;
+    height: calc(var(--wm) * 0.64);
+    overflow: hidden;                       /* the footer's bottom edge cuts the letters */
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.footer-wordmark span {
+    --gx: 50%;
+    --gi: 0;
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: var(--wm);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    margin-top: calc(var(--wm) * -0.16);
+    background:
+        radial-gradient(circle 0.9em at var(--gx) 28%, rgb(255 255 255 / calc(var(--gi) * 0.35)), transparent 70%),
+        linear-gradient(90deg, #6c63ff 0%, #c850c0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    /* vertical fade: lightest at the top of the letters, practically the footer background in the lower third */
+    -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0.5) 22%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.12) 55%, rgb(0 0 0 / 0.06) 68%, rgb(0 0 0 / 0.04) 100%);
+    mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0.5) 22%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.12) 55%, rgb(0 0 0 / 0.06) 68%, rgb(0 0 0 / 0.04) 100%);
+}
+/* entrance: set up by js/footer.js (visible without it) */
+.footer-floor.fw-prep .footer-wordmark span { opacity: 0; transform: translateY(12%); }
+.footer-floor.fw-in .footer-wordmark span { opacity: 1; transform: none; transition: opacity 0.9s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.9s cubic-bezier(0.215, 0.61, 0.355, 1); }
+
+/* legal row: on the dark lower zone of the wordmark (desktop), in flow above it on phones */
+.footer-legal {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: clamp(8px, 1.4svh, 14px);
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px 24px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: rgb(255 255 255 / 0.7);
+}
+.footer-legal::before {                    /* soft footer-coloured floor behind the text keeps the contrast */
+    content: "";
+    position: absolute;
+    inset: -40px -20px -14px;
+    z-index: -1;
+    background: linear-gradient(to bottom, transparent, rgb(15 22 41 / 0.88) 55%);
+    pointer-events: none;
+}
+.footer-legal p { margin: 0; color: inherit; font-size: inherit; opacity: 1; }
+.footer-legal .footer-bottom-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px 22px; }
+.footer-legal .cookie-settings-link {
+    font: inherit;
+    color: rgb(255 255 255 / 0.7);
+    background: none;
+    border: 0;
+    padding: 6px 0;
+    cursor: pointer;
+    text-decoration: none;
+}
+.footer-legal .cookie-settings-link::after {
+    background: var(--card-primary);
+    height: 2px;
+    bottom: 2px;
+}
+.footer-legal .cookie-settings-link:hover,
+.footer-legal .cookie-settings-link:focus-visible { color: #fff; }
+.footer-legal .cookie-settings-link:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
+
+@media (max-width: 850px) {
+    .footer-bottom-side { flex-direction: row; justify-content: center; }
+    .footer-floor { display: flex; flex-direction: column-reverse; }
+    .footer-legal {
+        position: static;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 14px;
+        font-size: 13px;
+    }
+    .footer-legal::before { display: none; }
+    .footer-legal .footer-bottom-links { justify-content: center; }
+    .footer-legal .cookie-settings-link { min-height: 36px; display: inline-flex; align-items: center; padding: 0 4px; }
+}
+@media (max-width: 560px) { .footer-bottom-side { flex-direction: column; } }
+footer { padding-bottom: var(--cb-h, 0px); }
+/* ===== /FOOTER FLOOR ===== */

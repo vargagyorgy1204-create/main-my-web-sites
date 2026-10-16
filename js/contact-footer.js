@@ -164,12 +164,6 @@
   /* ---------------------------------------------------------- footer */
   if (footer) {
     arr(footer, '.social-links a').forEach(function (a) { magnet(a, 4); });
-    var wm = footer.querySelector('.footer-wordmark span');
-    if (wm) {
-      gsap.fromTo(wm, { yPercent: 45 }, {
-        yPercent: 0, ease: 'none',
-        scrollTrigger: { trigger: footer, start: 'top bottom', end: 'bottom bottom', scrub: 0.5 }
-      });
-    }
+    /* the VARBRO wordmark (fit, entrance, highlight) lives in js/footer.js */
   }
 })();

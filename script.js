@@ -288,17 +288,25 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     const declineBtn = document.getElementById('cookie-decline');
     const settingsBtn = document.getElementById('cookie-settings-trigger');
 
+    /* while the banner is open the footer gets room underneath, so the legal links are never hidden behind it */
+    const reserveSpace = () => {
+        document.documentElement.style.setProperty('--cb-h', banner && banner.classList.contains('is-visible') ? (banner.offsetHeight + 24) + 'px' : '0px');
+    };
+
     const hideBanner = () => {
         if (!banner) return;
         banner.classList.remove('is-visible');
         banner.setAttribute('aria-hidden', 'true');
+        reserveSpace();
     };
 
     const showBanner = () => {
         if (!banner) return;
         banner.classList.add('is-visible');
         banner.setAttribute('aria-hidden', 'false');
+        reserveSpace();
     };
+    window.addEventListener('resize', reserveSpace);
 
     if (settingsBtn) {
         settingsBtn.addEventListener('click', () => {
