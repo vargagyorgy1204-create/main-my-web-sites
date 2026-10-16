@@ -58,6 +58,21 @@
         }
     }
 
+    /* < 1024px: hide the header on scroll down, bring it back on scroll up (6px threshold); always visible at the top
+       and while the menu is open. Reduced motion is handled in CSS (no slide). */
+    var lastY = window.pageYOffset || 0, acc = 0;
+    function trackDirection() {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var dy = y - lastY; lastY = y;
+        if (window.innerWidth >= 1024 || menuOpen || y <= 24) { nav.classList.remove('nav--hidden'); acc = 0; return; }
+        if ((dy > 0) !== (acc > 0)) acc = 0;           /* direction change resets the accumulator */
+        acc += dy;
+        if (acc > 6) nav.classList.add('nav--hidden');
+        else if (acc < -6) nav.classList.remove('nav--hidden');
+    }
+    window.addEventListener('scroll', trackDirection, { passive: true });
+    window.addEventListener('resize', function () { if (window.innerWidth >= 1024) nav.classList.remove('nav--hidden'); });
+
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     window.addEventListener('load', function () { applyTheme(); setTimeout(applyTheme, 300); });

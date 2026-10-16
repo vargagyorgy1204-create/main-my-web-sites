@@ -262,6 +262,83 @@ async function hoverChecks(vp, coarse) {
   await ctx.close();
 }
 
+// ---------------------------------------------------------------- layout: corridor, header overlap, eyebrows, mobile header
+async function layoutChecks(vp) {
+  const tag = `layout ${vp.w}x${vp.h}`;
+  const errs = [];
+  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h } });
+  const p = await open(ctx, 'index', tag, errs);
+  await sleep(1200);
+  const hdr = await p.evaluate(() => { const r = e => { const b = document.querySelector(e).getBoundingClientRect(); return [b.left, b.top, b.right, b.bottom]; }; return { logo: r('.nav__logo'), burger: r('#burger') }; });
+  // 1) shared corridor: left content line of every section on index
+  const edges = {};
+  const probes = { hero: '.hero-inner', skills: '#skills .skills-inner', why: '#why .why-inner', steps: '#steps .steps-inner', services: '.svt__inner', contact: '.ctc__head', about: '.about-premium-grid', portfolioHead: '.pf__head' };
+  for (const [k, sel] of Object.entries(probes)) {
+    const y = await topOf(p, sel); await scrollTo(p, Math.max(0, (y || 0) - 100)); await sleep(1500);
+    edges[k] = await p.evaluate(s => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; }, sel);
+  }
+  const lefts = Object.values(edges).filter(Boolean).map(e => e[0]);
+  const gutterMin = hdr.logo[2] + 32 - 1;   // logo right edge + 32px air
+  const L = lefts[0];
+  rec(tag, 'all sections share one left content line', lefts.every(x => Math.abs(x - L) <= 1) && L >= gutterMin, JSON.stringify(edges));
+  const rights = Object.entries(edges).filter(([k, v]) => v && k !== 'portfolioHead').map(([, v]) => v[1]);
+  const R = Math.max(...rights);
+  rec(tag, 'right content lines inside the corridor and clear of the burger', rights.every(x => x <= R + 1) && R <= hdr.burger[0] - 32 + 1, `max right ${R}, burger left ${Math.round(hdr.burger[0])}`);
+
+  // 2) the logo / burger never intersect text or cards while scrolling the page (portfolio cards and footer excepted)
+  const H = await p.evaluate(() => document.documentElement.scrollHeight);
+  const hits = [];
+  for (let y = 0; y < H; y += Math.round(vp.h * 0.5)) {
+    await scrollTo(p, y); await sleep(450);
+    const h = await p.evaluate(({ logo, burger }) => {
+      const out = [];
+      const boxes = [logo, burger];
+      document.querySelectorAll('h1,h2,h3,h4,p,li,.section-eyebrow,label,button:not(#burger):not(.footer-top-btn),input,select,textarea,a.hbtn,.svt-word,.ctc-word,.hero-title,.contact-form-panel,.contact-personal-panel,.about-photo-card,.about-bio-card,.why-panel,.skill-row,.process__step,.svt-row')
+        .forEach(e => {
+          if (e.closest('footer, .menu, #pf-deck, .pf-modal, .cookie-banner, .nav, .skills-preview, [aria-hidden="true"]')) return;
+          const s = getComputedStyle(e); if (s.visibility === 'hidden' || +s.opacity < 0.05 || s.display === 'none') return;
+          const r = e.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return;
+          if (e.matches('.why-panel') ) { /* clipped decorative panel edges are still cards */ }
+          for (const b of boxes) if (r.left < b[2] && r.right > b[0] && r.top < b[3] && r.bottom > b[1]) out.push((e.className && String(e.className).slice(0, 28)) || e.tagName);
+        });
+      return out;
+    }, hdr);
+    if (h.length) hits.push(`${y}:${[...new Set(h)].slice(0, 3).join('+')}`);
+  }
+  rec(tag, 'logo/burger never overlap text or cards', hits.length === 0, hits.slice(0, 4).join(' ; '));
+
+  // 3) eyebrows: identical typography everywhere
+  const eb = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e); return [s.fontFamily, s.fontSize, s.fontWeight, s.letterSpacing, s.textTransform, s.fontStyle].join('|'); }));
+  const eb2 = await (async () => { const p2 = await ctx.newPage(); await p2.goto(`${BASE}/myapproach.html`, { waitUntil: 'networkidle' }); await sleep(3200); /* its entrance animates the letter-spacing */ const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e); return [s.fontFamily, s.fontSize, s.fontWeight, s.letterSpacing, s.textTransform, s.fontStyle].join('|'); })); await p2.close(); return r; })();
+  const all = eb.concat(eb2);
+  rec(tag, 'eight section eyebrows on index + one on myapproach exist', eb.length === 8 && eb2.length === 1, `${eb.length}+${eb2.length}`);
+  rec(tag, 'all eyebrows share font / size / weight / spacing / uppercase', new Set(all).size === 1 && /uppercase/.test(all[0]), [...new Set(all)].join(' || '));
+  const ebTxt = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => e.textContent.trim()));
+  rec(tag, 'eyebrow labels are written in normal case', ebTxt.every(t => t !== t.toUpperCase() || t.length < 2), ebTxt.join(' / '));
+  rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
+  await ctx.close();
+}
+
+async function mobileHeader() {
+  const tag = 'mobile header 390x844';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' }); await sleep(800);
+  const st = () => p.evaluate(() => { const n = document.querySelector('.nav'); const t = getComputedStyle(n).transform; const m = /matrix\([^)]*, ([-\d.]+)\)$/.exec(t); return { hidden: n.classList.contains('nav--hidden'), ty: m ? Math.round(parseFloat(m[1])) : 0, bg: parseFloat(getComputedStyle(n, '::before').opacity), y: Math.round(scrollY) }; });
+  const top = await st();
+  rec(tag, 'transparent and visible at the very top', !top.hidden && top.bg < 0.05, JSON.stringify(top));
+  await scrollTo(p, 900); await sleep(400); await scrollTo(p, 1400); await sleep(900);
+  const down = await st();
+  rec(tag, 'hides on scroll down', down.hidden && down.ty < -20, JSON.stringify(down));
+  await scrollTo(p, 1300); await sleep(900);
+  const up = await st();
+  rec(tag, 'returns with a background on scroll up', !up.hidden && up.ty === 0 && up.bg > 0.9, JSON.stringify(up));
+  await scrollTo(p, 2200); await sleep(900);
+  await p.evaluate(() => document.querySelector('#burger').click()); await sleep(900);
+  const menu = await st();
+  rec(tag, 'always visible while the menu is open', menu.ty === 0, JSON.stringify(menu));
+  await ctx.close();
+}
+
 async function touchTapWhy() {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' }); await sleep(500);
@@ -285,6 +362,7 @@ async function touchCursorOff() {
 }
 
 try {
+  if (process.env.SMOKE_ONLY === 'layout') { await layoutChecks({ w: 1440, h: 900 }); await layoutChecks({ w: 1280, h: 720 }); await mobileHeader(); } else {
   await indexChecks({ w: 1440, h: 900 });
   await indexChecks({ w: 390, h: 844 });
   for (const pg of ['myapproach', 'adatvedelem', 'whatsappcontact']) { await otherPage(pg, { w: 1440, h: 900 }); await otherPage(pg, { w: 390, h: 844 }); }
@@ -293,6 +371,10 @@ try {
   await hoverChecks({ w: 1440, h: 900 }, false);
   await hoverChecks({ w: 1920, h: 1080 }, false);
   await hoverChecks({ w: 1440, h: 900 }, true);
+  await layoutChecks({ w: 1440, h: 900 });
+  await layoutChecks({ w: 1280, h: 720 });
+  await mobileHeader();
+  }
 } catch (e) {
   rec('harness', 'test run completed', false, String(e).slice(0, 200));
 }

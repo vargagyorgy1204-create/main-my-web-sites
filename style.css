@@ -6,6 +6,11 @@
     --gradient: linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
     /* Brand card system */
     --card-primary:      linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
+    --eyebrow-gap: clamp(12px, 1.6svh, 20px);
+    /* header zones: logo 44px at 32px from the left, burger 24px at 32px from the right */
+    --hdr-side: 32px;
+    --hdr-logo-w: 44px;
+    --content-max: 1152px;
     --card-secondary:    #1a1f2e;
     --card-accent-warm:  linear-gradient(135deg, #7c1263 0%, #c850c0 100%);
     --card-accent-cool:  linear-gradient(135deg, #0e4d5c 0%, #1a8fa3 100%);
@@ -2645,16 +2650,6 @@ body.contact-page {
     --abt-motion: #6c63ff;
     --about-accent: var(--abt-motion);
 }
-.abt-eyebrow {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    line-height: 1.6;
-    color: #8a8a8a;
-}
 .abt-heading {
     margin: 0;
     font-family: 'Syne', sans-serif;
@@ -2899,12 +2894,6 @@ body.contact-page {
     padding: 44px 48px;
     display: flex; flex-direction: column; gap: 16px;
 }
-.ap-eyebrow {
-    margin: 0;
-    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-    letter-spacing: 0.2em; text-transform: uppercase; line-height: 1.6;
-    color: #8a8a8a; -webkit-text-fill-color: #8a8a8a; background: none; text-shadow: none;
-}
 .ap-title {
     margin: 0;
     font-family: 'Syne', sans-serif; font-weight: 800;
@@ -3060,14 +3049,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     align-items: flex-start;
 }
 
-.hero-eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #8a8a8a;
-    margin: 0 0 clamp(10px, 2svh, 22px) 0;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
+.hero-eyebrow {                       /* look = .section-eyebrow; only the entrance animation lives here */
     animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0s both;
 }
 
@@ -3498,7 +3480,6 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 }
 @media (max-width: 640px) {
     #hero { padding: 104px 20px 56px; }
-    .hero-eyebrow { margin-bottom: 16px; }
     .hero-title { margin-bottom: 22px; }
     .hero-sub { margin-bottom: 0; }
     .hero-tech { order: 1; margin-bottom: 30px; }
@@ -3512,7 +3493,6 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 
 /* Hero compact tiers (height-based, same idea as About / Portfolio) */
 @media (min-width: 900px) and (max-height: 699px) {
-    .hero-eyebrow { font-size: 11px; }
     .hero-tech__label { margin-bottom: 6px; font-size: 10px; }
 }
 @media (min-width: 900px) and (max-height: 559px) {
@@ -3692,16 +3672,24 @@ html.cursor-keyboard .cursor-dot { opacity: 0; }
 html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0; }
 
 /* Shared section header (same look as the About card header) */
+/* THE section eyebrow: one class for every section label on every page (written in normal case, uppercased here).
+   Size 12px at 1440 wide, fluid 11-13px; colour is the only per-section variable (--eyebrow-color). */
 .section-eyebrow {
-    margin: 0 0 16px;
+    --eyebrow-color: rgb(26 26 46 / 0.62);
+    margin: 0 0 var(--eyebrow-gap);
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: clamp(11px, 8px + 0.28vw, 13px);
+    font-style: normal;
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     line-height: 1.6;
-    color: #8a8a8a;
+    color: var(--eyebrow-color);
+    -webkit-text-fill-color: var(--eyebrow-color);
+    background: none;
+    text-shadow: none;
 }
+[data-theme="dark"] .section-eyebrow { --eyebrow-color: rgb(255 255 255 / 0.72); }
 .section-heading {
     margin: 0;
     font-family: 'Syne', sans-serif;
@@ -4387,13 +4375,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 
 .pf__head { margin-block-end: clamp(32px, 5vh, 56px); max-width: 720px; }
 
-.pf__eyebrow {
-  font-family: var(--font-accent);
-  font-weight: 500;
-  font-size: 13px;
-  letter-spacing: 2px;
-  color: color-mix(in srgb, var(--card-secondary) 60%, transparent);
-}
 
 .pf__title {
   font-family: var(--font-display);
@@ -5197,16 +5178,6 @@ html.lenis, html.lenis body { height: auto; }
 
 /* ---------- intro ---------- */
 .svt-intro { max-width: 720px; margin-block-end: clamp(32px, 6svh, 64px); }
-.svt-eyebrow {
-  margin: 0 0 16px;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  line-height: 1.6;
-  color: rgb(255 255 255 / 0.6);
-}
 .svt-title {
   margin: 0 0 16px;
   font-family: 'Syne', sans-serif;
@@ -5578,15 +5549,6 @@ html.lenis, html.lenis body { height: auto; }
 @media (prefers-reduced-motion: reduce) { .ctc__glow { animation: none; } }
 
 /* ---------- headline ---------- */
-.ctc-eyebrow {
-    margin: 0 0 12px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgb(255 255 255 / 0.7);
-}
 .ctc-word {
     margin: 0;
     font-family: 'Syne', sans-serif;
@@ -5796,7 +5758,6 @@ html.lenis, html.lenis body { height: auto; }
    clears the logo, also when an in-page #contact link lands the section at the top. */
 #contact.ctc { padding-top: calc(92px + clamp(24px, 4svh, 56px)); }
 @media (max-width: 767px) { #contact.ctc { padding-top: calc(76px + clamp(24px, 4svh, 56px)); } }
-.ctc-eyebrow { margin-bottom: clamp(8px, 1.1svh, 12px); }
 .ctc-word { font-size: min(calc((100vw - 32px) / 8.75), 16rem, clamp(56px, 12.9svh, 16rem)); }
 @media (min-width: 768px) { .ctc-word { font-size: min(calc((min(100vw, 1280px) - 64px) / 8.75), clamp(56px, 12.9svh, 16rem)); } }
 .ctc-sub {
@@ -6157,3 +6118,69 @@ footer { padding-bottom: var(--cb-h, 0px); }
 .page-legal button:hover::after, .page-legal button:focus-visible::after { transform: scaleX(1); }
 .page-legal a:focus-visible, .page-legal button:focus-visible { outline: 2px solid #6c63ff; outline-offset: 3px; border-radius: 4px; }
 @media (max-width: 560px) { .page-legal { flex-direction: column; } }
+
+/* ===== HEADER-SAFE CONTENT CORRIDOR (>= 1024px) =====
+   Every section's content lives between the logo column and the burger column: side padding
+   --content-gutter = logo offset + logo width + 32px air (= 108px), inner containers max 1152px centred.
+   Left/right content lines are therefore identical in every section and on every page. Exceptions: the Portfólió
+   case cards (full width) and the footer (untouched). Below 1024px the header auto-hides instead (nav.js). */
+@media (min-width: 1024px) {
+    :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); }
+
+    #hero { padding-inline: var(--content-gutter); }
+    section#skills { padding-inline: var(--content-gutter) !important; }
+    #services.svt { padding-inline: var(--content-gutter); }
+    .svt__inner { max-width: var(--content-max); padding-inline: 0; }
+    #contact.ctc { padding-inline: var(--content-gutter); }
+    .ctc > .container, .ctc__head { max-width: var(--content-max); padding-inline: 0; }
+    .ctc .contact-grid { max-width: none; }
+    .pf__inner { max-width: none; padding-inline: max(var(--content-gutter), calc((100% - var(--content-max)) / 2)); }
+    #about { padding-inline: var(--content-gutter) !important; }
+    #about.is-pinned .about-pin { padding-inline: var(--content-gutter); }
+    .about-premium-grid { max-width: var(--content-max); }
+    .ap { padding-inline: var(--content-gutter); }
+    .ap-wrap { max-width: var(--content-max); }
+    .policy-main { padding-inline: var(--content-gutter); }
+    .policy-container { max-width: var(--content-max); padding-inline: 0; }
+    #steps { padding-inline: var(--content-gutter); }
+}
+@media (min-width: 1024px) and (min-height: 520px) {
+    #why { padding-inline: var(--content-gutter) !important; }
+    #why .why-inner {
+        width: calc(min(var(--content-max), 100%) / var(--fit, 1));
+        margin: 0 0 0 max(0px, calc((100% - var(--content-max)) / 2));
+    }
+}
+@media (min-width: 1024px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+    #steps { padding-inline: 0; }
+    .steps-pin { padding-inline: var(--content-gutter); }
+    /* the pinned block is scaled to fit the height: widen the layout box by 1/fit so the scaled result still spans the corridor */
+    .steps-pin .steps-inner {
+        width: calc(min(var(--content-max), 100%) / var(--fit, 1));
+        max-width: none;
+        margin: 0 0 0 max(0px, calc((100% - var(--content-max)) / 2));
+    }
+}
+
+/* ===== MOBILE / TABLET (< 1024px): the header hides on scroll down, returns on scroll up (nav.js) ===== */
+@media (max-width: 1023px) {
+    .nav { transition: transform 0.35s ease; will-change: transform; }
+    .nav.nav--hidden:not(.nav--menu-open) { transform: translateY(-100%); }
+    /* background only once the page is scrolled (so it shows when the header comes back); transparent at the very top.
+       Translucent tint of the current theme + soft shadow; no backdrop-filter. */
+    .nav::before {
+        inset: 0;
+        background: rgb(16 19 33 / 0.88);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        -webkit-mask-image: none;
+        mask-image: none;
+        box-shadow: 0 6px 20px rgb(0 0 0 / 0.18);
+        opacity: 0;
+    }
+    .nav--on-light::before { background: rgb(248 247 255 / 0.92); box-shadow: 0 6px 20px rgb(26 26 46 / 0.10); }
+    .nav--scrolled::before { opacity: 1; }
+    .nav--menu-open { transform: none !important; }
+}
+@media (max-width: 768px) { .nav:not(.nav--scrolled)::before { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .nav { transition: none; } .nav.nav--hidden:not(.nav--menu-open) { transform: none; } }
