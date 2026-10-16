@@ -535,7 +535,7 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         py += (my - py) * 0.16;
         rot += ((Math.max(-12, Math.min(12, dx * 0.15))) - rot) * 0.12;
         preview.style.transform = 'translate3d(' + (px + 130).toFixed(1) + 'px,' + py.toFixed(1) + 'px,0) rotate(' + rot.toFixed(2) + 'deg)';
-        if (active || Math.abs(dx) > 0.2) requestAnimationFrame(loop);
+        if (active) requestAnimationFrame(loop);      /* stops as soon as the preview is hidden */
         else running = false;
     }
 
