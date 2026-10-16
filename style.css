@@ -3589,7 +3589,7 @@ body.contact-page {
 
 /* Custom cursor: dot + morphing ring (cursor.js) */
 html.has-cursor, html.has-cursor * { cursor: none !important; }
-html.has-cursor input, html.has-cursor textarea, html.has-cursor [contenteditable="true"] { cursor: text !important; }
+html.has-cursor input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), html.has-cursor textarea, html.has-cursor [contenteditable="true"] { cursor: text !important; }
 
 .cursor-ring, .cursor-dot {
     position: fixed;
@@ -3686,6 +3686,8 @@ html.cursor-dark .cursor-ring.is-view::before { border-color: transparent; }
 
 /* hidden / over form fields */
 html.cursor-hidden .cursor-ring, html.cursor-hidden .cursor-dot { opacity: 0; }
+/* keyboard focus: the frame alone, no pointer dot */
+html.cursor-keyboard .cursor-dot { opacity: 0; }
 html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0; }
 
 /* Shared section header (same look as the About card header) */
