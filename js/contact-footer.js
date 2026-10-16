@@ -30,6 +30,18 @@
 
   function arr(root, sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); }
 
+  /* Lenis / wheel scrolling moves content under a stationary mouse without pointer events: re-test on scroll */
+  function resetOnScrollAway(el, reset) {
+    var lx = -1, ly = -1, tk = false;
+    document.addEventListener('pointermove', function (e) { lx = e.clientX; ly = e.clientY; }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', reset);
+    window.addEventListener('blur', reset);
+    window.addEventListener('scroll', function () {
+      if (tk || lx < 0) return; tk = true;
+      requestAnimationFrame(function () { tk = false; var u = document.elementFromPoint(lx, ly); if (!u || !el.contains(u)) reset(); });
+    }, { passive: true });
+  }
+
   /* ---------------------------------------------------------- magnet / tilt helpers */
   function magnet(el, max) {
     if (!el) return;
@@ -44,6 +56,7 @@
       qy(Math.max(-1, Math.min(1, dy)) * max);
     });
     el.addEventListener('pointerleave', function () { qx(0); qy(0); });
+    resetOnScrollAway(el, function () { qx(0); qy(0); });
   }
 
   if (section) {
@@ -71,6 +84,7 @@
         if (!raf) raf = requestAnimationFrame(apply);
       });
       card.addEventListener('pointerleave', function () { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(apply); });
+      resetOnScrollAway(card, function () { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(apply); });
     }
 
     /* ---------------------------------------------------------- entrances */
@@ -156,6 +170,7 @@
         zone.addEventListener('pointerenter', function (e) { if (!notTouch(e) || !ready) return; cacheCentres(); inside = true; if (!loop) loop = requestAnimationFrame(tick); });
         zone.addEventListener('pointermove', function (e) { if (!notTouch(e)) return; px = e.clientX; py = e.clientY; if (ready && !inside) { inside = true; cacheCentres(); } if (ready && !loop) loop = requestAnimationFrame(tick); });
         zone.addEventListener('pointerleave', function () { inside = false; if (!loop) loop = requestAnimationFrame(tick); });
+        resetOnScrollAway(zone, function () { inside = false; if (!loop) loop = requestAnimationFrame(tick); });
       };
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(setup); else setup();
     } else {

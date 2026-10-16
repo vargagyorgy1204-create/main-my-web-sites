@@ -517,14 +517,17 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 })();
 
 // Skills – floating logo preview following the cursor
+// Exists only while the pointer is over a Skills row: hidden on leave, on scroll (content moving under a resting
+// mouse fires no pointer events), when the section leaves the viewport, when the menu opens, on touch / blur.
 (function () {
     var list = document.querySelector('.skills-list');
     var preview = document.querySelector('.skills-preview');
+    var section = document.getElementById('skills');
     if (!list || !preview) return;
     /* real mouse input (html.has-cursor, set by cursor.js), not hover/pointer media queries: they are false on touch-screen laptops */
     var ok = { get matches() { return document.documentElement.classList.contains('has-cursor') && window.innerWidth > 900; } };
     var inner = preview.querySelector('.skills-preview__inner');
-    var mx = 0, my = 0, px = 0, py = 0, rot = 0, running = false, active = null;
+    var mx = -1, my = -1, px = 0, py = 0, rot = 0, running = false, active = null, tick = false;
 
     function loop() {
         var dx = mx - px;
@@ -536,24 +539,51 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         else running = false;
     }
 
-    list.addEventListener('pointermove', function (e) {
-        if (!ok.matches || e.pointerType !== 'mouse') return;
-        mx = e.clientX; my = e.clientY;
-        var row = e.target.closest('.skill-row');
-        if (row && row !== active) {
-            if (!active) { px = mx; py = my; }
-            active = row;
-            var logo = row.querySelector('.skill-row__logo');
-            inner.innerHTML = logo ? logo.innerHTML : '';
-            preview.classList.add('is-visible');
-        }
-        if (!running) { running = true; requestAnimationFrame(loop); }
-    }, { passive: true });
-
-    list.addEventListener('pointerleave', function () {
+    function hide() {
         active = null;
         preview.classList.remove('is-visible');
-    });
+    }
+    function show(row) {
+        if (!active) { px = mx; py = my; }
+        active = row;
+        var logo = row.querySelector('.skill-row__logo');
+        inner.innerHTML = logo ? logo.innerHTML : '';
+        preview.classList.add('is-visible');
+        if (!running) { running = true; requestAnimationFrame(loop); }
+    }
+
+    list.addEventListener('pointermove', function (e) {
+        if (!ok.matches || (e.pointerType !== 'mouse' && e.pointerType !== 'pen')) return;
+        mx = e.clientX; my = e.clientY;
+        var row = e.target.closest('.skill-row');
+        if (row && row !== active) show(row);
+        else if (active && !running) { running = true; requestAnimationFrame(loop); }
+    }, { passive: true });
+
+    list.addEventListener('pointerleave', hide);
+    document.documentElement.addEventListener('pointerleave', hide);
+    window.addEventListener('blur', hide);
+    document.addEventListener('pointerdown', function (e) { if (e.pointerType === 'touch') hide(); }, true);
+
+    /* scrolling: the list moves under a resting pointer, so re-test what is under it on every scroll tick */
+    window.addEventListener('scroll', function () {
+        if (!active || tick) return;
+        tick = true;
+        requestAnimationFrame(function () {
+            tick = false;
+            var u = document.elementFromPoint(mx, my);
+            var row = u && u.closest ? u.closest('.skills-list .skill-row') : null;
+            if (!row) hide();
+            else if (row !== active) show(row);
+        });
+    }, { passive: true });
+
+    /* section out of view, or the menu overlay opened: gone */
+    if (section && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function (es) { if (!es[0].isIntersecting) hide(); }, { threshold: 0 }).observe(section);
+    }
+    new MutationObserver(function () { if (document.body.classList.contains('menu-open')) hide(); })
+        .observe(document.body, { attributes: true, attributeFilter: ['class'] });
 })();
 
 // Why section – expanding panels / mobile accordion

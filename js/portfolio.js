@@ -201,6 +201,18 @@
       qx(dx / d * m); qy(dy / d * m);
     });
     igBtn.addEventListener('pointerleave', function () { qx(0); qy(0); });
+  /* Lenis / wheel scrolling moves content under a stationary mouse without pointer events: re-test on scroll */
+  function resetOnScrollAway(el, reset) {
+    var lx = -1, ly = -1, tk = false;
+    document.addEventListener('pointermove', function (e) { lx = e.clientX; ly = e.clientY; }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', reset);
+    window.addEventListener('blur', reset);
+    window.addEventListener('scroll', function () {
+      if (tk || lx < 0) return; tk = true;
+      requestAnimationFrame(function () { tk = false; var u = document.elementFromPoint(lx, ly); if (!u || !el.contains(u)) reset(); });
+    }, { passive: true });
+  }
+    resetOnScrollAway(igBtn, function () { qx(0); qy(0); });
   }
 
   /* -------------------------------------------------------- stacking + parallax */

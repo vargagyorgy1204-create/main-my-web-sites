@@ -3823,11 +3823,12 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     margin: -100px 0 0 -100px;
     pointer-events: none;
     opacity: 0;
+    visibility: hidden;                 /* resting state: can never show over another section */
     transform: translate3d(-500px, -500px, 0);
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
     will-change: transform, opacity;
 }
-.skills-preview.is-visible { opacity: 1; }
+.skills-preview.is-visible { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s; }
 .skills-preview__inner {
     display: grid;
     place-items: center;

@@ -221,6 +221,22 @@ async function hoverChecks(vp, coarse) {
   await move(sr[0], sr[1]);
   const sh = await p.evaluate(() => getComputedStyle(document.querySelectorAll('.skill-row')[2].querySelector('.skill-row__name')).transform);
   rec(tag, 'Készségek: hover effect', sh !== sb, `${sb} -> ${sh}`);
+  // Készségek floating preview: shows only over a row; hides on leave and when scrolling moves the list away from a resting mouse
+  const pvState = () => p.evaluate(() => { const e = document.querySelector('.skills-preview'); const s = getComputedStyle(e); const u = document.elementFromPoint(window.__mx, window.__my); return { op: parseFloat(s.opacity), vis: s.visibility, over: !!(u && u.closest('.skills-list')) }; });
+  await p.evaluate(() => { window.__mx = 0; window.__my = 0; document.addEventListener('pointermove', e => { window.__mx = e.clientX; window.__my = e.clientY; }, true); });
+  await move(sr[0], sr[1]);
+  const pv1 = await pvState();
+  rec(tag, 'Készségek preview: visible over a row', pv1.op > 0.9 && pv1.vis === 'visible', JSON.stringify(pv1));
+  await p.mouse.move(vp.w - 30, 30, { steps: 8 }); await sleep(800);
+  const pv2 = await pvState();
+  rec(tag, 'Készségek preview: hidden after the pointer leaves the list', pv2.op < 0.05 && pv2.vis === 'hidden', JSON.stringify(pv2));
+  await move(sr[0], sr[1]);
+  let leaked = [], prevBad = false;   // a 0.3s fade-out right after leaving is fine; visible for two samples in a row is a leak
+  for (let i = 0; i < 14; i++) { await p.mouse.wheel(0, 260); await sleep(160); const s = await pvState(); const bad = s.op > 0.1 && !s.over; if (bad && prevBad) leaked.push(i); prevBad = bad; }
+  await sleep(900);
+  const pv3 = await pvState();
+  const inWhy = await p.evaluate(() => { const r = document.querySelector('#why').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; });
+  rec(tag, 'Készségek preview: never visible after scrolling away (wheel, resting mouse)', leaked.length === 0 && pv3.op < 0.05 && pv3.vis === 'hidden', `leaked at steps ${leaked.join(',') || '-'}; end ${JSON.stringify(pv3)}; why in view ${inWhy}`);
   // Értékek & Garanciák: hover expands, previous collapses, leaving restores, no cursor frame
   await scrollTo(p, (await topOf(p, '#why')) + 20); await sleep(2200);
   const n = await p.evaluate(() => document.querySelectorAll('.why-panel').length);
