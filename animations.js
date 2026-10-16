@@ -54,13 +54,6 @@
         Array.from(stepsHead.children).forEach(function (c, i) { add(c, null, i * 80); });
     }
 
-    // Testimonial
-    var showcaseEl = document.querySelector('#bento-showcase');
-    if (showcaseEl) {
-        add(showcaseEl.querySelector('h2'),         null,    0);
-        add(showcaseEl.querySelector('.bento-card'),'scale', 100);
-    }
-
     // Portfolio: reveals are handled by js/portfolio.js (no AOS / animations.js here)
 
     // Contact
