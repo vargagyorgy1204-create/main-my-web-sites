@@ -5470,6 +5470,28 @@ html.lenis, html.lenis body { height: auto; }
   .svt-list li { padding-block: 9px; }
   .svt-close { padding-block-start: 56px; }
 }
+
+/* ---------- height-aware proportions (desktop >= 768px) ----------
+   Reference look at >= 1080px tall; scales down smoothly in shorter windows.
+   Top padding = header (92px) + a height-aware gap, so the eyebrow always clears the header. */
+@media (min-width: 768px) {
+  #services.svt { padding-block: calc(92px + clamp(24px, 4svh, 56px)) clamp(64px, 10svh, 120px); }
+  .svt-intro { margin-block-end: clamp(24px, 5svh, 64px); }
+  .svt-title { font-size: clamp(30px, min(3.4vw, 4.82svh), 52px); }
+  .svt-sub { font-size: clamp(14px, min(1.25vw, 1.9svh), 18px); }
+  .svt-row { padding-block: clamp(28px, 7svh, 96px); }
+  .svt-word {
+    font-size: min(calc((100vw - 64px) / 9.75), 125px, 11.6svh);
+    margin: clamp(6px, 1.3svh, 16px) 0 clamp(14px, 3.4svh, 40px);
+  }
+  .svt-details { gap: clamp(18px, 3svh, 32px); }
+  .svt-tagline { font-size: clamp(1.05rem, min(1.6vw, 2.7svh), 1.35rem); margin-block-end: clamp(16px, 2.6svh, 28px); }
+  .svt-list li { padding-block: clamp(8px, 1.4svh, 14px); }
+  .svt-list__t { font-size: clamp(0.95rem, min(1.3vw, 2.2svh), 1.2rem); }
+  .svt-btn { padding: clamp(10px, 1.6svh, 15px) clamp(24px, 3.4svh, 34px); font-size: clamp(13px, 1.45svh, 15px); }
+  .svt-close { padding-block-start: clamp(48px, 12svh, 160px); }
+  .svt-close__title { font-size: clamp(32px, min(8vw, 11svh), 120px); }
+}
 /* ===== /SERVICES ===== */
 
 /* ===== CONTACT FORM — labels, select, consent, honeypot, status ===== */
