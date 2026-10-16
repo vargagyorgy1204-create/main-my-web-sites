@@ -2949,12 +2949,10 @@ body.contact-page {
     opacity: 0; transition: opacity .3s ease; pointer-events: none;
 }
 .ap-row__body h3 { transition: translate .3s ease; }
-@media (hover: hover) and (pointer: fine) {
-    .ap-row:hover::before { opacity: .07; }
-    .ap-row:hover .ap-row__icon { translate: 4px 0; }
-    .ap-row:hover .ap-row__icon::after { opacity: 1; }
-    .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
-}
+html.has-cursor .ap-row:hover::before { opacity: .07; }
+html.has-cursor .ap-row:hover .ap-row__icon { translate: 4px 0; }
+html.has-cursor .ap-row:hover .ap-row__icon::after { opacity: 1; }
+html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 .ap-row__num {
     font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; padding-top: 10px;
     background: var(--card-primary); -webkit-background-clip: text; background-clip: text;
@@ -3806,14 +3804,14 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     transition: color 0.3s ease;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .skills-list:hover .skill-row:not(:hover) { opacity: 0.45; }
-    .skill-row:hover::before { clip-path: inset(0 0 0 0 round 18px); }
-    .skill-row:hover .skill-row__name { transform: translateX(14px); }
-    .skill-row:hover .skill-row__desc,
-    .skill-row:hover .skill-row__num { color: #fff; }
-    .skill-row:hover .skill-row__logo { background: rgba(255, 255, 255, 0.18); }
-}
+/* hover effects follow REAL mouse input (html.has-cursor is set by cursor.js on the first mouse move), not the
+   hover / pointer media queries, which are false on touch-screen laptops */
+html.has-cursor .skills-list:hover .skill-row:not(:hover) { opacity: 0.45; }
+html.has-cursor .skill-row:hover::before { clip-path: inset(0 0 0 0 round 18px); }
+html.has-cursor .skill-row:hover .skill-row__name { transform: translateX(14px); }
+html.has-cursor .skill-row:hover .skill-row__desc,
+html.has-cursor .skill-row:hover .skill-row__num { color: #fff; }
+html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 255, 0.18); }
 
 .skills-preview {
     position: fixed;
@@ -3847,7 +3845,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
 .skills-preview.is-visible .skills-preview__inner { scale: 1; }
 .skills-preview__inner svg, .skills-preview__inner img { width: 96px; height: 96px; display: block; }
 
-@media (max-width: 900px), (hover: none), (prefers-reduced-motion: reduce) {
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
     .skills-preview { display: none; }
 }
 

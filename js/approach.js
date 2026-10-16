@@ -17,7 +17,6 @@
   if (!page) { root.classList.remove('ap-pre'); return; }
 
   var reduce = !!VB.reduceMotion;
-  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var back = page.querySelector('.ap-back');
   var photo = page.querySelector('.ap-photo');
   var card = page.querySelector('.ap-card');
@@ -175,11 +174,12 @@
   }
 
   /* ---------------------------------------------------------- tilt toward the pointer (<= 3deg) */
-  if (photo && fine) {
+  if (photo) {
     var qx = gsap.quickTo(photo, 'rotationY', { duration: 0.6, ease: 'power3.out' });
     var qy = gsap.quickTo(photo, 'rotationX', { duration: 0.6, ease: 'power3.out' });
     var tiltOn = false;
     photo.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;     /* real pointer input, not a media query (touch-screen laptops) */
       var r = photo.getBoundingClientRect();
       var nx = ((e.clientX - r.left) / r.width) * 2 - 1;
       var ny = ((e.clientY - r.top) / r.height) * 2 - 1;

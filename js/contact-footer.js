@@ -13,7 +13,8 @@
   var section = document.getElementById('contact');
   var footer = document.querySelector('footer');
   var reduce = !!VB.reduceMotion;
-  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  /* hover behaviour follows REAL pointer input (pointerType), not hover/pointer media queries: they are false on touch-screen laptops */
+  function notTouch(e) { return e.pointerType !== 'touch'; }
 
   /* ---------------------------------------------------------- glows: run only on screen */
   if (section && !reduce && 'IntersectionObserver' in window) {
@@ -31,10 +32,11 @@
 
   /* ---------------------------------------------------------- magnet / tilt helpers */
   function magnet(el, max) {
-    if (!el || !fine) return;
+    if (!el) return;
     var qx = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'elastic.out(1, 0.45)' });
     var qy = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'elastic.out(1, 0.45)' });
     el.addEventListener('pointermove', function (e) {
+      if (!notTouch(e)) return;
       var r = el.getBoundingClientRect();
       var dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
       var dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
@@ -52,7 +54,7 @@
     /* gentle pointer tilt of the whole photo circle */
     var card = section.querySelector('.contact-personal-panel');
     var photo = section.querySelector('.contact-photo-square');
-    if (card && photo && fine) {
+    if (card && photo) {
       var raf = 0, tx = 0, ty = 0;
       var apply = function () {
         raf = 0;
@@ -60,6 +62,7 @@
         photo.style.setProperty('--ry', ty.toFixed(2) + 'deg');
       };
       card.addEventListener('pointermove', function (e) {
+        if (!notTouch(e)) return;
         var r = photo.getBoundingClientRect();
         var nx = (e.clientX - (r.left + r.width / 2)) / (card.clientWidth / 2);
         var ny = (e.clientY - (r.top + r.height / 2)) / (card.clientHeight / 2);
@@ -124,7 +127,6 @@
         ST.create({ trigger: word, start: 'top 80%', once: true, onEnter: play, onLeave: play });
 
         /* proximity: letters near the pointer pick up the gradient, lift and grow */
-        if (!fine) return;
         var centres = [], p = chars.map(function () { return 0; }), target = p.slice();
         var inside = false, px = 0, py = 0, loop = 0, RADIUS = 140;
         function cacheCentres() {
@@ -151,8 +153,8 @@
           if (busy || inside) loop = requestAnimationFrame(tick);
         }
         var zone = word.parentElement;
-        zone.addEventListener('pointerenter', function () { if (!ready) return; cacheCentres(); inside = true; if (!loop) loop = requestAnimationFrame(tick); });
-        zone.addEventListener('pointermove', function (e) { px = e.clientX; py = e.clientY; if (ready && !inside) { inside = true; cacheCentres(); } if (ready && !loop) loop = requestAnimationFrame(tick); });
+        zone.addEventListener('pointerenter', function (e) { if (!notTouch(e) || !ready) return; cacheCentres(); inside = true; if (!loop) loop = requestAnimationFrame(tick); });
+        zone.addEventListener('pointermove', function (e) { if (!notTouch(e)) return; px = e.clientX; py = e.clientY; if (ready && !inside) { inside = true; cacheCentres(); } if (ready && !loop) loop = requestAnimationFrame(tick); });
         zone.addEventListener('pointerleave', function () { inside = false; if (!loop) loop = requestAnimationFrame(tick); });
       };
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(setup); else setup();

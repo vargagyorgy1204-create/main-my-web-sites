@@ -275,7 +275,7 @@
 
     /* ------------------------------------------------------------ state from the element under the pointer */
     function resolve(t) {
-        if (!t || t.closest(FIELD)) return null;
+        if (!t || t.closest(FIELD) || t.closest('[data-cursor="plain"]')) return null;   /* plain zones (values accordion): no frame */
         var el = t.closest(LINK);
         if (!el) return null;
         if (el.tagName === 'LABEL') {
@@ -291,6 +291,7 @@
         ring.classList.remove('is-link-small', 'is-magnetic');
         if (!t) return;
         if (t.closest(FIELD)) { root.classList.add('cursor-on-field'); return; }
+        if (t.closest('[data-cursor="plain"]')) return;     /* ring + dot only: no text beam, no frame */
         var view = t.closest(VIEW);
         if (view) {
             ring.classList.add('is-view');

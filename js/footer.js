@@ -12,7 +12,6 @@
   if (!wm) return;
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   /* ---- fit: exact container width, never wider, never taller than 30% of the viewport height ---- */
   function fit() {
@@ -49,7 +48,6 @@
   }
 
   /* ---- soft highlight following the cursor (x only), eased ---- */
-  if (!fine) return;
   var target = 50, cur = 50, gi = 0, tgi = 0, raf = 0;
   function tick() {
     raf = 0;
@@ -61,6 +59,7 @@
   }
   function kick() { if (!raf) raf = requestAnimationFrame(tick); }
   floor.addEventListener('pointermove', function (e) {
+    if (e.pointerType === 'touch') return;     /* real pointer input, not a media query (touch-screen laptops) */
     var r = wmBox.getBoundingClientRect();
     target = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
     tgi = 1;

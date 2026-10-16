@@ -32,7 +32,6 @@
   var hasSplit = hasGsap && !!VB.hasSplit;
 
   var reduce    = VB.reduceMotion;
-  var hoverFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var EASE      = 'power2.out';
   var N         = data.length;
 
@@ -189,10 +188,11 @@
   }
 
   /* ------------------------------------------------------ magnetic button */
-  if (hasGsap && hoverFine && !reduce) {
+  if (hasGsap && !reduce) {
     var qx = gsap.quickTo(igBtn, 'x', { duration: 0.4, ease: 'power3.out' });
     var qy = gsap.quickTo(igBtn, 'y', { duration: 0.4, ease: 'power3.out' });
     igBtn.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;     /* real pointer input, not a media query (touch-screen laptops) */
       var r = igBtn.getBoundingClientRect();
       var dx = e.clientX - (r.left + r.width / 2);
       var dy = e.clientY - (r.top + r.height / 2);

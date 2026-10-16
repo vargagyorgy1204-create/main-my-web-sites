@@ -521,7 +521,8 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     var list = document.querySelector('.skills-list');
     var preview = document.querySelector('.skills-preview');
     if (!list || !preview) return;
-    var ok = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 901px) and (prefers-reduced-motion: no-preference)');
+    /* real mouse input (html.has-cursor, set by cursor.js), not hover/pointer media queries: they are false on touch-screen laptops */
+    var ok = { get matches() { return document.documentElement.classList.contains('has-cursor') && window.innerWidth > 900; } };
     var inner = preview.querySelector('.skills-preview__inner');
     var mx = 0, my = 0, px = 0, py = 0, rot = 0, running = false, active = null;
 
@@ -559,7 +560,8 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 (function () {
     var panels = Array.prototype.slice.call(document.querySelectorAll('.why-panel'));
     if (!panels.length) return;
-    var desktopHover = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 768px)');
+    /* hover-expand follows real mouse / pen input (pointerType), not hover/pointer media queries (false on touch-screen laptops) */
+    var desktopHover = { get matches() { return window.innerWidth >= 768; } };
 
     function activate(panel) {
         panels.forEach(function (p) {
@@ -570,9 +572,16 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         });
     }
 
+    var defaultPanel = panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0];
+    var row = panels[0].parentElement;
+    /* the pointer leaving the row restores the default open card */
+    row.addEventListener('pointerleave', function (e) {
+        if ((e.pointerType === 'mouse' || e.pointerType === 'pen') && desktopHover.matches) activate(defaultPanel);
+    });
+
     panels.forEach(function (panel) {
         panel.addEventListener('pointerenter', function (e) {
-            if (e.pointerType === 'mouse' && desktopHover.matches) activate(panel);
+            if ((e.pointerType === 'mouse' || e.pointerType === 'pen') && desktopHover.matches) activate(panel);
         });
         var tab = panel.querySelector('.why-panel__tab');
         if (tab) {
