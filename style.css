@@ -6222,3 +6222,10 @@ footer { padding-bottom: var(--cb-h, 0px); }
     #skills .section-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px) !important; line-height: 1.06 !important; }
 }
 .about-bio-card .abt-eyebrow { margin-bottom: -6px; }   /* list layout (< 900px): same tight eyebrow gap as the pinned story and Készségek */
+
+/* ===== Értékek & Garanciák: eyebrow + heading identical to Rólam / Készségek ===== */
+#why .section-eyebrow { margin-bottom: 10px; }
+#why .section-heading { font-size: clamp(30px, 8.2vw, 42px) !important; line-height: 1.12 !important; }
+@media (min-width: 900px) {
+    #why .section-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px) !important; line-height: 1.06 !important; }
+}
