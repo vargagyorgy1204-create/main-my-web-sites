@@ -6229,3 +6229,16 @@ footer { padding-bottom: var(--cb-h, 0px); }
 @media (min-width: 900px) {
     #why .section-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px) !important; line-height: 1.06 !important; }
 }
+
+/* ===== Együttműködés: eyebrow + heading identical to Rólam / Készségek / Értékek ===== */
+#steps .section-eyebrow { margin-bottom: 10px; }
+#steps .section-heading { font-size: clamp(30px, 8.2vw, 42px) !important; line-height: 1.12 !important; }
+@media (min-width: 900px) {
+    #steps .section-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px) !important; line-height: 1.06 !important; }
+}
+/* pinned timeline: with the larger heading, the gaps give way first so the scaled block (--fit) stays as close to 1 as possible */
+@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+    #steps .steps-head { margin-bottom: clamp(18px, 3svh, 44px); }
+    #steps .process-cta { margin-top: clamp(18px, 3svh, 44px); padding-top: clamp(16px, 2.4svh, 28px); }
+    #steps .process__body { margin-top: clamp(14px, 2.4svh, 22px); }
+}
