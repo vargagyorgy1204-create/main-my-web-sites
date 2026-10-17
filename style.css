@@ -2665,7 +2665,7 @@ body.contact-page {
     margin: 0;
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(28px, 7.2vw, 40px);
+    font-size: clamp(30px, 8.2vw, 40px);
     line-height: 1.12;
     letter-spacing: -0.02em;
     text-align: left;
@@ -2699,7 +2699,7 @@ body.contact-page {
     margin: 0 0 6px;
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(28px, 7.2vw, 40px);
+    font-size: clamp(30px, 8.2vw, 40px);
     line-height: 1.1;
     letter-spacing: -0.02em;
     color: var(--ch, var(--abt-ink));
