@@ -2856,7 +2856,8 @@ body.contact-page {
 /* ===== /ABOUT CHAPTERS ===== */
 
 /* story: visual order = eyebrow, heading, chapters, progress, button row */
-#about.is-pinned .abt-eyebrow { order: 1; margin: 0 0 18px; }
+/* the card's flex gap (16px) already sits between the eyebrow and the heading: a small negative margin tightens it to ~10px */
+#about.is-pinned .abt-eyebrow { order: 1; margin: 0 0 -6px; }
 #about.is-pinned .abt-head { order: 2; margin: 0 0 16px; }
 #about.is-pinned .abt-chapters { order: 4; }
 #about.is-pinned .abt-progress { order: 5; }
