@@ -6249,3 +6249,10 @@ footer { padding-bottom: var(--cb-h, 0px); }
 @media (min-width: 900px) {
     .svt-title { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px); line-height: 1.06; }
 }
+
+/* ===== Portfólió: eyebrow + title identical in size / spacing to Készségek / Rólam ===== */
+.pf__eyebrow { margin-bottom: 10px; }
+.pf__title { font-size: clamp(30px, 8.2vw, 42px); line-height: 1.12; letter-spacing: -0.02em; margin-block-start: 0; }
+@media (min-width: 900px) {
+    .pf__title { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px); line-height: 1.06; }
+}
