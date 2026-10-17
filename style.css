@@ -68,8 +68,6 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
 .nav--on-light::before {
     background: linear-gradient(to bottom, rgb(248 247 255 / 0.82) 0%, rgb(248 247 255 / 0) 100%);
 }
-@media (max-width: 1023px) { .nav--scrolled::before { opacity: 1; } }
-@media (max-width: 768px) { .nav::before { opacity: 1; } }
 .nav--menu-open::before { opacity: 0 !important; }
 
 .nav__logo {
@@ -6190,25 +6188,28 @@ footer { padding-bottom: var(--cb-h, 0px); }
     }
 }
 
-/* ===== MOBILE / TABLET (< 1024px): the header hides on scroll down, returns on scroll up (nav.js) ===== */
+/* ===== MOBILE / TABLET (< 1024px): always-visible header, transparent at the top, frosted blur once the page scrolls =====
+   Background layer (::before): light tint of the current section + backdrop blur, soft bottom fade (no hard edge, no shadow,
+   no solid background). Fades in after 8px of scroll; logo and burger stay crisp on top. Never over the open menu. */
 @media (max-width: 1023px) {
-    .nav { transition: transform 0.35s ease; will-change: transform; }
-    .nav.nav--hidden:not(.nav--menu-open) { transform: translateY(-100%); }
-    /* background only once the page is scrolled (so it shows when the header comes back); transparent at the very top.
-       Translucent tint of the current theme + soft shadow; no backdrop-filter. */
     .nav::before {
-        inset: 0;
-        background: rgb(16 19 33 / 0.88);
-        -webkit-backdrop-filter: none;
-        backdrop-filter: none;
-        -webkit-mask-image: none;
-        mask-image: none;
-        box-shadow: 0 6px 20px rgb(0 0 0 / 0.18);
+        inset: 0 0 -18px 0;
+        background: rgba(14, 16, 32, 0.25);
+        -webkit-backdrop-filter: blur(14px) saturate(140%);
+        backdrop-filter: blur(14px) saturate(140%);
+        -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+        mask-image: linear-gradient(to bottom, #000 70%, transparent);
+        box-shadow: none;
         opacity: 0;
+        transition: opacity 0.3s ease;
     }
-    .nav--on-light::before { background: rgb(248 247 255 / 0.92); box-shadow: 0 6px 20px rgb(26 26 46 / 0.10); }
+    .nav--on-light::before { background: rgba(255, 255, 255, 0.35); }
     .nav--scrolled::before { opacity: 1; }
-    .nav--menu-open { transform: none !important; }
 }
-@media (max-width: 768px) { .nav:not(.nav--scrolled)::before { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .nav { transition: none; } .nav.nav--hidden:not(.nav--menu-open) { transform: none; } }
+@media (max-width: 1023px) {
+    /* no backdrop-filter support: a slightly stronger tint only */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        .nav::before { background: rgba(14, 16, 32, 0.6); }
+        .nav--on-light::before { background: rgba(255, 255, 255, 0.72); }
+    }
+}

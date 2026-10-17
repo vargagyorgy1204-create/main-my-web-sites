@@ -364,19 +364,27 @@ async function mobileHeader() {
   const tag = 'mobile header 390x844';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' }); await sleep(800);
-  const st = () => p.evaluate(() => { const n = document.querySelector('.nav'); const t = getComputedStyle(n).transform; const m = /matrix\([^)]*, ([-\d.]+)\)$/.exec(t); return { hidden: n.classList.contains('nav--hidden'), ty: m ? Math.round(parseFloat(m[1])) : 0, bg: parseFloat(getComputedStyle(n, '::before').opacity), y: Math.round(scrollY) }; });
+  await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
+  const st = () => p.evaluate(() => {
+    const n = document.querySelector('.nav'); const r = n.getBoundingClientRect(); const b = getComputedStyle(n, '::before');
+    const logo = document.querySelector('.nav__logo').getBoundingClientRect(), burger = document.querySelector('#burger').getBoundingClientRect();
+    const at = (x, y) => document.elementFromPoint(x, y);
+    return { top: Math.round(r.top), transformNone: getComputedStyle(n).transform === 'none', blur: parseFloat(b.opacity), filter: (b.backdropFilter || b.webkitBackdropFilter || ''), y: Math.round(scrollY),
+      logoHit: !!at(logo.left + logo.width / 2, logo.top + logo.height / 2)?.closest('.nav__logo'), burgerHit: !!at(burger.left + burger.width / 2, burger.top + burger.height / 2)?.closest('#burger') };
+  });
   const top = await st();
-  rec(tag, 'transparent and visible at the very top', !top.hidden && top.bg < 0.05, JSON.stringify(top));
-  await scrollTo(p, 900); await sleep(400); await scrollTo(p, 1400); await sleep(900);
+  rec(tag, 'blur layer is fully transparent at the top', top.blur < 0.05 && top.top === 0, JSON.stringify(top));
+  await scrollTo(p, 800); await sleep(1200);
+  const mid = await st();
+  rec(tag, 'header stays in view after scrolling down 800px', mid.top === 0 && mid.transformNone, JSON.stringify(mid));
+  rec(tag, 'blur layer fades in once scrolled (backdrop blur)', mid.blur > 0.95 && /blur/.test(mid.filter), `opacity ${mid.blur}, filter ${mid.filter}`);
+  rec(tag, 'logo and burger are clickable', mid.logoHit && mid.burgerHit, `${mid.logoHit}/${mid.burgerHit}`);
+  await scrollTo(p, 2400); await sleep(900);
   const down = await st();
-  rec(tag, 'hides on scroll down', down.hidden && down.ty < -20, JSON.stringify(down));
-  await scrollTo(p, 1300); await sleep(900);
-  const up = await st();
-  rec(tag, 'returns with a background on scroll up', !up.hidden && up.ty === 0 && up.bg > 0.9, JSON.stringify(up));
-  await scrollTo(p, 2200); await sleep(900);
+  rec(tag, 'header never hides while scrolling further down', down.top === 0 && down.transformNone && down.blur > 0.95, JSON.stringify(down));
   await p.evaluate(() => document.querySelector('#burger').click()); await sleep(900);
-  const menu = await st();
-  rec(tag, 'always visible while the menu is open', menu.ty === 0, JSON.stringify(menu));
+  const open = await p.evaluate(() => ({ open: document.querySelector('#menu').classList.contains('is-open'), top: Math.round(document.querySelector('.nav').getBoundingClientRect().top), blur: parseFloat(getComputedStyle(document.querySelector('.nav'), '::before').opacity) }));
+  rec(tag, 'menu opens; header visible above the overlay without the blur layer', open.open && open.top === 0 && open.blur < 0.05, JSON.stringify(open));
   await ctx.close();
 }
 
