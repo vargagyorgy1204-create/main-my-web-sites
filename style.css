@@ -6256,3 +6256,10 @@ footer { padding-bottom: var(--cb-h, 0px); }
 @media (min-width: 900px) {
     .pf__title { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px); line-height: 1.06; }
 }
+
+/* ===== Kapcsolat: eyebrow gap + "Üzenjen." size identical to the other section headings (the letters-rise / proximity effects are untouched) ===== */
+.ctc-eyebrow { margin-bottom: 10px; }
+.ctc-word, .ctc-word { font-size: clamp(30px, 8.2vw, 42px); line-height: 1.12; }
+@media (min-width: 900px) {
+    .ctc-word { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px); line-height: 1.06; }
+}
