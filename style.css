@@ -2856,8 +2856,6 @@ body.contact-page {
 /* ===== /ABOUT CHAPTERS ===== */
 
 /* story: visual order = eyebrow, heading, chapters, progress, button row */
-/* the card's flex gap (16px) already sits between the eyebrow and the heading: a small negative margin tightens it to ~10px */
-#about.is-pinned .abt-eyebrow { order: 1; margin: 0 0 -6px; }
 #about.is-pinned .abt-head { order: 2; margin: 0 0 16px; }
 #about.is-pinned .abt-chapters { order: 4; }
 #about.is-pinned .abt-progress { order: 5; }
@@ -6221,7 +6219,6 @@ footer { padding-bottom: var(--cb-h, 0px); }
 @media (min-width: 900px) {
     #skills .section-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px) !important; line-height: 1.06 !important; }
 }
-.about-bio-card .abt-eyebrow { margin-bottom: -6px; }   /* list layout (< 900px): same tight eyebrow gap as the pinned story and Készségek */
 
 /* ===== Értékek & Garanciák: eyebrow + heading identical to Rólam / Készségek ===== */
 #why .section-eyebrow { margin-bottom: 10px; }
@@ -6238,7 +6235,6 @@ footer { padding-bottom: var(--cb-h, 0px); }
 }
 /* pinned timeline: with the larger heading, the gaps give way first so the scaled block (--fit) stays as close to 1 as possible */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-    #steps .steps-head { margin-bottom: clamp(18px, 3svh, 44px); }
     #steps .process-cta { margin-top: clamp(18px, 3svh, 44px); padding-top: clamp(16px, 2.4svh, 28px); }
     #steps .process__body { margin-top: clamp(14px, 2.4svh, 22px); }
 }
@@ -6263,3 +6259,74 @@ footer { padding-bottom: var(--cb-h, 0px); }
 @media (min-width: 900px) {
     .ctc-word { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px); line-height: 1.06; }
 }
+
+/* ===== SECTION TITLE SYSTEM =====
+   The eyebrow is the anchor of every section: same typography (.section-eyebrow), same distance from the section top
+   (--section-top = header + a height-aware gap), same left line (the content corridor, --content-gutter), and the heading and
+   the first content block hang off it with fixed gaps (--eyebrow-gap, --head-gap). */
+:root {
+    --hdr-h: 92px;
+    --section-top: calc(var(--hdr-h) + clamp(24px, 4svh, 56px));
+    --head-gap: clamp(28px, 4svh, 56px);
+    --content-gutter: 20px;                       /* phones / tablets: the common side line */
+    --abt-eyebrow-gap: clamp(16px, 2.4svh, 28px);
+}
+@media (max-width: 767px) { :root { --hdr-h: 76px; } }
+@media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
+
+/* hero: the eyebrow sits on the anchor, the rest of the block follows it */
+#hero { padding-top: var(--section-top); padding-inline: var(--content-gutter); align-content: start; align-items: start; }
+
+/* Rólam: the eyebrow lives at section level above the photo + text card */
+#about .abt-eyebrow { width: 100%; max-width: var(--content-max); margin: 0 auto var(--abt-eyebrow-gap); }
+#about { padding-top: var(--section-top) !important; padding-inline: var(--content-gutter) !important; align-items: flex-start; }
+#about .about-pin { display: block; }
+#about.is-pinned {
+    --about-bottom: clamp(24px, 4svh, 48px);
+    --about-h: min(calc(640px - clamp(0px, (100vh - 900px) * 0.4, 70px)), calc(100vh - var(--section-top) - 20px - var(--abt-eyebrow-gap) - var(--about-bottom)));
+    --about-h: min(calc(640px - clamp(0px, (100svh - 900px) * 0.4, 70px)), calc(100svh - var(--section-top) - 20px - var(--abt-eyebrow-gap) - var(--about-bottom)));
+    padding: 0 !important;
+}
+#about.is-pinned .about-pin {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: var(--section-top) var(--content-gutter) 0;
+}
+#about.is-pinned .about-premium-grid { width: 100%; margin-inline: auto; flex: none; }
+
+/* Készségek / Értékek / Együttműködés / Szolgáltatások / Portfólió / Kapcsolat: top anchor + side line + head gap */
+section#skills { padding-top: var(--section-top) !important; padding-inline: var(--content-gutter) !important; }
+.skills-head { margin-bottom: var(--head-gap); }
+#why { padding-top: var(--section-top) !important; padding-inline: var(--content-gutter) !important; align-items: flex-start !important; }
+.why-head { margin-bottom: var(--head-gap); }
+#steps { padding-top: var(--section-top); padding-inline: var(--content-gutter); }
+.steps-head { margin-bottom: var(--head-gap); }
+#services.svt { padding-block-start: var(--section-top); padding-inline: var(--content-gutter); }
+.svt__inner { max-width: var(--content-max); padding-inline: 0; }
+.svt-intro { margin-block-end: var(--head-gap); }
+#portfolio { padding-block-start: var(--section-top); }
+.pf__inner { max-width: none; padding-inline: max(var(--content-gutter), calc((100% - var(--content-max)) / 2)); }
+.pf__head { margin-block-end: var(--head-gap); }
+#contact.ctc { padding-top: var(--section-top); padding-inline: var(--content-gutter); }
+.ctc > .container, .ctc__head { max-width: var(--content-max); padding-inline: 0; }
+.ctc .contact-grid { max-width: none; }
+.ctc-sub { margin-bottom: var(--head-gap); }
+
+/* the pinned / fitted blocks are scaled by --fit: the eyebrow is counter-scaled (same rendered size everywhere) and the block scales from its top-left corner (the eyebrow does not move) */
+#why .why-inner .section-eyebrow, #steps .steps-inner .section-eyebrow { transform: scale(calc(1 / var(--fit, 1))); transform-origin: left top; }
+@media (min-width: 768px) and (min-height: 520px) { #why { align-items: flex-start !important; } }
+@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+    #steps { padding: 0; }                       /* the pinned stage carries the padding */
+    .steps-pin { align-items: flex-start; padding-inline: var(--content-gutter); }
+    .steps-pin .steps-inner { transform-origin: left top; }
+    #steps .steps-head { margin-bottom: var(--head-gap); }
+}
+
+/* Hogyan dolgozom: the eyebrow sits at section level on the anchor; the back link shares its row */
+.ap { padding-top: var(--section-top); padding-inline: var(--content-gutter); }
+.ap-wrap { max-width: var(--content-max); }
+.ap-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 24px; margin-bottom: var(--head-gap); }
+.ap-top .ap-back { margin: 0; }
+.ap-top .ap-eyebrow { margin: 0; }

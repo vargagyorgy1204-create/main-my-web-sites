@@ -360,6 +360,59 @@ async function aboutChecks(vp, wantH) {
   await ctx.close();
 }
 
+// ---------------------------------------------------------------- section title system: typography, top anchor, left line
+async function titleSystem(vp) {
+  const tag = `titles ${vp.w}x${vp.h}`;
+  const errs = [];
+  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(vp.w < 500 ? { hasTouch: true, isMobile: true } : {}) });
+  const SECS = [
+    ['hero', 'index', '#hero', '.hero-eyebrow', '.hero-title', '.hero-sub', true],
+    ['about', 'index', '#about', '.abt-eyebrow', null, '.about-photo-card', true],
+    ['skills', 'index', '#skills', '#skills .section-eyebrow', '#skills .section-heading', '#skills .skills-list', true],
+    ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .why-panels', true],
+    ['steps', 'index', '#steps', '#steps .section-eyebrow', '#steps .section-heading', '#steps .process', true],
+    ['services', 'index', '#services', '.svt-eyebrow', '.svt-title', '.svt-row', true],
+    ['portfolio', 'index', '#portfolio', '.pf__eyebrow', '.pf__title', '.pf__sub', true],
+    ['contact', 'index', '#contact', '.ctc-eyebrow', '.ctc-word', '.contact-grid', true],
+    ['myapproach', 'myapproach', '.ap', '.ap-eyebrow', null, '.ap-grid', true],
+  ];
+  const pages = {}; const rows = [];
+  for (const [name, page, sec, eye, head, first] of SECS) {
+    let p = pages[page];
+    if (!p) { p = pages[page] = await open(ctx, page, tag, errs); await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; }); await sleep(900); }
+    await p.evaluate(s => {
+      const e = document.querySelector(s); const pinned = (e.id === 'about' && e.classList.contains('is-pinned')) || (e.id === 'steps' && getComputedStyle(e.querySelector('.steps-pin') || e).position === 'sticky');
+      const y = e.getBoundingClientRect().top + scrollY + (pinned ? 40 : 0);
+      if (window.VB && VB.lenis) VB.lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y);
+    }, sec);
+    await sleep(2600);
+    rows.push({ name, ...(await p.evaluate(([sec, eye, head, first]) => {
+      const R = e => e.getBoundingClientRect(); const s = document.querySelector(sec), e = document.querySelector(eye);
+      const pinned = (s.id === 'about' && s.classList.contains('is-pinned')) || (s.id === 'steps' && getComputedStyle(s.querySelector('.steps-pin') || s).position === 'sticky');
+      const cs = getComputedStyle(e);
+      return { top: R(e).top - (pinned ? 0 : R(s).top), left: R(e).left, typo: [cs.fontFamily, cs.fontSize, cs.fontWeight, cs.letterSpacing, cs.textTransform, cs.lineHeight].join('|'),
+        headLeft: head ? R(document.querySelector(head)).left : null, firstLeft: R(document.querySelector(first)).left, clientW: document.documentElement.clientWidth,
+        gutter: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--content-gutter')) || 0, hdr: innerWidth < 768 ? 76 : 92 };
+    }, [sec, eye, head, first])) });
+  }
+  const r0 = rows[0];
+  const expTop = r0.hdr + Math.min(56, Math.max(24, 0.04 * vp.h));
+  // content corridor left line: the gutter, or the centred 1152px column when the viewport is wider
+  const gutterPx = vp.w >= 1024 ? 32 + 44 + 32 : 20;
+  const expLeft = gutterPx + Math.max(0, (r0.clientW - 2 * gutterPx - 1152) / 2);
+  rec(tag, 'eyebrow typography identical in all sections', new Set(rows.map(r => r.typo)).size === 1, [...new Set(rows.map(r => r.typo))].join(' || '));
+  const badTop = rows.filter(r => Math.abs(r.top - expTop) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
+  rec(tag, `eyebrow top = section top + ${Math.round(expTop)}px in every section`, badTop.length === 0, badTop.join(' '));
+  const badLeft = rows.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
+  rec(tag, `eyebrow left = content corridor (${Math.round(expLeft)}px)`, badLeft.length === 0, badLeft.join(' '));
+  const badHead = rows.filter(r => r.headLeft != null && Math.abs(r.headLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.headLeft)}`);
+  rec(tag, 'heading left = eyebrow left', badHead.length === 0, badHead.join(' '));
+  const badFirst = rows.filter(r => Math.abs(r.firstLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.firstLeft)}`);
+  rec(tag, 'first content block left = eyebrow left', badFirst.length === 0, badFirst.join(' '));
+  rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
+  await ctx.close();
+}
+
 async function mobileHeader() {
   const tag = 'mobile header 390x844';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
@@ -423,6 +476,7 @@ try {
   await layoutChecks({ w: 1440, h: 900 });
   await layoutChecks({ w: 1280, h: 720 });
   await mobileHeader();
+  for (const vp of [{ w: 390, h: 844 }, { w: 768, h: 1024 }, { w: 1280, h: 720 }, { w: 1440, h: 900 }, { w: 1920, h: 1080 }]) await titleSystem(vp);
   await aboutChecks({ w: 1440, h: 900 }, 640);
   await aboutChecks({ w: 1920, h: 1080 }, 570);
   await aboutChecks({ w: 390, h: 844 }, 0);
