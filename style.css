@@ -10,7 +10,7 @@
     /* header zones: logo 44px at 32px from the left, burger 24px at 32px from the right */
     --hdr-side: 32px;
     --hdr-logo-w: 44px;
-    --content-max: 1152px;
+    --content-max: clamp(1152px, 78vw, 1480px);   /* 1152px up to 1480px wide screens (1440 unchanged), caps at 1480px */
     --card-secondary:    #1a1f2e;
     --card-accent-warm:  linear-gradient(135deg, #7c1263 0%, #c850c0 100%);
     --card-accent-cool:  linear-gradient(135deg, #0e4d5c 0%, #1a8fa3 100%);
@@ -3065,7 +3065,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 
 .hero-inner {
     width: 100%;
-    max-width: 1152px;
+    max-width: var(--content-max);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -3732,7 +3732,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     background: #0f1629;
     padding: 120px 24px;
 }
-.skills-inner { max-width: 1152px; margin: 0 auto; }
+.skills-inner { max-width: var(--content-max); margin: 0 auto; }
 .skills-head { margin: 0 0 clamp(28px, 5.2svh, 56px); text-align: left; }
 
 /* Desktop: the eyebrow clears the fixed header (92px) by a height-aware gap; bottom padding scales too.
@@ -3901,7 +3901,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 
 /* Why (Miért válassz engem?) – expanding panels */
 #why { text-align: left; }
-.why-inner { max-width: 1152px; margin: 0 auto; }
+.why-inner { max-width: var(--content-max); margin: 0 auto; }
 .why-head { margin: 0 0 56px; }
 #why .section-heading {
     font-family: 'Syne', sans-serif !important;
@@ -4111,7 +4111,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     background: #0f1629;
     padding: 120px 24px;
 }
-.steps-inner { max-width: 1152px; margin: 0 auto; }
+.steps-inner { max-width: var(--content-max); margin: 0 auto; }
 .steps-head { margin: 0 0 72px; text-align: left; }
 #steps .section-heading {
     font-family: 'Syne', sans-serif !important;
@@ -6330,3 +6330,11 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 .ap-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 24px; margin-bottom: var(--head-gap); }
 .ap-top .ap-back { margin: 0; }
 .ap-top .ap-eyebrow { margin: 0; }
+
+/* ===== HERO fills exactly one screen =====
+   eyebrow on the common anchor (top) -> the main block (title, lead, CTAs) sits optically a little above the centre of the
+   remaining space -> the tech-stack card is pinned to the bottom with the same clamp as the top gap. */
+#hero { padding-bottom: clamp(24px, 4svh, 56px); display: flex; flex-direction: column; align-items: stretch; }
+#hero .hero-inner { flex: 1 1 auto; min-height: 0; margin-block: 0; }
+#hero .hero-title { margin-top: auto; }
+#hero .hero-ctas { margin-bottom: auto; padding-bottom: clamp(16px, 7svh, 72px); }   /* the padding lifts the block above the centre */

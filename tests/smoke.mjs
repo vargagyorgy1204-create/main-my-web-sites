@@ -399,7 +399,8 @@ async function titleSystem(vp) {
   const expTop = r0.hdr + Math.min(56, Math.max(24, 0.04 * vp.h));
   // content corridor left line: the gutter, or the centred 1152px column when the viewport is wider
   const gutterPx = vp.w >= 1024 ? 32 + 44 + 32 : 20;
-  const expLeft = gutterPx + Math.max(0, (r0.clientW - 2 * gutterPx - 1152) / 2);
+  const maxW = Math.min(1480, Math.max(1152, 0.78 * vp.w));          // --content-max: clamp(1152px, 78vw, 1480px)
+  const expLeft = gutterPx + Math.max(0, (r0.clientW - 2 * gutterPx - maxW) / 2);
   rec(tag, 'eyebrow typography identical in all sections', new Set(rows.map(r => r.typo)).size === 1, [...new Set(rows.map(r => r.typo))].join(' || '));
   const badTop = rows.filter(r => Math.abs(r.top - expTop) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
   rec(tag, `eyebrow top = section top + ${Math.round(expTop)}px in every section`, badTop.length === 0, badTop.join(' '));
@@ -476,7 +477,7 @@ try {
   await layoutChecks({ w: 1440, h: 900 });
   await layoutChecks({ w: 1280, h: 720 });
   await mobileHeader();
-  for (const vp of [{ w: 390, h: 844 }, { w: 768, h: 1024 }, { w: 1280, h: 720 }, { w: 1440, h: 900 }, { w: 1920, h: 1080 }]) await titleSystem(vp);
+  for (const vp of [{ w: 390, h: 844 }, { w: 768, h: 1024 }, { w: 1280, h: 720 }, { w: 1440, h: 900 }, { w: 1920, h: 1080 }, { w: 2560, h: 1440 }]) await titleSystem(vp);
   await aboutChecks({ w: 1440, h: 900 }, 640);
   await aboutChecks({ w: 1920, h: 1080 }, 570);
   await aboutChecks({ w: 390, h: 844 }, 0);
