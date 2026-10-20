@@ -6256,9 +6256,10 @@ footer { padding-bottom: var(--cb-h, 0px); }
 /* ===== Kapcsolat: eyebrow gap + "Üzenjen." size identical to the other section headings (the letters-rise / proximity effects are untouched) ===== */
 .ctc-eyebrow { margin-bottom: 10px; }
 /* the other section titles x 1.2 ("Üzenjen." is the closing statement of the page) */
-.ctc-word { font-size: clamp(36px, 9.84vw, 50.4px); line-height: 1.12; }
+/* x1.44 of the common title scale; on phones the single unbreakable word is also capped by the column width (8.6em wide) */
+.ctc-word { font-size: clamp(36px, min(11.8vw, calc((100vw - 2 * var(--content-gutter)) / 8.75)), 60.5px); line-height: 1.12; }
 @media (min-width: 900px) {
-    .ctc-word { font-size: clamp(36px, min(5.52vw, 7.92svh), 76.8px); line-height: 1.06; }
+    .ctc-word { font-size: clamp(43.2px, min(6.62vw, 9.5svh), 92.2px); line-height: 1.06; }
 }
 
 /* ===== SECTION TITLE SYSTEM =====
