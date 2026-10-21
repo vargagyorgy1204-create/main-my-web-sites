@@ -666,8 +666,12 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         var pin = section.querySelector('.steps-pin') || section;
         var pcs = window.getComputedStyle(pin);
         var avail = window.innerHeight - parseFloat(pcs.paddingTop) - parseFloat(pcs.paddingBottom);
+        section.style.setProperty('--fit', '1');
         var natural = inner.offsetHeight;
-        var s = natural > 0 ? Math.max(0.55, Math.min(1, avail / natural)) : 1;
+        /* the section heading is laid out at size / fit, so it always renders at the common size: only the rest scales */
+        var hd = inner.querySelector('.section-heading');
+        var fixedH = hd ? hd.offsetHeight : 0;
+        var s = natural > fixedH ? Math.max(0.55, Math.min(1, (avail - fixedH) / (natural - fixedH))) : 1;
         section.style.setProperty('--fit', s.toFixed(3));
     }
 
@@ -718,9 +722,12 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         var wcs = window.getComputedStyle(section);
         var avail = window.innerHeight - parseFloat(wcs.paddingTop) - parseFloat(wcs.paddingBottom);
         var natural = inner.offsetHeight;
-        var s = natural > 0 ? Math.max(0.55, Math.min(1, avail / natural)) : 1;
+        /* the section heading is laid out at size / fit, so it always renders at the common size: only the rest scales */
+        var hd = inner.querySelector('.section-heading');
+        var fixedH = hd ? hd.offsetHeight : 0;
+        var s = natural > fixedH ? Math.max(0.55, Math.min(1, (avail - fixedH) / (natural - fixedH))) : 1;
         section.style.setProperty('--fit', s.toFixed(3));
-        section.style.setProperty('--fit-h', Math.round(natural * s) + 'px');
+        section.style.setProperty('--fit-h', Math.round(fixedH + (natural - fixedH) * s) + 'px');
     }
 
     window.addEventListener('resize', fit);

@@ -357,14 +357,15 @@
 
     /* Section header: headline words, then eyebrow and subtitle. */
     var eyebrow = section.querySelector('.pf__eyebrow');
-    var title   = section.querySelector('.pf__title');
+    var title   = section.querySelector('.section-heading');
     var sub     = section.querySelector('.pf__sub');
     var headDone = false;
     var words = null;
 
     function setupHead() {
       if (hasSplit && !reduce) {
-        words = SplitText.create(title, { type: 'words', aria: 'auto' }).words;
+        /* the heading's letters belong to js/heading-fx.js (no second split): the whole heading rises */
+        words = [title];
         gsap.set(words, { y: 40, opacity: 0 });
         gsap.set([eyebrow, sub], { y: 24, opacity: 0 });
       } else {

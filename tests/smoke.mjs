@@ -70,8 +70,8 @@ const PROBES = [
   ['skills', '#skills .skills-head h2', 'animated'],
   ['why', '#why .why-panel:nth-child(3)', 'animated'],
   ['steps', '#steps .steps-head h2', 'animated'],
-  ['services', '.svt-title', 'visible'],
-  ['portfolio', '.pf__title', 'visible'],
+  ['services', '#services .section-heading', 'visible'],
+  ['portfolio', '#portfolio .section-heading', 'visible'],
   ['contact', '.contact-form-panel .btn-submit-message', 'animated'],
   ['footer', 'footer .footer-section:nth-child(3)', 'animated'],
 ];
@@ -293,7 +293,7 @@ async function layoutChecks(vp) {
     const h = await p.evaluate(({ logo, burger }) => {
       const out = [];
       const boxes = [logo, burger];
-      document.querySelectorAll('h1,h2,h3,h4,p,li,.section-eyebrow,label,button:not(#burger):not(.footer-top-btn),input,select,textarea,a.hbtn,.svt-word,.ctc-word,.hero-title,.contact-form-panel,.contact-personal-panel,.about-photo-card,.about-bio-card,.why-panel,.skill-row,.process__step,.svt-row')
+      document.querySelectorAll('h1,h2,h3,h4,p,li,.section-eyebrow,label,button:not(#burger):not(.footer-top-btn),input,select,textarea,a.hbtn,.svt-word,.section-heading,.hero-title,.contact-form-panel,.contact-personal-panel,.about-photo-card,.about-bio-card,.why-panel,.skill-row,.process__step,.svt-row')
         .forEach(e => {
           if (e.closest('footer, .menu, #pf-deck, .pf-modal, .cookie-banner, .nav, .skills-preview, [aria-hidden="true"]')) return;
           const s = getComputedStyle(e); if (s.visibility === 'hidden' || +s.opacity < 0.05 || s.display === 'none') return;
@@ -371,9 +371,9 @@ async function titleSystem(vp) {
     ['skills', 'index', '#skills', '#skills .section-eyebrow', '#skills .section-heading', '#skills .skills-list', true],
     ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .why-panels', true],
     ['steps', 'index', '#steps', '#steps .section-eyebrow', '#steps .section-heading', '#steps .process', true],
-    ['services', 'index', '#services', '.svt-eyebrow', '.svt-title', '.svt-row', true],
-    ['portfolio', 'index', '#portfolio', '.pf__eyebrow', '.pf__title', '.pf__sub', true],
-    ['contact', 'index', '#contact', '.ctc-eyebrow', '.ctc-word', '.contact-grid', true],
+    ['services', 'index', '#services', '.svt-eyebrow', '#services .section-heading', '.svt-row', true],
+    ['portfolio', 'index', '#portfolio', '.pf__eyebrow', '#portfolio .section-heading', '.pf__sub', true],
+    ['contact', 'index', '#contact', '.ctc-eyebrow', '#contact .section-heading', '.contact-grid', true],
     ['myapproach', 'myapproach', '.ap', '.ap-eyebrow', null, '.ap-grid', true],
   ];
   const pages = {}; const rows = [];
@@ -391,6 +391,8 @@ async function titleSystem(vp) {
       const pinned = (s.id === 'about' && s.classList.contains('is-pinned')) || (s.id === 'steps' && getComputedStyle(s.querySelector('.steps-pin') || s).position === 'sticky');
       const cs = getComputedStyle(e);
       return { top: R(e).top - (pinned ? 0 : R(s).top), left: R(e).left, typo: [cs.fontFamily, cs.fontSize, cs.fontWeight, cs.letterSpacing, cs.textTransform, cs.lineHeight].join('|'),
+        headTypo: head ? (() => { const h = document.querySelector(head), hs = getComputedStyle(h), fit = parseFloat(getComputedStyle(s).getPropertyValue('--fit')) || 1, fs = parseFloat(hs.fontSize) * fit;
+          return { sig: [hs.fontFamily, hs.fontWeight, hs.textTransform, (parseFloat(hs.letterSpacing) / parseFloat(hs.fontSize)).toFixed(3), (parseFloat(hs.lineHeight) / parseFloat(hs.fontSize)).toFixed(3)].join('|'), fs, dots: h.querySelectorAll('.sh-dot').length, split: h.classList.contains('is-split'), aria: !!h.getAttribute('aria-label'), right: Math.max(...[...h.querySelectorAll('.sh-word')].map(x => R(x).right)) }; })() : null,
         headLeft: head ? R(document.querySelector(head)).left : null, firstLeft: R(document.querySelector(first)).left, clientW: document.documentElement.clientWidth,
         gutter: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--content-gutter')) || 0, hdr: innerWidth < 768 ? 76 : 92 };
     }, [sec, eye, head, first])) });
@@ -406,10 +408,45 @@ async function titleSystem(vp) {
   rec(tag, `eyebrow top = section top + ${Math.round(expTop)}px in every section`, badTop.length === 0, badTop.join(' '));
   const badLeft = rows.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
   rec(tag, `eyebrow left = content corridor (${Math.round(expLeft)}px)`, badLeft.length === 0, badLeft.join(' '));
+  const hr = rows.filter(r => r.headTypo && !['hero'].includes(r.name));
+  rec(tag, 'section headings: same font / weight / uppercase / letter-spacing / line-height', new Set(hr.map(r => r.headTypo.sig)).size === 1, [...new Set(hr.map(r => r.headTypo.sig))].join(' || '));
+  const fss = hr.map(r => r.headTypo.fs);
+  rec(tag, 'section headings: identical rendered size in all 6', Math.max(...fss) - Math.min(...fss) < 0.6, hr.map(r => `${r.name}:${r.headTypo.fs.toFixed(1)}`).join(' '));
+  rec(tag, 'section headings: split in letters, accent dot, aria-label', hr.length === 6 && hr.every(r => r.headTypo.split && r.headTypo.dots === 1 && r.headTypo.aria), hr.map(r => `${r.name}:${r.headTypo.split}/${r.headTypo.dots}/${r.headTypo.aria}`).join(' '));
+  rec(tag, 'section headings: no word sticks out of the viewport', hr.every(r => r.headTypo.right <= r.clientW + 0.5), hr.map(r => `${r.name}:${Math.round(r.headTypo.right)}`).join(' '));
   const badHead = rows.filter(r => r.headLeft != null && Math.abs(r.headLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.headLeft)}`);
   rec(tag, 'heading left = eyebrow left', badHead.length === 0, badHead.join(' '));
   const badFirst = rows.filter(r => Math.abs(r.firstLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.firstLeft)}`);
   rec(tag, 'first content block left = eyebrow left', badFirst.length === 0, badFirst.join(' '));
+  rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
+  await ctx.close();
+}
+
+async function headingFx(vp, mouse) {
+  const tag = `headingFx ${vp.w}x${vp.h}${mouse ? '' : ' touch'}`;
+  const errs = [];
+  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(mouse ? {} : { hasTouch: true, isMobile: true }) });
+  const p = await open(ctx, 'index', tag, errs);
+  await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
+  await sleep(900);
+  for (const sec of ['skills', 'why', 'steps', 'services', 'portfolio', 'contact']) {
+    await p.evaluate(s => { const e = document.querySelector('#' + s + ' .section-heading'); const y = e.getBoundingClientRect().top + scrollY - innerHeight * 0.35; if (window.VB && VB.lenis) VB.lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y); }, sec);
+    await sleep(2300);
+    if (mouse) {
+      const pt = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); const r = c.parentNode.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sec);
+      await p.mouse.move(pt[0] - 160, pt[1] - 20); await p.mouse.move(pt[0], pt[1], { steps: 6 }); await sleep(700);
+      const v = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); return { p: parseFloat(c.style.getPropertyValue('--p')) || 0, tf: getComputedStyle(c).transform }; }, sec);
+      rec(tag, `hover effect fires on #${sec} heading`, v.p > 0.4 && v.tf !== 'none', `p=${v.p} transform=${v.tf}`);
+      await p.mouse.move(2, vp.h - 2, { steps: 4 }); await sleep(900);
+      const off = await p.evaluate(s => Math.max(...[...document.querySelectorAll('#' + s + ' .section-heading .sh-char')].map(c => parseFloat(c.style.getPropertyValue('--p')) || 0)), sec);
+      rec(tag, `hover effect releases on #${sec} heading`, off < 0.02, `max p=${off}`);
+    } else {
+      const v = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); const r = c.parentNode.getBoundingClientRect(); window.dispatchEvent(new Event('x')); return [r.left + r.width / 2, r.top + r.height / 2]; }, sec);
+      await p.touchscreen.tap(v[0], v[1]); await sleep(500);
+      const m = await p.evaluate(s => Math.max(...[...document.querySelectorAll('#' + s + ' .section-heading .sh-char')].map(c => parseFloat(c.style.getPropertyValue('--p')) || 0)), sec);
+      rec(tag, `no hover effect on touch (#${sec})`, m === 0, `max p=${m}`);
+    }
+  }
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
   await ctx.close();
 }
@@ -477,6 +514,8 @@ try {
   await layoutChecks({ w: 1440, h: 900 });
   await layoutChecks({ w: 1280, h: 720 });
   await mobileHeader();
+  await headingFx({ w: 1440, h: 900 }, true);
+  await headingFx({ w: 390, h: 844 }, false);
   for (const vp of [{ w: 390, h: 844 }, { w: 768, h: 1024 }, { w: 1280, h: 720 }, { w: 1440, h: 900 }, { w: 1920, h: 1080 }, { w: 2560, h: 1440 }]) await titleSystem(vp);
   await aboutChecks({ w: 1440, h: 900 }, 640);
   await aboutChecks({ w: 1920, h: 1080 }, 570);

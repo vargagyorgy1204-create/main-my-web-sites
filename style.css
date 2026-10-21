@@ -2388,16 +2388,6 @@ body.contact-page {
     background: #10172a !important;
     padding: 90px 20px 100px !important;
 }
-#skills h2 {
-    background: none !important;
-    -webkit-text-fill-color: #f0f4ff !important;
-    color: #f0f4ff !important;
-    font-size: clamp(2rem, 4vw, 2.8rem) !important;
-    font-weight: 800 !important;
-    text-align: center !important;
-    margin: 0 0 18px !important;
-    letter-spacing: -0.02em !important;
-}
 #skills .sk-sub {
     color: #7a90b8 !important;
     font-size: 1.05rem !important;
@@ -3713,18 +3703,6 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     text-shadow: none;
 }
 [data-theme="dark"] .section-eyebrow { --eyebrow-color: rgb(255 255 255 / 0.72); }
-.section-heading {
-    margin: 0;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(26px, 3.2vw, 42px);
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    color: #1a1a2e;
-    -webkit-text-fill-color: currentColor;
-    background: none;
-    text-shadow: none;
-}
 
 /* Skills (Készségeim) – editorial list with floating logo preview */
 #skills {
@@ -3739,18 +3717,6 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
    (An older #skills rule sets the padding with !important, hence the higher-specificity selector.) */
 @media (min-width: 641px) {
     section#skills { padding: calc(92px + clamp(24px, 4svh, 56px)) 24px clamp(64px, 11svh, 120px) !important; }
-}
-#skills .section-heading {
-    font-family: 'Syne', sans-serif !important;
-    font-weight: 800 !important;
-    font-size: clamp(26px, min(3.2vw, 3.9svh), 42px) !important;
-    line-height: 1.12 !important;
-    letter-spacing: -0.02em !important;
-    color: #fff !important;
-    -webkit-text-fill-color: #fff !important;
-    text-align: left !important;
-    max-width: 880px;
-    margin: 0 !important;
 }
 
 .skills-list { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
@@ -3886,7 +3852,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 @media (max-width: 640px) {
     #skills { padding: 88px 20px; }
     .skills-head { margin-bottom: 36px; }
-    #skills .section-heading { font-size: clamp(19px, 5.6vw, 26px) !important; }
     .skill-row {
         grid-template-columns: 44px minmax(0, 1fr);
         column-gap: 16px;
@@ -3903,19 +3868,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 #why { text-align: left; }
 .why-inner { max-width: var(--content-max); margin: 0 auto; }
 .why-head { margin: 0 0 56px; }
-#why .section-heading {
-    font-family: 'Syne', sans-serif !important;
-    font-weight: 800 !important;
-    font-size: clamp(26px, 3.2vw, 42px) !important;
-    line-height: 1.12 !important;
-    letter-spacing: -0.02em !important;
-    color: #1a1a2e !important;
-    -webkit-text-fill-color: #1a1a2e !important;
-    background: none !important;
-    text-align: left !important;
-    max-width: 880px;
-    margin: 0 !important;
-}
 
 .why-panels { display: flex; gap: 12px; height: 460px; }
 .why-panel {
@@ -4048,7 +4000,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 
 @media (max-width: 767px) {
     .why-head { margin-bottom: 32px; }
-    #why .section-heading { font-size: clamp(19px, 5.6vw, 26px) !important; }
     .why-panels { flex-direction: column; height: auto; gap: 10px; }
     .why-panel { flex: none; border-radius: 20px; }
     .why-panel__tab {
@@ -4113,19 +4064,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 }
 .steps-inner { max-width: var(--content-max); margin: 0 auto; }
 .steps-head { margin: 0 0 72px; text-align: left; }
-#steps .section-heading {
-    font-family: 'Syne', sans-serif !important;
-    font-weight: 800 !important;
-    font-size: clamp(26px, 3.2vw, 42px) !important;
-    line-height: 1.12 !important;
-    letter-spacing: -0.02em !important;
-    color: #fff !important;
-    -webkit-text-fill-color: #fff !important;
-    background: none !important;
-    text-align: left !important;
-    max-width: none;
-    margin: 0 !important;
-}
 
 .process {
     --gap: 32px;
@@ -4260,7 +4198,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 @media (max-width: 767px) {
     #steps { padding: 88px 20px; }
     .steps-head { margin-bottom: 44px; }
-    #steps .section-heading { font-size: clamp(19px, 5.6vw, 26px) !important; }
     .process { grid-template-columns: 1fr; gap: 40px; }
     .process__title { min-height: 0; }
     .process__line {
@@ -4401,14 +4338,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 .pf__head { margin-block-end: clamp(32px, 5vh, 56px); max-width: 720px; }
 
 
-.pf__title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(30px, 3.4vw, 52px);
-  line-height: 1.1;
-  color: var(--card-secondary);
-  margin: 14px 0 20px;
-}
 
 .pf__sub {
   font-family: var(--font-body);
@@ -5202,21 +5131,9 @@ html.lenis, html.lenis body { height: auto; }
 @media (min-width: 768px) { .svt__inner { padding-inline: 32px; } }
 
 /* ---------- intro ---------- */
-.svt-intro { max-width: 720px; margin-block-end: clamp(32px, 6svh, 64px); }
-.svt-title {
-  margin: 0 0 16px;
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: clamp(22px, calc((100vw - 32px) / 13.8), 30px);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: #fff;
-  -webkit-text-fill-color: #fff;
-  background: none;
-  text-align: left;
-}
-@media (min-width: 768px) { .svt-title { font-size: clamp(30px, 3.4vw, 52px); } }
+.svt-intro { margin-block-end: clamp(32px, 6svh, 64px); }
 .svt-sub {
+  max-width: 720px;
   margin: 0;
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(15px, 1.25vw, 18px);
@@ -5415,7 +5332,6 @@ html.lenis, html.lenis body { height: auto; }
 @media (min-width: 768px) {
   #services.svt { padding-block: calc(92px + clamp(24px, 4svh, 56px)) clamp(64px, 10svh, 120px); }
   .svt-intro { margin-block-end: clamp(24px, 5svh, 64px); }
-  .svt-title { font-size: clamp(30px, min(3.4vw, 4.82svh), 52px); }
   .svt-sub { font-size: clamp(14px, min(1.25vw, 1.9svh), 18px); }
   .svt-row { padding-block: clamp(28px, 7svh, 96px); }
   .svt-word {
@@ -5574,24 +5490,10 @@ html.lenis, html.lenis body { height: auto; }
 @media (prefers-reduced-motion: reduce) { .ctc__glow { animation: none; } }
 
 /* ---------- headline ---------- */
-.ctc-word {
-    margin: 0;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: min(calc((100vw - 32px) / 8.75), 16rem, 34svh);
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    color: #fff;
-    -webkit-text-fill-color: #fff;
-    background: none;
-    min-height: 1.12em;
-}
-@media (min-width: 768px) { .ctc-word { font-size: min(calc((min(100vw, 1280px) - 64px) / 8.75), 16rem, 34svh); } }
-.ctc-word [class*="ctc-mask"] { display: inline-block; overflow: clip; padding-block: 0.14em; margin-block: -0.14em; vertical-align: top; }
-.ctc-char { display: inline-block; position: relative; transform: translateY(calc(var(--p, 0) * -6px)) scale(calc(1 + var(--p, 0) * 0.04)); will-change: transform; }
-.ctc-char::after {
+.sh-word { display: inline-block; white-space: nowrap; }
+.sh-mask { display: inline-block; overflow: clip; padding-block: 0.14em; margin-block: -0.14em; vertical-align: top; }
+.sh-char { display: inline-block; position: relative; transform: translateY(calc(var(--p, 0) * -6px)) scale(calc(1 + var(--p, 0) * 0.04)); will-change: transform; }
+.sh-char::after {
     content: attr(data-c);
     position: absolute;
     inset: 0;
@@ -5603,8 +5505,8 @@ html.lenis, html.lenis body { height: auto; }
     opacity: var(--p, 0);
     pointer-events: none;
 }
-.ctc-dot { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
-.ctc-dot::after { display: none; }
+.sh-dot { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
+.sh-dot::after { display: none; }
 .ctc-sub {
     max-width: 62ch;
     margin: clamp(10px, 2svh, 22px) 0 clamp(32px, 6svh, 56px);
@@ -5783,8 +5685,6 @@ html.lenis, html.lenis body { height: auto; }
    clears the logo, also when an in-page #contact link lands the section at the top. */
 #contact.ctc { padding-top: calc(92px + clamp(24px, 4svh, 56px)); }
 @media (max-width: 767px) { #contact.ctc { padding-top: calc(76px + clamp(24px, 4svh, 56px)); } }
-.ctc-word { font-size: min(calc((100vw - 32px) / 8.75), 16rem, clamp(56px, 12.9svh, 16rem)); }
-@media (min-width: 768px) { .ctc-word { font-size: min(calc((min(100vw, 1280px) - 64px) / 8.75), clamp(56px, 12.9svh, 16rem)); } }
 .ctc-sub {
     margin-block: clamp(8px, 2svh, 22px) clamp(20px, 5.2svh, 56px);
     font-size: clamp(15px, min(1.25vw, 1.67svh), 18px);
@@ -5961,13 +5861,12 @@ footer {
 /* Portfolio: head clears the header; head type follows the height */
 #portfolio { padding-block-start: var(--sec-top); }
 .pf__head { margin-block-end: clamp(24px, 5svh, 56px); }
-.pf__title { font-size: clamp(30px, min(3.4vw, 4.8svh), 52px); margin-block: clamp(8px, 1.3svh, 14px) clamp(12px, 1.9svh, 20px); }
+.pf__head .section-heading { margin-block: 0 clamp(12px, 1.9svh, 20px); }
 .pf__sub { font-size: clamp(15px, min(1.25vw, 1.9svh), 18px); }
 
 /* Why: desktop panels scale with the window height (460px at >= 1080px) */
 @media (min-width: 768px) {
     .why-head { margin-bottom: clamp(24px, 5.2svh, 56px); }
-    #why .section-heading { font-size: clamp(26px, min(3.2vw, 3.9svh), 42px) !important; }
     .why-panels { height: clamp(300px, 42.6svh, 460px); }
     .why-panel__tab { padding-block: clamp(18px, 2.6svh, 28px) clamp(20px, 3svh, 32px); }
     .why-panel__body { padding: clamp(20px, 3.3svh, 36px); }
@@ -6215,24 +6114,12 @@ footer { padding-bottom: var(--cb-h, 0px); }
 
 /* ===== Készségek: eyebrow + heading identical to Rólam (same type scale on every screen, same tight eyebrow gap) ===== */
 #skills .section-eyebrow { margin-bottom: 10px; }
-#skills .section-heading { font-size: clamp(30px, 8.2vw, 42px) !important; line-height: 1.12 !important; }
-@media (min-width: 900px) {
-    #skills .section-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px) !important; line-height: 1.06 !important; }
-}
 
 /* ===== Értékek & Garanciák: eyebrow + heading identical to Rólam / Készségek ===== */
 #why .section-eyebrow { margin-bottom: 10px; }
-#why .section-heading { font-size: clamp(30px, 8.2vw, 42px) !important; line-height: 1.12 !important; }
-@media (min-width: 900px) {
-    #why .section-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px) !important; line-height: 1.06 !important; }
-}
 
 /* ===== Együttműködés: eyebrow + heading identical to Rólam / Készségek / Értékek ===== */
 #steps .section-eyebrow { margin-bottom: 10px; }
-#steps .section-heading { font-size: clamp(30px, 8.2vw, 42px) !important; line-height: 1.12 !important; }
-@media (min-width: 900px) {
-    #steps .section-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px) !important; line-height: 1.06 !important; }
-}
 /* pinned timeline: with the larger heading, the gaps give way first so the scaled block (--fit) stays as close to 1 as possible */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps .process-cta { margin-top: clamp(18px, 3svh, 44px); padding-top: clamp(16px, 2.4svh, 28px); }
@@ -6241,26 +6128,12 @@ footer { padding-bottom: var(--cb-h, 0px); }
 
 /* ===== Szolgáltatások: eyebrow + title identical to Készségek / Rólam ===== */
 .svt-eyebrow { margin-bottom: 10px; }
-.svt-title { font-size: clamp(30px, 8.2vw, 42px); line-height: 1.12; }
-@media (min-width: 900px) {
-    .svt-title { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px); line-height: 1.06; }
-}
 
 /* ===== Portfólió: eyebrow + title identical in size / spacing to Készségek / Rólam ===== */
 .pf__eyebrow { margin-bottom: 10px; }
-.pf__title { font-size: clamp(30px, 8.2vw, 42px); line-height: 1.12; letter-spacing: -0.02em; margin-block-start: 0; }
-@media (min-width: 900px) {
-    .pf__title { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px); line-height: 1.06; }
-}
 
 /* ===== Kapcsolat: eyebrow gap + "Üzenjen." size identical to the other section headings (the letters-rise / proximity effects are untouched) ===== */
 .ctc-eyebrow { margin-bottom: 10px; }
-/* the other section titles x 1.2 ("Üzenjen." is the closing statement of the page) */
-/* x1.44 of the common title scale; on phones the single unbreakable word is also capped by the column width (8.6em wide) */
-.ctc-word { font-size: clamp(36px, min(11.8vw, calc((100vw - 2 * var(--content-gutter)) / 8.75)), 60.5px); line-height: 1.12; }
-@media (min-width: 900px) {
-    .ctc-word { font-size: clamp(43.2px, min(6.62vw, 9.5svh), 92.2px); line-height: 1.06; }
-}
 
 /* ===== SECTION TITLE SYSTEM =====
    The eyebrow is the anchor of every section: same typography (.section-eyebrow), same distance from the section top
@@ -6317,7 +6190,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 .ctc-sub { margin-bottom: var(--head-gap); }
 
 /* the pinned / fitted blocks are scaled by --fit: the eyebrow is counter-scaled (same rendered size everywhere) and the block scales from its top-left corner (the eyebrow does not move) */
-#why .why-inner .section-eyebrow, #steps .steps-inner .section-eyebrow { transform: scale(calc(1 / var(--fit, 1))); transform-origin: left top; }
+#why .why-inner .section-eyebrow, #steps .steps-inner .section-eyebrow { width: fit-content; transform: scale(calc(1 / var(--fit, 1))); transform-origin: left top; }
 @media (min-width: 768px) and (min-height: 520px) { #why { align-items: flex-start !important; } }
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps { padding: 0; }                       /* the pinned stage carries the padding */
@@ -6340,3 +6213,38 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 #hero .hero-inner { flex: 1 1 auto; min-height: 0; margin-block: 0; }
 #hero .hero-title { margin-top: auto; }
 #hero .hero-ctas { margin-bottom: auto; padding-bottom: clamp(16px, 7svh, 72px); }   /* the padding lifts the block above the centre */
+
+/* ===== SECTION HEADINGS (.section-heading) — one look for every section title, reference: "ÜZENJEN." =====
+   Uppercase Syne 800, one fluid size token for all of them (= the Kapcsolat word: 85.5px at 1440 wide, scales with the width, also
+   eased by the height). Only the colour differs per section. Letters / accent dot / hover: js/heading-fx.js (.sh-*). */
+:root {
+    --section-heading-size: clamp(25px, min(5.94vw, 9.5svh), 96px);
+    --section-heading-lh: 1.12;
+}
+@media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
+.section-heading {
+    --sh-color: #1a1a2e;
+    margin: 0;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: var(--section-heading-size);
+    line-height: var(--section-heading-lh);
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--sh-color);
+    -webkit-text-fill-color: var(--sh-color);
+    background: none;
+    text-shadow: none;
+    overflow-wrap: normal;
+}
+#skills .section-heading, #steps .section-heading, #services .section-heading, #contact .section-heading { --sh-color: #fff; }
+#portfolio .section-heading { --sh-color: var(--card-secondary); }
+.svt-intro .section-heading { margin-bottom: 16px; }
+/* the pinned blocks are scaled by --fit: the heading is laid out at size / fit so it renders at exactly the common size */
+@media (min-width: 768px) and (min-height: 520px) {
+    #why .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
+}
+@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+    #steps .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
+}
