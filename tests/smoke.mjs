@@ -377,7 +377,7 @@ async function aboutChecks(vp, wantH) {
   const ctx = await newCtx(vp);
   const p = await open(ctx, 'index', tag, errs);
   const top = await topOf(p, '#about'); const sh = await p.evaluate(() => document.getElementById('about').offsetHeight);
-  const stops = mobile ? [0, 0.35, 0.7, 0.95] : [0.02, 0.2, 0.4, 0.62, 0.85];
+  const stops = mobile ? [0, 0.35, 0.7, 0.95] : [-0.04, 0.02, 0.2, 0.4, 0.62, 0.85, 1.03];   // first / last: before the pin starts and after it ended
   const rows = [];
   for (const s of stops) {
     await scrollTo(p, mobile ? top + (sh - vp.h * 0.6) * s : top + (sh - vp.h) * s);
@@ -397,6 +397,14 @@ async function aboutChecks(vp, wantH) {
         signHitsBtn: inter(sign, btn), signHitsProg: inter(sign, prog), signW: Math.round(sign.width),
         signHitsText: textBoxes.some(t => inter(sign, t) && !(t.height < 2)),
         barFlowGap: Math.min(...bodies), signOpacity: parseFloat(sgs.opacity), signClip: sgs.clipPath,
+        inCard: (() => { const e = q('.about-bio-card'); return !!q('.about-bio-card .abt-eyebrow') && e.querySelector('.abt-eyebrow').getBoundingClientRect().bottom <= R(q('.abt-heading')).top + 14; })(),
+        // the signature's ink (incl. descenders) must be inside its own box, the box inside the card, and nothing on the way clips it
+        signInk: (() => { const el = q('.about-sign'), cs = sgs, r = sign, cv = document.createElement('canvas').getContext('2d'); cv.font = `${cs.fontSize} Sacramento`; const m = cv.measureText(el.textContent);
+          const fs = parseFloat(cs.fontSize), lh = parseFloat(cs.lineHeight), pt = parseFloat(cs.paddingTop), A = m.fontBoundingBoxAscent, D = m.fontBoundingBoxDescent;
+          const base = r.top + pt + (lh - (A + D)) / 2 + A; const inkBottom = base + m.actualBoundingBoxDescent, inkTop = base - m.actualBoundingBoxAscent;
+          const left = r.left + parseFloat(cs.paddingLeft) - m.actualBoundingBoxLeft, right = r.left + parseFloat(cs.paddingLeft) + m.actualBoundingBoxRight;
+          let clipped = cs.clipPath !== 'none' || cs.overflow !== 'visible' || cs.maskImage !== 'none'; for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) { const s = getComputedStyle(a); if ((s.overflow !== 'visible' && a.matches('.about-bio-card, .abt')) || s.clipPath !== 'none') clipped = true; if (a.matches('.about-bio-card')) break; }
+          return { descentSpace: +(r.bottom - inkBottom).toFixed(1), ascentSpace: +(inkTop - r.top).toFixed(1), leftSpace: +(left - r.left).toFixed(1), rightSpace: +(r.right - right).toFixed(1), clipped, fonts: document.fonts.check(cs.fontSize + ' Sacramento') }; })(),
         h2lines: Math.round(R(q('.abt-heading')).height / parseFloat(getComputedStyle(q('.abt-heading')).lineHeight)),
       };
     }));
@@ -405,7 +413,9 @@ async function aboutChecks(vp, wantH) {
   if (!mobile) rec(tag, 'composition height', rows.every(r => r.photoH === wantH && r.cardH === wantH), `photo ${rows.map(r => r.photoH).join('/')} card ${rows.map(r => r.cardH).join('/')} (want ${wantH})`);
   rec(tag, 'text card height constant across chapters', hs.size === 1, [...hs].join(','));
   rec(tag, 'signature inside the card, not over the button / segments / text', rows.every(r => r.signInside && !r.signHitsBtn && !r.signHitsProg && !r.signHitsText), JSON.stringify(rows.map(r => [r.signInside, r.signHitsBtn, r.signHitsProg, r.signHitsText])));
-  rec(tag, 'signature visible in every chapter', rows.every(r => r.signOpacity > 0.5 && !/inset\(0px 100%/.test(r.signClip.replace(/ /g, ''))), rows.map(r => `${r.signOpacity}`).join(','));
+  rec(tag, 'signature always visible: opacity >= 0.85, no clip-path (every chapter, before and after the pin)', rows.every(r => r.signOpacity >= 0.85 && r.signClip === 'none'), rows.map(r => `${r.signOpacity}/${r.signClip}`).join(','));
+  rec(tag, 'signature not clipped: ink incl. descenders inside its box, nothing clips it', rows.every(r => r.signInk.fonts && !r.signInk.clipped && r.signInk.descentSpace >= 0 && r.signInk.ascentSpace >= 0 && r.signInk.leftSpace >= -0.5 && r.signInk.rightSpace >= -0.5), JSON.stringify(rows[0].signInk));
+  rec(tag, 'eyebrow "Rólam" sits inside the text card, directly above the heading', rows.every(r => r.inCard), rows.map(r => r.inCard).join(','));
   rec(tag, 'accent bar stays in flow (body starts below the lead + bar)', rows.every(r => r.barFlowGap >= -1)   /* the lead block includes the bar + its 18px margin, so the body must start at or below its bottom edge */, rows.map(r => Math.round(r.barFlowGap)).join(','));
   rec(tag, 'heading max two lines', rows.every(r => r.h2lines <= 2), rows.map(r => r.h2lines).join(','));
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
@@ -462,10 +472,12 @@ async function titleSystem(vp) {
   const maxW = Math.min(1480, Math.max(1152, 0.78 * vp.w));          // --content-max: clamp(1152px, 78vw, 1480px)
   const expLeft = gutterPx + Math.max(0, (r0.clientW - 2 * gutterPx - maxW) / 2);
   rec(tag, 'eyebrow typography identical in all sections', new Set(rows.map(r => r.typo)).size === 1, [...new Set(rows.map(r => r.typo))].join(' || '));
-  const badTop = rows.filter(r => Math.abs(r.top - expTop) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
-  rec(tag, `eyebrow top = section top + ${Math.round(expTop)}px in every section`, badTop.length === 0, badTop.join(' '));
-  const badLeft = rows.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
-  rec(tag, `eyebrow left = content corridor (${Math.round(expLeft)}px)`, badLeft.length === 0, badLeft.join(' '));
+  // Rólam is the one exception to the anchor system: its eyebrow lives inside the white text card (typography is still checked above)
+  const anchored = rows.filter(r => r.name !== 'about');
+  const badTop = anchored.filter(r => Math.abs(r.top - expTop) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
+  rec(tag, `eyebrow top = section top + ${Math.round(expTop)}px in every section (except Rólam)`, badTop.length === 0, badTop.join(' '));
+  const badLeft = anchored.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
+  rec(tag, `eyebrow left = content corridor (${Math.round(expLeft)}px) (except Rólam)`, badLeft.length === 0, badLeft.join(' '));
   const hr = rows.filter(r => r.headTypo && !['hero'].includes(r.name));
   rec(tag, 'section headings: same font / weight / uppercase / letter-spacing / line-height', new Set(hr.map(r => r.headTypo.sig)).size === 1, [...new Set(hr.map(r => r.headTypo.sig))].join(' || '));
   const fss = hr.map(r => r.headTypo.fs);
@@ -474,7 +486,7 @@ async function titleSystem(vp) {
   rec(tag, 'section headings: no word sticks out of the viewport', hr.every(r => r.headTypo.right <= r.clientW + 0.5), hr.map(r => `${r.name}:${Math.round(r.headTypo.right)}`).join(' '));
   const badHead = rows.filter(r => r.headLeft != null && Math.abs(r.headLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.headLeft)}`);
   rec(tag, 'heading left = eyebrow left', badHead.length === 0, badHead.join(' '));
-  const badFirst = rows.filter(r => Math.abs(r.firstLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.firstLeft)}`);
+  const badFirst = anchored.filter(r => Math.abs(r.firstLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.firstLeft)}`);
   rec(tag, 'first content block left = eyebrow left', badFirst.length === 0, badFirst.join(' '));
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
   await ctx.close();

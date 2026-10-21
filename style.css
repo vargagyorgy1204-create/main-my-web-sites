@@ -2556,19 +2556,21 @@ body.contact-page {
 }
 .about-bio-foot .btn-about { align-self: auto; }
 /* signature "Varga György": always visible, bottom-right corner of the text card (absolute inside the card; the button row
-   reserves its width). Static #4B1956 here; the pinned story layout adds the scroll-linked gradient + rewrite. */
+   reserves its width). Static #4B1956 here; the pinned story layout adds a soft scroll-linked sheen. Never clipped, never hidden:
+   the box is taller than the line (line-height 1.45 + bottom padding) so the descenders of "y" / "g" are inside it, and the
+   box bottom is pulled down by the same amount so the baseline stays where it was. */
 .about-bio-card { position: relative; --sign-w: clamp(100px, 28vw, 140px); }
 .about-sign {
     --sig: 0;
     position: absolute;
     right: var(--bio-pad, 24px);
-    bottom: var(--bio-pad, 24px);
+    bottom: calc(var(--bio-pad, 24px) - 0.34em);
     font-family: 'Sacramento', cursive;
     font-size: calc(var(--sign-w) / 4.92);
-    line-height: 1;
-    padding: 0.08em 0.12em;
+    line-height: 1.45;
+    padding: 0.04em 0.2em 0.34em 0.12em;
     color: #4B1956;
-    opacity: 0.85;
+    opacity: 0.9;
     white-space: nowrap;
     user-select: none;
 }
@@ -2846,17 +2848,26 @@ body.contact-page {
 /* ===== /ABOUT CHAPTERS ===== */
 
 /* story: visual order = eyebrow, heading, chapters, progress, button row */
+/* the card's flex gap (16px) already sits between the eyebrow and the heading: a small negative margin tightens it to ~10px */
+#about.is-pinned .abt-eyebrow { order: 1; margin: 0 0 -6px; }
 #about.is-pinned .abt-head { order: 2; margin: 0 0 16px; }
 #about.is-pinned .abt-chapters { order: 4; }
 #about.is-pinned .abt-progress { order: 5; }
 #about.is-pinned .about-bio-foot { order: 6; margin: 20px 0 0; padding-inline-end: calc(var(--sign-w) + 16px); }   /* story: button and signature share the bottom row */
-/* signature in the story: colour flows with the scroll progress (--sig, scrubbed in about-story.js), rewrite reveal per chapter */
+/* signature in the story: always visible; a soft sheen (a brighter band ~25% of the width) travels left -> right with the pinned scroll
+   progress (--sig 0..1, scrubbed in about-story.js). background-position only: no layout. Band starts just off the left edge and ends
+   just off the right edge, so before / after the pin the signature is the plain base colour. */
 #about.is-pinned .about-sign {
+    --sign-base: #4B1956;
+    --sign-hi: color-mix(in srgb, #4B1956 45%, #c850c0);
     color: transparent;
     -webkit-text-fill-color: transparent;
-    background: linear-gradient(90deg, #4B1956 0%, #6c63ff 25%, #c850c0 50%, #6c63ff 75%, #4B1956 100%) calc(var(--sig) * 100%) 0 / 400% 100%;
+    background: linear-gradient(90deg, var(--sign-base) 0%, var(--sign-base) 45.8%, var(--sign-hi) 50%, var(--sign-base) 54.2%, var(--sign-base) 100%) calc(81.25% - var(--sig) * 75%) 0 / 300% 100% no-repeat;
     -webkit-background-clip: text;
     background-clip: text;
+}
+@media (prefers-reduced-motion: reduce) {
+    #about.is-pinned .about-sign { background: none; color: #4B1956; -webkit-text-fill-color: currentColor; }
 }
 
 /* ── Hogyan dolgozom (myapproach.html) – About-style editorial split ── */
@@ -6115,6 +6126,8 @@ footer { padding-bottom: var(--cb-h, 0px); }
 /* ===== Készségek: eyebrow + heading identical to Rólam (same type scale on every screen, same tight eyebrow gap) ===== */
 #skills .section-eyebrow { margin-bottom: 10px; }
 
+.about-bio-card .abt-eyebrow { margin-bottom: -6px; }   /* list layout (< 900px): same tight eyebrow gap as the pinned story and Készségek */
+
 /* ===== Értékek & Garanciák: eyebrow + heading identical to Rólam / Készségek ===== */
 #why .section-eyebrow { margin-bottom: 10px; }
 
@@ -6144,32 +6157,12 @@ footer { padding-bottom: var(--cb-h, 0px); }
     --section-top: calc(var(--hdr-h) + clamp(24px, 4svh, 56px));
     --head-gap: clamp(28px, 4svh, 56px);
     --content-gutter: 20px;                       /* phones / tablets: the common side line */
-    --abt-eyebrow-gap: clamp(16px, 2.4svh, 28px);
 }
 @media (max-width: 767px) { :root { --hdr-h: 76px; } }
 @media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
 
 /* hero: the eyebrow sits on the anchor, the rest of the block follows it */
 #hero { padding-top: var(--section-top); padding-inline: var(--content-gutter); align-content: start; align-items: start; }
-
-/* Rólam: the eyebrow lives at section level above the photo + text card */
-#about .abt-eyebrow { width: 100%; max-width: var(--content-max); margin: 0 auto var(--abt-eyebrow-gap); }
-#about { padding-top: var(--section-top) !important; padding-inline: var(--content-gutter) !important; align-items: flex-start; }
-#about .about-pin { display: block; }
-#about.is-pinned {
-    --about-bottom: clamp(24px, 4svh, 48px);
-    --about-h: min(calc(640px - clamp(0px, (100vh - 900px) * 0.4, 70px)), calc(100vh - var(--section-top) - 20px - var(--abt-eyebrow-gap) - var(--about-bottom)));
-    --about-h: min(calc(640px - clamp(0px, (100svh - 900px) * 0.4, 70px)), calc(100svh - var(--section-top) - 20px - var(--abt-eyebrow-gap) - var(--about-bottom)));
-    padding: 0 !important;
-}
-#about.is-pinned .about-pin {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    padding: var(--section-top) var(--content-gutter) 0;
-}
-#about.is-pinned .about-premium-grid { width: 100%; margin-inline: auto; flex: none; }
 
 /* Készségek / Értékek / Együttműködés / Szolgáltatások / Portfólió / Kapcsolat: top anchor + side line + head gap */
 section#skills { padding-top: var(--section-top) !important; padding-inline: var(--content-gutter) !important; }

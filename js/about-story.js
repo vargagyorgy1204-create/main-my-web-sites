@@ -276,25 +276,12 @@
       tl.fromTo(segs[i], { scaleX: 0 }, { scaleX: 1, duration: 30 }, S);
     });
     tl.set({}, {}, 450);
-    /* signature: the gradient flows across it with the pinned scroll progress */
+    /* signature: always visible; a soft sheen travels across it with the pinned scroll progress (CSS: background-position from --sig) */
     if (p.sign) tl.fromTo(p.sign, { '--sig': 0 }, { '--sig': 1, duration: 450 }, 0);
-
-    /* signature: always visible; a gentle left-to-right "rewrite" once per chapter change */
-    function rewriteSign() {
-      if (!p.sign) return;
-      gsap.killTweensOf(p.sign, 'clipPath');
-      gsap.fromTo(p.sign, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
-    }
-    function signFinal() {
-      if (!p.sign) return;
-      gsap.killTweensOf(p.sign, 'clipPath');
-      gsap.set(p.sign, { clipPath: 'inset(0 0% 0 0)' });
-    }
 
     /* signature animations: one ScrollTrigger per chapter */
     function play(k) {
       killAnim(k);
-      rewriteSign();
       if (k === 4) { resultNeutral(p, true); anims[k] = resultTL(p, true); return; }
       var key = ['design', 'code', 'motion'][k - 1];
       KIND[k][1](W[key], chars[key]);
@@ -302,14 +289,12 @@
     }
     function finish(k) {
       killAnim(k);
-      signFinal();
       if (k === 4) { resultEnd(p, true); return; }
       var key = ['design', 'code', 'motion'][k - 1];
       KIND[k][1](W[key], chars[key]);
     }
     function reset(k) {
       killAnim(k);
-      signFinal();
       if (k === 4) { resultNeutral(p, true); return; }
       var key = ['design', 'code', 'motion'][k - 1];
       KIND[k][1](W[key], chars[key]);
