@@ -1,4 +1,4 @@
-// Regression smoke test: `node tests/smoke.mjs` (needs Playwright; Chromium).
+// Regression smoke test (needs Playwright; Chromium): `node tests/smoke.mjs --quick` (default, before every commit) or `--full`; `--only=<group>` re-runs one group.
 // Serves the repo with a tiny static server, drives the real pages and prints a PASS/FAIL table; exit code 1 on any FAIL.
 // Env: SMOKE_ROOT=<dir to test (default: repo root)>, PW_CHROMIUM=<path to a chromium binary, optional>.
 import http from 'node:http';
@@ -43,19 +43,40 @@ const browser = await chromium.launch(launchOpts);
 // third-party hosts are not ours to fail on (CDNs / analytics / fonts may be blocked in CI)
 const isOurs = u => u.startsWith(BASE);
 
+// ---------------------------------------------------------------- runner options
+//   node tests/smoke.mjs            -> --quick (default)
+//   node tests/smoke.mjs --quick    1440x900 + 390x844, index only: the checks needed before every commit
+//   node tests/smoke.mjs --full     every viewport (390/768/1280/1440/1920/2560), every page, touch-laptop emulation
+//   --only=<group>[,<group>]        run only these groups (in the chosen mode), e.g. --only=titles,about
+const ARGS = process.argv.slice(2);
+const FULL = ARGS.includes('--full');
+const ONLY = (ARGS.find(a => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean);
+const CONCURRENCY = 3;
+const T0 = Date.now();
+
+// ---------------------------------------------------------------- waiting helpers (conditions, not fixed sleeps)
+const frames = (p, n = 3) => p.evaluate(k => new Promise(r => { const f = () => (--k <= 0 ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
+// resolves true as soon as `fn(arg)` is truthy in the page, false after `timeout` ms (the check that follows then reports the real state)
+const until = async (p, fn, arg, timeout = 3000) => { try { await p.waitForFunction(fn, arg, { timeout, polling: 'raf' }); return true; } catch { return false; } };
+// an element that finished its entrance: opaque and without a translate / scale
+const SETTLED_JS = sel => { const e = document.querySelector(sel); if (!e) return false; const c = getComputedStyle(e); return parseFloat(c.opacity) >= 0.95 && (c.transform === 'none' || /^matrix\(1, 0, 0, 1, 0(\.\d+)?, 0(\.\d+)?\)$/.test(c.transform)); };
+
 async function open(ctx, page, area, errs) {
   const p = await ctx.newPage();
   p.on('pageerror', e => errs.push('pageerror: ' + String(e).slice(0, 140)));
   p.on('console', m => { if (m.type() === 'error' && !/Failed to load resource.*(net::ERR|status of 4)/.test(m.text()) ) errs.push('console: ' + m.text().slice(0, 140)); });
   p.on('response', r => { if (isOurs(r.url()) && r.status() >= 400) errs.push(`${r.status()} ${r.url().replace(BASE, '')}`); });
   p.on('requestfailed', r => { if (isOurs(r.url())) errs.push('failed ' + r.url().replace(BASE, '')); });
-  await p.goto(`${BASE}/${page}.html`, { waitUntil: 'networkidle' });
-  await p.evaluate(() => { try { localStorage.clear(); } catch (e) { /* ignore */ } });
-  await sleep(500);
+  await p.goto(`${BASE}/${page}.html`, { waitUntil: 'load' });
+  await p.evaluate(() => { try { localStorage.clear(); } catch (e) { /* ignore */ } return document.fonts.ready; });
+  // GSAP-driven pages: wait until ScrollTrigger has registered its triggers (entrance states are set after the fonts are in)
+  await until(p, () => !window.VB || !VB.hasST || window.ScrollTrigger.getAll().length > 0, null, 4000);
+  await frames(p, 4);
   return p;
 }
 const scrollTo = (p, y) => p.evaluate(yy => { if (window.VB && VB.lenis) VB.lenis.scrollTo(yy, { immediate: true }); else scrollTo(0, yy); }, y);
 const topOf = (p, sel) => p.evaluate(s => { const e = document.querySelector(s); return e ? e.getBoundingClientRect().top + scrollY : null; }, sel);
+const newCtx = (vp, extra = {}) => browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(vp.w < 500 ? { hasTouch: true, isMobile: true } : {}), ...extra });
 
 // ---------------------------------------------------------------- per-viewport checks on index.html
 const SECTIONS = {
@@ -85,7 +106,7 @@ const settled = s => s && s.op >= 0.95 && (s.tf === 'none' || /^matrix\(1, 0, 0,
 async function indexChecks(vp) {
   const tag = `index ${vp.w}x${vp.h}`;
   const errs = [];
-  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(vp.w < 500 ? { hasTouch: true, isMobile: true } : {}) });
+  const ctx = await newCtx(vp);
   const p = await open(ctx, 'index', tag, errs);
   const mobile = vp.w < 500;
 
@@ -93,22 +114,22 @@ async function indexChecks(vp) {
   const missing = await p.evaluate(secs => Object.entries(secs).filter(([, s]) => !document.querySelector(s)).map(([k]) => k), SECTIONS);
   rec(tag, 'all sections exist', missing.length === 0, missing.join(','));
 
-  // initial (pre-scroll) state of the probes that start below the fold
-  await sleep(1500);                      // let the entrance states (set after fonts are ready) settle before sampling
+  // initial (pre-scroll) state of the probes that start below the fold: wait until their hidden entrance states are applied
+  await until(p, probes => probes.every(s => { const e = document.querySelector(s); if (!e) return true; const r = e.getBoundingClientRect(); if (r.top <= innerHeight) return true; const c = getComputedStyle(e); return parseFloat(c.opacity) < 0.95 || (c.transform !== 'none' && !/^matrix\(1, 0, 0, 1, 0(\.\d+)?, 0(\.\d+)?\)$/.test(c.transform)); }), PROBES.filter(x => x[2] === 'animated').map(x => x[1]), 2500);
   const pre = {};
   for (const [sec, sel] of PROBES) pre[sel] = await state(p, sel);
 
-  // scroll through the whole page slowly
+  // scroll through the whole page (jumps: the scroll-driven setups see every position in order)
   const H = await p.evaluate(() => document.documentElement.scrollHeight);
-  for (let y = 0; y < H; y += Math.round(vp.h * 0.5)) { await scrollTo(p, y); await sleep(mobile ? 160 : 220); }
-  await sleep(400);
+  for (let y = 0; y < H; y += Math.round(vp.h * 0.5)) { await scrollTo(p, y); await frames(p, 4); }
 
   // each probe: scroll it into view and check the entrance fired and ended visible
   for (const [sec, sel, exp] of PROBES) {
     const before = pre[sel];
     const y = await topOf(p, sel);
     if (y == null) { rec(tag, `${sec}: ${sel}`, false, 'probe element missing'); continue; }
-    await scrollTo(p, Math.max(0, y - vp.h * 0.45)); await sleep(2600);
+    await scrollTo(p, Math.max(0, y - vp.h * 0.45));
+    await until(p, SETTLED_JS, sel, 3500);
     const after = await state(p, sel);
     rec(tag, `${sec}: visible after scroll`, settled(after), after ? `op ${after.op} tf ${after.tf}` : 'missing');
     if (exp === 'animated') {
@@ -119,7 +140,7 @@ async function indexChecks(vp) {
   }
 
   // stuck-at-zero scan: anything in the page body still inline-hidden after the full pass (excluding intentional states)
-  await sleep(500);
+  await frames(p, 6);
   const stuck = await p.evaluate(() => [...document.querySelectorAll('main *, section *, footer *')]
     .filter(e => e.style && e.style.opacity === '0' && !e.closest('#about, .menu, .modal, .pf-modal, .service-modal-overlay, .cookie-banner, [aria-hidden="true"]') && e.getBoundingClientRect().height > 8 && !e.closest('#portfolio'))
     .map(e => (e.className && String(e.className).slice(0, 30)) || e.tagName).slice(0, 6));
@@ -131,13 +152,19 @@ async function indexChecks(vp) {
 
   if (!mobile) {
     // Készségek hover (real mouse): row name moves, others dim, floating preview shows
-    await scrollTo(p, (await topOf(p, '#skills')) + 40); await sleep(1500);
+    await scrollTo(p, (await topOf(p, '#skills')) + 40); await frames(p, 4); await scrollTo(p, (await topOf(p, '.skill-row:nth-child(3)')) - vp.h * 0.4); await frames(p, 8);   // the 3rd row sits mid-screen, whatever the heading height
     const r = await p.evaluate(() => { const e = document.querySelectorAll('.skill-row')[2].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
     const base = await p.evaluate(() => ({ t: getComputedStyle(document.querySelectorAll('.skill-row')[2].querySelector('.skill-row__name')).transform, o: getComputedStyle(document.querySelectorAll('.skill-row')[4]).opacity }));
-    await p.mouse.move(60, 60); await p.mouse.move(r[0] - 80, r[1], { steps: 4 }); await p.mouse.move(r[0], r[1], { steps: 4 }); await sleep(900);
+    await p.mouse.move(60, 60); await p.mouse.move(r[0] - 80, r[1], { steps: 4 }); await p.mouse.move(r[0], r[1], { steps: 4 });
+    await until(p, b => { const rows = document.querySelectorAll('.skill-row'); return getComputedStyle(rows[2].querySelector('.skill-row__name')).transform !== b.t && parseFloat(getComputedStyle(rows[4]).opacity) < parseFloat(b.o) && (innerWidth <= 900 || parseFloat(getComputedStyle(document.querySelector('.skills-preview')).opacity) > 0.9); }, base, 2000);
     const hv = await p.evaluate(() => ({ t: getComputedStyle(document.querySelectorAll('.skill-row')[2].querySelector('.skill-row__name')).transform, o: getComputedStyle(document.querySelectorAll('.skill-row')[4]).opacity, pv: parseFloat(getComputedStyle(document.querySelector('.skills-preview')).opacity) }));
     rec(tag, 'Készségek: row hover effect', hv.t !== base.t && parseFloat(hv.o) < parseFloat(base.o), `name ${base.t} -> ${hv.t}, others ${base.o} -> ${hv.o}`);
-    rec(tag, 'Készségek: floating icon preview on hover', hv.pv > 0.9, `preview opacity ${hv.pv}`);
+    if (vp.w > 900) rec(tag, 'Készségek: floating icon preview on hover', hv.pv > 0.9, `preview opacity ${hv.pv}`);   // the preview is desktop-only (> 900px, script.js)
+    // ... and the preview goes away when the pointer leaves the list
+    await p.mouse.move(vp.w - 30, 30, { steps: 6 });
+    await until(p, () => parseFloat(getComputedStyle(document.querySelector('.skills-preview')).opacity) < 0.05, null, 2000);
+    const pvOff = await p.evaluate(() => parseFloat(getComputedStyle(document.querySelector('.skills-preview')).opacity));
+    if (vp.w > 900) rec(tag, 'Készségek: preview hides when the pointer leaves', pvOff < 0.05, `preview opacity ${pvOff}`);
 
     // custom cursor after a real mouse move
     const cur = await p.evaluate(() => { const r = document.querySelector('.cursor-ring'); return { has: document.documentElement.classList.contains('has-cursor'), ring: !!r, shown: r && getComputedStyle(r).display !== 'none' && !!r.style.transform }; });
@@ -146,30 +173,34 @@ async function indexChecks(vp) {
 
   // menu: 5 items in order, 4 socials, each scrolls to its section
   const menuOk = [];
-  await scrollTo(p, 0); await sleep(500);
+  await scrollTo(p, 0); await frames(p, 6);
   const links = [['Rólam', '#about'], ['Értékek & Garanciák', '#why'], ['Szolgáltatások', '#services'], ['Portfólió', '#portfolio'], ['Kapcsolat', '#contact']];
-  await p.click('#burger'); await sleep(1200);
+  await p.click('#burger'); await until(p, () => document.querySelector('#menu').classList.contains('is-open') && document.querySelectorAll('#menu .menu__link').length > 0, null, 3000); await frames(p, 6);
   const menu = await p.evaluate(() => ({ items: [...document.querySelectorAll('#menu .menu__link')].map(a => a.textContent.trim()), hrefs: [...document.querySelectorAll('#menu .menu__link')].map(a => a.getAttribute('href')), socials: document.querySelectorAll('#menu .menu__social a').length }));
   rec(tag, 'menu: five items in order', JSON.stringify(menu.items.map(s => s.toLowerCase())) === JSON.stringify(links.map(l => l[0].toLowerCase())), menu.items.join(' | '));
   rec(tag, 'menu: social icons', menu.socials === 4, `${menu.socials}`);
-  await p.keyboard.press('Escape'); await sleep(700);
-  for (const [label, hash] of links) {
-    await scrollTo(p, 0); await sleep(500);
-    await p.click('#burger'); await sleep(1000);
-    await p.click(`#menu a[href="${hash}"]`); await sleep(3000);
+  await p.keyboard.press('Escape'); await until(p, () => !document.querySelector('#menu').classList.contains('is-open'), null, 2000);
+  if (FULL) for (const [label, hash] of links) {
+    await scrollTo(p, 0); await frames(p, 6);
+    await p.click('#burger'); await until(p, () => document.querySelector('#menu').classList.contains('is-open'), null, 2000); await frames(p, 8);
+    await p.click(`#menu a[href="${hash}"]`);
+    await until(p, h => Math.abs(Math.round(document.querySelector(h).getBoundingClientRect().top)) <= 3 && !document.querySelector('#menu').classList.contains('is-open'), hash, 6000); await frames(p, 6);
     const top = await p.evaluate(h => Math.round(document.querySelector(h).getBoundingClientRect().top), hash);
     const closed = await p.evaluate(() => !document.querySelector('#menu').classList.contains('is-open'));
     menuOk.push([label, Math.abs(top) <= 3, closed]);
   }
-  rec(tag, 'menu: every item scrolls to its section and closes', menuOk.every(m => m[1] && m[2]), menuOk.map(m => `${m[0]}:${m[1] ? 'ok' : 'miss'}${m[2] ? '' : '/open'}`).join(' '));
+  if (FULL) rec(tag, 'menu: every item scrolls to its section and closes', menuOk.every(m => m[1] && m[2]), menuOk.map(m => `${m[0]}:${m[1] ? 'ok' : 'miss'}${m[2] ? '' : '/open'}`).join(' '));
 
   // cookie banner
+  await until(p, () => { const b = document.getElementById('cookie-consent-banner'); return b && b.classList.contains('is-visible'); }, null, 4000);
   const banner = await p.evaluate(() => { const b = document.getElementById('cookie-consent-banner'); return b && b.classList.contains('is-visible'); });
   rec(tag, 'cookie banner shows on first visit', !!banner);
   if (banner) {
-    await p.evaluate(() => document.getElementById('cookie-decline').click()); await sleep(500);
+    await p.evaluate(() => document.getElementById('cookie-decline').click());
+    await until(p, () => !document.getElementById('cookie-consent-banner').classList.contains('is-visible'), null, 2000);
     const hid = await p.evaluate(() => !document.getElementById('cookie-consent-banner').classList.contains('is-visible'));
-    await p.evaluate(() => document.getElementById('cookie-settings-trigger').click()); await sleep(500);
+    await p.evaluate(() => document.getElementById('cookie-settings-trigger').click());
+    await until(p, () => document.getElementById('cookie-consent-banner').classList.contains('is-visible'), null, 2000);
     const re = await p.evaluate(() => document.getElementById('cookie-consent-banner').classList.contains('is-visible'));
     rec(tag, 'cookie banner closes and reopens from the footer link', hid && re, `closed ${hid}, reopened ${re}`);
   }
@@ -181,11 +212,11 @@ async function indexChecks(vp) {
 async function otherPage(page, vp) {
   const tag = `${page} ${vp.w}x${vp.h}`;
   const errs = [];
-  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(vp.w < 500 ? { hasTouch: true, isMobile: true } : {}) });
+  const ctx = await newCtx(vp);
   const p = await open(ctx, page, tag, errs);
   const H = await p.evaluate(() => document.documentElement.scrollHeight);
-  for (let y = 0; y < H; y += Math.round(vp.h * 0.6)) { await scrollTo(p, y); await sleep(200); }
-  await sleep(1500);
+  for (let y = 0; y < H; y += Math.round(vp.h * 0.6)) { await scrollTo(p, y); await frames(p, 5); }
+  await until(p, () => [...document.querySelectorAll('main *, section *, footer *')].filter(e => e.style && e.style.opacity === '0' && e.getBoundingClientRect().height > 8 && !e.closest('[aria-hidden="true"], .menu, .modal, .cookie-banner')).length === 0, null, 3000);
   const info = await p.evaluate(() => ({
     ov: document.documentElement.scrollWidth - innerWidth,
     stuck: [...document.querySelectorAll('main *, section *, footer *')].filter(e => e.style && e.style.opacity === '0' && e.getBoundingClientRect().height > 8 && !e.closest('[aria-hidden="true"], .menu, .modal, .cookie-banner')).length,
@@ -209,55 +240,69 @@ async function hoverChecks(vp, coarse) {
   const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(coarse ? { hasTouch: true } : {}) });
   if (coarse) await ctx.addInitScript(COARSE_ENV);
   const p = await open(ctx, 'index', tag, errs);
-  const move = async (x, y) => { await p.mouse.move(x - 60, y - 10); await p.mouse.move(x, y, { steps: 6 }); await sleep(700); };
+  const move = async (x, y) => { await p.mouse.move(x - 60, y - 10); await p.mouse.move(x, y, { steps: 6 }); await frames(p, 6); };
+  const nameT = () => p.evaluate(() => getComputedStyle(document.querySelectorAll('.skill-row')[2].querySelector('.skill-row__name')).transform);
   // cursor appears after the first real mouse move, whatever the media queries say
   await move(300, 300);
+  await until(p, () => document.documentElement.classList.contains('has-cursor') && !!document.querySelector('.cursor-ring'), null, 2000);
   const cur = await p.evaluate(() => ({ has: document.documentElement.classList.contains('has-cursor'), ring: !!document.querySelector('.cursor-ring'), fine: matchMedia('(pointer: fine)').matches, hover: matchMedia('(hover: hover)').matches }));
   rec(tag, 'cursor appears after a real mouse move', cur.has && cur.ring && (coarse ? !cur.fine && !cur.hover : true), JSON.stringify(cur));
   // Készségek hover
-  await scrollTo(p, (await topOf(p, '#skills')) + 40); await sleep(1500);
+  await scrollTo(p, (await topOf(p, '#skills')) + 40); await frames(p, 4); await scrollTo(p, (await topOf(p, '.skill-row:nth-child(3)')) - vp.h * 0.4); await frames(p, 8);   // the 3rd row sits mid-screen, whatever the heading height
   const sr = await p.evaluate(() => { const e = document.querySelectorAll('.skill-row')[2].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
-  const sb = await p.evaluate(() => getComputedStyle(document.querySelectorAll('.skill-row')[2].querySelector('.skill-row__name')).transform);
+  const sb = await nameT();
   await move(sr[0], sr[1]);
-  const sh = await p.evaluate(() => getComputedStyle(document.querySelectorAll('.skill-row')[2].querySelector('.skill-row__name')).transform);
+  await until(p, b => getComputedStyle(document.querySelectorAll('.skill-row')[2].querySelector('.skill-row__name')).transform !== b, sb, 2000);
+  const sh = await nameT();
   rec(tag, 'Készségek: hover effect', sh !== sb, `${sb} -> ${sh}`);
   // Készségek floating preview: shows only over a row; hides on leave and when scrolling moves the list away from a resting mouse
   const pvState = () => p.evaluate(() => { const e = document.querySelector('.skills-preview'); const s = getComputedStyle(e); const u = document.elementFromPoint(window.__mx, window.__my); return { op: parseFloat(s.opacity), vis: s.visibility, over: !!(u && u.closest('.skills-list')) }; });
   await p.evaluate(() => { window.__mx = 0; window.__my = 0; document.addEventListener('pointermove', e => { window.__mx = e.clientX; window.__my = e.clientY; }, true); });
   await move(sr[0], sr[1]);
+  await until(p, () => parseFloat(getComputedStyle(document.querySelector('.skills-preview')).opacity) > 0.9, null, 2000);
   const pv1 = await pvState();
   rec(tag, 'Készségek preview: visible over a row', pv1.op > 0.9 && pv1.vis === 'visible', JSON.stringify(pv1));
-  await p.mouse.move(vp.w - 30, 30, { steps: 8 }); await sleep(800);
+  await p.mouse.move(vp.w - 30, 30, { steps: 8 });
+  await until(p, () => { const s = getComputedStyle(document.querySelector('.skills-preview')); return parseFloat(s.opacity) < 0.05 && s.visibility === 'hidden'; }, null, 2000);
   const pv2 = await pvState();
   rec(tag, 'Készségek preview: hidden after the pointer leaves the list', pv2.op < 0.05 && pv2.vis === 'hidden', JSON.stringify(pv2));
-  await move(sr[0], sr[1]);
-  let leaked = [], prevBad = false;   // a 0.3s fade-out right after leaving is fine; visible for two samples in a row is a leak
-  for (let i = 0; i < 14; i++) { await p.mouse.wheel(0, 260); await sleep(160); const s = await pvState(); const bad = s.op > 0.1 && !s.over; if (bad && prevBad) leaked.push(i); prevBad = bad; }
-  await sleep(900);
-  const pv3 = await pvState();
-  const inWhy = await p.evaluate(() => { const r = document.querySelector('#why').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; });
-  rec(tag, 'Készségek preview: never visible after scrolling away (wheel, resting mouse)', leaked.length === 0 && pv3.op < 0.05 && pv3.vis === 'hidden', `leaked at steps ${leaked.join(',') || '-'}; end ${JSON.stringify(pv3)}; why in view ${inWhy}`);
+  if (FULL) {
+    await move(sr[0], sr[1]);
+    let leaked = [], prevBad = false;   // a 0.3s fade-out right after leaving is fine; visible for two samples in a row is a leak
+    for (let i = 0; i < 14; i++) { await p.mouse.wheel(0, 260); await sleep(160); const s = await pvState(); const bad = s.op > 0.1 && !s.over; if (bad && prevBad) leaked.push(i); prevBad = bad; }
+    await until(p, () => { const s = getComputedStyle(document.querySelector('.skills-preview')); return parseFloat(s.opacity) < 0.05 && s.visibility === 'hidden'; }, null, 1500);
+    const pv3 = await pvState();
+    const inWhy = await p.evaluate(() => { const r = document.querySelector('#why').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; });
+    rec(tag, 'Készségek preview: never visible after scrolling away (wheel, resting mouse)', leaked.length === 0 && pv3.op < 0.05 && pv3.vis === 'hidden', `leaked at steps ${leaked.join(',') || '-'}; end ${JSON.stringify(pv3)}; why in view ${inWhy}`);
+  }
   // Értékek & Garanciák: hover expands, previous collapses, leaving restores, no cursor frame
-  await scrollTo(p, (await topOf(p, '#why')) + 20); await sleep(2200);
+  await scrollTo(p, (await topOf(p, '#why')) + 20);
+  await until(p, () => document.querySelectorAll('.why-panel').length === 6 && document.querySelector('.why-panel').getBoundingClientRect().height > 100, null, 3000); await frames(p, 10);
   const n = await p.evaluate(() => document.querySelectorAll('.why-panel').length);
   const seq = [];
   for (let i = n - 1; i >= 0; i--) {
     const c = await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; }, i);
     await move(c[0], c[1]);
+    await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active') && [...document.querySelectorAll('.why-panel')].filter(e => e.classList.contains('is-active')).length === 1, i, 1500);
     const st = await p.evaluate(i => ({ act: [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active')), ring: document.querySelector('.cursor-ring').className }), i);
     seq.push(st.act.filter(Boolean).length === 1 && st.act[i] && !/is-frame|is-link-small|is-text/.test(st.ring));
   }
   rec(tag, 'Értékek: every card expands on hover, one open, no cursor frame', n === 6 && seq.every(Boolean), `${n} cards, ${seq.map(Boolean).join(',')}`);
-  await p.mouse.move(40, 40, { steps: 6 }); await sleep(900);
+  await p.mouse.move(40, 40, { steps: 6 });
+  await until(p, () => { const a = [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active')); return a[0] && a.filter(Boolean).length === 1; }, null, 2000);
   const rest = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active')));
   rec(tag, 'Értékek: leaving the row restores the default card', rest[0] && rest.filter(Boolean).length === 1, rest.join(','));
-  // frames still work on real targets (menu item)
-  await scrollTo(p, 0); await sleep(500);
-  await p.mouse.move(vp.w - 40, 44, { steps: 3 }); await p.click('#burger'); await sleep(1300);
-  const mb = await p.evaluate(() => { const r = document.querySelectorAll('.menu__link')[1].getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
-  await move(mb[0], mb[1]);
-  const fr = await p.evaluate(() => document.querySelector('.cursor-ring').className);
-  rec(tag, 'cursor frame on menu items', /is-frame/.test(fr), fr);
+  if (FULL) {
+    // frames still work on real targets (menu item)
+    await scrollTo(p, 0); await frames(p, 6);
+    await p.mouse.move(vp.w - 40, 44, { steps: 3 }); await p.click('#burger');
+    await until(p, () => document.querySelector('#menu').classList.contains('is-open'), null, 2000); await frames(p, 20);
+    const mb = await p.evaluate(() => { const r = document.querySelectorAll('.menu__link')[1].getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+    await move(mb[0], mb[1]);
+    await until(p, () => /is-frame/.test(document.querySelector('.cursor-ring').className), null, 1500);
+    const fr = await p.evaluate(() => document.querySelector('.cursor-ring').className);
+    rec(tag, 'cursor frame on menu items', /is-frame/.test(fr), fr);
+  }
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
   await ctx.close();
 }
@@ -268,13 +313,12 @@ async function layoutChecks(vp) {
   const errs = [];
   const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h } });
   const p = await open(ctx, 'index', tag, errs);
-  await sleep(1200);
   const hdr = await p.evaluate(() => { const r = e => { const b = document.querySelector(e).getBoundingClientRect(); return [b.left, b.top, b.right, b.bottom]; }; return { logo: r('.nav__logo'), burger: r('#burger') }; });
   // 1) shared corridor: left content line of every section on index
   const edges = {};
   const probes = { hero: '.hero-inner', skills: '#skills .skills-inner', why: '#why .why-inner', steps: '#steps .steps-inner', services: '.svt__inner', contact: '.ctc__head', about: '.about-premium-grid', portfolioHead: '.pf__head' };
   for (const [k, sel] of Object.entries(probes)) {
-    const y = await topOf(p, sel); await scrollTo(p, Math.max(0, (y || 0) - 100)); await sleep(1500);
+    const y = await topOf(p, sel); await scrollTo(p, Math.max(0, (y || 0) - 100)); await frames(p, 10);
     edges[k] = await p.evaluate(s => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; }, sel);
   }
   const lefts = Object.values(edges).filter(Boolean).map(e => e[0]);
@@ -289,7 +333,7 @@ async function layoutChecks(vp) {
   const H = await p.evaluate(() => document.documentElement.scrollHeight);
   const hits = [];
   for (let y = 0; y < H; y += Math.round(vp.h * 0.5)) {
-    await scrollTo(p, y); await sleep(450);
+    await scrollTo(p, y); await sleep(250);
     const h = await p.evaluate(({ logo, burger }) => {
       const out = [];
       const boxes = [logo, burger];
@@ -309,7 +353,13 @@ async function layoutChecks(vp) {
 
   // 3) eyebrows: identical typography everywhere
   const eb = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e); return [s.fontFamily, s.fontSize, s.fontWeight, s.letterSpacing, s.textTransform, s.fontStyle].join('|'); }));
-  const eb2 = await (async () => { const p2 = await ctx.newPage(); await p2.goto(`${BASE}/myapproach.html`, { waitUntil: 'networkidle' }); await sleep(3200); /* its entrance animates the letter-spacing */ const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e); return [s.fontFamily, s.fontSize, s.fontWeight, s.letterSpacing, s.textTransform, s.fontStyle].join('|'); })); await p2.close(); return r; })();
+  const eb2 = await (async () => {
+    const p2 = await ctx.newPage(); await p2.goto(`${BASE}/myapproach.html`, { waitUntil: 'load' });
+    /* its entrance animates the letter-spacing: wait until it reaches the common value */
+    const want = (eb[0] || '').split('|')[3];
+    await until(p2, w => { const e = document.querySelector('.section-eyebrow'); return !!e && getComputedStyle(e).letterSpacing === w; }, want, 4000);
+    const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e); return [s.fontFamily, s.fontSize, s.fontWeight, s.letterSpacing, s.textTransform, s.fontStyle].join('|'); })); await p2.close(); return r;
+  })();
   const all = eb.concat(eb2);
   rec(tag, 'eight section eyebrows on index + one on myapproach exist', eb.length === 8 && eb2.length === 1, `${eb.length}+${eb2.length}`);
   rec(tag, 'all eyebrows share font / size / weight / spacing / uppercase', new Set(all).size === 1 && /uppercase/.test(all[0]), [...new Set(all)].join(' || '));
@@ -324,14 +374,16 @@ async function aboutChecks(vp, wantH) {
   const tag = `about ${vp.w}x${vp.h}`;
   const errs = [];
   const mobile = vp.w < 900;
-  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(vp.w < 500 ? { hasTouch: true, isMobile: true } : {}) });
+  const ctx = await newCtx(vp);
   const p = await open(ctx, 'index', tag, errs);
-  await sleep(1200);
   const top = await topOf(p, '#about'); const sh = await p.evaluate(() => document.getElementById('about').offsetHeight);
   const stops = mobile ? [0, 0.35, 0.7, 0.95] : [0.02, 0.2, 0.4, 0.62, 0.85];
   const rows = [];
   for (const s of stops) {
-    await scrollTo(p, mobile ? top + (sh - vp.h * 0.6) * s : top + (sh - vp.h) * s); await sleep(2300);
+    await scrollTo(p, mobile ? top + (sh - vp.h * 0.6) * s : top + (sh - vp.h) * s);
+    await frames(p, 12);
+    // the signature's rewrite reveal for the new chapter has finished (clip fully open)
+    await until(p, () => { const s = getComputedStyle(document.querySelector('.about-sign')); const n = (s.clipPath.match(/[\d.]+/g) || []).map(parseFloat); return parseFloat(s.opacity) > 0.5 && (s.clipPath === 'none' || n.every(x => x === 0)); }, null, 2500);
     rows.push(await p.evaluate(() => {
       const R = e => e.getBoundingClientRect(); const q = s => document.querySelector(s);
       const card = R(q('.about-bio-card')), photo = R(q('.about-photo-card')), sign = R(q('.about-sign')), btn = R(q('.btn-about')), prog = R(q('.abt-progress'));
@@ -364,7 +416,7 @@ async function aboutChecks(vp, wantH) {
 async function titleSystem(vp) {
   const tag = `titles ${vp.w}x${vp.h}`;
   const errs = [];
-  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(vp.w < 500 ? { hasTouch: true, isMobile: true } : {}) });
+  const ctx = await newCtx(vp);
   const SECS = [
     ['hero', 'index', '#hero', '.hero-eyebrow', '.hero-title', '.hero-sub', true],
     ['about', 'index', '#about', '.abt-eyebrow', null, '.about-photo-card', true],
@@ -379,13 +431,19 @@ async function titleSystem(vp) {
   const pages = {}; const rows = [];
   for (const [name, page, sec, eye, head, first] of SECS) {
     let p = pages[page];
-    if (!p) { p = pages[page] = await open(ctx, page, tag, errs); await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; }); await sleep(900); }
+    if (!p) { p = pages[page] = await open(ctx, page, tag, errs); await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; }); await frames(p, 4); }
     await p.evaluate(s => {
       const e = document.querySelector(s); const pinned = (e.id === 'about' && e.classList.contains('is-pinned')) || (e.id === 'steps' && getComputedStyle(e.querySelector('.steps-pin') || e).position === 'sticky');
       const y = e.getBoundingClientRect().top + scrollY + (pinned ? 40 : 0);
       if (window.VB && VB.lenis) VB.lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y);
     }, sec);
-    await sleep(2600);
+    await frames(p, 8);
+    // the eyebrow (and heading) finished their entrance: opaque, no translate, final letter-spacing
+    await until(p, ([eye, head]) => {
+      const done = sel => { const e = document.querySelector(sel); if (!e) return true; const c = getComputedStyle(e); return parseFloat(c.opacity) >= 0.95 && (c.transform === 'none' || /^matrix\(1, 0, 0, 1, 0(\.\d+)?, 0(\.\d+)?\)$/.test(c.transform)); };
+      const eb = document.querySelector(eye), ecs = eb && getComputedStyle(eb), h = head && document.querySelector(head);
+      return done(eye) && (!head || done(head)) && (!eb || Math.abs(parseFloat(ecs.letterSpacing) - 0.2 * parseFloat(ecs.fontSize)) < 0.008) && (!h || !h.classList.contains('section-heading') || h.classList.contains('is-split'));
+    }, [eye, head], 3500);
     rows.push({ name, ...(await p.evaluate(([sec, eye, head, first]) => {
       const R = e => e.getBoundingClientRect(); const s = document.querySelector(sec), e = document.querySelector(eye);
       const pinned = (s.id === 'about' && s.classList.contains('is-pinned')) || (s.id === 'steps' && getComputedStyle(s.querySelector('.steps-pin') || s).position === 'sticky');
@@ -425,24 +483,27 @@ async function titleSystem(vp) {
 async function headingFx(vp, mouse) {
   const tag = `headingFx ${vp.w}x${vp.h}${mouse ? '' : ' touch'}`;
   const errs = [];
-  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, ...(mouse ? {} : { hasTouch: true, isMobile: true }) });
+  const ctx = await newCtx(vp, mouse ? {} : {});
   const p = await open(ctx, 'index', tag, errs);
   await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
-  await sleep(900);
   for (const sec of ['skills', 'why', 'steps', 'services', 'portfolio', 'contact']) {
     await p.evaluate(s => { const e = document.querySelector('#' + s + ' .section-heading'); const y = e.getBoundingClientRect().top + scrollY - innerHeight * 0.35; if (window.VB && VB.lenis) VB.lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y); }, sec);
-    await sleep(2300);
+    // letters exist and their reveal (Kapcsolat: letters rise) is over
+    await until(p, s => { const cs = [...document.querySelectorAll('#' + s + ' .section-heading .sh-char')]; return cs.length > 0 && cs.every(c => { const t = getComputedStyle(c).transform; return t === 'none' || /^matrix\(1, 0, 0, 1, 0(\.\d+)?, 0(\.\d+)?\)$/.test(t); }); }, sec, 4000);
+    await frames(p, 6);
     if (mouse) {
       const pt = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); const r = c.parentNode.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sec);
-      await p.mouse.move(pt[0] - 160, pt[1] - 20); await p.mouse.move(pt[0], pt[1], { steps: 6 }); await sleep(700);
+      await p.mouse.move(pt[0] - 160, pt[1] - 20); await p.mouse.move(pt[0], pt[1], { steps: 6 });
+      await until(p, s => (parseFloat(document.querySelector('#' + s + ' .section-heading .sh-char').style.getPropertyValue('--p')) || 0) > 0.4, sec, 3000);
       const v = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); return { p: parseFloat(c.style.getPropertyValue('--p')) || 0, tf: getComputedStyle(c).transform }; }, sec);
       rec(tag, `hover effect fires on #${sec} heading`, v.p > 0.4 && v.tf !== 'none', `p=${v.p} transform=${v.tf}`);
-      await p.mouse.move(2, vp.h - 2, { steps: 4 }); await sleep(900);
+      await p.mouse.move(2, vp.h - 2, { steps: 4 });
+      await until(p, s => Math.max(...[...document.querySelectorAll('#' + s + ' .section-heading .sh-char')].map(c => parseFloat(c.style.getPropertyValue('--p')) || 0)) < 0.02, sec, 5000);
       const off = await p.evaluate(s => Math.max(...[...document.querySelectorAll('#' + s + ' .section-heading .sh-char')].map(c => parseFloat(c.style.getPropertyValue('--p')) || 0)), sec);
       rec(tag, `hover effect releases on #${sec} heading`, off < 0.02, `max p=${off}`);
     } else {
-      const v = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); const r = c.parentNode.getBoundingClientRect(); window.dispatchEvent(new Event('x')); return [r.left + r.width / 2, r.top + r.height / 2]; }, sec);
-      await p.touchscreen.tap(v[0], v[1]); await sleep(500);
+      const v = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); const r = c.parentNode.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sec);
+      await p.touchscreen.tap(v[0], v[1]); await frames(p, 20);
       const m = await p.evaluate(s => Math.max(...[...document.querySelectorAll('#' + s + ' .section-heading .sh-char')].map(c => parseFloat(c.style.getPropertyValue('--p')) || 0)), sec);
       rec(tag, `no hover effect on touch (#${sec})`, m === 0, `max p=${m}`);
     }
@@ -454,7 +515,7 @@ async function headingFx(vp, mouse) {
 async function mobileHeader() {
   const tag = 'mobile header 390x844';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-  const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' }); await sleep(800);
+  const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'load' }); await p.evaluate(() => document.fonts.ready); await frames(p, 6);
   await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
   const st = () => p.evaluate(() => {
     const n = document.querySelector('.nav'); const r = n.getBoundingClientRect(); const b = getComputedStyle(n, '::before');
@@ -465,68 +526,83 @@ async function mobileHeader() {
   });
   const top = await st();
   rec(tag, 'blur layer is fully transparent at the top', top.blur < 0.05 && top.top === 0, JSON.stringify(top));
-  await scrollTo(p, 800); await sleep(1200);
+  await scrollTo(p, 800);
+  await until(p, () => parseFloat(getComputedStyle(document.querySelector('.nav'), '::before').opacity) > 0.95, null, 2500); await frames(p, 4);
   const mid = await st();
   rec(tag, 'header stays in view after scrolling down 800px', mid.top === 0 && mid.transformNone, JSON.stringify(mid));
   rec(tag, 'blur layer fades in once scrolled (backdrop blur)', mid.blur > 0.95 && /blur/.test(mid.filter), `opacity ${mid.blur}, filter ${mid.filter}`);
   rec(tag, 'logo and burger are clickable', mid.logoHit && mid.burgerHit, `${mid.logoHit}/${mid.burgerHit}`);
-  await scrollTo(p, 2400); await sleep(900);
+  await scrollTo(p, 2400); await sleep(400);   // a hide-on-scroll regression would show up within a few frames
   const down = await st();
   rec(tag, 'header never hides while scrolling further down', down.top === 0 && down.transformNone && down.blur > 0.95, JSON.stringify(down));
-  await p.evaluate(() => document.querySelector('#burger').click()); await sleep(900);
+  await p.evaluate(() => document.querySelector('#burger').click());
+  await until(p, () => document.querySelector('#menu').classList.contains('is-open') && parseFloat(getComputedStyle(document.querySelector('.nav'), '::before').opacity) < 0.05, null, 2500);
   const open = await p.evaluate(() => ({ open: document.querySelector('#menu').classList.contains('is-open'), top: Math.round(document.querySelector('.nav').getBoundingClientRect().top), blur: parseFloat(getComputedStyle(document.querySelector('.nav'), '::before').opacity) }));
   rec(tag, 'menu opens; header visible above the overlay without the blur layer', open.open && open.top === 0 && open.blur < 0.05, JSON.stringify(open));
   await ctx.close();
 }
 
 async function touchTapWhy() {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-  const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' }); await sleep(500);
-  await scrollTo(p, (await topOf(p, '#why')) + 10); await sleep(1800);
+  const ctx = await newCtx({ w: 390, h: 844 });
+  const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'load' }); await p.evaluate(() => document.fonts.ready); await frames(p, 6);
+  await scrollTo(p, (await topOf(p, '#why')) + 10);
+  await until(p, () => document.querySelectorAll('.why-panel').length === 6 && document.querySelector('.why-panel:nth-child(4) .why-panel__tab').getBoundingClientRect().height > 20, null, 3000); await frames(p, 8);
   const idx = 3;
-  await p.tap(`.why-panel:nth-child(${idx + 1}) .why-panel__tab`); await sleep(900);
+  await p.tap(`.why-panel:nth-child(${idx + 1}) .why-panel__tab`);
+  await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), idx, 2000);
   const open = await p.evaluate(i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), idx);
   rec('touch 390x844', 'Értékek: tap opens a card', open, `${open}`);
   await ctx.close();
 }
 
 async function touchCursorOff() {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-  const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' });
+  const ctx = await newCtx({ w: 390, h: 844 });
+  const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'load' }); await frames(p, 6);
   const cd = await ctx.newCDPSession(p);
   await cd.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 100, y: 300 }] });
-  await cd.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await sleep(500);
+  await cd.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await sleep(300);   // negative check: give a wrong cursor time to appear
   const s = await p.evaluate(() => ({ has: document.documentElement.classList.contains('has-cursor'), ring: !!document.querySelector('.cursor-ring') }));
   rec('touch', 'cursor stays off with touch emulation', !s.has && !s.ring, JSON.stringify(s));
   await ctx.close();
 }
 
-try {
-  if (process.env.SMOKE_ONLY === 'layout') { await layoutChecks({ w: 1440, h: 900 }); await layoutChecks({ w: 1280, h: 720 }); await mobileHeader(); } else {
-  await indexChecks({ w: 1440, h: 900 });
-  await indexChecks({ w: 390, h: 844 });
-  for (const pg of ['myapproach', 'adatvedelem', 'whatsappcontact']) { await otherPage(pg, { w: 1440, h: 900 }); await otherPage(pg, { w: 390, h: 844 }); }
-  await touchCursorOff();
-  await touchTapWhy();
-  await hoverChecks({ w: 1440, h: 900 }, false);
-  await hoverChecks({ w: 1920, h: 1080 }, false);
-  await hoverChecks({ w: 1440, h: 900 }, true);
-  await layoutChecks({ w: 1440, h: 900 });
-  await layoutChecks({ w: 1280, h: 720 });
-  await mobileHeader();
-  await headingFx({ w: 1440, h: 900 }, true);
-  await headingFx({ w: 390, h: 844 }, false);
-  for (const vp of [{ w: 390, h: 844 }, { w: 768, h: 1024 }, { w: 1280, h: 720 }, { w: 1440, h: 900 }, { w: 1920, h: 1080 }, { w: 2560, h: 1440 }]) await titleSystem(vp);
-  await aboutChecks({ w: 1440, h: 900 }, 640);
-  await aboutChecks({ w: 1920, h: 1080 }, 570);
-  await aboutChecks({ w: 390, h: 844 }, 0);
-  }
-} catch (e) {
-  rec('harness', 'test run completed', false, String(e).slice(0, 200));
+// ---------------------------------------------------------------- groups + runner
+const VP = { phone: { w: 390, h: 844 }, tablet: { w: 768, h: 1024 }, laptop: { w: 1280, h: 720 }, desk: { w: 1440, h: 900 }, wide: { w: 1920, h: 1080 }, huge: { w: 2560, h: 1440 } };
+const GROUPS = {
+  // group: [quick tasks, extra tasks run only with --full]; every task is [label, async fn]
+  index: [[['index 1440x900', () => indexChecks(VP.desk)], ['index 390x844', () => indexChecks(VP.phone)]],
+          [['index 768x1024', () => indexChecks(VP.tablet)], ['index 1280x720', () => indexChecks(VP.laptop)], ['index 1920x1080', () => indexChecks(VP.wide)]]],
+  pages: [[], [...['myapproach', 'adatvedelem', 'whatsappcontact'].flatMap(pg => [[`${pg} 1440`, () => otherPage(pg, VP.desk)], [`${pg} 390`, () => otherPage(pg, VP.phone)]])]],
+  touch: [[['touch cursor', touchCursorOff], ['touch tap Értékek', touchTapWhy]], []],
+  hover: [[['hover desktop 1440', () => hoverChecks(VP.desk, false)]],
+          [['hover desktop 1920', () => hoverChecks(VP.wide, false)], ['hover touch-laptop 1440', () => hoverChecks(VP.desk, true)]]],
+  layout: [[['layout 1440x900', () => layoutChecks(VP.desk)]], [['layout 1280x720', () => layoutChecks(VP.laptop)]]],
+  header: [[['mobile header', mobileHeader]], []],
+  headingfx: [[['headingFx 1440 mouse', () => headingFx(VP.desk, true)], ['headingFx 390 touch', () => headingFx(VP.phone, false)]], []],
+  titles: [[['titles 1440x900', () => titleSystem(VP.desk)], ['titles 390x844', () => titleSystem(VP.phone)]],
+           [['titles 768x1024', () => titleSystem(VP.tablet)], ['titles 1280x720', () => titleSystem(VP.laptop)], ['titles 1920x1080', () => titleSystem(VP.wide)], ['titles 2560x1440', () => titleSystem(VP.huge)]]],
+  about: [[['about 1440x900', () => aboutChecks(VP.desk, 640)], ['about 390x844', () => aboutChecks(VP.phone, 0)]], [['about 1920x1080', () => aboutChecks(VP.wide, 570)]]],
+};
+const unknown = ONLY.filter(g => !GROUPS[g]);
+if (unknown.length) { console.error(`Unknown group(s): ${unknown.join(', ')}. Groups: ${Object.keys(GROUPS).join(', ')}`); await browser.close(); server.close(); process.exit(2); }
+const tasks = [];
+for (const [g, [quick, extra]] of Object.entries(GROUPS)) { if (ONLY.length && !ONLY.includes(g)) continue; tasks.push(...quick, ...(FULL ? extra : [])); }
+
+const timings = [];
+async function runTask([label, fn]) {
+  const t = Date.now();
+  try { await fn(); } catch (e) { rec(label, 'test run completed', false, String(e).slice(0, 200)); }
+  timings.push([label, Date.now() - t]);
+}
+{
+  const queue = tasks.slice();
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => { while (queue.length) await runTask(queue.shift()); }));
 }
 await browser.close(); server.close();
 
 // ---------------------------------------------------------------- report
+const order = []; for (const r of results) if (!order.includes(r.area)) order.push(r.area);
+results.sort((a, b) => order.indexOf(a.area) - order.indexOf(b.area));
 const w = Math.max(...results.map(r => r.name.length), 10);
 let fails = 0;
 console.log('\n' + 'RESULT'.padEnd(7) + 'AREA'.padEnd(20) + 'CHECK'.padEnd(w + 2) + 'DETAIL');
@@ -534,5 +610,7 @@ for (const r of results) {
   if (!r.ok) fails++;
   console.log((r.ok ? 'PASS' : 'FAIL').padEnd(7) + r.area.padEnd(20) + r.name.padEnd(w + 2) + (r.ok && !process.env.SMOKE_VERBOSE ? '' : r.detail));
 }
-console.log(`\n${results.length - fails}/${results.length} passed${fails ? `, ${fails} FAILED` : ''}`);
+console.log(`\n${results.length - fails}/${results.length} passed${fails ? `, ${fails} FAILED` : ''}   [${FULL ? 'full' : 'quick'}${ONLY.length ? ' --only=' + ONLY.join(',') : ''}, ${tasks.length} tasks, ${CONCURRENCY} parallel]`);
+if (process.env.SMOKE_VERBOSE || fails) console.log('slowest tasks: ' + timings.sort((a, b) => b[1] - a[1]).slice(0, 5).map(t => `${t[0]} ${(t[1] / 1000).toFixed(0)}s`).join(', '));
+console.log(`Total duration: ${((Date.now() - T0) / 1000).toFixed(1)}s`);
 process.exit(fails ? 1 : 0);
