@@ -250,6 +250,7 @@ async function hoverChecks(vp, coarse) {
   // Készségek hover
   await scrollTo(p, (await topOf(p, '#skills')) + 40); await frames(p, 4); await scrollTo(p, (await topOf(p, '.skill-row:nth-child(3)')) - vp.h * 0.4); await frames(p, 8);   // the 3rd row sits mid-screen, whatever the heading height
   const sr = await p.evaluate(() => { const e = document.querySelectorAll('.skill-row')[2].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
+  await p.mouse.move(vp.w - 20, vp.h - 20, { steps: 4 }); await frames(p, 10);     // off the rows: the baseline is the un-hovered state
   const sb = await nameT();
   await move(sr[0], sr[1]);
   await until(p, b => getComputedStyle(document.querySelectorAll('.skill-row')[2].querySelector('.skill-row__name')).transform !== b, sb, 2000);
@@ -280,14 +281,18 @@ async function hoverChecks(vp, coarse) {
   await until(p, () => document.querySelectorAll('.why-panel').length === 6 && document.querySelector('.why-panel').getBoundingClientRect().height > 100, null, 3000); await frames(p, 10);
   const wact = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active') ? 1 : 0).join(''));
   const wgeo = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => Math.round(e.getBoundingClientRect().left) + ':' + Math.round(e.getBoundingClientRect().width)).join(','));
-  const w0 = await wact(), g0 = await wgeo(); const seq = [];
+  let g0 = await wgeo();
+  for (let k = 0; k < 20; k++) { await sleep(150); const g = await wgeo(); if (g === g0) break; g0 = g; }       // the open card may still be growing: take the settled geometry
+  const w0 = await wact(); const seq = [], why = [];
   for (let i = 5; i >= 0; i--) {
     const c = await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; }, i);
     await move(c[0], c[1]); await frames(p, 20);
     const ring = await p.evaluate(() => document.querySelector('.cursor-ring').className);
-    seq.push((await wact()) === w0 && (await wgeo()) === g0 && !/is-frame|is-link-small|is-text/.test(ring));
+    const wa = await wact(), wg = await wgeo();
+    seq.push(wa === w0 && wg === g0 && !/is-frame|is-link-small|is-text/.test(ring));
+    if (!seq[seq.length - 1]) why.push(`card ${i + 1}: open ${wa === w0 ? 'same' : wa}, geometry ${wg === g0 ? 'same' : wg.slice(0, 40) + ' vs ' + g0.slice(0, 40)}, ring ${ring.slice(0, 40)}`);
   }
-  rec(tag, 'Értékek: hovering any card changes nothing (no open, no layout change), no cursor frame', seq.every(Boolean), `open ${w0}, ${seq.map(Boolean).join(',')}`);
+  rec(tag, 'Értékek: hovering any card changes nothing (no open, no layout change), no cursor frame', seq.every(Boolean), `open ${w0}, ${seq.map(Boolean).join(',')} ${why[0] || ''}`);
   if (FULL) {
     // frames still work on real targets (menu item)
     await scrollTo(p, 0); await frames(p, 6);
@@ -406,7 +411,7 @@ async function aboutChecks(vp, wantH) {
     }));
   }
   const hs = new Set(rows.map(r => r.cardH));
-  if (!mobile) rec(tag, 'composition height', rows.every(r => r.photoH === wantH && r.cardH === wantH), `photo ${rows.map(r => r.photoH).join('/')} card ${rows.map(r => r.cardH).join('/')} (want ${wantH})`);
+  if (!mobile && wantH != null) rec(tag, 'composition height', rows.every(r => r.photoH === wantH && r.cardH === wantH), `photo ${rows.map(r => r.photoH).join('/')} card ${rows.map(r => r.cardH).join('/')} (want ${wantH})`);
   rec(tag, 'text card height constant across chapters', hs.size === 1, [...hs].join(','));
   rec(tag, 'signature inside the card, not over the button / segments / text', rows.every(r => r.signInside && !r.signHitsBtn && !r.signHitsProg && !r.signHitsText), JSON.stringify(rows.map(r => [r.signInside, r.signHitsBtn, r.signHitsProg, r.signHitsText])));
   rec(tag, 'signature always visible: opacity >= 0.85, no clip-path (every chapter, before and after the pin)', rows.every(r => r.signOpacity >= 0.85 && r.signClip === 'none'), rows.map(r => `${r.signOpacity}/${r.signClip}`).join(','));
@@ -526,7 +531,7 @@ async function headingFx(vp, mouse) {
 async function whyPin(vp) {
   const tag = `whyPin ${vp.w}x${vp.h}`;
   const errs = [];
-  const ctx = await newCtx(vp);
+  const ctx = await newCtx(vp, vp.w < 1024 ? { hasTouch: true } : {});       // tablets / phones: touch (tap)
   const p = await open(ctx, 'index', tag, errs);
   await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
   const pinnedWanted = vp.w >= 1024;
@@ -542,10 +547,11 @@ async function whyPin(vp) {
     const tapTab = async i => { await p.evaluate(i => document.querySelectorAll('.why-panel')[i].querySelector('.why-panel__tab').scrollIntoView({ block: 'center' }), i); await frames(p, 4); await p.tap(`.why-panel:nth-child(${i + 1}) .why-panel__tab`); await frames(p, 8); };
     await tapTab(2); const t1 = await openList();
     await tapTab(4); const t2 = await openList();
-    await tapTab(4); const t3 = await openList();
+    let t3 = '';
+    if (vp.w < 768) { await tapTab(4); t3 = await openList(); }                    // stacked accordion: tapping the open card closes it (the row layout of 768-1023px keeps one open)
     await p.evaluate(() => document.querySelectorAll('.why-panel')[3].querySelector('.why-panel__tab').focus({ preventScroll: true })); await p.keyboard.press('Enter'); await frames(p, 8); const t4 = await openList();
     const ex = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.querySelector('.why-panel__tab').getAttribute('aria-expanded') === String(e.classList.contains('is-active'))).every(Boolean));
-    rec(tag, 'tap opens a card (one at a time), tapping the open card closes it, Enter opens', t1 === '3' && t2 === '5' && t3 === '' && t4 === '4' && ex, `${t1} | ${t2} | ${t3 || '-'} | ${t4} | aria in sync ${ex}`);
+    rec(tag, 'tap opens a card (one at a time; phones: tapping the open card closes it), Enter opens', t1 === '3' && t2 === '5' && t3 === '' && t4 === '4' && ex, `${t1} | ${t2} | ${t3 || '-'} | ${t4} | aria in sync ${ex}`);
     rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
     await ctx.close(); return;
   }
@@ -564,6 +570,8 @@ async function whyPin(vp) {
   const g = await p.evaluate(() => { const s = document.getElementById('why'), r = s.querySelector('.why-inner').getBoundingClientRect(), pn = s.querySelector('.why-panels').getBoundingClientRect(), hd = s.querySelector('.section-heading').getBoundingClientRect(); return { top: r.top, h: r.height, cardsH: pn.height, bottomGap: innerHeight - pn.bottom, headGap: pn.top - hd.bottom }; });
   rec(tag, 'stage sticks to the viewport and is exactly one viewport tall', Math.abs(g.top) <= 1 && Math.abs(g.h - vp.h) <= 1, JSON.stringify({ top: g.top, h: g.h }));
   rec(tag, 'bottom gap (cards -> viewport bottom) = --section-bottom ±2px', Math.abs(g.bottomGap - sb) <= 2, `gap ${g.bottomGap.toFixed(1)} want ${sb.toFixed(1)}`);
+  const lab = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => { const l = e.querySelector('.why-panel__label').getBoundingClientRect(), n = e.querySelector('.why-panel__num').getBoundingClientRect(), r = e.getBoundingClientRect(); return { fs: getComputedStyle(e.querySelector('.why-panel__label')).fontSize, bottomPad: r.bottom - l.bottom, aboveNum: l.top - n.bottom, inside: l.left >= r.left - 0.5 && l.right <= r.right + 0.5 }; }));
+  rec(tag, 'vertical labels fit the collapsed cards (>= 16px bottom padding, below the number, one shared size)', lab.every(x => x.bottomPad >= 16 && x.aboveNum >= 4 && x.inside) && new Set(lab.map(x => x.fs)).size === 1, lab.map(x => `${x.fs}/${x.bottomPad.toFixed(0)}/${x.aboveNum.toFixed(0)}`).join(' '));
   rec(tag, 'cards keep their minimum height', g.cardsH >= 240, `${Math.round(g.cardsH)}px`);
   rec(tag, 'composition fits one viewport: cards end --section-bottom above the bottom edge, heading not shrunk', g.cardsH >= 240 ? Math.abs(g.bottomGap - sb) <= 2 : true, `bottom gap ${g.bottomGap.toFixed(1)} want ${sb.toFixed(1)}, cards ${Math.round(g.cardsH)}px`);
   // scroll steps in order, then in reverse
@@ -593,7 +601,9 @@ async function whyPin(vp) {
   // hover does nothing: moving over every card changes neither the open card nor the layout
   const cur = await active();
   const geo = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => Math.round(e.getBoundingClientRect().left) + ':' + Math.round(e.getBoundingClientRect().width)).join(','));
-  const geo0 = await geo(); let hoverOk = true, ringOk = true;
+  let geo0 = await geo();
+  for (let k = 0; k < 20; k++) { await sleep(150); const g = await geo(); if (g === geo0) break; geo0 = g; }
+  let hoverOk = true, ringOk = true;
   for (let i = 0; i < 6; i++) {
     const pt = await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; }, i);
     await p.mouse.move(pt[0] - 25, pt[1] + 5); await p.mouse.move(pt[0], pt[1], { steps: 4 }); await frames(p, 20);
@@ -627,9 +637,9 @@ async function whyPin(vp) {
   await ctx.close();
 }
 
-async function mobileHeader() {
-  const tag = 'mobile header 390x844';
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+async function mobileHeader(vp) {
+  const tag = `mobile header ${vp.w}x${vp.h}`;
+  const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, hasTouch: true, isMobile: true });
   const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'load' }); await p.evaluate(() => document.fonts.ready); await frames(p, 6);
   await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
   const st = () => p.evaluate(() => {
@@ -682,27 +692,40 @@ async function touchCursorOff() {
 }
 
 // ---------------------------------------------------------------- groups + runner
-const VP = { phone: { w: 390, h: 844 }, tablet: { w: 768, h: 1024 }, laptop: { w: 1280, h: 720 }, desk: { w: 1440, h: 900 }, wide: { w: 1920, h: 1080 }, huge: { w: 2560, h: 1440 } };
+// ---------------------------------------------------------------- viewport sets (see CLAUDE.md "Viewports")
+const V = (w, h) => ({ w, h });
+const QUICK_VPS = [V(390, 844), V(1366, 768), V(1440, 900), V(1518, 670)];       // 1518x670 = the owner's real browser viewport (1920x1080 screen at 125% scaling)
+const FULL_VPS = [V(360, 800), V(390, 844), V(430, 932), V(768, 1024), V(1280, 720), V(1366, 768), V(1536, 864), V(1440, 900), V(1920, 1080), V(1518, 670)];
+const key = v => `${v.w}x${v.h}`;
+const inQuick = v => QUICK_VPS.some(q => key(q) === key(v));
+const isDesktop = v => v.w >= 1024;
+const isPhone = v => v.w < 500;
+const COMPOSITION_H = { '1440x900': 640, '1920x1080': 570 };       // About composition height known for these windows only
+// one task per viewport: the quick set runs in --quick, the rest of the standard set only in --full
+function perVp(name, vps, fn, weight = 1) {
+  const q = [], x = [];
+  for (const v of vps) (inQuick(v) ? q : x).push([`${name} ${key(v)}`, () => fn(v), weight]);
+  return [q, x];
+}
 const GROUPS = {
-  // group: [quick tasks, extra tasks run only with --full]; every task is [label, async fn]
-  index: [[['index 1440x900', () => indexChecks(VP.desk)], ['index 390x844', () => indexChecks(VP.phone)]],
-          [['index 768x1024', () => indexChecks(VP.tablet)], ['index 1280x720', () => indexChecks(VP.laptop)], ['index 1920x1080', () => indexChecks(VP.wide)]]],
-  pages: [[], [...['myapproach', 'adatvedelem', 'whatsappcontact'].flatMap(pg => [[`${pg} 1440`, () => otherPage(pg, VP.desk)], [`${pg} 390`, () => otherPage(pg, VP.phone)]])]],
-  touch: [[['touch cursor', touchCursorOff], ['touch tap Értékek', touchTapWhy]], []],
-  hover: [[['hover desktop 1440', () => hoverChecks(VP.desk, false)]],
-          [['hover desktop 1920', () => hoverChecks(VP.wide, false)], ['hover touch-laptop 1440', () => hoverChecks(VP.desk, true)]]],
-  layout: [[['layout 1440x900', () => layoutChecks(VP.desk)]], [['layout 1280x720', () => layoutChecks(VP.laptop)]]],
-  header: [[['mobile header', mobileHeader]], []],
-  headingfx: [[['headingFx 1440 mouse', () => headingFx(VP.desk, true)], ['headingFx 390 touch', () => headingFx(VP.phone, false)]], []],
-  titles: [[['titles 1440x900', () => titleSystem(VP.desk)], ['titles 390x844', () => titleSystem(VP.phone)], ['titles 1518x670 (a 1897 window at 125% zoom)', () => titleSystem({ w: 1518, h: 670 })]],
-           [['titles 768x1024', () => titleSystem(VP.tablet)], ['titles 1280x720', () => titleSystem(VP.laptop)], ['titles 1920x1080', () => titleSystem(VP.wide)], ['titles 2560x1440', () => titleSystem(VP.huge)]]],
-  whypin: [[['whyPin 1440x900', () => whyPin(VP.desk)], ['whyPin 390x844', () => whyPin(VP.phone)]], [['whyPin 1897x840', () => whyPin({ w: 1897, h: 840 })], ['whyPin 1920x1080', () => whyPin(VP.wide)], ['whyPin 1280x720', () => whyPin(VP.laptop)]]],
-  about: [[['about 1440x900', () => aboutChecks(VP.desk, 640)], ['about 390x844', () => aboutChecks(VP.phone, 0)]], [['about 1920x1080', () => aboutChecks(VP.wide, 570)]]],
+  // group: [quick tasks, extra tasks run only with --full]; every task is [label, async fn, weight (heavier first)]
+  index: perVp('index', FULL_VPS, indexChecks, 3),
+  whypin: perVp('whyPin', FULL_VPS, whyPin, 3),
+  layout: perVp('layout', FULL_VPS.filter(isDesktop), layoutChecks, 3),
+  hover: (([q, x]) => [q, [...x, ['hover touch-laptop 1440x900', () => hoverChecks(V(1440, 900), true), 2]]])(perVp('hover', FULL_VPS.filter(isDesktop), v => hoverChecks(v, false), 2)),
+  about: perVp('about', FULL_VPS, v => aboutChecks(v, isPhone(v) ? 0 : (COMPOSITION_H[key(v)] ?? null)), 2),
+  titles: (([q, x]) => [q, [...x, ['titles 2560x1440', () => titleSystem(V(2560, 1440)), 1]]])(perVp('titles', FULL_VPS, titleSystem, 1)),
+  headingfx: [[['headingFx 1440x900 mouse', () => headingFx(V(1440, 900), true), 2], ['headingFx 390x844 touch', () => headingFx(V(390, 844), false), 2]],
+              [['headingFx 1366x768 mouse', () => headingFx(V(1366, 768), true), 2], ['headingFx 1518x670 mouse', () => headingFx(V(1518, 670), true), 2], ['headingFx 1920x1080 mouse', () => headingFx(V(1920, 1080), true), 2]]],
+  header: perVp('mobile header', FULL_VPS.filter(isPhone), mobileHeader, 1),
+  touch: [[['touch cursor', touchCursorOff, 1], ['touch tap Értékek', touchTapWhy, 1]], []],
+  pages: [[], ['myapproach', 'adatvedelem', 'whatsappcontact'].flatMap(pg => [[`${pg} 1440x900`, () => otherPage(pg, V(1440, 900)), 1], [`${pg} 390x844`, () => otherPage(pg, V(390, 844)), 1]])],
 };
 const unknown = ONLY.filter(g => !GROUPS[g]);
 if (unknown.length) { console.error(`Unknown group(s): ${unknown.join(', ')}. Groups: ${Object.keys(GROUPS).join(', ')}`); await browser.close(); server.close(); process.exit(2); }
 const tasks = [];
 for (const [g, [quick, extra]] of Object.entries(GROUPS)) { if (ONLY.length && !ONLY.includes(g)) continue; tasks.push(...quick, ...(FULL ? extra : [])); }
+tasks.sort((a, b) => (b[2] || 1) - (a[2] || 1));          // heavy tasks first: the three workers stay busy to the end
 
 const timings = [];
 async function runTask([label, fn]) {
@@ -725,6 +748,16 @@ console.log('\n' + 'RESULT'.padEnd(7) + 'AREA'.padEnd(20) + 'CHECK'.padEnd(w + 2
 for (const r of results) {
   if (!r.ok) fails++;
   console.log((r.ok ? 'PASS' : 'FAIL').padEnd(7) + r.area.padEnd(20) + r.name.padEnd(w + 2) + (r.ok && !process.env.SMOKE_VERBOSE ? '' : r.detail));
+}
+{
+  const rows = new Map();
+  for (const r of results) {
+    const m = /(\d{3,4})x(\d{3,4})/.exec(r.area); const k = m ? `${m[1]}x${m[2]}` : 'other';
+    const e = rows.get(k) || { n: 0, f: 0, bad: new Set() }; e.n++; if (!r.ok) { e.f++; e.bad.add(r.area.replace(/\s*\d{3,4}x\d{3,4}.*$/, '').trim() + ': ' + r.name.slice(0, 50)); } rows.set(k, e);
+  }
+  console.log('\nPER VIEWPORT');
+  console.log('viewport'.padEnd(11) + 'checks'.padEnd(8) + 'failed'.padEnd(8) + 'status');
+  for (const [k, e] of [...rows].sort((a, b) => parseInt(a[0]) - parseInt(b[0]))) console.log(k.padEnd(11) + String(e.n).padEnd(8) + String(e.f).padEnd(8) + (e.f ? 'FAIL  ' + [...e.bad].slice(0, 3).join(' | ') : 'ok'));
 }
 console.log(`\n${results.length - fails}/${results.length} passed${fails ? `, ${fails} FAILED` : ''}   [${FULL ? 'full' : 'quick'}${ONLY.length ? ' --only=' + ONLY.join(',') : ''}, ${tasks.length} tasks, ${CONCURRENCY} parallel]`);
 if (process.env.SMOKE_VERBOSE || fails) console.log('slowest tasks: ' + timings.sort((a, b) => b[1] - a[1]).slice(0, 5).map(t => `${t[0]} ${(t[1] / 1000).toFixed(0)}s`).join(', '));

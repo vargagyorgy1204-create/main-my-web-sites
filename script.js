@@ -607,6 +607,25 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     var defaultPanel = panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0];
     activate(defaultPanel);
 
+    /* The vertical labels of the collapsed cards share one font size: 20px, or smaller when the longest label would not fit the card
+       (card height - top padding - number - gap - bottom padding). Re-fitted whenever the row changes size (resize, pin on / off). */
+    var row = panels[0].parentElement;
+    function fitLabels() {
+        if (window.innerWidth < 768) { row.style.removeProperty('--why-label-fs'); return; }          /* stacked accordion: horizontal labels */
+        row.style.setProperty('--why-label-fs', '20px');
+        var tab = panels[0].querySelector('.why-panel__tab'), cs = getComputedStyle(tab);
+        var num = panels[0].querySelector('.why-panel__num').getBoundingClientRect().height;
+        var avail = panels[0].getBoundingClientRect().height - parseFloat(cs.paddingTop) - num - 12 - parseFloat(cs.paddingBottom);
+        var longest = 0;
+        panels.forEach(function (p) { longest = Math.max(longest, p.querySelector('.why-panel__label').getBoundingClientRect().height); });
+        if (longest > 0) row.style.setProperty('--why-label-fs', Math.max(11, Math.min(20, 20 * avail / longest)).toFixed(2) + 'px');
+    }
+    var fitRaf = 0;
+    function queueFit() { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fitLabels); }
+    if (window.ResizeObserver) new ResizeObserver(queueFit).observe(row); else window.addEventListener('resize', queueFit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueFit);
+    queueFit();
+
     /* js/why-pin.js (>= 1024px, motion allowed) takes over `pinned` / `onSelect`: a click scrolls to the step of that card and the
        scroll position opens it. Everywhere else a click / tap opens the card directly (phones: tapping the open card closes it). */
     var API = (window.VB = window.VB || {}).why = { panels: panels, activate: activate, pinned: false, onSelect: null };

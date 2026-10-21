@@ -3937,7 +3937,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     transform: rotate(180deg);
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: 20px;
+    font-size: var(--why-label-fs, 20px);      /* shared by all 6, fitted to the card height by script.js */
     letter-spacing: -0.01em;
     color: #1a1a2e;
     white-space: nowrap;
