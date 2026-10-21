@@ -458,7 +458,7 @@ async function titleSystem(vp) {
       const R = e => e.getBoundingClientRect(); const s = document.querySelector(sec), e = document.querySelector(eye);
       const pinned = (s.id === 'about' && s.classList.contains('is-pinned')) || (s.id === 'steps' && getComputedStyle(s.querySelector('.steps-pin') || s).position === 'sticky');
       const cs = getComputedStyle(e);
-      return { top: R(e).top - (pinned ? 0 : R(s).top), left: R(e).left, typo: [cs.fontFamily, cs.fontSize, cs.fontWeight, cs.letterSpacing, cs.textTransform, cs.lineHeight].join('|'),
+      return { top: R(e).top - (pinned ? 0 : R(s).top), left: R(e).left, typo: [cs.fontFamily, cs.fontSize, cs.fontWeight, parseFloat(cs.letterSpacing).toFixed(2) + 'px', cs.textTransform, cs.lineHeight].join('|'),   // spacing rounded: an eyebrow entrance may still be settling by a few thousandths
         headTypo: head ? (() => { const h = document.querySelector(head), hs = getComputedStyle(h), fit = parseFloat(getComputedStyle(s).getPropertyValue('--fit')) || 1, fs = parseFloat(hs.fontSize) * fit;
           return { sig: [hs.fontFamily, hs.fontWeight, hs.textTransform, (parseFloat(hs.letterSpacing) / parseFloat(hs.fontSize)).toFixed(3), (parseFloat(hs.lineHeight) / parseFloat(hs.fontSize)).toFixed(3)].join('|'), fs, dots: h.querySelectorAll('.sh-dot').length, split: h.classList.contains('is-split'), aria: !!h.getAttribute('aria-label'), right: Math.max(...[...h.querySelectorAll('.sh-word')].map(x => R(x).right)) }; })() : null,
         headLeft: head ? R(document.querySelector(head)).left : null, firstLeft: R(document.querySelector(first)).left, clientW: document.documentElement.clientWidth,
