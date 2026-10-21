@@ -6278,12 +6278,8 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     transform: none;
 }
 #why.is-pinned .why-head { flex: none; margin-bottom: var(--head-gap); }
-#why.is-pinned .why-panels { flex: 1 1 0; height: auto; min-height: 280px; }
-/* low windows: the heading and the gap give way before the cards get shorter than their minimum */
-@media (max-height: 699px) {
-    #why.is-pinned .section-heading { font-size: calc(var(--section-heading-size) * 0.85); }
-    #why.is-pinned .why-head { margin-bottom: 18px; }
-}
+/* the cards take whatever is left under the heading (the heading, eyebrow and bottom gap never give way): low windows get shorter cards */
+#why.is-pinned .why-panels { flex: 1 1 0; height: auto; min-height: 240px; }
 /* progress: 6 thin segments in the bottom gap, the same language as the About story */
 #why.is-pinned .why-progress {
     display: grid;

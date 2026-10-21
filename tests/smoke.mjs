@@ -456,7 +456,7 @@ async function titleSystem(vp) {
       const cs = getComputedStyle(e);
       return { top: R(e).top - (pinned ? 0 : R(s).top), left: R(e).left, typo: (() => { const f = parseFloat(getComputedStyle(s).getPropertyValue('--fit')) || 1; return [cs.fontFamily, (parseFloat(cs.fontSize) * f).toFixed(2) + 'px', cs.fontWeight, (parseFloat(cs.letterSpacing) * f).toFixed(2) + 'px', cs.textTransform, (parseFloat(cs.lineHeight) * f).toFixed(1) + 'px'].join('|'); })(),   // rendered values (fitted sections lay the eyebrow out at size / fit); spacing rounded: an entrance may still be settling   // spacing rounded: an eyebrow entrance may still be settling by a few thousandths
         headTypo: head ? (() => { const h = document.querySelector(head), hs = getComputedStyle(h), fit = parseFloat(getComputedStyle(s).getPropertyValue('--fit')) || 1, fs = parseFloat(hs.fontSize) * fit;
-          return { sig: [hs.fontFamily, hs.fontWeight, hs.textTransform, (parseFloat(hs.letterSpacing) / parseFloat(hs.fontSize)).toFixed(3), (parseFloat(hs.lineHeight) / parseFloat(hs.fontSize)).toFixed(3)].join('|'), fs, dots: h.querySelectorAll('.sh-dot').length, split: h.classList.contains('is-split'), aria: !!h.getAttribute('aria-label'), right: Math.max(...[...h.querySelectorAll('.sh-word')].map(x => R(x).right)) }; })() : null,
+          return { sig: [hs.fontFamily, hs.fontWeight, hs.textTransform, (parseFloat(hs.letterSpacing) / parseFloat(hs.fontSize)).toFixed(3), (parseFloat(hs.lineHeight) / parseFloat(hs.fontSize)).toFixed(3)].join('|'), fs, lineH: h.querySelector('.sh-word') ? R(h.querySelector('.sh-word')).height : 0, dots: h.querySelectorAll('.sh-dot').length, split: h.classList.contains('is-split'), aria: !!h.getAttribute('aria-label'), right: Math.max(...[...h.querySelectorAll('.sh-word')].map(x => R(x).right)) }; })() : null,
         headLeft: head ? R(document.querySelector(head)).left : null, firstLeft: R(document.querySelector(first)).left, clientW: document.documentElement.clientWidth,
         gutter: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--content-gutter')) || 0, hdr: innerWidth < 768 ? 76 : 92 };
     }, [sec, eye, head, first])) });
@@ -478,6 +478,8 @@ async function titleSystem(vp) {
   rec(tag, 'section headings: same font / weight / uppercase / letter-spacing / line-height', new Set(hr.map(r => r.headTypo.sig)).size === 1, [...new Set(hr.map(r => r.headTypo.sig))].join(' || '));
   const fss = hr.map(r => r.headTypo.fs);
   rec(tag, 'section headings: identical rendered size in all 6', Math.max(...fss) - Math.min(...fss) < 0.6, hr.map(r => `${r.name}:${r.headTypo.fs.toFixed(1)}`).join(' '));
+  const lhs = hr.map(r => r.headTypo.lineH);
+  rec(tag, 'section headings: identical RENDERED line height in all 6 (transforms cannot hide a smaller heading)', Math.max(...lhs) - Math.min(...lhs) < 0.6, hr.map(r => `${r.name}:${r.headTypo.lineH.toFixed(1)}`).join(' '));
   rec(tag, 'section headings: split in letters, accent dot, aria-label', hr.length === 6 && hr.every(r => r.headTypo.split && r.headTypo.dots === 1 && r.headTypo.aria), hr.map(r => `${r.name}:${r.headTypo.split}/${r.headTypo.dots}/${r.headTypo.aria}`).join(' '));
   rec(tag, 'section headings: no word sticks out of the viewport', hr.every(r => r.headTypo.right <= r.clientW + 0.5), hr.map(r => `${r.name}:${Math.round(r.headTypo.right)}`).join(' '));
   const badHead = rows.filter(r => r.headLeft != null && Math.abs(r.headLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.headLeft)}`);
@@ -562,7 +564,8 @@ async function whyPin(vp) {
   const g = await p.evaluate(() => { const s = document.getElementById('why'), r = s.querySelector('.why-inner').getBoundingClientRect(), pn = s.querySelector('.why-panels').getBoundingClientRect(), hd = s.querySelector('.section-heading').getBoundingClientRect(); return { top: r.top, h: r.height, cardsH: pn.height, bottomGap: innerHeight - pn.bottom, headGap: pn.top - hd.bottom }; });
   rec(tag, 'stage sticks to the viewport and is exactly one viewport tall', Math.abs(g.top) <= 1 && Math.abs(g.h - vp.h) <= 1, JSON.stringify({ top: g.top, h: g.h }));
   rec(tag, 'bottom gap (cards -> viewport bottom) = --section-bottom ±2px', Math.abs(g.bottomGap - sb) <= 2, `gap ${g.bottomGap.toFixed(1)} want ${sb.toFixed(1)}`);
-  rec(tag, 'cards keep their minimum height', g.cardsH >= 280, `${Math.round(g.cardsH)}px`);
+  rec(tag, 'cards keep their minimum height', g.cardsH >= 240, `${Math.round(g.cardsH)}px`);
+  rec(tag, 'composition fits one viewport: cards end --section-bottom above the bottom edge, heading not shrunk', g.cardsH >= 240 ? Math.abs(g.bottomGap - sb) <= 2 : true, `bottom gap ${g.bottomGap.toFixed(1)} want ${sb.toFixed(1)}, cards ${Math.round(g.cardsH)}px`);
   // scroll steps in order, then in reverse
   const up = []; for (let k = 0; k < 6; k++) up.push(await atStep(k));
   rec(tag, 'scrolling opens cards 01 -> 06 in order (one open at a time)', up.join('|') === '1|2|3|4|5|6', up.join('|'));
@@ -691,7 +694,7 @@ const GROUPS = {
   layout: [[['layout 1440x900', () => layoutChecks(VP.desk)]], [['layout 1280x720', () => layoutChecks(VP.laptop)]]],
   header: [[['mobile header', mobileHeader]], []],
   headingfx: [[['headingFx 1440 mouse', () => headingFx(VP.desk, true)], ['headingFx 390 touch', () => headingFx(VP.phone, false)]], []],
-  titles: [[['titles 1440x900', () => titleSystem(VP.desk)], ['titles 390x844', () => titleSystem(VP.phone)]],
+  titles: [[['titles 1440x900', () => titleSystem(VP.desk)], ['titles 390x844', () => titleSystem(VP.phone)], ['titles 1518x670 (a 1897 window at 125% zoom)', () => titleSystem({ w: 1518, h: 670 })]],
            [['titles 768x1024', () => titleSystem(VP.tablet)], ['titles 1280x720', () => titleSystem(VP.laptop)], ['titles 1920x1080', () => titleSystem(VP.wide)], ['titles 2560x1440', () => titleSystem(VP.huge)]]],
   whypin: [[['whyPin 1440x900', () => whyPin(VP.desk)], ['whyPin 390x844', () => whyPin(VP.phone)]], [['whyPin 1897x840', () => whyPin({ w: 1897, h: 840 })], ['whyPin 1920x1080', () => whyPin(VP.wide)], ['whyPin 1280x720', () => whyPin(VP.laptop)]]],
   about: [[['about 1440x900', () => aboutChecks(VP.desk, 640)], ['about 390x844', () => aboutChecks(VP.phone, 0)]], [['about 1920x1080', () => aboutChecks(VP.wide, 570)]]],
