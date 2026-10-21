@@ -524,6 +524,89 @@ async function headingFx(vp, mouse) {
   await ctx.close();
 }
 
+// ---------------------------------------------------------------- Értékek & Garanciák: pinned stage with scroll-driven cards (>= 1024px)
+async function whyPin(vp) {
+  const tag = `whyPin ${vp.w}x${vp.h}`;
+  const errs = [];
+  const ctx = await newCtx(vp);
+  const p = await open(ctx, 'index', tag, errs);
+  await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
+  const pinnedWanted = vp.w >= 1024;
+  const isPinned = await until(p, () => document.getElementById('why').classList.contains('is-pinned'), null, pinnedWanted ? 4000 : 800);
+  rec(tag, pinnedWanted ? 'section pins (>= 1024px)' : 'section is not pinned (< 1024px)', isPinned === pinnedWanted, `is-pinned ${isPinned}`);
+  const info = await p.evaluate(() => { const s = document.getElementById('why'); return { top: s.getBoundingClientRect().top + scrollY, h: s.offsetHeight, pb: parseFloat(getComputedStyle(s).paddingBottom), vh: innerHeight }; });
+  const sb = Math.min(Math.max(48, 0.09 * vp.h), 104);                    // --section-bottom: clamp(48px, 9svh, 104px)
+  if (!pinnedWanted) {
+    rec(tag, 'not pinned: bottom padding = --section-bottom', Math.abs(info.pb - sb) <= 2, `padding-bottom ${info.pb.toFixed(1)} want ${sb.toFixed(1)}`);
+    rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
+    await ctx.close(); return;
+  }
+  const L = vp.h * 0.7;
+  const active = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map((e, i) => e.classList.contains('is-active') ? i + 1 : 0).filter(Boolean).join(','));
+  const go = async rel => { await p.evaluate(y => VB.lenis.scrollTo(y, { immediate: true }), info.top + rel); await frames(p, 6); };
+  const atStep = async k => {
+    await go(k * L + 4);
+    await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active') && document.querySelectorAll('.why-panel.is-active').length === 1, k, 2500);
+    await until(p, i => { const a = document.querySelectorAll('.why-panel')[i].getBoundingClientRect().width, o = document.querySelectorAll('.why-panel')[(i + 1) % 6].getBoundingClientRect().width; return a > o * 3; }, k, 2500);
+    return active();
+  };
+  // pin length + geometry at step 1
+  rec(tag, 'pin length = 6 x 70svh (+ one 100svh stage)', Math.abs(info.h - info.vh - 4.2 * vp.h) <= 2, `run ${info.h - info.vh}px = ${((info.h - info.vh) / vp.h).toFixed(2)}svh`);
+  await atStep(0);
+  const g = await p.evaluate(() => { const s = document.getElementById('why'), r = s.querySelector('.why-inner').getBoundingClientRect(), pn = s.querySelector('.why-panels').getBoundingClientRect(), hd = s.querySelector('.section-heading').getBoundingClientRect(); return { top: r.top, h: r.height, cardsH: pn.height, bottomGap: innerHeight - pn.bottom, headGap: pn.top - hd.bottom }; });
+  rec(tag, 'stage sticks to the viewport and is exactly one viewport tall', Math.abs(g.top) <= 1 && Math.abs(g.h - vp.h) <= 1, JSON.stringify({ top: g.top, h: g.h }));
+  rec(tag, 'bottom gap (cards -> viewport bottom) = --section-bottom ±2px', Math.abs(g.bottomGap - sb) <= 2, `gap ${g.bottomGap.toFixed(1)} want ${sb.toFixed(1)}`);
+  rec(tag, 'cards keep their minimum height', g.cardsH >= 280, `${Math.round(g.cardsH)}px`);
+  // scroll steps in order, then in reverse
+  const up = []; for (let k = 0; k < 6; k++) up.push(await atStep(k));
+  rec(tag, 'scrolling opens cards 01 -> 06 in order (one open at a time)', up.join('|') === '1|2|3|4|5|6', up.join('|'));
+  const down = []; for (let k = 5; k >= 0; k--) down.push(await atStep(k));
+  rec(tag, 'scrolling back opens cards 06 -> 01', down.join('|') === '6|5|4|3|2|1', down.join('|'));
+  await go(info.h - info.vh + 300); await until(p, () => document.querySelectorAll('.why-panel')[5].classList.contains('is-active'), null, 2000);
+  rec(tag, 'leaving the pin at the bottom: card 06 stays open', (await active()) === '6', await active());
+  await go(-300); await until(p, () => document.querySelectorAll('.why-panel')[0].classList.contains('is-active'), null, 2000);
+  rec(tag, 'leaving the pin at the top: card 01 is open', (await active()) === '1', await active());
+  // wheel + snap: never left between two steps, no half-open card
+  await go(0); await p.mouse.move(vp.w - 60, vp.h / 2);
+  const snaps = [];
+  for (const d of [380, 700]) {
+    await p.mouse.wheel(0, d);
+    await sleep(500);
+    await until(p, () => !VB.lenis.isScrolling, null, 3500);
+    await sleep(450);                                     // the settle (snap) starts 160ms after the scroll stops and lasts 0.4s
+    await until(p, () => !VB.lenis.isScrolling, null, 3000); await frames(p, 10);
+    const rel = (await p.evaluate(() => window.pageYOffset)) - info.top, near = Math.round(rel / L);
+    snaps.push([Math.abs(rel - near * L) <= 3, near, await active()]);
+  }
+  rec(tag, 'snap: a wheel scroll settles exactly on a step with that card open', snaps.every(s => s[0] && s[2] === String(s[1] + 1)), JSON.stringify(snaps));
+  const widths = await p.evaluate(() => { const w = [...document.querySelectorAll('.why-panel')].map(e => e.getBoundingClientRect().width); const a = document.querySelector('.why-panel.is-active').getBoundingClientRect().width; return { open: a, closed: w.filter(x => x !== a).map(Math.round) }; });
+  rec(tag, 'snap: no half-open card (all closed cards equally narrow)', Math.max(...widths.closed) - Math.min(...widths.closed) <= 2 && widths.open > 3 * Math.max(...widths.closed), JSON.stringify(widths));
+  // hover preview and restore
+  const cur = await active();
+  const pt = await p.evaluate(() => { const e = document.querySelectorAll('.why-panel')[5].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
+  await p.mouse.move(pt[0] - 40, pt[1]); await p.mouse.move(pt[0], pt[1], { steps: 5 });
+  await until(p, () => document.querySelectorAll('.why-panel')[5].classList.contains('is-active'), null, 2000);
+  const prev = await active();
+  await p.mouse.move(vp.w / 2, 30, { steps: 6 });
+  await until(p, c => document.querySelectorAll('.why-panel')[+c - 1].classList.contains('is-active'), cur, 2500);
+  rec(tag, 'hover previews a card and the scroll-driven card is restored on leave', prev === '6' && (await active()) === cur, `step card ${cur} -> hover ${prev} -> leave ${await active()}`);
+  // click scrolls to the step of that card
+  const tab = await p.evaluate(() => { const e = document.querySelectorAll('.why-panel')[4].querySelector('.why-panel__tab').getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
+  await p.mouse.move(tab[0] - 30, tab[1]); await p.mouse.move(tab[0], tab[1], { steps: 4 });
+  await p.evaluate(() => document.querySelectorAll('.why-panel')[4].querySelector('.why-panel__tab').click());
+  await until(p, () => !VB.lenis.isScrolling && document.querySelectorAll('.why-panel')[4].classList.contains('is-active'), null, 4000); await frames(p, 8);
+  const relC = (await p.evaluate(() => window.pageYOffset)) - info.top;
+  rec(tag, 'clicking a card scrolls to the step of that card', Math.abs(relC - 4 * L) <= 3 && (await active()) === '5', `rel ${Math.round(relC)} want ${Math.round(4 * L)}, open ${await active()}`);
+  // the next section starts normally after the pin
+  await p.evaluate(() => { VB.lenis.scrollTo(document.getElementById('steps').getBoundingClientRect().top + scrollY, { immediate: true }); });
+  await frames(p, 10);
+  const sx = await p.evaluate(() => { const s = document.getElementById('steps'), pin = s.querySelector('.steps-pin') || s, e = s.querySelector('.section-eyebrow').getBoundingClientRect(); return { top: e.top - (getComputedStyle(pin).position === 'sticky' ? 0 : s.getBoundingClientRect().top) }; });
+  const expTop = (vp.w < 768 ? 76 : 92) + Math.min(56, Math.max(24, 0.04 * vp.h));
+  rec(tag, 'next section (Együttműködés) starts at its normal anchor after the pin', Math.abs(sx.top - expTop) <= 2, `eyebrow ${sx.top.toFixed(1)} want ${expTop.toFixed(1)}`);
+  rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
+  await ctx.close();
+}
+
 async function mobileHeader() {
   const tag = 'mobile header 390x844';
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
@@ -593,6 +676,7 @@ const GROUPS = {
   headingfx: [[['headingFx 1440 mouse', () => headingFx(VP.desk, true)], ['headingFx 390 touch', () => headingFx(VP.phone, false)]], []],
   titles: [[['titles 1440x900', () => titleSystem(VP.desk)], ['titles 390x844', () => titleSystem(VP.phone)]],
            [['titles 768x1024', () => titleSystem(VP.tablet)], ['titles 1280x720', () => titleSystem(VP.laptop)], ['titles 1920x1080', () => titleSystem(VP.wide)], ['titles 2560x1440', () => titleSystem(VP.huge)]]],
+  whypin: [[['whyPin 1440x900', () => whyPin(VP.desk)], ['whyPin 390x844', () => whyPin(VP.phone)]], [['whyPin 1897x840', () => whyPin({ w: 1897, h: 840 })], ['whyPin 1920x1080', () => whyPin(VP.wide)], ['whyPin 1280x720', () => whyPin(VP.laptop)]]],
   about: [[['about 1440x900', () => aboutChecks(VP.desk, 640)], ['about 390x844', () => aboutChecks(VP.phone, 0)]], [['about 1920x1080', () => aboutChecks(VP.wide, 570)]]],
 };
 const unknown = ONLY.filter(g => !GROUPS[g]);

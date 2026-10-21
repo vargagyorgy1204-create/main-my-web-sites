@@ -6156,6 +6156,7 @@ footer { padding-bottom: var(--cb-h, 0px); }
     --hdr-h: 92px;
     --section-top: calc(var(--hdr-h) + clamp(24px, 4svh, 56px));
     --head-gap: clamp(28px, 4svh, 56px);
+    --section-bottom: clamp(48px, 9svh, 104px);   /* gap between the last content block and the section / viewport bottom */
     --content-gutter: 20px;                       /* phones / tablets: the common side line */
 }
 @media (max-width: 767px) { :root { --hdr-h: 76px; } }
@@ -6247,3 +6248,52 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
 }
+
+/* ===== ÉRTÉKEK & GARANCIÁK — bottom gap, then the pinned stage with scroll-driven cards (js/why-pin.js) =====
+   Not pinned (< 1024px, short or reduced-motion windows): the usual stacked / fitted section, now with the common bottom gap. */
+#why { padding-bottom: var(--section-bottom) !important; }
+.why-progress { display: none; }
+
+/* pinned: tall block = 100svh stage + 6 x 70svh of scrolling; the sticky stage is exactly one viewport:
+   top = --section-top, eyebrow, heading, --head-gap, the cards (fill the rest), --section-bottom */
+#why.is-pinned {
+    --why-run: 420svh;
+    display: block;
+    min-height: 0;
+    height: calc(100vh + 420vh);
+    height: calc(100svh + var(--why-run));
+    padding: 0 var(--content-gutter) !important;
+}
+#why.is-pinned .why-inner {
+    position: sticky;
+    top: 0;
+    width: min(var(--content-max), 100%);
+    max-width: none;
+    height: 100vh;
+    height: 100svh;
+    margin: 0 0 0 max(0px, calc((100% - var(--content-max)) / 2));
+    padding: var(--section-top) 0 var(--section-bottom);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transform: none;
+}
+#why.is-pinned .why-head { flex: none; margin-bottom: var(--head-gap); }
+#why.is-pinned .why-panels { flex: 1 1 0; height: auto; min-height: 280px; }
+/* low windows: the heading and the gap give way before the cards get shorter than their minimum */
+@media (max-height: 699px) {
+    #why.is-pinned .section-heading { font-size: calc(var(--section-heading-size) * 0.85); }
+    #why.is-pinned .why-head { margin-bottom: 18px; }
+}
+/* progress: 6 thin segments in the bottom gap, the same language as the About story */
+#why.is-pinned .why-progress {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    position: absolute;
+    left: 0; right: 0;
+    bottom: calc(var(--section-bottom) / 2 - 1.5px);
+}
+.why-progress i { position: relative; height: 3px; border-radius: 2px; overflow: hidden; background: rgba(26, 26, 46, 0.12); }
+.why-progress b { position: absolute; inset: 0; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.why-progress i.is-on b { transform: scaleX(1); }

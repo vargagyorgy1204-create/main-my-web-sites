@@ -604,19 +604,31 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 
     var defaultPanel = panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0];
     var row = panels[0].parentElement;
+    /* js/why-pin.js (>= 1024px): the scroll position decides the default card. A card that opens or closes moves the cards under a
+       resting mouse and the browser then fires pointerenter without any mouse movement: such events must not steal the step. */
+    var mx = -1, my = -1, anchor = null;
+    var API = (window.VB = window.VB || {}).why = {
+        panels: panels, activate: activate, pinned: false, onSelect: null,
+        setDefault: function (p) { defaultPanel = p; },
+        mark: function () { anchor = { x: mx, y: my }; }
+    };
+    document.addEventListener('pointermove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
+    function moved(e) { return !API.pinned || !anchor || Math.hypot(e.clientX - anchor.x, e.clientY - anchor.y) > 6; }
+
     /* the pointer leaving the row restores the default open card */
     row.addEventListener('pointerleave', function (e) {
         if ((e.pointerType === 'mouse' || e.pointerType === 'pen') && desktopHover.matches) activate(defaultPanel);
     });
 
-    panels.forEach(function (panel) {
+    panels.forEach(function (panel, i) {
         panel.addEventListener('pointerenter', function (e) {
-            if ((e.pointerType === 'mouse' || e.pointerType === 'pen') && desktopHover.matches) activate(panel);
+            if ((e.pointerType === 'mouse' || e.pointerType === 'pen') && desktopHover.matches && moved(e)) activate(panel);
         });
         var tab = panel.querySelector('.why-panel__tab');
         if (tab) {
-            tab.addEventListener('click', function () { activate(panel); });
-            tab.addEventListener('focus', function () { activate(panel); });
+            var pick = function () { if (API.pinned && API.onSelect) API.onSelect(i); else activate(panel); };
+            tab.addEventListener('click', pick);
+            tab.addEventListener('focus', pick);
         }
     });
 })();
@@ -716,7 +728,7 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     var q = window.matchMedia('(min-width: 768px) and (min-height: 520px)');
 
     function fit() {
-        if (!q.matches) { section.style.removeProperty('--fit'); section.style.removeProperty('--fit-h'); return; }
+        if (!q.matches || section.classList.contains('is-pinned')) { section.style.removeProperty('--fit'); section.style.removeProperty('--fit-h'); return; }
         section.style.setProperty('--fit-h', 'auto');
         section.style.setProperty('--fit', '1');
         var wcs = window.getComputedStyle(section);
