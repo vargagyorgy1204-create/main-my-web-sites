@@ -6217,7 +6217,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
    Uppercase Syne 800, one fluid size token for all of them (= the Kapcsolat word: 85.5px at 1440 wide, scales with the width, also
    eased by the height). Only the colour differs per section. Letters / accent dot / hover: js/heading-fx.js (.sh-*). */
 :root {
-    --section-heading-size: clamp(22.5px, min(5.346vw, 8.55svh), 86.4px);
+    --section-heading-size: clamp(18px, min(4.277vw, 6.84svh), 69.12px);
     --section-heading-lh: 1.12;
 }
 @media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
