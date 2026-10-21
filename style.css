@@ -3906,7 +3906,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     box-shadow: 0 24px 50px rgba(108, 99, 255, 0.22);
 }
 .why-panel.is-active::before { opacity: 1; }
-.why-panel:not(.is-active):hover { border-color: rgba(192, 38, 163, 0.35); }
 
 .why-panel__tab {
     position: absolute;
@@ -6297,3 +6296,32 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 .why-progress i { position: relative; height: 3px; border-radius: 2px; overflow: hidden; background: rgba(26, 26, 46, 0.12); }
 .why-progress b { position: absolute; inset: 0; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .why-progress i.is-on b { transform: scaleX(1); }
+
+/* ===== ÉRTÉKEK cards: zero layout shift =====
+   The row (>= 768px) has a fixed geometry: every card is absolutely positioned at left: 0 and slid with transform: translateX() to the x
+   it has in the current state; only its width changes (a size change does not move any start edge, and nothing else in the layout moves).
+   Closed card = (row - 5 gaps - 12px of borders) / 10 + 2px, open card = (row - 72px) / 2 + 2px: exactly the old flex-grow 1 : 5 split (flex-basis 0 shares the free space after the borders). --i = card index (static),
+   --k = 1 when the open card sits before this one (set by script.js). cqw = the row's width. Same durations / easings as before.
+   Inner layers do not depend on the animated width either: the closed label is centred in a fixed closed-width box and slides with
+   transform, the open content / big number live in a fixed open-width box. */
+@media (min-width: 768px) {
+    .why-panels { display: block; position: relative; container-type: inline-size; }
+    .why-panel {
+        --wc: calc((100cqw - 72px) / 10 + 2px);
+        --wo: calc((100cqw - 72px) / 2 + 2px);
+        position: absolute;
+        top: 0; bottom: 0; left: 0;
+        flex: none;
+        width: var(--wc);
+        transform: translateX(calc(var(--i, 0) * (var(--wc) + 12px) + var(--k, 0) * (var(--wo) - var(--wc))));
+        transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.45s ease, border-color 0.3s ease, box-shadow 0.45s ease;
+    }
+    .why-panel.is-active { width: var(--wo); }
+    .why-panel:nth-child(1) { --i: 0; } .why-panel:nth-child(2) { --i: 1; } .why-panel:nth-child(3) { --i: 2; }
+    .why-panel:nth-child(4) { --i: 3; } .why-panel:nth-child(5) { --i: 4; } .why-panel:nth-child(6) { --i: 5; }
+    .why-panel:nth-child(n+2) { --k: 1; }                 /* before script.js runs the first card is the open one */
+    .why-panel__tab { right: auto; width: var(--wc); transition: opacity 0.3s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+    .why-panel.is-active .why-panel__tab { transform: translateX(calc((var(--wo) - var(--wc)) / 2)); }
+    .why-panel__body { right: auto; width: var(--wo); }
+    .why-panel__content { width: min(460px, calc(var(--wo) - 72px)); }
+}

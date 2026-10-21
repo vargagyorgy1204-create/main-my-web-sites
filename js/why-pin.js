@@ -5,8 +5,7 @@
    progress; each 70svh of scrolling opens the next card (01 -> 06) with the EXISTING open/close animation of the cards
    (the same `is-active` toggle that hover uses). Scrolling back reverses the order. After the scroll stops, a short Lenis
    scrollTo settles on the nearest step so a card is never left half-open (ScrollTrigger's own snap fights Lenis).
-   Hover (real mouse) still previews a card; leaving the row restores the scroll-driven one (script.js). A click / focus on a
-   card scrolls to that card's step. Below 1024px, with reduced motion or without GSAP: untouched (stacked / hover as before).
+   There is no hover effect: a click (or Enter / Space) on a card scrolls to that card's step and the scroll position opens it. Below 1024px, with reduced motion or without GSAP: untouched (stacked / hover as before).
    No manual ScrollTrigger.refresh(). */
 (function () {
   'use strict';
@@ -29,8 +28,6 @@
   function setStep(i) {
     if (i === cur) return;
     cur = i;
-    W.setDefault(panels[i]);
-    W.mark();                                   /* a scroll-driven change wins over a hover that has not moved */
     W.activate(panels[i]);
     segs.forEach(function (s, k) { s.classList.toggle('is-on', k <= i); });
   }
@@ -58,7 +55,7 @@
   function goTo(i) {
     if (!st) return;
     var y = st.start + i * stepLen();
-    if (VB.lenis) VB.lenis.scrollTo(y, { duration: 0.9 });
+    if (VB.lenis) VB.lenis.scrollTo(y, { duration: 0.8, easing: function (t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; } });
     else window.scrollTo({ top: y, behavior: 'smooth' });
   }
 
@@ -85,7 +82,7 @@
     st.kill(); st = null; cur = -1;
     section.classList.remove('is-pinned');
     W.pinned = false; W.onSelect = null;
-    W.setDefault(panels[0]); W.activate(panels[0]);
+    W.activate(panels[0]);
     segs.forEach(function (s) { s.classList.remove('is-on'); });
     window.dispatchEvent(new Event('resize'));   /* script.js re-fits the (unpinned) section */
   }

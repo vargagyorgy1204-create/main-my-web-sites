@@ -59,7 +59,7 @@ const frames = (p, n = 3) => p.evaluate(k => new Promise(r => { const f = () => 
 // resolves true as soon as `fn(arg)` is truthy in the page, false after `timeout` ms (the check that follows then reports the real state)
 const until = async (p, fn, arg, timeout = 3000) => { try { await p.waitForFunction(fn, arg, { timeout, polling: 'raf' }); return true; } catch { return false; } };
 // an element that finished its entrance: opaque and without a translate / scale
-const SETTLED_JS = sel => { const e = document.querySelector(sel); if (!e) return false; const c = getComputedStyle(e); return parseFloat(c.opacity) >= 0.95 && (c.transform === 'none' || /^matrix\(1, 0, 0, 1, 0(\.\d+)?, 0(\.\d+)?\)$/.test(c.transform)); };
+const SETTLED_JS = sel => { const e = document.querySelector(sel); if (!e) return false; const c = getComputedStyle(e); return parseFloat(c.opacity) >= 0.95 && (c.transform === 'none' || /^matrix\(1, 0, 0, 1, -?[\d.]+, 0(\.\d+)?\)$/.test(c.transform)); };
 
 async function open(ctx, page, area, errs) {
   const p = await ctx.newPage();
@@ -101,7 +101,7 @@ const state = (p, sel) => p.evaluate(s => {
   const c = getComputedStyle(e); const r = e.getBoundingClientRect();
   return { op: parseFloat(c.opacity), tf: c.transform, rect: [Math.round(r.top + scrollY), Math.round(r.height)] };
 }, sel);
-const settled = s => s && s.op >= 0.95 && (s.tf === 'none' || /^matrix\(1, 0, 0, 1, 0(\.\d+)?, 0(\.\d+)?\)$/.test(s.tf));
+const settled = s => s && s.op >= 0.95 && (s.tf === 'none' || /^matrix\(1, 0, 0, 1, -?[\d.]+, 0(\.\d+)?\)$/.test(s.tf));   // no vertical offset left (a card may sit at its own translateX)
 
 async function indexChecks(vp) {
   const tag = `index ${vp.w}x${vp.h}`;
@@ -275,23 +275,19 @@ async function hoverChecks(vp, coarse) {
     const inWhy = await p.evaluate(() => { const r = document.querySelector('#why').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; });
     rec(tag, 'Készségek preview: never visible after scrolling away (wheel, resting mouse)', leaked.length === 0 && pv3.op < 0.05 && pv3.vis === 'hidden', `leaked at steps ${leaked.join(',') || '-'}; end ${JSON.stringify(pv3)}; why in view ${inWhy}`);
   }
-  // Értékek & Garanciák: hover expands, previous collapses, leaving restores, no cursor frame
+  // Értékek & Garanciák: hovering a card does NOT open or preview anything (click opens it) and shows no cursor frame
   await scrollTo(p, (await topOf(p, '#why')) + 20);
   await until(p, () => document.querySelectorAll('.why-panel').length === 6 && document.querySelector('.why-panel').getBoundingClientRect().height > 100, null, 3000); await frames(p, 10);
-  const n = await p.evaluate(() => document.querySelectorAll('.why-panel').length);
-  const seq = [];
-  for (let i = n - 1; i >= 0; i--) {
+  const wact = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active') ? 1 : 0).join(''));
+  const wgeo = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => Math.round(e.getBoundingClientRect().left) + ':' + Math.round(e.getBoundingClientRect().width)).join(','));
+  const w0 = await wact(), g0 = await wgeo(); const seq = [];
+  for (let i = 5; i >= 0; i--) {
     const c = await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; }, i);
-    await move(c[0], c[1]);
-    await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active') && [...document.querySelectorAll('.why-panel')].filter(e => e.classList.contains('is-active')).length === 1, i, 1500);
-    const st = await p.evaluate(i => ({ act: [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active')), ring: document.querySelector('.cursor-ring').className }), i);
-    seq.push(st.act.filter(Boolean).length === 1 && st.act[i] && !/is-frame|is-link-small|is-text/.test(st.ring));
+    await move(c[0], c[1]); await frames(p, 20);
+    const ring = await p.evaluate(() => document.querySelector('.cursor-ring').className);
+    seq.push((await wact()) === w0 && (await wgeo()) === g0 && !/is-frame|is-link-small|is-text/.test(ring));
   }
-  rec(tag, 'Értékek: every card expands on hover, one open, no cursor frame', n === 6 && seq.every(Boolean), `${n} cards, ${seq.map(Boolean).join(',')}`);
-  await p.mouse.move(40, 40, { steps: 6 });
-  await until(p, () => { const a = [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active')); return a[0] && a.filter(Boolean).length === 1; }, null, 2000);
-  const rest = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active')));
-  rec(tag, 'Értékek: leaving the row restores the default card', rest[0] && rest.filter(Boolean).length === 1, rest.join(','));
+  rec(tag, 'Értékek: hovering any card changes nothing (no open, no layout change), no cursor frame', seq.every(Boolean), `open ${w0}, ${seq.map(Boolean).join(',')}`);
   if (FULL) {
     // frames still work on real targets (menu item)
     await scrollTo(p, 0); await frames(p, 6);
@@ -538,6 +534,16 @@ async function whyPin(vp) {
   const sb = Math.min(Math.max(48, 0.09 * vp.h), 104);                    // --section-bottom: clamp(48px, 9svh, 104px)
   if (!pinnedWanted) {
     rec(tag, 'not pinned: bottom padding = --section-bottom', Math.abs(info.pb - sb) <= 2, `padding-bottom ${info.pb.toFixed(1)} want ${sb.toFixed(1)}`);
+    // unpinned: a tap opens a card directly (one at a time), tapping the open card closes it, Enter opens too
+    await p.evaluate(y => VB.lenis.scrollTo(y, { immediate: true }), info.top); await frames(p, 8);
+    const openList = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map((e, i) => e.classList.contains('is-active') ? i + 1 : 0).filter(Boolean).join(','));
+    const tapTab = async i => { await p.evaluate(i => document.querySelectorAll('.why-panel')[i].querySelector('.why-panel__tab').scrollIntoView({ block: 'center' }), i); await frames(p, 4); await p.tap(`.why-panel:nth-child(${i + 1}) .why-panel__tab`); await frames(p, 8); };
+    await tapTab(2); const t1 = await openList();
+    await tapTab(4); const t2 = await openList();
+    await tapTab(4); const t3 = await openList();
+    await p.evaluate(() => document.querySelectorAll('.why-panel')[3].querySelector('.why-panel__tab').focus({ preventScroll: true })); await p.keyboard.press('Enter'); await frames(p, 8); const t4 = await openList();
+    const ex = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.querySelector('.why-panel__tab').getAttribute('aria-expanded') === String(e.classList.contains('is-active'))).every(Boolean));
+    rec(tag, 'tap opens a card (one at a time), tapping the open card closes it, Enter opens', t1 === '3' && t2 === '5' && t3 === '' && t4 === '4' && ex, `${t1} | ${t2} | ${t3 || '-'} | ${t4} | aria in sync ${ex}`);
     rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
     await ctx.close(); return;
   }
@@ -581,15 +587,18 @@ async function whyPin(vp) {
   rec(tag, 'snap: a wheel scroll settles exactly on a step with that card open', snaps.every(s => s[0] && s[2] === String(s[1] + 1)), JSON.stringify(snaps));
   const widths = await p.evaluate(() => { const w = [...document.querySelectorAll('.why-panel')].map(e => e.getBoundingClientRect().width); const a = document.querySelector('.why-panel.is-active').getBoundingClientRect().width; return { open: a, closed: w.filter(x => x !== a).map(Math.round) }; });
   rec(tag, 'snap: no half-open card (all closed cards equally narrow)', Math.max(...widths.closed) - Math.min(...widths.closed) <= 2 && widths.open > 3 * Math.max(...widths.closed), JSON.stringify(widths));
-  // hover preview and restore
+  // hover does nothing: moving over every card changes neither the open card nor the layout
   const cur = await active();
-  const pt = await p.evaluate(() => { const e = document.querySelectorAll('.why-panel')[5].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
-  await p.mouse.move(pt[0] - 40, pt[1]); await p.mouse.move(pt[0], pt[1], { steps: 5 });
-  await until(p, () => document.querySelectorAll('.why-panel')[5].classList.contains('is-active'), null, 2000);
-  const prev = await active();
-  await p.mouse.move(vp.w / 2, 30, { steps: 6 });
-  await until(p, c => document.querySelectorAll('.why-panel')[+c - 1].classList.contains('is-active'), cur, 2500);
-  rec(tag, 'hover previews a card and the scroll-driven card is restored on leave', prev === '6' && (await active()) === cur, `step card ${cur} -> hover ${prev} -> leave ${await active()}`);
+  const geo = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => Math.round(e.getBoundingClientRect().left) + ':' + Math.round(e.getBoundingClientRect().width)).join(','));
+  const geo0 = await geo(); let hoverOk = true, ringOk = true;
+  for (let i = 0; i < 6; i++) {
+    const pt = await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; }, i);
+    await p.mouse.move(pt[0] - 25, pt[1] + 5); await p.mouse.move(pt[0], pt[1], { steps: 4 }); await frames(p, 20);
+    if ((await active()) !== cur || (await geo()) !== geo0) hoverOk = false;
+    if (/is-frame|is-link-small|is-text/.test(await p.evaluate(() => document.querySelector('.cursor-ring') ? document.querySelector('.cursor-ring').className : ''))) ringOk = false;
+  }
+  await p.mouse.move(vp.w / 2, 30, { steps: 4 }); await frames(p, 10);
+  rec(tag, 'hovering every card changes nothing (no open, no preview, no layout change, no cursor frame)', hoverOk && ringOk && (await active()) === cur, `open ${cur} -> ${await active()}, geometry same ${hoverOk}, ring ok ${ringOk}`);
   // click scrolls to the step of that card
   const tab = await p.evaluate(() => { const e = document.querySelectorAll('.why-panel')[4].querySelector('.why-panel__tab').getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
   await p.mouse.move(tab[0] - 30, tab[1]); await p.mouse.move(tab[0], tab[1], { steps: 4 });
@@ -597,6 +606,14 @@ async function whyPin(vp) {
   await until(p, () => !VB.lenis.isScrolling && document.querySelectorAll('.why-panel')[4].classList.contains('is-active'), null, 4000); await frames(p, 8);
   const relC = (await p.evaluate(() => window.pageYOffset)) - info.top;
   rec(tag, 'clicking a card scrolls to the step of that card', Math.abs(relC - 4 * L) <= 3 && (await active()) === '5', `rel ${Math.round(relC)} want ${Math.round(4 * L)}, open ${await active()}`);
+  // Enter on a focused collapsed card does the same (keyboard)
+  await p.evaluate(() => document.querySelectorAll('.why-panel')[2].querySelector('.why-panel__tab').focus({ preventScroll: true }));
+  await p.keyboard.press('Enter');
+  await until(p, () => !VB.lenis.isScrolling && document.querySelectorAll('.why-panel')[2].classList.contains('is-active'), null, 4000); await frames(p, 8);
+  const relE = (await p.evaluate(() => window.pageYOffset)) - info.top;
+  rec(tag, 'Enter on a focused card scrolls to its step and opens it', Math.abs(relE - 2 * L) <= 3 && (await active()) === '3', `rel ${Math.round(relE)} want ${Math.round(2 * L)}, open ${await active()}`);
+  const aria = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => { const t = e.querySelector('.why-panel__tab'); return t.tagName + ':' + t.getAttribute('aria-expanded') + ':' + !!document.getElementById(t.getAttribute('aria-controls')); }).join(' '));
+  rec(tag, 'cards are buttons with aria-expanded (only the open one true) and a valid aria-controls', /^(BUTTON:(true|false):true ?){6}$/.test(aria) && (aria.match(/:true:/g) || []).length === 1, aria);
   // the next section starts normally after the pin
   await p.evaluate(() => { VB.lenis.scrollTo(document.getElementById('steps').getBoundingClientRect().top + scrollY, { immediate: true }); });
   await frames(p, 10);

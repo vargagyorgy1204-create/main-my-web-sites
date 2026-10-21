@@ -586,50 +586,43 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         .observe(document.body, { attributes: true, attributeFilter: ['class'] });
 })();
 
-// Why section – expanding panels / mobile accordion
+// Why section – expanding cards (click / tap / Enter / Space; no hover)
 (function () {
     var panels = Array.prototype.slice.call(document.querySelectorAll('.why-panel'));
     if (!panels.length) return;
-    /* hover-expand follows real mouse / pen input (pointerType), not hover/pointer media queries (false on touch-screen laptops) */
-    var desktopHover = { get matches() { return window.innerWidth >= 768; } };
 
+    /* One card open at a time. `--k` = 1 when the open card sits before this one: the geometry of the row (>= 768px, style.css)
+       is pure CSS from the open index, so nothing in the layout moves. */
     function activate(panel) {
-        panels.forEach(function (p) {
+        var s = panels.indexOf(panel);
+        panels.forEach(function (p, i) {
             var on = p === panel;
             p.classList.toggle('is-active', on);
+            p.style.setProperty('--k', i > s ? 1 : 0);
             var tab = p.querySelector('.why-panel__tab');
             if (tab) tab.setAttribute('aria-expanded', on ? 'true' : 'false');
         });
     }
 
     var defaultPanel = panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0];
-    var row = panels[0].parentElement;
-    /* js/why-pin.js (>= 1024px): the scroll position decides the default card. A card that opens or closes moves the cards under a
-       resting mouse and the browser then fires pointerenter without any mouse movement: such events must not steal the step. */
-    var mx = -1, my = -1, anchor = null;
-    var API = (window.VB = window.VB || {}).why = {
-        panels: panels, activate: activate, pinned: false, onSelect: null,
-        setDefault: function (p) { defaultPanel = p; },
-        mark: function () { anchor = { x: mx, y: my }; }
-    };
-    document.addEventListener('pointermove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
-    function moved(e) { return !API.pinned || !anchor || Math.hypot(e.clientX - anchor.x, e.clientY - anchor.y) > 6; }
+    activate(defaultPanel);
 
-    /* the pointer leaving the row restores the default open card */
-    row.addEventListener('pointerleave', function (e) {
-        if ((e.pointerType === 'mouse' || e.pointerType === 'pen') && desktopHover.matches) activate(defaultPanel);
-    });
+    /* js/why-pin.js (>= 1024px, motion allowed) takes over `pinned` / `onSelect`: a click scrolls to the step of that card and the
+       scroll position opens it. Everywhere else a click / tap opens the card directly (phones: tapping the open card closes it). */
+    var API = (window.VB = window.VB || {}).why = { panels: panels, activate: activate, pinned: false, onSelect: null };
 
     panels.forEach(function (panel, i) {
-        panel.addEventListener('pointerenter', function (e) {
-            if ((e.pointerType === 'mouse' || e.pointerType === 'pen') && desktopHover.matches && moved(e)) activate(panel);
-        });
         var tab = panel.querySelector('.why-panel__tab');
-        if (tab) {
-            var pick = function () { if (API.pinned && API.onSelect) API.onSelect(i); else activate(panel); };
-            tab.addEventListener('click', pick);
-            tab.addEventListener('focus', pick);
-        }
+        if (!tab) return;
+        tab.addEventListener('click', function () {
+            if (API.pinned && API.onSelect) { API.onSelect(i); return; }
+            if (window.innerWidth < 768 && panel.classList.contains('is-active')) {      /* stacked accordion: tap again = close */
+                panel.classList.remove('is-active');
+                tab.setAttribute('aria-expanded', 'false');
+                return;
+            }
+            activate(panel);
+        });
     });
 })();
 

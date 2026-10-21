@@ -9,7 +9,8 @@
         el.style.transition = T;
         el.style.opacity = '0';
         if (delayMs) el.style.transitionDelay = delayMs + 'ms';
-        if (variant === 'left')  el.style.transform = 'translateX(-36px)';
+        if (variant === 'fade') { el._noTransform = true; }       /* opacity only: the element's own CSS transform (the Értékek cards' x position) must stay */
+        else if (variant === 'left')  el.style.transform = 'translateX(-36px)';
         else if (variant === 'right') el.style.transform = 'translateX(36px)';
         else if (variant === 'scale') el.style.transform = 'scale(0.92)';
         else el.style.transform = 'translateY(28px)';
@@ -45,7 +46,8 @@
     if (whyEl) {
         var whyHead = whyEl.querySelector('.why-head');
         if (whyHead) Array.from(whyHead.children).forEach(function (c, i) { add(c, null, i * 80); });
-        whyEl.querySelectorAll('.why-panel').forEach(function (c, i) { add(c, null, i * 80); });
+        /* >= 768px the cards are placed with transform: translateX (zero-layout-shift row): they fade in without the 28px rise */
+        whyEl.querySelectorAll('.why-panel').forEach(function (c, i) { add(c, window.innerWidth >= 768 ? 'fade' : null, i * 80); });
     }
 
     // Steps
@@ -69,11 +71,11 @@
             var el = entry.target;
             var d = parseFloat(el.style.transitionDelay || '0');
             el.style.opacity = '1';
-            el.style.transform = 'none';
+            if (!el._noTransform) el.style.transform = 'none';
             observer.unobserve(el);
             setTimeout(function () {
                 el.style.opacity = '';
-                el.style.transform = '';
+                if (!el._noTransform) el.style.transform = '';
                 el.style.transitionDelay = '';
                 el.style.transition = el._origTransition || '';
             }, d + 1100);
