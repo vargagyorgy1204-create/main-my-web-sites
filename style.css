@@ -6221,6 +6221,9 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     --section-heading-lh: 1.12;
 }
 @media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
+/* phones: as large as the longest uppercase word ("TECHNOLÓGIÁK", 13.6em wide) allows inside the 20px gutters: ~23px at 360, 25 at 390, 28 at 430;
+   from 768px up the desktop formula above, unchanged */
+@media (max-width: 767px) { :root { --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }
 .section-heading {
     --sh-color: #1a1a2e;
     margin: 0;
