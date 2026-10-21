@@ -6,15 +6,38 @@
     --gradient: linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
     /* Brand card system */
     --card-primary:      linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
-    --eyebrow-gap: clamp(12px, 1.6svh, 20px);
-    /* header zones: logo 44px at 32px from the left, burger 24px at 32px from the right */
-    --hdr-side: 32px;
-    --hdr-logo-w: 44px;
-    --content-max: clamp(1152px, 78vw, 1480px);   /* 1152px up to 1480px wide screens (1440 unchanged), caps at 1480px */
     --card-secondary:    #1a1f2e;
     --card-accent-warm:  linear-gradient(135deg, #7c1263 0%, #c850c0 100%);
     --card-accent-cool:  linear-gradient(135deg, #0e4d5c 0%, #1a8fa3 100%);
 }
+
+/* ===== DESIGN TOKENS — the single source of the proportional layout (documented in DESIGN-SYSTEM.md) =====
+   Reference viewport 1440x900: every size is a fluid clamp() of vw / svh derived from it. A section may only USE these tokens;
+   a new value needs a new token here. */
+:root {
+    /* header + content corridor */
+    --hdr-h: 92px;                                                         /* fixed header height (76px on phones) */
+    --hdr-side: 32px;                                                      /* logo / burger distance from the window edge */
+    --hdr-logo-w: 44px;
+    --content-gutter: 20px;                                                /* side line (>= 1024px: logo column + 32px, see below) */
+    --content-max: clamp(1152px, 78vw, 1480px);                            /* 1152px up to 1480px wide screens, 1440 unchanged */
+    /* vertical rhythm of a section */
+    --section-top: calc(var(--hdr-h) + clamp(24px, 4svh, 56px));           /* section top -> eyebrow */
+    --section-bottom: clamp(48px, 9svh, 104px);                            /* last content block -> section / viewport bottom */
+    --sec-bottom: clamp(20px, 3svh, 28px);                                 /* pinned Együttműködés bottom padding (legacy, tighter) */
+    --eyebrow-size: clamp(11px, 8px + 0.28vw, 13px);
+    --eyebrow-gap: clamp(12px, 1.6svh, 20px);                              /* generic eyebrow -> next block */
+    --eyebrow-head-gap: 10px;                                              /* eyebrow -> heading of the unified sections */
+    --head-gap: clamp(28px, 4svh, 56px);                                   /* heading -> first content block */
+    /* headings */
+    --section-heading-size: clamp(18px, min(4.277vw, 6.84svh), 69.12px);   /* the 6 unified .section-heading */
+    --section-heading-lh: 1.12;
+    --about-heading-size: clamp(30px, 8.2vw, 42px);                        /* Rólam, list layout */
+    --about-heading-size-pinned: clamp(30px, min(4.6vw, 6.6svh), 64px);    /* Rólam, pinned story (>= 900px) */
+}
+@media (max-width: 767px) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
+@media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
+@media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
 
 .icon { width: 20px; height: 20px; stroke-width: 1.75; }
 .icon--sm { width: 16px; height: 16px; }
@@ -2655,7 +2678,7 @@ body.contact-page {
     margin: 0;
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(30px, 8.2vw, 42px);
+    font-size: var(--about-heading-size);
     line-height: 1.12;
     letter-spacing: -0.02em;
     text-align: left;
@@ -2810,7 +2833,7 @@ body.contact-page {
     justify-content: center;          /* the stack is vertically centred; chapters share one grid cell so its height never changes */
     padding: var(--bio-pad);
 }
-#about.is-pinned .abt-heading { font-size: clamp(30px, min(4.6vw, 6.6svh), 64px); line-height: 1.06; }
+#about.is-pinned .abt-heading { font-size: var(--about-heading-size-pinned); line-height: 1.06; }
 #about.is-pinned .abt-head, #about.is-pinned .abt-chapters { max-width: 60ch; }
 #about.is-pinned .abt-w { color: var(--abt-ink); }
 #about.is-pinned .abt-chapters { display: grid; gap: 0; }
@@ -2871,7 +2894,7 @@ body.contact-page {
 }
 
 /* ── Hogyan dolgozom (myapproach.html) – About-style editorial split ── */
-.ap { background: #f8f7ff; padding: var(--sec-top) 20px 90px; }
+.ap { background: #f8f7ff; padding: var(--section-top) 20px 90px; }
 .ap-wrap { max-width: 1100px; margin: 0 auto; }
 .ap-back {
     display: inline-flex; align-items: center; gap: 8px;
@@ -3702,7 +3725,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
     --eyebrow-color: rgb(26 26 46 / 0.62);
     margin: 0 0 var(--eyebrow-gap);
     font-family: 'Inter', sans-serif;
-    font-size: clamp(11px, 8px + 0.28vw, 13px);
+    font-size: var(--eyebrow-size);
     font-style: normal;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -4239,7 +4262,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
         height: 100svh;
         display: flex;
         align-items: center;
-        padding: var(--sec-top) 24px var(--sec-bottom);
+        padding: var(--section-top) 24px var(--sec-bottom);
         box-sizing: border-box;
     }
     .steps-pin .steps-inner {
@@ -4267,7 +4290,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
         min-height: 100svh;
         display: flex;
         align-items: center;
-        padding: var(--sec-top) 24px var(--sec-bottom) !important;
+        padding: var(--section-top) 24px var(--sec-bottom) !important;
         box-sizing: border-box;
     }
     #why .why-inner {
@@ -5693,8 +5716,6 @@ html.lenis, html.lenis body { height: auto; }
    Reference look at >= 1080px tall; everything scales down with the window height (~78% at 840).
    Top padding = fixed header (92px, 76px on phones) + a height-aware gap, so the eyebrow always
    clears the logo, also when an in-page #contact link lands the section at the top. */
-#contact.ctc { padding-top: calc(92px + clamp(24px, 4svh, 56px)); }
-@media (max-width: 767px) { #contact.ctc { padding-top: calc(76px + clamp(24px, 4svh, 56px)); } }
 .ctc-sub {
     margin-block: clamp(8px, 2svh, 22px) clamp(20px, 5.2svh, 56px);
     font-size: clamp(15px, min(1.25vw, 1.67svh), 18px);
@@ -5859,17 +5880,10 @@ footer {
 }
 /* ===== /FOOTER DESIGN PASS ===== */
 
-/* ===== SECTION TOP OFFSETS + height-aware proportions (why, portfolio, steps) =====
-   One shared clearance: fixed header (92px; 76px on phones) + a height-aware gap, so an eyebrow
-   always sits >= 48px below the logo wherever an in-page link lands (the sections start at the top). */
-:root {
-    --sec-top: calc(92px + clamp(24px, 4svh, 56px));
-    --sec-bottom: clamp(20px, 3svh, 28px);
-}
-@media (max-width: 767px) { :root { --sec-top: calc(76px + clamp(24px, 4svh, 56px)); } }
+/* ===== height-aware proportions (why, portfolio, steps): the tokens live in the DESIGN TOKENS block at the top of this file ===== */
 
 /* Portfolio: head clears the header; head type follows the height */
-#portfolio { padding-block-start: var(--sec-top); }
+#portfolio { padding-block-start: var(--section-top); }
 .pf__head { margin-block-end: clamp(24px, 5svh, 56px); }
 .pf__head .section-heading { margin-block: 0 clamp(12px, 1.9svh, 20px); }
 .pf__sub { font-size: clamp(15px, min(1.25vw, 1.9svh), 18px); }
@@ -6123,15 +6137,15 @@ footer { padding-bottom: var(--cb-h, 0px); }
 }
 
 /* ===== Készségek: eyebrow + heading identical to Rólam (same type scale on every screen, same tight eyebrow gap) ===== */
-#skills .section-eyebrow { margin-bottom: 10px; }
+#skills .section-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
 
 .about-bio-card .abt-eyebrow { margin-bottom: -6px; }   /* list layout (< 900px): same tight eyebrow gap as the pinned story and Készségek */
 
 /* ===== Értékek & Garanciák: eyebrow + heading identical to Rólam / Készségek ===== */
-#why .section-eyebrow { margin-bottom: 10px; }
+#why .section-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
 
 /* ===== Együttműködés: eyebrow + heading identical to Rólam / Készségek / Értékek ===== */
-#steps .section-eyebrow { margin-bottom: 10px; }
+#steps .section-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
 /* pinned timeline: with the larger heading, the gaps give way first so the scaled block (--fit) stays as close to 1 as possible */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps .process-cta { margin-top: clamp(18px, 3svh, 44px); padding-top: clamp(16px, 2.4svh, 28px); }
@@ -6139,27 +6153,18 @@ footer { padding-bottom: var(--cb-h, 0px); }
 }
 
 /* ===== Szolgáltatások: eyebrow + title identical to Készségek / Rólam ===== */
-.svt-eyebrow { margin-bottom: 10px; }
+.svt-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
 
 /* ===== Portfólió: eyebrow + title identical in size / spacing to Készségek / Rólam ===== */
-.pf__eyebrow { margin-bottom: 10px; }
+.pf__eyebrow { margin-bottom: var(--eyebrow-head-gap); }
 
 /* ===== Kapcsolat: eyebrow gap + "Üzenjen." size identical to the other section headings (the letters-rise / proximity effects are untouched) ===== */
-.ctc-eyebrow { margin-bottom: 10px; }
+.ctc-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
 
 /* ===== SECTION TITLE SYSTEM =====
    The eyebrow is the anchor of every section: same typography (.section-eyebrow), same distance from the section top
    (--section-top = header + a height-aware gap), same left line (the content corridor, --content-gutter), and the heading and
    the first content block hang off it with fixed gaps (--eyebrow-gap, --head-gap). */
-:root {
-    --hdr-h: 92px;
-    --section-top: calc(var(--hdr-h) + clamp(24px, 4svh, 56px));
-    --head-gap: clamp(28px, 4svh, 56px);
-    --section-bottom: clamp(48px, 9svh, 104px);   /* gap between the last content block and the section / viewport bottom */
-    --content-gutter: 20px;                       /* phones / tablets: the common side line */
-}
-@media (max-width: 767px) { :root { --hdr-h: 76px; } }
-@media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
 
 /* hero: the eyebrow sits on the anchor, the rest of the block follows it */
 #hero { padding-top: var(--section-top); padding-inline: var(--content-gutter); align-content: start; align-items: start; }
@@ -6186,8 +6191,8 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 #why .why-inner .section-eyebrow, #steps .steps-inner .section-eyebrow {
     /* laid out at size / fit (like the heading) so it renders at the common size AND its box matches what is drawn: the gap to the
        heading is the same 10px in both sections at every window size (a counter-scale transform kept the full-size text over a shrunken box) */
-    font-size: calc(clamp(11px, 8px + 0.28vw, 13px) / var(--fit, 1));
-    margin-bottom: calc(10px / var(--fit, 1));
+    font-size: calc(var(--eyebrow-size) / var(--fit, 1));
+    margin-bottom: calc(var(--eyebrow-head-gap) / var(--fit, 1));
     width: fit-content;
 }
 @media (min-width: 768px) and (min-height: 520px) { #why { align-items: flex-start !important; } }
@@ -6216,14 +6221,6 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 /* ===== SECTION HEADINGS (.section-heading) — one look for every section title, reference: "ÜZENJEN." =====
    Uppercase Syne 800, one fluid size token for all of them (= the Kapcsolat word: 85.5px at 1440 wide, scales with the width, also
    eased by the height). Only the colour differs per section. Letters / accent dot / hover: js/heading-fx.js (.sh-*). */
-:root {
-    --section-heading-size: clamp(18px, min(4.277vw, 6.84svh), 69.12px);
-    --section-heading-lh: 1.12;
-}
-@media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
-/* phones: as large as the longest uppercase word ("TECHNOLÓGIÁK", 13.6em wide) allows inside the 20px gutters: ~23px at 360, 25 at 390, 28 at 430;
-   from 768px up the desktop formula above, unchanged */
-@media (max-width: 767px) { :root { --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }
 .section-heading {
     --sh-color: #1a1a2e;
     margin: 0;
