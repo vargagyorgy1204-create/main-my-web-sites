@@ -6183,7 +6183,13 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 .ctc-sub { margin-bottom: var(--head-gap); }
 
 /* the pinned / fitted blocks are scaled by --fit: the eyebrow is counter-scaled (same rendered size everywhere) and the block scales from its top-left corner (the eyebrow does not move) */
-#why .why-inner .section-eyebrow, #steps .steps-inner .section-eyebrow { width: fit-content; transform: scale(calc(1 / var(--fit, 1))); transform-origin: left top; }
+#why .why-inner .section-eyebrow, #steps .steps-inner .section-eyebrow {
+    /* laid out at size / fit (like the heading) so it renders at the common size AND its box matches what is drawn: the gap to the
+       heading is the same 10px in both sections at every window size (a counter-scale transform kept the full-size text over a shrunken box) */
+    font-size: calc(clamp(11px, 8px + 0.28vw, 13px) / var(--fit, 1));
+    margin-bottom: calc(10px / var(--fit, 1));
+    width: fit-content;
+}
 @media (min-width: 768px) and (min-height: 520px) { #why { align-items: flex-start !important; } }
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps { padding: 0; }                       /* the pinned stage carries the padding */

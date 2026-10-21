@@ -352,13 +352,13 @@ async function layoutChecks(vp) {
   rec(tag, 'logo/burger never overlap text or cards', hits.length === 0, hits.slice(0, 4).join(' ; '));
 
   // 3) eyebrows: identical typography everywhere
-  const eb = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e); return [s.fontFamily, s.fontSize, s.fontWeight, s.letterSpacing, s.textTransform, s.fontStyle].join('|'); }));
+  const eb = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */);
   const eb2 = await (async () => {
     const p2 = await ctx.newPage(); await p2.goto(`${BASE}/myapproach.html`, { waitUntil: 'load' });
     /* its entrance animates the letter-spacing: wait until it reaches the common value */
     const want = (eb[0] || '').split('|')[3];
     await until(p2, w => { const e = document.querySelector('.section-eyebrow'); return !!e && getComputedStyle(e).letterSpacing === w; }, want, 4000);
-    const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e); return [s.fontFamily, s.fontSize, s.fontWeight, s.letterSpacing, s.textTransform, s.fontStyle].join('|'); })); await p2.close(); return r;
+    const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */); await p2.close(); return r;
   })();
   const all = eb.concat(eb2);
   rec(tag, 'eight section eyebrows on index + one on myapproach exist', eb.length === 8 && eb2.length === 1, `${eb.length}+${eb2.length}`);
@@ -458,7 +458,7 @@ async function titleSystem(vp) {
       const R = e => e.getBoundingClientRect(); const s = document.querySelector(sec), e = document.querySelector(eye);
       const pinned = (s.id === 'about' && s.classList.contains('is-pinned')) || (s.id === 'steps' && getComputedStyle(s.querySelector('.steps-pin') || s).position === 'sticky');
       const cs = getComputedStyle(e);
-      return { top: R(e).top - (pinned ? 0 : R(s).top), left: R(e).left, typo: [cs.fontFamily, cs.fontSize, cs.fontWeight, parseFloat(cs.letterSpacing).toFixed(2) + 'px', cs.textTransform, cs.lineHeight].join('|'),   // spacing rounded: an eyebrow entrance may still be settling by a few thousandths
+      return { top: R(e).top - (pinned ? 0 : R(s).top), left: R(e).left, typo: (() => { const f = parseFloat(getComputedStyle(s).getPropertyValue('--fit')) || 1; return [cs.fontFamily, (parseFloat(cs.fontSize) * f).toFixed(2) + 'px', cs.fontWeight, (parseFloat(cs.letterSpacing) * f).toFixed(2) + 'px', cs.textTransform, (parseFloat(cs.lineHeight) * f).toFixed(1) + 'px'].join('|'); })(),   // rendered values (fitted sections lay the eyebrow out at size / fit); spacing rounded: an entrance may still be settling   // spacing rounded: an eyebrow entrance may still be settling by a few thousandths
         headTypo: head ? (() => { const h = document.querySelector(head), hs = getComputedStyle(h), fit = parseFloat(getComputedStyle(s).getPropertyValue('--fit')) || 1, fs = parseFloat(hs.fontSize) * fit;
           return { sig: [hs.fontFamily, hs.fontWeight, hs.textTransform, (parseFloat(hs.letterSpacing) / parseFloat(hs.fontSize)).toFixed(3), (parseFloat(hs.lineHeight) / parseFloat(hs.fontSize)).toFixed(3)].join('|'), fs, dots: h.querySelectorAll('.sh-dot').length, split: h.classList.contains('is-split'), aria: !!h.getAttribute('aria-label'), right: Math.max(...[...h.querySelectorAll('.sh-word')].map(x => R(x).right)) }; })() : null,
         headLeft: head ? R(document.querySelector(head)).left : null, firstLeft: R(document.querySelector(first)).left, clientW: document.documentElement.clientWidth,
