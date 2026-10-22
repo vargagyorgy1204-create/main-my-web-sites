@@ -289,8 +289,8 @@ async function hoverChecks(vp, coarse) {
     await move(c[0], c[1]); await frames(p, 20);
     const ring = await p.evaluate(() => document.querySelector('.cursor-ring').className);
     const wa = await wact(), wg = await wgeo();
-    seq.push(wa === w0 && wg === g0 && !/is-frame|is-link-small|is-text/.test(ring));
-    if (!seq[seq.length - 1]) why.push(`card ${i + 1}: open ${wa === w0 ? 'same' : wa}, geometry ${wg === g0 ? 'same' : wg.slice(0, 40) + ' vs ' + g0.slice(0, 40)}, ring ${ring.slice(0, 40)}`);
+    seq.push(wa === w0 && sameGeo(wg, g0) && !/is-frame|is-link-small|is-text/.test(ring));
+    if (!seq[seq.length - 1]) why.push(`card ${i + 1}: open ${wa === w0 ? 'same' : wa}, geometry ${sameGeo(wg, g0) ? 'same' : wg.slice(0, 40) + ' vs ' + g0.slice(0, 40)}, ring ${ring.slice(0, 40)}`);
   }
   rec(tag, 'Értékek: hovering any card changes nothing (no open, no layout change), no cursor frame', seq.every(Boolean), `open ${w0}, ${seq.map(Boolean).join(',')} ${why[0] || ''}`);
   if (FULL) {
@@ -314,7 +314,7 @@ async function layoutChecks(vp) {
   const errs = [];
   const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h } });
   const p = await open(ctx, 'index', tag, errs);
-  const hdr = await p.evaluate(() => { const r = e => { const b = document.querySelector(e).getBoundingClientRect(); return [b.left, b.top, b.right, b.bottom]; }; return { logo: r('.nav__logo'), burger: r('#burger') }; });
+  const hdr = await p.evaluate(() => { const r = e => { const b = document.querySelector(e).getBoundingClientRect(); return [b.left, b.top, b.right, b.bottom]; }; return { logo: r('.nav__logo'), burger: r('#burger'), vw: document.documentElement.clientWidth }; });
   // 1) shared corridor: left content line of every section on index
   const edges = {};
   const probes = { hero: '.hero-inner', skills: '#skills .skills-inner', why: '#why .why-inner', steps: '#steps .steps-inner', services: '.svt__inner', contact: '.ctc__head', about: '.about-premium-grid', portfolioHead: '.pf__head' };
@@ -322,17 +322,19 @@ async function layoutChecks(vp) {
     const y = await topOf(p, sel); await scrollTo(p, Math.max(0, (y || 0) - 100)); await frames(p, 10);
     edges[k] = await p.evaluate(s => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; }, sel);
   }
-  // EXPERIMENT tighter anchor: Készségek has its own left line (checked separately below)
-  const lefts = Object.entries(edges).filter(([k, v]) => v && k !== 'skills').map(([, e]) => e[0]);
-  const gutterMin = hdr.logo[2] + 32 - 1;   // logo right edge + 32px air
-  const L = lefts[0];
-  rec(tag, 'all sections share one left content line', lefts.every(x => Math.abs(x - L) <= 1) && L >= gutterMin, JSON.stringify(edges));
-  const rights = Object.entries(edges).filter(([k, v]) => v && k !== 'portfolioHead' && k !== 'skills').map(([, v]) => v[1]);
-  const R = Math.max(...rights);
-  rec(tag, 'right content lines inside the corridor and clear of the burger', rights.every(x => x <= R + 1) && R <= hdr.burger[0] - 32 + 1, `max right ${R}, burger left ${Math.round(hdr.burger[0])}`);
-
-  // EXPERIMENT tighter anchor: Készségek content stays >= 20px right of the logo and >= 20px left of the burger
-  rec(tag, 'EXPERIMENT Készségek: content line >= 20px clear of the logo and the burger', !!edges.skills && edges.skills[0] >= hdr.logo[2] + 20 - 1 && edges.skills[1] <= hdr.burger[0] - 20 + 1, `left ${edges.skills && edges.skills[0]} (logo right ${Math.round(hdr.logo[2])}), right ${edges.skills && edges.skills[1]} (burger left ${Math.round(hdr.burger[0])})`);
+  // the wide corridor (hero, Rólam) and the tight corridor (.section--tight: Készségek, Értékek, Együttműködés, Szolgáltatások, Portfólió head, Kapcsolat)
+  const TIGHT = ['skills', 'why', 'steps', 'services', 'contact', 'portfolioHead'];
+  const wideLefts = ['hero', 'about'].map(k => edges[k]).filter(Boolean).map(e => e[0]);
+  const tightLefts = TIGHT.map(k => edges[k]).filter(Boolean).map(e => e[0]);
+  const gutterMin = hdr.logo[2] + 32 - 1;   // wide: logo right edge + 32px air
+  const L = wideLefts[0], LT = tightLefts[0];
+  rec(tag, 'hero and Rólam share one (wide) left content line, 32px clear of the logo', wideLefts.every(x => Math.abs(x - L) <= 1) && L >= gutterMin, JSON.stringify({ hero: edges.hero, about: edges.about }));
+  rec(tag, 'the six tight sections share one left content line, >= 20px clear of the logo', tightLefts.every(x => Math.abs(x - LT) <= 1) && LT >= hdr.logo[2] + 20 - 1, JSON.stringify(TIGHT.map(k => [k, edges[k] && edges[k][0]])));
+  const wideRights = ['hero', 'about'].map(k => edges[k]).filter(Boolean).map(e => e[1]);
+  const tightRights = TIGHT.filter(k => k !== 'portfolioHead').map(k => edges[k]).filter(Boolean).map(e => e[1]);
+  const RW = Math.max(...wideRights), RT = Math.max(...tightRights);
+  rec(tag, 'hero / Rólam right lines inside the corridor and clear of the burger', wideRights.every(x => x <= RW + 1) && RW <= hdr.burger[0] - 32 + 1, `max right ${RW}, burger left ${Math.round(hdr.burger[0])}`);
+  rec(tag, 'the tight sections share one symmetric right line, >= 20px clear of the burger', tightRights.every(x => Math.abs(x - RT) <= 1) && RT <= hdr.burger[0] - 20 + 1 && Math.abs((hdr.vw - RT) - LT) <= 16, `right ${tightRights.join(',')} (burger left ${Math.round(hdr.burger[0])}, left line ${LT})`);
 
   // 2) the logo / burger never intersect text or cards while scrolling the page (portfolio cards and footer excepted)
   const H = await p.evaluate(() => document.documentElement.scrollHeight);
@@ -435,16 +437,16 @@ async function titleSystem(vp) {
   const SECS = [
     ['hero', 'index', '#hero', '.hero-eyebrow', '.hero-title', '.hero-sub', true],
     ['about', 'index', '#about', '.abt-eyebrow', null, '.about-photo-card', true],
-    ['skills', 'index', '#skills', '#skills .section-eyebrow', '#skills .section-heading', '#skills .skills-list', true],
-    ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .why-panels', true],
-    ['steps', 'index', '#steps', '#steps .section-eyebrow', '#steps .section-heading', '#steps .process', true],
-    ['services', 'index', '#services', '.svt-eyebrow', '#services .section-heading', '.svt-row', true],
-    ['portfolio', 'index', '#portfolio', '.pf__eyebrow', '#portfolio .section-heading', '.pf__sub', true],
-    ['contact', 'index', '#contact', '.ctc-eyebrow', '#contact .section-heading', '.contact-grid', true],
+    ['skills', 'index', '#skills', '#skills .section-eyebrow', '#skills .section-heading', '#skills .skills-list', true, '#skills .skills-list'],
+    ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .why-panels', true, '#why .why-panels'],
+    ['steps', 'index', '#steps', '#steps .section-eyebrow', '#steps .section-heading', '#steps .process', true, '#steps .process'],
+    ['services', 'index', '#services', '.svt-eyebrow', '#services .section-heading', '.svt-row', true, '.svt-row'],
+    ['portfolio', 'index', '#portfolio', '.pf__eyebrow', '#portfolio .section-heading', '.pf__sub', true, null],
+    ['contact', 'index', '#contact', '.ctc-eyebrow', '#contact .section-heading', '.contact-grid', true, '.contact-grid'],
     ['myapproach', 'myapproach', '.ap', '.ap-eyebrow', null, '.ap-grid', true],
   ];
   const pages = {}; const rows = [];
-  for (const [name, page, sec, eye, head, first] of SECS) {
+  for (const [name, page, sec, eye, head, first, , rightSel] of SECS) {
     let p = pages[page];
     if (!p) { p = pages[page] = await open(ctx, page, tag, errs); await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; }); await frames(p, 4); }
     await p.evaluate(s => {
@@ -459,7 +461,7 @@ async function titleSystem(vp) {
       const eb = document.querySelector(eye), ecs = eb && getComputedStyle(eb), h = head && document.querySelector(head);
       return done(eye) && (!head || done(head)) && (!eb || Math.abs(parseFloat(ecs.letterSpacing) - 0.2 * parseFloat(ecs.fontSize)) < 0.008) && (!h || !h.classList.contains('section-heading') || h.classList.contains('is-split'));
     }, [eye, head], 3500);
-    rows.push({ name, ...(await p.evaluate(([sec, eye, head, first]) => {
+    rows.push({ name, ...(await p.evaluate(([sec, eye, head, first, rightSel]) => {
       const R = e => e.getBoundingClientRect(); const s = document.querySelector(sec), e = document.querySelector(eye);
       const pinned = (s.id === 'about' && s.classList.contains('is-pinned')) || (s.id === 'steps' && getComputedStyle(s.querySelector('.steps-pin') || s).position === 'sticky');
       const cs = getComputedStyle(e);
@@ -467,23 +469,34 @@ async function titleSystem(vp) {
         headTypo: head ? (() => { const h = document.querySelector(head), hs = getComputedStyle(h), fit = parseFloat(getComputedStyle(s).getPropertyValue('--fit')) || 1, fs = parseFloat(hs.fontSize) * fit;
           return { sig: [hs.fontFamily, hs.fontWeight, hs.textTransform, (parseFloat(hs.letterSpacing) / parseFloat(hs.fontSize)).toFixed(3), (parseFloat(hs.lineHeight) / parseFloat(hs.fontSize)).toFixed(3)].join('|'), fs, lineH: h.querySelector('.sh-word') ? R(h.querySelector('.sh-word')).height : 0, dots: h.querySelectorAll('.sh-dot').length, split: h.classList.contains('is-split'), aria: !!h.getAttribute('aria-label'), right: Math.max(...[...h.querySelectorAll('.sh-word')].map(x => R(x).right)) }; })() : null,
         headLeft: head ? R(document.querySelector(head)).left : null, firstLeft: R(document.querySelector(first)).left, clientW: document.documentElement.clientWidth,
+        firstRight: rightSel ? document.documentElement.clientWidth - R(document.querySelector(rightSel)).right : null, tight: s.classList.contains('section--tight'),
         gutter: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--content-gutter')) || 0, hdr: innerWidth < 768 ? 76 : 92 };
-    }, [sec, eye, head, first])) });
+    }, [sec, eye, head, first, rightSel])) });
   }
   const r0 = rows[0];
+  // wide anchor (hero, Hogyan dolgozom): --section-top = hdr + clamp(24px, 4svh, 56px); corridor = gutter, or the centred clamp(1152px, 78vw, 1480px) column
   const expTop = r0.hdr + Math.min(56, Math.max(24, 0.04 * vp.h));
-  // content corridor left line: the gutter, or the centred 1152px column when the viewport is wider
   const gutterPx = vp.w >= 1024 ? 32 + 44 + 32 : 20;
-  const maxW = Math.min(1480, Math.max(1152, 0.78 * vp.w));          // --content-max: clamp(1152px, 78vw, 1480px)
+  const maxW = Math.min(1480, Math.max(1152, 0.78 * vp.w));
   const expLeft = gutterPx + Math.max(0, (r0.clientW - 2 * gutterPx - maxW) / 2);
+  // tight anchor (.section--tight): --section-top = hdr + clamp(8px, 1.6svh, 20px); gutter 96px (>= 1024px) / 20px, content spans gutter -> gutter
+  const expTopT = r0.hdr + Math.min(20, Math.max(8, 0.016 * vp.h));
+  const expLeftT = vp.w >= 1024 ? 96 : 20;
   rec(tag, 'eyebrow typography identical in all sections', new Set(rows.map(r => r.typo)).size === 1, [...new Set(rows.map(r => r.typo))].join(' || '));
   // Rólam is the one exception to the anchor system: its eyebrow lives inside the white text card (typography is still checked above)
-  // EXPERIMENT tighter anchor: Készségek is a temporary exception too (its anchor is overridden in the EXPERIMENT block of style.css)
-  const anchored = rows.filter(r => r.name !== 'about' && r.name !== 'skills');
-  const badTop = anchored.filter(r => Math.abs(r.top - expTop) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
-  rec(tag, `eyebrow top = section top + ${Math.round(expTop)}px in every section (except Rólam)`, badTop.length === 0, badTop.join(' '));
-  const badLeft = anchored.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
-  rec(tag, `eyebrow left = content corridor (${Math.round(expLeft)}px) (except Rólam)`, badLeft.length === 0, badLeft.join(' '));
+  const anchored = rows.filter(r => r.name !== 'about');
+  const wide = anchored.filter(r => !r.tight), tight = anchored.filter(r => r.tight);
+  rec(tag, 'the six tight sections are marked .section--tight (hero / Hogyan dolgozom are not)', tight.length === 6 && wide.length === 2 && tight.every(r => ['skills', 'why', 'steps', 'services', 'portfolio', 'contact'].includes(r.name)), tight.map(r => r.name).join(','));
+  const badTop = wide.filter(r => Math.abs(r.top - expTop) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
+  rec(tag, `wide anchor: eyebrow top = section top + ${Math.round(expTop)}px (hero, Hogyan dolgozom)`, badTop.length === 0, badTop.join(' '));
+  const badLeft = wide.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
+  rec(tag, `wide anchor: eyebrow left = ${Math.round(expLeft)}px`, badLeft.length === 0, badLeft.join(' '));
+  const badTopT = tight.filter(r => Math.abs(r.top - expTopT) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
+  rec(tag, `tight anchor: eyebrow top = section top + ${expTopT.toFixed(1)}px in all six sections`, badTopT.length === 0, badTopT.join(' '));
+  const badLeftT = tight.filter(r => Math.abs(r.left - expLeftT) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
+  rec(tag, `tight anchor: eyebrow left = ${expLeftT}px in all six sections`, badLeftT.length === 0, badLeftT.join(' '));
+  const badRightT = tight.filter(r => r.firstRight != null && Math.abs(r.firstRight - expLeftT) > 2).map(r => `${r.name}:${Math.round(r.firstRight)}`);
+  rec(tag, `tight anchor: content right edge = ${expLeftT}px from the window edge (symmetric) in the sections that have a full-width block`, badRightT.length === 0, badRightT.join(' ') || tight.filter(r => r.firstRight != null).map(r => `${r.name}:${Math.round(r.firstRight)}`).join(' '));
   const hr = rows.filter(r => r.headTypo && !['hero'].includes(r.name));
   rec(tag, 'section headings: same font / weight / uppercase / letter-spacing / line-height', new Set(hr.map(r => r.headTypo.sig)).size === 1, [...new Set(hr.map(r => r.headTypo.sig))].join(' || '));
   const fss = hr.map(r => r.headTypo.fs);
@@ -533,6 +546,7 @@ async function headingFx(vp, mouse) {
 }
 
 // ---------------------------------------------------------------- Értékek & Garanciák: pinned stage with scroll-driven cards (>= 1024px)
+const sameGeo = (a, b) => { const x = a.split(/[:,]/).map(Number), y = b.split(/[:,]/).map(Number); return x.length === y.length && x.every((v, i) => Math.abs(v - y[i]) <= 2); };   // card geometry, sub-pixel tolerant
 async function whyPin(vp) {
   const tag = `whyPin ${vp.w}x${vp.h}`;
   const errs = [];
@@ -612,7 +626,7 @@ async function whyPin(vp) {
   for (let i = 0; i < 6; i++) {
     const pt = await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; }, i);
     await p.mouse.move(pt[0] - 25, pt[1] + 5); await p.mouse.move(pt[0], pt[1], { steps: 4 }); await frames(p, 20);
-    if ((await active()) !== cur || (await geo()) !== geo0) hoverOk = false;
+    if ((await active()) !== cur || !sameGeo(await geo(), geo0)) hoverOk = false;
     if (/is-frame|is-link-small|is-text/.test(await p.evaluate(() => document.querySelector('.cursor-ring') ? document.querySelector('.cursor-ring').className : ''))) ringOk = false;
   }
   await p.mouse.move(vp.w / 2, 30, { steps: 4 }); await frames(p, 10);
@@ -636,7 +650,7 @@ async function whyPin(vp) {
   await p.evaluate(() => { VB.lenis.scrollTo(document.getElementById('steps').getBoundingClientRect().top + scrollY, { immediate: true }); });
   await frames(p, 10);
   const sx = await p.evaluate(() => { const s = document.getElementById('steps'), pin = s.querySelector('.steps-pin') || s, e = s.querySelector('.section-eyebrow').getBoundingClientRect(); return { top: e.top - (getComputedStyle(pin).position === 'sticky' ? 0 : s.getBoundingClientRect().top) }; });
-  const expTop = (vp.w < 768 ? 76 : 92) + Math.min(56, Math.max(24, 0.04 * vp.h));
+  const expTop = (vp.w < 768 ? 76 : 92) + Math.min(20, Math.max(8, 0.016 * vp.h));            // tight anchor
   rec(tag, 'next section (Együttműködés) starts at its normal anchor after the pin', Math.abs(sx.top - expTop) <= 2, `eyebrow ${sx.top.toFixed(1)} want ${expTop.toFixed(1)}`);
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
   await ctx.close();

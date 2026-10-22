@@ -25,6 +25,9 @@ One system, one place: every size on the site is a **fluid token** derived from 
 | `--section-top` | `--hdr-h + clamp(24px, 4svh, 56px)` (section top → eyebrow) | 109.8 | 122.7 | 128 | 118.8 | 126.5 | 135.2 |
 | `--section-bottom` | `clamp(48px, 9svh, 104px)` (last block → section / viewport bottom) | 76 | 69.1 | 81 | 60.3 | 77.8 | 97.2 |
 | `--sec-bottom` | `clamp(20px, 3svh, 28px)` (legacy, pinned Együttműködés bottom padding) | 25.3 | 23 | 27 | 20.1 | 25.9 | 28 |
+| `--section-top-tight` | `--hdr-h + clamp(8px, 1.6svh, 20px)` (tight anchor, see below) | 90 | 104.3 | 106.4 | 102.7 | 104.3 | 109.3 |
+| `--content-gutter-tight` | `20px`; ≥ 1024px: `96px` (= logo right edge 76px + 20px) | 20 | 96 | 96 | 96 | 96 | 96 |
+| `--content-max-tight` | `100vw − 2 × --content-gutter-tight` (content spans gutter → gutter, never re-centred) | 350 | 1174 | 1248 | 1326 | 1344 | 1728 |
 | `--eyebrow-size` | `clamp(11px, 8px + 0.28vw, 13px)` | 11 | 11.8 | 12 | 12.3 | 12.3 | 13 |
 | `--eyebrow-gap` | `clamp(12px, 1.6svh, 20px)` (generic eyebrow → next block) | 13.5 | 12.3 | 14.4 | 12 | 13.8 | 17.3 |
 | `--eyebrow-head-gap` | `10px` (eyebrow → heading of the unified sections) | 10 | 10 | 10 | 10 | 10 | 10 |
@@ -33,6 +36,17 @@ One system, one place: every size on the site is a **fluid token** derived from 
 | `--section-heading-lh` | `1.12`; ≥ 900px: `1.06` | 1.12 | 1.06 | 1.06 | 1.06 | 1.06 | 1.06 |
 | `--about-heading-size` | `clamp(30px, 8.2vw, 42px)` (Rólam, list layout) | 32 | 42 | 42 | 42 | 42 | 42 |
 | `--about-heading-size-pinned` | `clamp(30px, min(4.6vw, 6.6svh), 64px)` (Rólam, pinned story ≥ 900px) | 30 | 50.7 | 59.4 | 44.2 | 57 | 64 |
+
+### Two anchors
+
+- **Wide anchor (default):** `--section-top`, `--content-gutter`, `--content-max`. Used by the hero, Rólam (its eyebrow lives in the text card), the footer and the other pages.
+- **Tight anchor — class `.section--tight`** on `#skills`, `#why`, `#steps`, `#services`, `#portfolio`, `#contact`: the class re-points
+  `--section-top`, `--content-gutter` and `--content-max` to the `-tight` tokens, so everything inside those sections (eyebrow, heading, lead,
+  rows, cards, the pinned stages) starts at the left line (96px at ≥ 1024px, 20px below) and ends at the symmetric right line, and the eyebrow sits
+  `hdr + clamp(8px, 1.6svh, 20px)` below the section top. Inner layouts scale with the width (Készségek rows: columns 4.96% | 4.26% | 1fr | 33.7%;
+  Értékek cards: `cqw` of the row; Együttműködés: 4 equal columns).
+- Együttműködés stage: min-height = `100svh − --section-top − --section-bottom`, the closing CTA row sits at its bottom edge (bottom gap = `--section-bottom`);
+  `--fit` (scale) only kicks in if the content does not fit (0.96 at 1518×670, 0.99 at 1280×720, 1 elsewhere). The closing line is allowed 700px (one row on laptops).
 
 The 6 unified headings (`.section-heading`: Készségek, Értékek, Együttműködés, Szolgáltatások, Portfólió, Kapcsolat) all use
 `--section-heading-size`; in the scaled sections (`--fit`) it is laid out at `size / fit` so the **rendered** size is always the token.
