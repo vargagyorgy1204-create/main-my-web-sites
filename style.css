@@ -39,6 +39,18 @@
 @media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
 @media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
 
+/* EXPERIMENT: tighter Készségek anchor — delete this block to revert */
+section#skills {
+    --section-top: calc(var(--hdr-h) + clamp(8px, 1.6svh, 20px));            /* was hdr + clamp(24px, 4svh, 56px): ~128px at 1440 -> ~106px */
+    --content-max: calc(100vw - 2 * var(--content-gutter));                  /* no re-centering: the content spans gutter -> gutter */
+}
+@media (min-width: 1024px) {
+    section#skills { --content-gutter: 96px; }                               /* = logo right edge (32 + 44) + 20px air; symmetric on the right (burger starts at vw - 56) */
+    /* the row columns keep their proportions of the old 1152px corridor (56 | 48 | 1fr | 380 of a 1128px row) */
+    #skills .skill-row { grid-template-columns: 4.96% 4.26% minmax(0, 1fr) minmax(0, 33.7%); }
+}
+/* /EXPERIMENT */
+
 .icon { width: 20px; height: 20px; stroke-width: 1.75; }
 .icon--sm { width: 16px; height: 16px; }
 .icon--lg { width: 28px; height: 28px; }

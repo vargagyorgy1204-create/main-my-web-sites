@@ -322,13 +322,17 @@ async function layoutChecks(vp) {
     const y = await topOf(p, sel); await scrollTo(p, Math.max(0, (y || 0) - 100)); await frames(p, 10);
     edges[k] = await p.evaluate(s => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; }, sel);
   }
-  const lefts = Object.values(edges).filter(Boolean).map(e => e[0]);
+  // EXPERIMENT tighter anchor: Készségek has its own left line (checked separately below)
+  const lefts = Object.entries(edges).filter(([k, v]) => v && k !== 'skills').map(([, e]) => e[0]);
   const gutterMin = hdr.logo[2] + 32 - 1;   // logo right edge + 32px air
   const L = lefts[0];
   rec(tag, 'all sections share one left content line', lefts.every(x => Math.abs(x - L) <= 1) && L >= gutterMin, JSON.stringify(edges));
-  const rights = Object.entries(edges).filter(([k, v]) => v && k !== 'portfolioHead').map(([, v]) => v[1]);
+  const rights = Object.entries(edges).filter(([k, v]) => v && k !== 'portfolioHead' && k !== 'skills').map(([, v]) => v[1]);
   const R = Math.max(...rights);
   rec(tag, 'right content lines inside the corridor and clear of the burger', rights.every(x => x <= R + 1) && R <= hdr.burger[0] - 32 + 1, `max right ${R}, burger left ${Math.round(hdr.burger[0])}`);
+
+  // EXPERIMENT tighter anchor: Készségek content stays >= 20px right of the logo and >= 20px left of the burger
+  rec(tag, 'EXPERIMENT Készségek: content line >= 20px clear of the logo and the burger', !!edges.skills && edges.skills[0] >= hdr.logo[2] + 20 - 1 && edges.skills[1] <= hdr.burger[0] - 20 + 1, `left ${edges.skills && edges.skills[0]} (logo right ${Math.round(hdr.logo[2])}), right ${edges.skills && edges.skills[1]} (burger left ${Math.round(hdr.burger[0])})`);
 
   // 2) the logo / burger never intersect text or cards while scrolling the page (portfolio cards and footer excepted)
   const H = await p.evaluate(() => document.documentElement.scrollHeight);
@@ -474,7 +478,8 @@ async function titleSystem(vp) {
   const expLeft = gutterPx + Math.max(0, (r0.clientW - 2 * gutterPx - maxW) / 2);
   rec(tag, 'eyebrow typography identical in all sections', new Set(rows.map(r => r.typo)).size === 1, [...new Set(rows.map(r => r.typo))].join(' || '));
   // Rólam is the one exception to the anchor system: its eyebrow lives inside the white text card (typography is still checked above)
-  const anchored = rows.filter(r => r.name !== 'about');
+  // EXPERIMENT tighter anchor: Készségek is a temporary exception too (its anchor is overridden in the EXPERIMENT block of style.css)
+  const anchored = rows.filter(r => r.name !== 'about' && r.name !== 'skills');
   const badTop = anchored.filter(r => Math.abs(r.top - expTop) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
   rec(tag, `eyebrow top = section top + ${Math.round(expTop)}px in every section (except Rólam)`, badTop.length === 0, badTop.join(' '));
   const badLeft = anchored.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
