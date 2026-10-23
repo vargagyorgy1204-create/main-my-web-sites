@@ -4176,8 +4176,28 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .process__step.is-active .process__body { opacity: 1; transform: none; }
-.process__icon { display: block; margin-bottom: 16px; color: #c850c0; }
-.process__icon .icon { width: 24px; height: 24px; }
+/* the step icon lives inside the number circle as a big, cropped, decorative background (behind the number, clipped by the circle) */
+.process__node { overflow: hidden; }
+.process__node .process__bg {
+    position: absolute;
+    left: -30%; top: -30%;
+    width: 160%; height: 160%;
+    z-index: -1;
+    color: #fff;
+    opacity: 0;
+    transform: translate(34%, 40%) rotate(-12deg);
+    pointer-events: none;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.process__step.is-active .process__node { text-shadow: 0 1px 5px rgba(24, 12, 70, 0.5); }   /* keeps the number crisp over the icon strokes */
+.process__step.is-active .process__bg { opacity: 0.16; transform: translate(18%, 22%) rotate(-12deg); }
+.process__step:nth-of-type(2) .process__bg { transition-delay: 0.08s; }
+.process__step:nth-of-type(3) .process__bg { transition-delay: 0.16s; }
+.process__step:nth-of-type(4) .process__bg { transition-delay: 0.24s; }
+html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: translate(18%, 22%) rotate(0deg) scale(1.05); transition: opacity 0.4s ease, transform 0.4s ease; transition-delay: 0s; }
+@media (prefers-reduced-motion: reduce) {
+    .process__node .process__bg, html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: translate(18%, 22%) rotate(-12deg); transition: none; }
+}
 .process__title {
     margin: 0 0 12px;
     font-family: 'Syne', sans-serif;
@@ -4192,7 +4212,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 }
 /* four columns: smaller titles that may wrap to two lines; the reserved height keeps every paragraph on the same y */
 @media (min-width: 768px) {
-    .process__title { font-size: clamp(19px, 1.9vw, 25px); min-height: 2.2em; overflow-wrap: break-word; }
+    .process__title { font-size: clamp(19px, 1.9vw, 25px); overflow-wrap: break-word; }   /* one-word titles: no reserved second line */
     .process__text { max-width: none; }
 }
 /* tablet: 2 x 2 columns, one line per row (node 1-2 and node 3-4) */

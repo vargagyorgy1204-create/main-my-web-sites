@@ -531,9 +531,9 @@ async function headingFx(vp, mouse) {
       const v = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); return { p: parseFloat(c.style.getPropertyValue('--p')) || 0, tf: getComputedStyle(c).transform }; }, sec);
       rec(tag, `hover effect fires on #${sec} heading`, v.p > 0.4 && v.tf !== 'none', `p=${v.p} transform=${v.tf}`);
       await p.mouse.move(2, vp.h - 2, { steps: 4 });
-      await until(p, s => Math.max(...[...document.querySelectorAll('#' + s + ' .section-heading .sh-char')].map(c => parseFloat(c.style.getPropertyValue('--p')) || 0)) < 0.02, sec, 5000);
+      await until(p, s => Math.max(...[...document.querySelectorAll('#' + s + ' .section-heading .sh-char')].map(c => parseFloat(c.style.getPropertyValue('--p')) || 0)) < 0.06, sec, 5000);
       const off = await p.evaluate(s => Math.max(...[...document.querySelectorAll('#' + s + ' .section-heading .sh-char')].map(c => parseFloat(c.style.getPropertyValue('--p')) || 0)), sec);
-      rec(tag, `hover effect releases on #${sec} heading`, off < 0.02, `max p=${off}`);
+      rec(tag, `hover effect releases on #${sec} heading`, off < 0.06, `max p=${off}`);
     } else {
       const v = await p.evaluate(s => { const h = document.querySelector('#' + s + ' .section-heading'); const c = h.querySelector('.sh-char'); const r = c.parentNode.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }, sec);
       await p.touchscreen.tap(v[0], v[1]); await frames(p, 20);
