@@ -150,6 +150,11 @@ async function indexChecks(vp) {
   const ov = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   rec(tag, 'no horizontal overflow', ov <= 0, `overflow ${ov}px`);
 
+  if (!mobile && vp.w >= 1024) {
+    // Szolgáltatások: the three descriptions take 3 lines and the buttons sit at the same distance from the giant title in all blocks
+    const sv = await p.evaluate(() => [...document.querySelectorAll('.svt-row')].map(r => { const w = r.querySelector('.svt-word').getBoundingClientRect(), t = r.querySelector('.svt-tagline'), a = r.querySelector('.svt-actions').getBoundingClientRect(); return { off: a.top - w.bottom, lines: Math.round(t.getBoundingClientRect().height / parseFloat(getComputedStyle(t).lineHeight)) }; }));
+    rec(tag, 'Szolgáltatások: buttons at the same distance from the title in all three blocks (±2px), descriptions 3 lines', sv.length === 3 && Math.max(...sv.map(x => x.off)) - Math.min(...sv.map(x => x.off)) <= 2 && sv.every(x => x.lines === 3), sv.map(x => `${Math.round(x.off)}px/${x.lines}l`).join(' '));
+  }
   if (!mobile) {
     // Készségek hover (real mouse): row name moves, others dim, floating preview shows
     await scrollTo(p, (await topOf(p, '#skills')) + 40); await frames(p, 4); await scrollTo(p, (await topOf(p, '.skill-row:nth-child(3)')) - vp.h * 0.4); await frames(p, 8);   // the 3rd row sits mid-screen, whatever the heading height
