@@ -29,6 +29,11 @@
     --eyebrow-gap: clamp(12px, 1.6svh, 20px);                              /* generic eyebrow -> next block */
     --eyebrow-head-gap: 10px;                                              /* eyebrow -> heading of the unified sections */
     --head-gap: clamp(28px, 4svh, 56px);                                   /* heading -> first content block */
+    /* Együttműködés: vertical rhythm of a step and of the closing row */
+    --step-circle-title: clamp(20px, 2.6svh, 32px);                        /* number circle -> step title */
+    --step-title-desc: clamp(10px, 1.4svh, 16px);                          /* step title -> description */
+    --step-desc-divider: clamp(32px, 5svh, 56px);                          /* description -> divider above the CTA row */
+    --divider-cta: clamp(24px, 3.4svh, 40px);                              /* divider -> CTA row */
     /* tight anchor (.section--tight): closer to the top-left; the gutter is the logo's right edge (32 + 44) + 20px, symmetric on the right */
     --section-top-tight: calc(var(--hdr-h) + clamp(8px, 1.6svh, 20px));
     --content-gutter-tight: 20px;
@@ -4282,7 +4287,7 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
     .process__step { display: grid; grid-template-columns: 56px 1fr; column-gap: 20px; align-items: start; }
     .process__body { margin-top: 4px; }
     .process-cta { margin-top: 56px; padding-top: 32px; }
-    .process-cta p { font-size: 16px; }
+    .process-cta { flex-direction: column; align-items: flex-start; }                    /* phones: the button goes under the text, left-aligned */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4308,16 +4313,6 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
         transform-origin: left center;
     }
     .steps-head { margin-bottom: 44px; }
-    .process__body { margin-top: 22px; }
-    .process-cta {
-        margin-top: 44px;
-        padding-top: 28px;
-        opacity: 0;
-        transform: translateY(16px);
-        pointer-events: none;
-        transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    #steps.steps-done .process-cta { opacity: 1; transform: none; pointer-events: auto; }
 }
 
 /* Why – fit the section to the viewport height (same proportions as the pinned Steps section) */
@@ -6185,8 +6180,6 @@ footer { padding-bottom: var(--cb-h, 0px); }
 #steps .section-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
 /* pinned timeline: with the larger heading, the gaps give way first so the scaled block (--fit) stays as close to 1 as possible */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-    #steps .process-cta { margin-top: clamp(18px, 3svh, 44px); padding-top: clamp(16px, 2.4svh, 28px); }
-    #steps .process__body { margin-top: clamp(14px, 2.4svh, 22px); }
 }
 
 /* ===== Szolgáltatások: eyebrow + title identical to Készségek / Rólam ===== */
@@ -6242,9 +6235,6 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
        --section-bottom, and the closing CTA row sits at its bottom edge, so the bottom gap is exactly --section-bottom.
        flex: 0 0 auto: the stage is a flex item and must not shrink back when it is widened by 1/fit (that left the right edge short of the corridor) */
     .steps-pin .steps-inner { flex: 0 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - var(--section-top) - var(--section-bottom)); min-height: calc(100svh - var(--section-top) - var(--section-bottom)); }
-    #steps .process { margin-bottom: clamp(18px, 3svh, 44px); }
-    #steps .process-cta { margin-top: auto; }
-    #steps .process-cta p { max-width: 700px; }     /* the closing line fits one row on laptops (was 520px = two rows): saves ~30px so the stage fits without scaling */
 }
 
 /* Hogyan dolgozom: the eyebrow sits at section level on the anchor; the back link shares its row */
@@ -6364,4 +6354,47 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     .why-panel.is-active .why-panel__tab { transform: translateX(calc((var(--wo) - var(--wc)) / 2)); }
     .why-panel__body { right: auto; width: var(--wo); }
     .why-panel__content { width: min(460px, calc(var(--wo) - 72px)); }
+}
+
+/* ===== EGYÜTTMŰKÖDÉS: step rhythm, two-line CTA, sequential entrance ===== */
+.process__node { transform-origin: 0 50%; }             /* the active circle grows from its left edge: the title stays flush with it */
+.process-cta .process-cta__text {
+    margin: 0;
+    max-width: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(20px, 1.15rem + 0.55vw, 28px);
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.72);
+}
+.process-cta .cta-l1 { display: block; color: #fff; font-weight: 600; }
+.process-cta .cta-l2 { display: block; font-weight: 400; }
+@media (min-width: 768px) {
+    .process__body { margin-top: var(--step-circle-title); }
+    .process__title { margin-bottom: var(--step-title-desc); }
+    .process__text { max-width: 32ch; }
+    .process { margin-bottom: var(--step-desc-divider); }
+    .process-cta { margin-top: 0; padding-top: var(--divider-cta); }
+}
+/* pinned stage: the steps + closing row are one block centred in the height under the heading: the height that is left over is shared
+   equally above and below it (nothing between the steps and the divider). Short windows have no leftover: the bottom gap is then exactly --section-bottom */
+@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+    #steps .process { margin-top: auto; }
+    #steps .process-cta { margin-bottom: auto; }
+}
+/* pinned stage: the closing row builds in order, text (line 1, line 2) first, then the button; it leaves in the reverse order */
+@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+    .process-cta { border-top-color: transparent; pointer-events: none; transition: border-color 0.6s ease 0.16s; }
+    .process-cta .cta-l1, .process-cta .cta-l2, .process-cta .process-cta__btn {
+        opacity: 0;
+        translate: 0 16px;
+        transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), translate 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .process-cta .process-cta__btn { transition-delay: 0s; }
+    .process-cta .cta-l2 { transition-delay: 0.08s; }
+    .process-cta .cta-l1 { transition-delay: 0.16s; }
+    #steps.steps-done .process-cta { border-top-color: rgba(255, 255, 255, 0.1); pointer-events: auto; transition-delay: 0s; }
+    #steps.steps-done .process-cta .cta-l1, #steps.steps-done .process-cta .cta-l2, #steps.steps-done .process-cta .process-cta__btn { opacity: 1; translate: 0 0; }
+    #steps.steps-done .process-cta .cta-l1 { transition-delay: 0s; }
+    #steps.steps-done .process-cta .cta-l2 { transition-delay: 0.08s; }
+    #steps.steps-done .process-cta .process-cta__btn { transition-delay: 0.33s; }
 }
