@@ -4296,12 +4296,14 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
 
 /* Steps – pinned (sticky) mode: section stays on screen while the line draws step by step */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-    #steps { height: 320vh; height: 320svh; padding: 0; }
+    /* section = the stage (its content + --section-top above + --section-bottom below, never more than one viewport) + 220svh of pin run; --stage-h is set by script.js */
+    #steps { height: calc(100vh + 220vh); height: calc(100svh + 220svh); height: calc(var(--stage-h, 100svh) + 220svh); padding: 0; }
     .steps-pin {
         position: sticky;
         top: 0;
-        height: 100vh;
-        height: 100svh;
+        height: auto;
+        max-height: 100vh;
+        max-height: 100svh;
         display: flex;
         align-items: center;
         padding: var(--section-top) 24px var(--section-bottom);
@@ -6234,7 +6236,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     /* layout fit (no scale while the content fits): the stage content is at least as tall as the space between --section-top and
        --section-bottom, and the closing CTA row sits at its bottom edge, so the bottom gap is exactly --section-bottom.
        flex: 0 0 auto: the stage is a flex item and must not shrink back when it is widened by 1/fit (that left the right edge short of the corridor) */
-    .steps-pin .steps-inner { flex: 0 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - var(--section-top) - var(--section-bottom)); min-height: calc(100svh - var(--section-top) - var(--section-bottom)); }
+    .steps-pin .steps-inner { flex: 0 0 auto; display: flex; flex-direction: column; }
 }
 
 /* Hogyan dolgozom: the eyebrow sits at section level on the anchor; the back link shares its row */
@@ -6362,10 +6364,11 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     margin: 0;
     max-width: none;
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(20px, 1.15rem + 0.55vw, 28px);
+    font-size: 18px;                      /* the original size of the closing line (16px on phones) */
     line-height: 1.35;
     color: rgba(255, 255, 255, 0.72);
 }
+@media (max-width: 767px) { .process-cta .process-cta__text { font-size: 16px; } }
 .process-cta .cta-l1 { display: block; color: #fff; font-weight: 600; }
 .process-cta .cta-l2 { display: block; font-weight: 400; }
 @media (min-width: 768px) {
@@ -6374,12 +6377,6 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     .process__text { max-width: 32ch; }
     .process { margin-bottom: var(--step-desc-divider); }
     .process-cta { margin-top: 0; padding-top: var(--divider-cta); }
-}
-/* pinned stage: the steps + closing row are one block centred in the height under the heading: the height that is left over is shared
-   equally above and below it (nothing between the steps and the divider). Short windows have no leftover: the bottom gap is then exactly --section-bottom */
-@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-    #steps .process { margin-top: auto; }
-    #steps .process-cta { margin-bottom: auto; }
 }
 /* pinned stage: the closing row builds in order, text (line 1, line 2) first, then the button; it leaves in the reverse order */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {

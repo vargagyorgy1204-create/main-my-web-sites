@@ -697,6 +697,8 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         var fixedH = hd ? hd.offsetHeight : 0;
         var s = natural > fixedH ? Math.max(0.55, Math.min(1, (avail - fixedH) / (natural - fixedH))) : 1;
         section.style.setProperty('--fit', s.toFixed(3));
+        /* the stage is its content (+ paddings) tall, at most one viewport: the section is that + the pin run (CSS) */
+        section.style.setProperty('--stage-h', Math.round(s < 1 ? window.innerHeight : Math.min(pin.offsetHeight, window.innerHeight)) + 'px');
     }
 
     function update() {
@@ -705,7 +707,8 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
         var r = section.getBoundingClientRect();
         var vh = window.innerHeight;
         if (pinQuery.matches) {
-            var total = Math.max(1, r.height - vh);
+            var pinEl = section.querySelector('.steps-pin');
+            var total = Math.max(1, r.height - (pinEl ? pinEl.offsetHeight : vh));
             var t = Math.max(0, Math.min(1, -r.top / total));
             setProgress(staged(t));
             section.classList.toggle('steps-done', t >= 0.94);
