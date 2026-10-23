@@ -53,11 +53,19 @@
         scrollTrigger: { trigger: row, start: 'top 75%', end: 'top 30%', scrub: 0.6 }
       });
 
-    entrance(row, q(row, '.svt-label, .svt-tagline, .svt-actions, .svt-list li'), 'top 70%');
+    entrance(row, q(row, '.svt-tagline, .svt-actions, .svt-list li'), 'top 70%');
   });
 
-  var close = section.querySelector('.svt-close');
-  if (close) entrance(close, q(close, '.svt-close__title, .svt-close__text, .svt-btn'), 'top 80%');
+  /* closing row (the shared .cta-row): divider, line 1, line 2, button in order; reversed when scrolling back up */
+  var cta = section.querySelector('.cta-row');
+  if (cta) {
+    cta.classList.add('cta-row--armed');
+    window.ScrollTrigger.create({
+      trigger: cta, start: 'top 90%',
+      onEnter: function () { cta.classList.add('is-in'); },
+      onLeaveBack: function () { cta.classList.remove('is-in'); }
+    });
+  }
 
   /* Background: graphite -> deep violet -> deep teal, one step per row. */
   var BG = { graphite: 'rgb(15, 22, 41)', violet: 'rgb(42, 15, 51)', teal: 'rgb(11, 58, 68)' };

@@ -45,7 +45,7 @@
         }
         </script>
 
-    <link rel="stylesheet" href="style.css?v=cta4">
+    <link rel="stylesheet" href="style.css?v=svc2">
 
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
@@ -455,9 +455,9 @@
                 </div>
             </li>
         </ol>
-        <div class="process-cta">
-            <p class="process-cta__text"><span class="cta-l1">Készen áll az együttműködésre?</span> <span class="cta-l2">Írjon most, és 24 órán belül válaszolok.</span></p>
-            <div class="process-cta__btn">
+        <div class="cta-row" id="steps-cta">
+            <p class="cta-row__text"><span class="cta-l1">Készen áll az együttműködésre?</span> <span class="cta-l2">Írjon most, és 24 órán belül válaszolok.</span></p>
+            <div class="cta-row__btn">
             <a class="hbtn hbtn--primary" href="#contact">
                 <span class="hbtn__glow" aria-hidden="true"></span>
                 <span class="hbtn__fill" aria-hidden="true"></span>
@@ -473,20 +473,18 @@
 
 <!-- "Bizonyított eredmények" removed on purpose: no real client reviews yet. Redesign later with real testimonials. -->
 
-<section id="services" class="svt section--tight" data-theme="dark" aria-labelledby="svt-title">
+<section id="services" class="svt section--tight" data-theme="dark" aria-label="Szolgáltatások">
     <div class="svt__inner">
         <header class="svt-intro">
             <p class="svt-eyebrow section-eyebrow">Szolgáltatások</p>
-            <h2 class="section-heading" id="svt-title">Három terület, egy kézből.</h2>
-            <p class="svt-sub">Weboldal, arculat és a háttérmunka, ami működteti.</p>
+            <p class="svt-sub">Három terület, egy kézből: weboldal, arculat és a háttérmunka, ami működteti.</p>
         </header>
 
         <article class="svt-row" data-row="1">
-            <p class="svt-label">Webfejlesztés</p>
             <h3 class="svt-word">WEBOLDAL<span class="svt-word__fill" aria-hidden="true">WEBOLDAL</span></h3>
             <div class="svt-details">
                 <div class="svt-copy">
-                    <p class="svt-tagline">Weboldal, amely gyors, mobilbarát, és könnyen megtalálható.</p>
+                    <p class="svt-tagline">Gyors, mobilbarát weboldal, amelyet a Google is könnyen megtalál – az egyoldalas bemutatkozótól az interaktív, animált oldalig.</p>
                     <div class="svt-actions">
                         <button type="button" class="svt-btn service-modal-trigger" data-modal-target="devModal">Részletek</button>
                         <a class="svt-btn" href="#contact">Ajánlatot kérek</a>
@@ -501,11 +499,10 @@
         </article>
 
         <article class="svt-row" data-row="2">
-            <p class="svt-label">Design &amp; Arculat</p>
             <h3 class="svt-word">DIZÁJN<span class="svt-word__fill" aria-hidden="true">DIZÁJN</span></h3>
             <div class="svt-details">
                 <div class="svt-copy">
-                    <p class="svt-tagline">Arculat, amelyről első ránézésre felismerik Önt.</p>
+                    <p class="svt-tagline">Egységes vizuális arculat – színek, betűtípusok, képi világ –, amelyről első ránézésre felismerik Önt. Meglévő weboldalak modernizálását is vállalom.</p>
                     <div class="svt-actions">
                         <button type="button" class="svt-btn service-modal-trigger" data-modal-target="designModal">Részletek</button>
                         <a class="svt-btn" href="#contact">Ajánlatot kérek</a>
@@ -520,11 +517,10 @@
         </article>
 
         <article class="svt-row" data-row="3">
-            <p class="svt-label">Extra szolgáltatások</p>
             <h3 class="svt-word">EXTRÁK<span class="svt-word__fill" aria-hidden="true">EXTRÁK</span></h3>
             <div class="svt-details">
                 <div class="svt-copy">
-                    <p class="svt-tagline">A háttérmunka, amitől a vállalkozása gördülékenyen működik.</p>
+                    <p class="svt-tagline">Online foglalás, automatizálás, SEO és üzemeltetés: a háttérmunka, amitől a vállalkozása gördülékenyen működik.</p>
                     <div class="svt-actions">
                         <button type="button" class="svt-btn service-modal-trigger" data-modal-target="extraModal">Részletek</button>
                         <a class="svt-btn" href="#contact">Ajánlatot kérek</a>
@@ -538,10 +534,17 @@
             </div>
         </article>
 
-        <div class="svt-close">
-            <h3 class="svt-close__title">Kezdjük el együtt.</h3>
-            <p class="svt-close__text">Meséljen a vállalkozásáról, és 24 órán belül válaszolok.</p>
-            <a class="svt-btn svt-btn--fill" href="#contact">Ajánlatot kérek</a>
+        <div class="cta-row" id="services-cta">
+            <p class="cta-row__text"><span class="cta-l1">Kezdjük el együtt.</span> <span class="cta-l2">Meséljen a vállalkozásáról, és 24 órán belül válaszolok.</span></p>
+            <div class="cta-row__btn">
+            <a class="hbtn hbtn--primary" href="#contact">
+                <span class="hbtn__glow" aria-hidden="true"></span>
+                <span class="hbtn__fill" aria-hidden="true"></span>
+                <span class="hbtn__rip" aria-hidden="true"></span>
+                <span class="hbtn__text"><span class="hbtn__roll" data-text="AJÁNLATOT KÉREK">AJÁNLATOT KÉREK</span></span>
+                <span class="hbtn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>
+            </a>
+            </div>
         </div>
     </div>
 </section>
@@ -1038,12 +1041,12 @@
 <script src="js/lenis-setup.js?v=1" defer></script>
 <script src="js/why-pin.js?v=2" defer></script>
 <script src="js/heading-fx.js?v=1" defer></script>
-<script src="js/services.js?v=1" defer></script>
+<script src="js/services.js?v=2" defer></script>
 <script src="js/contact-footer.js?v=7" defer></script>
 <script src="js/about-story.js?v=12" defer></script>
 <script src="js/portfolio-data.js?v=1" defer></script>
 <script src="js/portfolio.js?v=6" defer></script>
-<script src="script.js?v=44"></script>
+<script src="script.js?v=45"></script>
 <script src="animations.js?v=12"></script>
 <script src="nav.js?v=6" defer></script>
 <script src="cursor.js?v=14" defer></script>

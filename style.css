@@ -4251,25 +4251,6 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
     color: rgba(255, 255, 255, 0.65);
 }
 
-.process-cta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-top: 80px;
-    padding-top: 40px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-.process-cta p {
-    margin: 0;
-    max-width: 520px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 18px;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.8);
-}
-
 @media (max-width: 767px) {
     #steps { padding: 88px 20px; }
     .steps-head { margin-bottom: 44px; }
@@ -4286,8 +4267,6 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
     .process__fill { transform: scaleY(var(--progress, 0)); transform-origin: top center; }
     .process__step { display: grid; grid-template-columns: 56px 1fr; column-gap: 20px; align-items: start; }
     .process__body { margin-top: 4px; }
-    .process-cta { margin-top: 56px; padding-top: 32px; }
-    .process-cta { flex-direction: column; align-items: flex-start; }                    /* phones: the button goes under the text, left-aligned */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5200,7 +5179,7 @@ html.lenis, html.lenis body { height: auto; }
 /* ---------- intro ---------- */
 .svt-intro { margin-block-end: clamp(32px, 6svh, 64px); }
 .svt-sub {
-  max-width: 720px;
+  max-width: 70ch;
   margin: 0;
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(15px, 1.25vw, 18px);
@@ -5218,16 +5197,6 @@ html.lenis, html.lenis body { height: auto; }
   border-block-start: 1px solid var(--svt-line);
 }
 
-.svt-label {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  line-height: 1.6;
-  color: rgb(255 255 255 / 0.6);
-}
 
 /* The word: one real text node (outline). The aria-hidden duplicate sits on
    top, filled with the gradient and revealed left to right by JS. The size is
@@ -5237,7 +5206,7 @@ html.lenis, html.lenis body { height: auto; }
   display: block;
   inline-size: fit-content;
   max-inline-size: 100%;
-  margin: clamp(8px, 1.5svh, 16px) 0 clamp(20px, 4svh, 40px);
+  margin: 0 0 clamp(20px, 4svh, 40px);
   font-family: 'Syne', sans-serif;
   font-weight: 800;
   font-size: min(calc((100vw - 32px) / 9.75), 125px);
@@ -5276,7 +5245,7 @@ html.lenis, html.lenis body { height: auto; }
 
 .svt-tagline {
   margin: 0 0 28px;
-  max-inline-size: 34ch;
+  max-inline-size: 48ch;
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.05rem, 1.6vw, 1.35rem);
   line-height: 1.5;
@@ -5347,38 +5316,6 @@ html.lenis, html.lenis body { height: auto; }
 .svt-btn:hover::before,
 .svt-btn:focus-visible::before { opacity: 1; }
 .svt-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
-/* the one emphasised variant: filled gradient */
-.svt-btn--fill { color: #fff; border-color: transparent; background: var(--card-primary); }
-.svt-btn--fill::before { display: none; }
-.svt-btn--fill:hover,
-.svt-btn--fill:focus-visible { box-shadow: 0 10px 28px rgb(200 80 192 / 0.4); }
-
-/* ---------- closing block ---------- */
-.svt-close {
-  padding-block: clamp(72px, 14svh, 160px) 0;
-  border-block-start: 1px solid var(--svt-line);
-}
-.svt-close__title {
-  margin: 0 0 20px;
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: clamp(36px, 8vw, 120px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: #fff;
-  -webkit-text-fill-color: #fff;
-  background: none;
-  text-align: left;
-}
-.svt-close__text {
-  margin: 0 0 32px;
-  max-inline-size: 36ch;
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  line-height: 1.6;
-  color: rgb(255 255 255 / 0.72);
-}
-
 /* ---------- narrow and short windows ---------- */
 @media (max-width: 1023px) {
   .svt-row { min-block-size: auto; padding-block: 72px; }
@@ -5386,33 +5323,36 @@ html.lenis, html.lenis body { height: auto; }
 @media (max-height: 559px) {
   #services.svt { padding-block: 56px; }
   .svt-row { min-block-size: auto; padding-block: 32px; }
-  .svt-word { margin-block: 8px 16px; }
+  .svt-word { margin-block: 0 16px; }
   .svt-details { gap: 20px; }
   .svt-tagline { margin-block-end: 16px; }
   .svt-list li { padding-block: 9px; }
-  .svt-close { padding-block-start: 56px; }
 }
 
 /* ---------- height-aware proportions (desktop >= 768px) ----------
    Reference look at >= 1080px tall; scales down smoothly in shorter windows.
    Top padding = header (92px) + a height-aware gap, so the eyebrow always clears the header. */
 @media (min-width: 768px) {
-  #services.svt { padding-block: calc(92px + clamp(24px, 4svh, 56px)) clamp(64px, 10svh, 120px); }
+  #services.svt { padding-block: calc(92px + clamp(24px, 4svh, 56px)) var(--section-bottom); }
   .svt-intro { margin-block-end: clamp(24px, 5svh, 64px); }
   .svt-sub { font-size: clamp(14px, min(1.25vw, 1.9svh), 18px); }
   .svt-row { padding-block: clamp(28px, 7svh, 96px); }
   .svt-word {
     font-size: min(calc((100vw - 64px) / 9.75), 125px, 11.6svh);
-    margin: clamp(6px, 1.3svh, 16px) 0 clamp(14px, 3.4svh, 40px);
+    margin: 0 0 clamp(14px, 3.4svh, 40px);
   }
   .svt-details { gap: clamp(18px, 3svh, 32px); }
   .svt-tagline { font-size: clamp(1.05rem, min(1.6vw, 2.7svh), 1.35rem); margin-block-end: clamp(16px, 2.6svh, 28px); }
   .svt-list li { padding-block: clamp(8px, 1.4svh, 14px); }
   .svt-list__t { font-size: clamp(0.95rem, min(1.3vw, 2.2svh), 1.2rem); }
   .svt-btn { padding: clamp(10px, 1.6svh, 15px) clamp(24px, 3.4svh, 34px); font-size: clamp(13px, 1.45svh, 15px); }
-  .svt-close { padding-block-start: clamp(48px, 12svh, 160px); }
-  .svt-close__title { font-size: clamp(32px, min(8vw, 11svh), 120px); }
 }
+/* the labels above the giant titles are gone: the bottom padding grows by their height so each block keeps its place (the title sits where the label was) */
+.svt-row { padding-block-end: calc(clamp(40px, 8svh, 96px) + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); }
+@media (min-width: 768px) { .svt-row { padding-block-end: calc(clamp(28px, 7svh, 96px) + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); } }
+@media (max-width: 1023px) { .svt-row { padding-block-end: calc(72px + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); } }
+@media (max-height: 559px) { .svt-row { padding-block-end: 32px; } }
+#services.svt { padding-block-end: var(--section-bottom); }
 /* ===== /SERVICES ===== */
 
 /* ===== CONTACT FORM — labels, select, consent, honeypot, status ===== */
@@ -6185,7 +6125,7 @@ footer { padding-bottom: var(--cb-h, 0px); }
 }
 
 /* ===== Szolgáltatások: eyebrow + title identical to Készségek / Rólam ===== */
-.svt-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
+.svt-eyebrow { margin-bottom: var(--eyebrow-gap); }          /* no heading in this section: eyebrow -> lead */
 
 /* ===== Portfólió: eyebrow + title identical in size / spacing to Készségek / Rólam ===== */
 .pf__eyebrow { margin-bottom: var(--eyebrow-head-gap); }
@@ -6275,7 +6215,6 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 }
 #skills .section-heading, #steps .section-heading, #services .section-heading, #contact .section-heading { --sh-color: #fff; }
 #portfolio .section-heading { --sh-color: var(--card-secondary); }
-.svt-intro .section-heading { margin-bottom: 16px; }
 /* the pinned blocks are scaled by --fit: the heading is laid out at size / fit so it renders at exactly the common size */
 @media (min-width: 768px) and (min-height: 520px) {
     #why .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
@@ -6358,9 +6297,30 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     .why-panel__content { width: min(460px, calc(var(--wo) - 72px)); }
 }
 
-/* ===== EGYÜTTMŰKÖDÉS: step rhythm, two-line CTA, sequential entrance ===== */
+/* ===== EGYÜTTMŰKÖDÉS: step rhythm ===== */
 .process__node { transform-origin: 0 50%; }             /* the active circle grows from its left edge: the title stays flush with it */
-.process-cta .process-cta__text {
+@media (min-width: 768px) {
+    .process__body { margin-top: var(--step-circle-title); }
+    .process__title { margin-bottom: var(--step-title-desc); }
+    .process__text { max-width: 32ch; }
+    .process { margin-bottom: var(--step-desc-divider); }
+}
+
+/* ===== .cta-row — the closing row shared by Együttműködés and Szolgáltatások =====
+   thin divider on top; two-line text on the left (line 1 white 600, line 2 white 72% 400), the dark pill button on the right, centred to the
+   two lines; phones: the button goes under the text, left-aligned. Entrance (when script adds .cta-row--armed): divider, line 1, line 2,
+   button; .is-in plays it, removing .is-in plays it backwards (button first). Only opacity + translate: no layout shift. */
+.cta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 0;
+    padding-top: var(--divider-cta);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.cta-row .cta-row__text {
     margin: 0;
     max-width: none;
     font-family: 'Montserrat', sans-serif;
@@ -6368,30 +6328,23 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     line-height: 1.35;
     color: rgba(255, 255, 255, 0.72);
 }
-@media (max-width: 767px) { .process-cta .process-cta__text { font-size: 16px; } }
-.process-cta .cta-l1 { display: block; color: #fff; font-weight: 600; }
-.process-cta .cta-l2 { display: block; font-weight: 400; }
-@media (min-width: 768px) {
-    .process__body { margin-top: var(--step-circle-title); }
-    .process__title { margin-bottom: var(--step-title-desc); }
-    .process__text { max-width: 32ch; }
-    .process { margin-bottom: var(--step-desc-divider); }
-    .process-cta { margin-top: 0; padding-top: var(--divider-cta); }
+.cta-row .cta-l1 { display: block; color: #fff; font-weight: 600; }
+.cta-row .cta-l2 { display: block; font-weight: 400; }
+@media (max-width: 767px) {
+    .cta-row { flex-direction: column; align-items: flex-start; margin-top: 56px; padding-top: 32px; }
+    .cta-row .cta-row__text { font-size: 16px; }
 }
-/* pinned stage: the closing row builds in order, text (line 1, line 2) first, then the button; it leaves in the reverse order */
-@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-    .process-cta { border-top-color: transparent; pointer-events: none; transition: border-color 0.6s ease 0.16s; }
-    .process-cta .cta-l1, .process-cta .cta-l2, .process-cta .process-cta__btn {
-        opacity: 0;
-        translate: 0 16px;
+@media (prefers-reduced-motion: no-preference) {
+    .cta-row--armed:not(.is-in) { border-top-color: transparent; pointer-events: none; transition: border-color 0.6s ease 0.16s; }
+    .cta-row--armed .cta-l1, .cta-row--armed .cta-l2, .cta-row--armed .cta-row__btn {
         transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), translate 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .process-cta .process-cta__btn { transition-delay: 0s; }
-    .process-cta .cta-l2 { transition-delay: 0.08s; }
-    .process-cta .cta-l1 { transition-delay: 0.16s; }
-    #steps.steps-done .process-cta { border-top-color: rgba(255, 255, 255, 0.1); pointer-events: auto; transition-delay: 0s; }
-    #steps.steps-done .process-cta .cta-l1, #steps.steps-done .process-cta .cta-l2, #steps.steps-done .process-cta .process-cta__btn { opacity: 1; translate: 0 0; }
-    #steps.steps-done .process-cta .cta-l1 { transition-delay: 0s; }
-    #steps.steps-done .process-cta .cta-l2 { transition-delay: 0.08s; }
-    #steps.steps-done .process-cta .process-cta__btn { transition-delay: 0.33s; }
+    .cta-row--armed:not(.is-in) .cta-l1, .cta-row--armed:not(.is-in) .cta-l2, .cta-row--armed:not(.is-in) .cta-row__btn { opacity: 0; translate: 0 16px; }
+    .cta-row--armed:not(.is-in) .cta-row__btn { transition-delay: 0s; }
+    .cta-row--armed:not(.is-in) .cta-l2 { transition-delay: 0.08s; }
+    .cta-row--armed:not(.is-in) .cta-l1 { transition-delay: 0.16s; }
+    .cta-row--armed.is-in { transition-delay: 0s; }
+    .cta-row--armed.is-in .cta-l1 { transition-delay: 0s; }
+    .cta-row--armed.is-in .cta-l2 { transition-delay: 0.08s; }
+    .cta-row--armed.is-in .cta-row__btn { transition-delay: 0.33s; }
 }

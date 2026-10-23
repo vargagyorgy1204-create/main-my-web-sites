@@ -654,6 +654,10 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var pinQuery = window.matchMedia('(min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)');
     var ticking = false;
+    /* the closing row (.cta-row, shared with Szolgáltatások) plays its sequential entrance only in the pinned layout */
+    var ctaRow = section.querySelector('.cta-row');
+    function armCta() { if (ctaRow) ctaRow.classList.toggle('cta-row--armed', pinQuery.matches); }
+    armCta(); window.addEventListener('resize', armCta);
 
     function setProgress(p) {
         process.style.setProperty('--progress', p.toFixed(3));
@@ -703,7 +707,7 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 
     function update() {
         ticking = false;
-        if (reduce) { setProgress(1); section.classList.add('steps-done'); return; }
+        if (reduce) { setProgress(1); section.classList.add('steps-done'); if (ctaRow) ctaRow.classList.add('is-in'); return; }
         var r = section.getBoundingClientRect();
         var vh = window.innerHeight;
         if (pinQuery.matches) {
@@ -712,12 +716,14 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
             var t = Math.max(0, Math.min(1, -r.top / total));
             setProgress(staged(t));
             section.classList.toggle('steps-done', t >= 0.94);
+            if (ctaRow) ctaRow.classList.toggle('is-in', t >= 0.94);
         } else {
             var pr = process.getBoundingClientRect();
             var start = vh * 0.85;
             var span = Math.max(pr.height, 120) + vh * 0.3;
             setProgress(Math.max(0, Math.min(1, (start - pr.top) / span)));
             section.classList.add('steps-done');
+            if (ctaRow) ctaRow.classList.add('is-in');
         }
     }
 

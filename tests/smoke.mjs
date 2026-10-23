@@ -91,7 +91,7 @@ const PROBES = [
   ['skills', '#skills .skills-head h2', 'animated'],
   ['why', '#why .why-panel:nth-child(3)', 'animated'],
   ['steps', '#steps .steps-head h2', 'animated'],
-  ['services', '#services .section-heading', 'visible'],
+  ['services', '#services .svt-sub', 'visible'],
   ['portfolio', '#portfolio .section-heading', 'visible'],
   ['contact', '.contact-form-panel .btn-submit-message', 'animated'],
   ['footer', 'footer .footer-section:nth-child(3)', 'animated'],
@@ -440,7 +440,7 @@ async function titleSystem(vp) {
     ['skills', 'index', '#skills', '#skills .section-eyebrow', '#skills .section-heading', '#skills .skills-list', true, '#skills .skills-list'],
     ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .why-panels', true, '#why .why-panels'],
     ['steps', 'index', '#steps', '#steps .section-eyebrow', '#steps .section-heading', '#steps .process', true, '#steps .process'],
-    ['services', 'index', '#services', '.svt-eyebrow', '#services .section-heading', '.svt-row', true, '.svt-row'],
+    ['services', 'index', '#services', '.svt-eyebrow', null, '.svt-row', true, '.svt-row'],   // no section heading: the giant service titles (WEBOLDAL / DIZÁJN / EXTRÁK) act as its headings
     ['portfolio', 'index', '#portfolio', '.pf__eyebrow', '#portfolio .section-heading', '.pf__sub', true, null],
     ['contact', 'index', '#contact', '.ctc-eyebrow', '#contact .section-heading', '.contact-grid', true, '.contact-grid'],
     ['myapproach', 'myapproach', '.ap', '.ap-eyebrow', null, '.ap-grid', true],
@@ -500,10 +500,10 @@ async function titleSystem(vp) {
   const hr = rows.filter(r => r.headTypo && !['hero'].includes(r.name));
   rec(tag, 'section headings: same font / weight / uppercase / letter-spacing / line-height', new Set(hr.map(r => r.headTypo.sig)).size === 1, [...new Set(hr.map(r => r.headTypo.sig))].join(' || '));
   const fss = hr.map(r => r.headTypo.fs);
-  rec(tag, 'section headings: identical rendered size in all 6', Math.max(...fss) - Math.min(...fss) < 0.6, hr.map(r => `${r.name}:${r.headTypo.fs.toFixed(1)}`).join(' '));
+  rec(tag, 'section headings: identical rendered size in all 5 (Szolgáltatások is a documented exception: the giant service titles are its headings)', Math.max(...fss) - Math.min(...fss) < 0.6, hr.map(r => `${r.name}:${r.headTypo.fs.toFixed(1)}`).join(' '));
   const lhs = hr.map(r => r.headTypo.lineH);
-  rec(tag, 'section headings: identical RENDERED line height in all 6 (transforms cannot hide a smaller heading)', Math.max(...lhs) - Math.min(...lhs) < 0.6, hr.map(r => `${r.name}:${r.headTypo.lineH.toFixed(1)}`).join(' '));
-  rec(tag, 'section headings: split in letters, accent dot, aria-label', hr.length === 6 && hr.every(r => r.headTypo.split && r.headTypo.dots === 1 && r.headTypo.aria), hr.map(r => `${r.name}:${r.headTypo.split}/${r.headTypo.dots}/${r.headTypo.aria}`).join(' '));
+  rec(tag, 'section headings: identical RENDERED line height in all 5 (transforms cannot hide a smaller heading)', Math.max(...lhs) - Math.min(...lhs) < 0.6, hr.map(r => `${r.name}:${r.headTypo.lineH.toFixed(1)}`).join(' '));
+  rec(tag, 'section headings: split in letters, accent dot, aria-label', hr.length === 5 && hr.every(r => r.headTypo.split && r.headTypo.dots === 1 && r.headTypo.aria), hr.map(r => `${r.name}:${r.headTypo.split}/${r.headTypo.dots}/${r.headTypo.aria}`).join(' '));
   rec(tag, 'section headings: no word sticks out of the viewport', hr.every(r => r.headTypo.right <= r.clientW + 0.5), hr.map(r => `${r.name}:${Math.round(r.headTypo.right)}`).join(' '));
   const badHead = rows.filter(r => r.headLeft != null && Math.abs(r.headLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.headLeft)}`);
   rec(tag, 'heading left = eyebrow left', badHead.length === 0, badHead.join(' '));
@@ -519,7 +519,7 @@ async function headingFx(vp, mouse) {
   const ctx = await newCtx(vp, mouse ? {} : {});
   const p = await open(ctx, 'index', tag, errs);
   await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
-  for (const sec of ['skills', 'why', 'steps', 'services', 'portfolio', 'contact']) {
+  for (const sec of ['skills', 'why', 'steps', 'portfolio', 'contact']) {
     await p.evaluate(s => { const e = document.querySelector('#' + s + ' .section-heading'); const y = e.getBoundingClientRect().top + scrollY - innerHeight * 0.35; if (window.VB && VB.lenis) VB.lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y); }, sec);
     // letters exist and their reveal (Kapcsolat: letters rise) is over
     await until(p, s => { const cs = [...document.querySelectorAll('#' + s + ' .section-heading .sh-char')]; return cs.length > 0 && cs.every(c => { const t = getComputedStyle(c).transform; return t === 'none' || /^matrix\(1, 0, 0, 1, 0(\.\d+)?, 0(\.\d+)?\)$/.test(t); }); }, sec, 4000);
