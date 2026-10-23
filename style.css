@@ -5237,7 +5237,7 @@ html.lenis, html.lenis body { height: auto; }
 .svt-details { display: grid; gap: 32px; }
 @media (min-width: 1024px) {
   .svt-details {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 2.8fr) minmax(0, 1fr);        /* wider text column (the numbered list is short), so the descriptions take two lines */
     gap: 64px;
     align-items: start;
   }
@@ -5245,7 +5245,7 @@ html.lenis, html.lenis body { height: auto; }
 
 .svt-tagline {
   margin: 0 0 28px;
-  max-inline-size: 48ch;
+  max-inline-size: 62ch;
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(1.05rem, 1.6vw, 1.35rem);
   line-height: 1.5;
