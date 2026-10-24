@@ -88,7 +88,7 @@
         if (nav) return nav.classList.contains('nav--menu-open') || !nav.classList.contains('nav--on-light');
         for (var e = t; e && e.nodeType === 1; e = e.parentElement) {
             var cs = getComputedStyle(e);
-            if (cs.backgroundImage !== 'none' && cs.backgroundClip !== 'text' && /gradient/.test(cs.backgroundImage)) return true;
+            if (cs.backgroundImage !== 'none' && cs.backgroundClip.indexOf('text') < 0 && /gradient/.test(cs.backgroundImage)) return true;   /* "text, text" (two layers) is text clipping too */
             if (alpha(cs.backgroundColor) >= 0.5) return lum(cs.backgroundColor) < 0.5;
         }
         return false;
@@ -174,13 +174,14 @@
             if (!frame) return;
             frame = null;
             if (ro) ro.disconnect();
-            ring.classList.remove('is-frame');
+            ring.classList.remove('is-frame', 'is-pill');
             return;
         }
         if (frame && frame.el === el && frame.kind === kind) return;
         frame = { el: el, kind: kind, box: null, radius: 10 };
         computeBox(frame);
         ring.classList.add('is-frame');
+        ring.classList.toggle('is-pill', kind === 'pill');
         if (window.ResizeObserver) {
             if (!ro) ro = new ResizeObserver(function () { if (frame) measure(); });
             ro.disconnect();
@@ -331,9 +332,15 @@
     }
     function setStateInner(target) {
         var t = target instanceof Element ? target : null;
-        if (t) root.classList.toggle('cursor-dark', isDark(t));
         root.classList.remove('cursor-on-field');
         var el = resolve(t);
+        /* the pill target (hero link) is always the light, gradient frame: its theme comes from the link itself, never from a child
+           (label, arrow) and never from what lies under the pill's padding while the frame is held */
+        var pillHeld = !!frame && frame.kind === 'pill' && mode === 'hover';
+        if (t) {
+            if (el && el.matches('[data-cursor="pill"]')) root.classList.toggle('cursor-dark', isDark(el));
+            else if (!(pillHeld && !el)) root.classList.toggle('cursor-dark', isDark(t));
+        }
         lastEl = el;
 
         if (!el) {

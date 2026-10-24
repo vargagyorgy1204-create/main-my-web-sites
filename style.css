@@ -3747,6 +3747,30 @@ html.has-cursor input:not([type="checkbox"]):not([type="radio"]):not([type="subm
 }
 .cursor-ring.is-text + .cursor-dot { opacity: 0; }
 
+/* pill frame (hero "Portfólió" link): always the brand-gradient ring on any background (also over dark theme / children / padding) -
+   the ring is the gradient clipped by a mask (a gradient cannot be a border-color), the soft tint + glow live on ::after */
+html.has-cursor .cursor-ring.is-frame.is-pill::before {
+    border: 0;
+    padding: 1.5px;
+    background: var(--card-primary);
+    box-shadow: none;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+html.has-cursor .cursor-ring.is-frame.is-pill::after {
+    content: "";
+    position: absolute;
+    left: 0; top: 0;
+    width: var(--rw, 44px);
+    height: var(--rh, 44px);
+    margin: calc(var(--rh, 44px) / -2) 0 0 calc(var(--rw, 44px) / -2);
+    border-radius: var(--rr, 12px);
+    background: rgba(200, 80, 192, 0.05);
+    box-shadow: 0 0 0 4px rgba(200, 80, 192, 0.07), 0 6px 18px rgba(192, 38, 163, 0.12);
+    pointer-events: none;
+}
+
 /* press */
 html.cursor-press .cursor-ring::before { transform: scale(0.82); }
 html.cursor-press .cursor-dot { background: #C026A3; }
