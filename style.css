@@ -2585,20 +2585,44 @@ body.contact-page {
 }
 
 .btn-about {
+    /* same size / type as the "Részletek" outline button (tokens --btn-*), light-theme colours on the white card */
+    position: relative;
+    isolation: isolate;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     align-self: flex-start;
-    padding: 11px 26px;
+    padding: var(--btn-pad-y) var(--btn-px);
     border: 2px solid #4B1956;
     color: #4B1956;
     background: transparent;
     border-radius: 50px;
-    font-size: 0.88rem;
-    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: var(--btn-fs);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
     text-decoration: none;
-    transition: background .25s ease, color .25s ease, box-shadow .25s ease;
+    cursor: pointer;
+    transition: color 0.3s ease, border-color 0.3s ease;
 }
+/* brand-gradient fill: a layer over the whole border box that fades in (a gradient cannot be transitioned directly); the label stays above it */
+.btn-about::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--card-primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.btn-about:focus-visible { color: #fff; border-color: transparent; outline: 3px solid #4B1956; outline-offset: 3px; }
+.btn-about:focus-visible::before { opacity: 1; }
+html.has-cursor .btn-about:hover { color: #fff; border-color: transparent; }
+html.has-cursor .btn-about:hover::before { opacity: 1; }
+.btn-about:active { scale: 0.98; }
 
 .about-bio-foot {
     display: flex;
@@ -2630,11 +2654,6 @@ body.contact-page {
 /* list layout: the signature sits below the button row, bottom-right (room reserved under the row) */
 .about-bio-foot { margin-bottom: calc(var(--sign-w) / 4.92 * 1.25 + 4px); }
 
-.btn-about:hover {
-    background: #4B1956;
-    color: #fff;
-    box-shadow: 0 8px 24px rgba(75,25,86,.3);
-}
 
 @media (max-width: 1024px) {
     .about-premium-grid {
@@ -2881,7 +2900,6 @@ body.contact-page {
 }
 #about.is-pinned .abt-progress i { position: relative; height: 3px; border-radius: 2px; overflow: hidden; background: rgba(26, 26, 46, 0.12); }
 #about.is-pinned .abt-progress b { position: absolute; inset: 0; background: var(--about-accent); transform: scaleX(0); transform-origin: left center; }
-#about.is-pinned .btn-about { padding: clamp(8px, 1.4svh, 11px) clamp(18px, 2.4svh, 26px); font-size: clamp(0.8rem, 1.9svh, 0.88rem); }
 
 /* compact tiers by height (same idea as the Portfolio deck) */
 @media (min-width: 900px) and (max-height: 699px) {
@@ -2895,7 +2913,6 @@ body.contact-page {
     #about.is-pinned .abt-lead::after { margin-top: 8px; margin-bottom: 8px; height: 2px; }
     #about.is-pinned .abt-progress { margin-top: 12px; }
     #about.is-pinned .abt-body { font-size: 14px; line-height: 1.45; }
-    #about.is-pinned .btn-about { padding: 7px 18px; font-size: 0.8rem; }
 }
 
 /* ===== /ABOUT CHAPTERS ===== */
