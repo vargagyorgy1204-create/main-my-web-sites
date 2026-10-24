@@ -49,8 +49,7 @@
     --cf-ta-h: 104px;                                                      /* textarea min-height */
     --cf-gap: clamp(10px, 1.4svh, 14px);                                   /* between fields */
     --cf-radius: 14px;
-    --cf-pc-lines-gap: clamp(28px, 4.5svh, 48px);                          /* photo card: minimum gap, 3 info lines -> WhatsApp button */
-    --cf-pc-note-gap: clamp(24px, 3.4svh, 36px);                           /* photo card: e-mail button -> note */
+    --cf-pc-btn-gap: clamp(24px, 3.4svh, 36px);                            /* photo card: minimum gap above the WhatsApp button and below the e-mail button (the free height is split equally between them) */
     --cf-photo-d: clamp(190px, 27svh, 260px);                              /* photo card: portrait diameter on phones / tablets (stacked cards); desktop: clamp(150px, 20.5svh, 260px) so the card never grows taller than the form */
     --cf-title-fs: clamp(1.25rem, 2.2svh, 1.5rem);                         /* "Kérjen árajánlatot" AND the photo card heading */
     --cf-note-fs: 0.875rem;                                                /* "Adatait bizalmasan kezelem." AND "Általában 24 órán belül válaszolok." */
@@ -6683,15 +6682,20 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 /* ===== KAPCSOLAT photo card: aligned with the form card (>= 1024px), 2-line centred heading, note styled like the form's ===== */
 #contact .contact-note,
 #contact .contact-form-note { margin-bottom: 0; font-size: var(--cf-note-fs); color: rgb(159 176 216); text-align: center; }
-#contact .contact-note { margin-top: max(0px, calc(var(--cf-pc-note-gap) - clamp(8px, 1.1svh, 12px))); }   /* e-mail button -> note (the actions gap is clamp(8px, 1.1svh, 12px)) */
 @media (min-width: 1024px) {
     /* bottom padding as the form card's: the note baselines line up */
     .ctc .contact-personal-panel { padding-bottom: var(--cf-bottom-pad); }
 }
 .ctc .contact-personal-panel { padding-top: clamp(36px, 5svh, 56px); }
-.ctc .contact-profile-header { gap: 0; margin-bottom: var(--cf-pc-lines-gap); }   /* the group stays at the top: photo -> tagline -> 3 lines; at least this much space before the WhatsApp button */
-.ctc .contact-personal-panel { gap: 0; }
-.ctc .contact-actions { margin-top: auto; }                                                    /* buttons + note sit at the bottom, the free space is above them */
+/* the button group is centred between the last info line and the note: .contact-actions dissolves into the panel's flex column; the panel gap is the minimum gap,
+   the free height goes to two equal auto margins (above WhatsApp, above the note = below e-mail); WhatsApp -> e-mail keeps the small button gap */
+.ctc .contact-profile-header { gap: 0; }
+.ctc .contact-personal-panel { gap: var(--cf-pc-btn-gap); }
+.ctc .contact-actions { display: contents; }
+.ctc .contact-actions .btn-wa-cta { margin-top: auto; }
+.ctc .contact-actions .btn-email-cta { margin-top: calc(clamp(8px, 1.1svh, 12px) - var(--cf-pc-btn-gap)); }
+.ctc .contact-actions .contact-note { margin-top: auto; }
+.ctc .contact-personal-panel > .contact-profile-header, .ctc .contact-personal-panel > .contact-actions > * { align-self: center; }
 /* portrait: the gradient ring (::before) rotates slowly, only transform (compositor); the photo and its tilt stay still */
 #contact .contact-photo-square {
     width: var(--cf-photo-d);
