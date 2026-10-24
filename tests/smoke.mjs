@@ -66,7 +66,7 @@ async function open(ctx, page, area, errs) {
   p.on('pageerror', e => errs.push('pageerror: ' + String(e).slice(0, 140)));
   p.on('console', m => { if (m.type() === 'error' && !/Failed to load resource.*(net::ERR|status of 4)/.test(m.text()) ) errs.push('console: ' + m.text().slice(0, 140)); });
   p.on('response', r => { if (isOurs(r.url()) && r.status() >= 400) errs.push(`${r.status()} ${r.url().replace(BASE, '')}`); });
-  p.on('requestfailed', r => { if (isOurs(r.url())) errs.push('failed ' + r.url().replace(BASE, '')); });
+  p.on('requestfailed', r => { if (isOurs(r.url()) && !/\.(webm|mp4)(\?|$)/.test(r.url())) errs.push('failed ' + r.url().replace(BASE, '')); });   // a video the page is still streaming when the context closes is aborted by the browser: not an error
   await p.goto(`${BASE}/${page}.html`, { waitUntil: 'load' });
   await p.evaluate(() => { try { localStorage.clear(); } catch (e) { /* ignore */ } return document.fonts.ready; });
   // GSAP-driven pages: wait until ScrollTrigger has registered its triggers (entrance states are set after the fonts are in)

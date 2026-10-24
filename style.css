@@ -3577,7 +3577,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     .hero-title { margin-bottom: 22px; }
     .hero-sub { margin-bottom: 0; }
     .hero-tech { order: 1; margin-bottom: 30px; }
-    .hero-ctas { order: 2; flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 18px; width: 100%; }
+    .hero-ctas { order: 2; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-bottom: 18px; width: 100%; }   /* the text link sits next to the pill, or below it (left-aligned) when it does not fit */
     .hero-ctas .hbtn { width: auto; }
     .hero-tech { max-width: 100%; margin-top: 56px; padding: 16px 16px 18px; border-radius: 24px; }
     .stamp.hero-stamp { inline-size: 76px; top: -46px; right: -6px; }
@@ -6384,3 +6384,30 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     .cta-row--armed.is-in .cta-l2 { transition-delay: 0.08s; }
     .cta-row--armed.is-in .cta-row__btn { transition-delay: 0.33s; }
 }
+
+/* ===== HERO: the "Portfólió" secondary text link next to the CTA pill ===== */
+.hero-ctas { column-gap: 28px; }
+.hero-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--btn-h);                                   /* centred next to the pill */
+    font: 500 var(--btn-fs)/1 'Space Grotesk', sans-serif;  /* the CTA label */
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #111;
+    -webkit-tap-highlight-color: transparent;
+}
+.hero-link__label { position: relative; display: inline-block; transition: transform 0.35s ease; }
+/* base underline (1px, 50%) + the gradient underline (2px) that grows over it from the left */
+.hero-link__label::before, .hero-link__label::after { content: ""; position: absolute; left: 0; right: 0; }
+.hero-link__label::after { bottom: -8px; height: 1px; background: currentColor; opacity: 0.5; }
+.hero-link__label::before { bottom: -8.5px; height: 2px; z-index: 1; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.35s ease; }
+.hero-link__arrow { flex: none; opacity: 0; translate: -4px 0; transition: opacity 0.3s ease 0.12s, translate 0.3s ease 0.12s; }   /* its space is always reserved: no layout shift */
+.hero-link:focus-visible { outline: 2px solid #C026A3; outline-offset: 6px; border-radius: 4px; }
+.hero-link:focus-visible .hero-link__label, html.has-cursor .hero-link:hover .hero-link__label { transform: translateX(4px); }
+.hero-link:focus-visible .hero-link__label::before, html.has-cursor .hero-link:hover .hero-link__label::before { transform: scaleX(1); }
+.hero-link:focus-visible .hero-link__arrow, html.has-cursor .hero-link:hover .hero-link__arrow { opacity: 1; translate: 0 0; }
+@media (prefers-reduced-motion: reduce) { .hero-link__label, .hero-link__label::before, .hero-link__arrow { transition: none; } }
