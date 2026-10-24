@@ -146,9 +146,10 @@ if (form) {
     const sentMorph = (btn) => new Promise((resolve) => {
         if (!btn) { resolve(); return; }
         const original = btn.innerHTML;
+        btn.style.minWidth = btn.offsetWidth + 'px';     // the "Elküldve" morph keeps the button's width
         btn.classList.add('is-sent');
         btn.innerHTML = '<svg class="sent-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Elküldve';
-        setTimeout(() => { btn.classList.remove('is-sent'); btn.innerHTML = original; resolve(); }, 1200);
+        setTimeout(() => { btn.classList.remove('is-sent'); btn.innerHTML = original; btn.style.minWidth = ''; if (window.lucide) lucide.createIcons(); resolve(); }, 1200);
     });
     form.onsubmit = async (e) => {
         e.preventDefault();

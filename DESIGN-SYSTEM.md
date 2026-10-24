@@ -112,5 +112,5 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-gap` | `clamp(10px, 1.4svh, 14px)` | between fields |
 | `--cf-radius` | `14px` | field radius |
 | `--cf-title-gap` | `clamp(24px, 3.4svh, 36px)` | title -> first field |
-| `--cf-consent-gap` | `clamp(18px, 2.4svh, 26px)` | consent row -> submit button |
+| `--cf-btn-gap` | `clamp(18px, 2.4svh, 26px)` | consent row -> submit button AND submit button -> confidentiality note (equal) |
 | `--cf-bottom-pad` | `clamp(28px, 4svh, 44px)` | confidentiality note -> card bottom (extra height from the equal-height row is split evenly above and below the content) |
