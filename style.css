@@ -6458,7 +6458,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     text-decoration: none;
     box-shadow: none;
     cursor: pointer;
-    transition: color 0.35s var(--ease), background-position 0.6s var(--ease), translate 0.35s var(--ease), box-shadow 0.35s var(--ease), opacity 0.35s var(--ease);
+    transition: color 0.35s var(--ease), background-position 0.6s var(--ease), translate 0.35s var(--ease), transform 0.35s var(--ease), box-shadow 0.35s var(--ease), opacity 0.35s var(--ease);   /* the lift uses transform: GSAP's magnet (contact-footer.js) writes the translate property */
 }
 #contact .contact-actions .btn-wa-cta, #contact .contact-actions .btn-email-cta { width: auto; min-width: 220px; }
 #contact .btn-submit-message .icon, #contact .contact-actions .btn-email-cta .icon { width: 18px; height: 18px; flex: none; }
@@ -6467,7 +6467,8 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 /* -- submit: solid brand gradient that flows on hover, a paper plane slides in, flies out while sending, a spinner follows */
 #contact .btn-submit-message {
     color: #fff;
-    background: var(--card-primary) 0% 50% / 200% 100% no-repeat;
+    /* the brand gradient (flows on hover) under a fixed dark veil: white text >= 4.5:1 (5.2:1 at the lightest point) at every position */
+    background: linear-gradient(rgba(20, 8, 40, 0.18), rgba(20, 8, 40, 0.18)) 0 0 / 100% 100% no-repeat, var(--card-primary) 0% 50% / 200% 100% no-repeat;
     background-origin: border-box;
 }
 #contact .btn-submit-message__plane, #contact .btn-submit-message__spin {
@@ -6478,11 +6479,11 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 }
 #contact .btn-submit-message__plane { opacity: 0; translate: 14px 0; transition: opacity 0.35s var(--ease), translate 0.35s var(--ease); }
 #contact .btn-submit-message__spin { opacity: 0; }
-html.has-cursor #contact .btn-submit-message:hover:not(:disabled) { background-position: 100% 50%; translate: 0 -2px; box-shadow: 0 10px 28px rgba(108, 99, 255, 0.38); }
+html.has-cursor #contact .btn-submit-message:hover:not(:disabled) { background-position: 0 0, 100% 50%; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(108, 99, 255, 0.38); }
 html.has-cursor #contact .btn-submit-message:hover:not(:disabled) .btn-submit-message__plane,
 #contact .btn-submit-message:focus-visible .btn-submit-message__plane { opacity: 1; translate: 0 0; }
-#contact .btn-submit-message:focus-visible { background-position: 100% 50%; outline: 3px solid #b4acff; outline-offset: 3px; }
-#contact .btn-submit-message:disabled { opacity: 0.5; cursor: progress; translate: none; }
+#contact .btn-submit-message:focus-visible { background-position: 0 0, 100% 50%; outline: 3px solid #b4acff; outline-offset: 3px; }
+#contact .btn-submit-message:disabled { opacity: 0.5; cursor: progress; transform: none; }
 #contact .btn-submit-message.is-sending { opacity: 1; }                                  /* sending: the plane / spinner show the state, not the dimmed look */
 #contact .btn-submit-message.is-sending .btn-submit-message__plane { animation: ctcPlaneOut 0.5s ease-in forwards; }
 #contact .btn-submit-message.is-sending .btn-submit-message__spin { opacity: 1; transition: opacity 0.2s ease 0.45s; animation: ctcSpin 0.8s linear infinite; }
@@ -6504,8 +6505,9 @@ html.has-cursor #contact .btn-submit-message:hover:not(:disabled) .btn-submit-me
 #contact .contact-actions .btn-wa-cta::before { background: #25D366; }
 #contact .contact-actions .btn-email-cta { color: #E36DD0 !important; border-color: #C026A3; }          /* #E36DD0 on #10192d = 5.8:1 (#C026A3 itself is 3.3:1) */
 #contact .contact-actions .btn-email-cta::before { background: #C026A3; }
-html.has-cursor #contact .contact-actions .btn-wa-cta:hover, html.has-cursor #contact .contact-actions .btn-email-cta:hover,
-#contact .contact-actions .btn-wa-cta:focus-visible, #contact .contact-actions .btn-email-cta:focus-visible { color: #fff !important; }
+html.has-cursor #contact .contact-actions .btn-email-cta:hover, #contact .contact-actions .btn-email-cta:focus-visible { color: #fff !important; }
+/* WhatsApp: dark green-black on the green wipe (8.7:1; white would be 2.0:1), in step with the wipe */
+html.has-cursor #contact .contact-actions .btn-wa-cta:hover, #contact .contact-actions .btn-wa-cta:focus-visible { color: #0B1F17 !important; }
 html.has-cursor #contact .contact-actions .btn-wa-cta:hover::before, html.has-cursor #contact .contact-actions .btn-email-cta:hover::before,
 #contact .contact-actions .btn-wa-cta:focus-visible::before, #contact .contact-actions .btn-email-cta:focus-visible::before { transform: scaleX(1); }
 @keyframes ctcWiggle { 0%, 100% { rotate: 0deg; } 25% { rotate: -8deg; } 60% { rotate: 8deg; } 85% { rotate: -3deg; } }
@@ -6516,7 +6518,7 @@ html.has-cursor #contact .contact-actions .btn-email-cta:hover .icon path:first-
     #contact .btn-submit-message, #contact .contact-actions .btn-wa-cta, #contact .contact-actions .btn-email-cta,
     #contact .contact-actions .btn-wa-cta::before, #contact .contact-actions .btn-email-cta::before,
     #contact .btn-submit-message__plane, #contact .contact-actions .btn-email-cta .icon path { transition: none; }
-    html.has-cursor #contact .btn-submit-message:hover:not(:disabled) { translate: none; }
+    html.has-cursor #contact .btn-submit-message:hover:not(:disabled) { transform: none; }
     #contact .btn-submit-message__plane { translate: 0 0; }
     html.has-cursor #contact .contact-actions .btn-wa-cta:hover i, #contact .contact-actions .btn-wa-cta:focus-visible i { animation: none; }
     html.has-cursor #contact .contact-actions .btn-email-cta:hover .icon path:first-child, #contact .contact-actions .btn-email-cta:focus-visible .icon path:first-child { translate: none; }
