@@ -71,6 +71,7 @@ function openThankYou(opener) {
     m.style.display = 'flex';
     const btn = m.querySelector('button');
     if (btn) btn.focus({ preventScroll: true });
+    m.classList.remove('is-open'); void m.offsetWidth; m.classList.add('is-open');   // replays the check draw-in
 }
 function closeModal() {
     const m = document.getElementById('thankYouModal');
@@ -81,7 +82,9 @@ function closeModal() {
 }
 document.addEventListener('keydown', (e) => {
     const m = document.getElementById('thankYouModal');
-    if (e.key === 'Escape' && m && m.style.display === 'flex') closeModal();
+    if (!m || m.style.display !== 'flex') return;
+    if (e.key === 'Escape') closeModal();
+    else if (e.key === 'Tab') { e.preventDefault(); const b = m.querySelector('button'); if (b) b.focus({ preventScroll: true }); }   // focus trap: the close button is the only control
 });
 
 // Contact form (Formspree): Hungarian validation messages, honeypot, inline status
@@ -107,8 +110,6 @@ if (form) {
         const f = el.closest('.contact-field');
         if (f) f.classList.toggle('is-filled', el.value !== '');
     };
-    let firstInvalid = false;
-    if (submitBtn) submitBtn.addEventListener('click', () => { firstInvalid = true; });
     form.querySelectorAll('input, select, textarea').forEach((el) => {
         el.addEventListener('invalid', () => {
             let msg = '';
@@ -122,7 +123,6 @@ if (form) {
                 f.classList.add('is-shake');
                 f.addEventListener('animationend', () => f.classList.remove('is-shake'), { once: true });
             }
-            if (firstInvalid && msg) { setStatus(msg, 'error'); firstInvalid = false; }
         });
         const clear = () => {
             el.setCustomValidity('');

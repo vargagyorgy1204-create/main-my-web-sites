@@ -6526,3 +6526,57 @@ html.has-cursor #contact .contact-actions .btn-email-cta:hover .icon path:first-
     #contact .btn-submit-message.is-sending .btn-submit-message__spin { transition: none; animation: ctcSpinStatic 1.6s steps(8) infinite; }
 }
 @keyframes ctcSpinStatic { to { rotate: 360deg; } }
+
+/* ===== KAPCSOLAT form: centred title / consent / submit / note; errors only for submit / network failures ===== */
+#contact .contact-form-panel h3 { text-align: center; }
+#contact .contact-consent { align-self: center; justify-content: center; text-align: left; }
+#contact .btn-submit-message { align-self: center; }
+#contact .contact-form-note { align-self: center; text-align: center; font-size: 0.875em; margin-top: clamp(16px, 2.2svh, 24px); }
+#contact .contact-form-status { text-align: center; min-height: 0; }
+#contact .contact-form-status:empty { display: none; }
+
+/* ===== success modal "Köszönöm!": big decorative check behind the text, two-line copy, "Részletek"-size close button ===== */
+#thankYouModal .modal-content { position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; align-items: center; padding: clamp(36px, 5svh, 50px); }
+#thankYouModal .modal-check {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: -1;
+    height: 70%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    opacity: 0.09;
+    pointer-events: none;
+}
+#thankYouModal .modal-check__tick { stroke-dasharray: 1; stroke-dashoffset: 0; }
+#thankYouModal.is-open .modal-check__tick { animation: modalTick 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes modalTick { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+#thankYouModal .modal-content h3 { font-size: clamp(2rem, 5vw, 3rem); }
+#thankYouModal .modal-content p { margin: 0; position: relative; }
+.modal-close-btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: 28px;
+    height: var(--btn-h);
+    padding: 0 var(--btn-px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: 500 var(--btn-fs)/1.2 'Space Grotesk', sans-serif;
+    letter-spacing: 0.5px;
+    color: #4B1956;
+    background: transparent;
+    border: 2px solid #4B1956;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+.modal-close-btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--card-primary); opacity: 0; transition: opacity 0.3s ease; }
+html.has-cursor .modal-close-btn:hover, .modal-close-btn:focus-visible { color: #fff; border-color: transparent; }
+html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::before { opacity: 1; }
+.modal-close-btn:focus-visible { outline: 3px solid #8b7bff; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+    #thankYouModal.is-open .modal-check__tick { animation: none; }
+    .modal-close-btn, .modal-close-btn::before { transition: none; }
+}
