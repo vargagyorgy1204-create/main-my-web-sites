@@ -41,6 +41,14 @@
     --btn-h: calc(2 * var(--btn-pad-y) + 1.2 * var(--btn-fs) + 4px);       /* 2 x padding + line-height 1.2 + 2 x 2px border */
     /* Szolgáltatások */
     --svc-desc-btn-gap: clamp(36px, 5svh, 60px);                           /* service description -> Részletek / Ajánlatot kérek buttons (same in all three blocks) */
+    /* Kapcsolat form card (fields, spacing) */
+    --cf-fs: clamp(16px, 0.95rem + 0.15vw, 17px);                          /* text / placeholder of inputs, select, textarea (>= 16px: no iOS zoom) */
+    --cf-h: clamp(48px, 6.2svh, 56px);                                     /* input / select height */
+    --cf-gap: clamp(10px, 1.4svh, 14px);                                   /* between fields */
+    --cf-radius: 14px;
+    --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
+    --cf-consent-gap: clamp(18px, 2.4svh, 26px);                           /* consent row -> submit button */
+    --cf-bottom-pad: clamp(28px, 4svh, 44px);                              /* "Adatait bizalmasan kezelem." -> card bottom */
     /* tight anchor (.section--tight): closer to the top-left; the gutter is the logo's right edge (32 + 44) + 20px, symmetric on the right */
     --section-top-tight: calc(var(--hdr-h) + clamp(8px, 1.6svh, 20px));
     --content-gutter-tight: 20px;
@@ -6607,3 +6615,32 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
     #thankYouModal.is-open .modal-check__tick { animation: none; }
     .modal-close-btn, .modal-close-btn::before { transition: none; }
 }
+
+/* ===== KAPCSOLAT form card: smaller fields, roomier card spacing (--cf-* tokens); the right card is untouched ===== */
+.ctc .contact-form-panel { display: flex; flex-direction: column; justify-content: center; padding-bottom: var(--cf-bottom-pad); }
+.ctc .contact-form-panel h3 { margin-bottom: var(--cf-title-gap); }
+.ctc .contact-form-ui { gap: var(--cf-gap); }
+.ctc .contact-field input,
+.ctc .contact-field select,
+.ctc .contact-field textarea {
+    font-size: var(--cf-fs);
+    line-height: 1.25;
+    border-radius: var(--cf-radius);
+}
+.ctc .contact-field input,
+.ctc .contact-field select {
+    height: var(--cf-h);
+    padding: calc(var(--cf-h) * 0.38) 16px calc(var(--cf-h) * 0.08);
+}
+.ctc .contact-field textarea { display: block; min-height: 120px; padding: calc(var(--cf-h) * 0.4) 16px 10px; resize: vertical; }
+.ctc .contact-field > label {
+    --cf-label-top: calc((var(--cf-h) - 1.2 * var(--cf-fs)) / 2);          /* resting label: vertically centred in the field */
+    top: var(--cf-label-top);
+    font-size: var(--cf-fs);
+    line-height: 1.2;
+}
+.ctc .contact-field.is-filled > label,
+.ctc .contact-field:focus-within > label,
+.ctc .contact-field--select > label { transform: translateY(calc(7px - var(--cf-label-top))) scale(0.78); }   /* small label (12.5-13px) sits 7px below the top edge */
+.ctc .btn-submit-message { margin-top: max(0px, calc(var(--cf-consent-gap) - var(--cf-gap))); }
+@media (min-width: 900px) and (max-height: 799px) { .ctc .contact-field textarea { min-height: 120px; } }

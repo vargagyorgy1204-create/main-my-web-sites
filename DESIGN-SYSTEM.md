@@ -100,3 +100,15 @@ Left as they are, because converting them would change the look at 1440×900 or 
 - Body text sizes (table above): they use per-section `clamp(… svh …)` formulas; unifying them would shift line breaks.
 - Card internals (padding / radius / icon sizes) of Értékek, Szolgáltatások, Portfólió, footer: component-level, not layout proportions.
 - `1152px` / `1280px` max-widths in the footer, `.ctc__head` and the legal pages.
+
+## Kapcsolat form card (`--cf-*` tokens)
+
+| Token | Value | Use |
+|---|---|---|
+| `--cf-fs` | `clamp(16px, 0.95rem + 0.15vw, 17px)` | text / placeholder of inputs, select, textarea (never < 16px, no iOS zoom); the floating label is 0.78 of it (12.5-13px) |
+| `--cf-h` | `clamp(48px, 6.2svh, 56px)` | input / select height (textarea min-height 120px, vertical resize only) |
+| `--cf-gap` | `clamp(10px, 1.4svh, 14px)` | between fields |
+| `--cf-radius` | `14px` | field radius |
+| `--cf-title-gap` | `clamp(24px, 3.4svh, 36px)` | title -> first field |
+| `--cf-consent-gap` | `clamp(18px, 2.4svh, 26px)` | consent row -> submit button |
+| `--cf-bottom-pad` | `clamp(28px, 4svh, 44px)` | confidentiality note -> card bottom (extra height from the equal-height row is split evenly above and below the content) |
