@@ -6740,3 +6740,94 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 }
 #contact .status-dot { animation-duration: 2s; }
 @media (prefers-reduced-motion: reduce) { #contact .contact-photo-square::before { animation: none; } }
+
+/* ===== KAPCSOLAT: custom service dropdown (html.cs-on = pointer:fine or a real mouse; touch keeps the native picker) ===== */
+.cs { display: none; }
+html.cs-on .contact-field--select .cs { display: block; position: absolute; inset: 0; }
+html.cs-on .ctc .contact-field--select select {
+    color: transparent;                                    /* the native control stays (box, validity bubble) but the trigger draws the text */
+    background-image: none;
+    pointer-events: none;
+}
+html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
+.cs__trigger {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: calc(var(--cf-h) * 0.4) 44px calc(var(--cf-h) * 0.06) 16px;
+    border: 0;
+    border-radius: var(--cf-radius);
+    background: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: var(--cf-fs);
+    line-height: 1.25;
+    text-align: left;
+    cursor: pointer;
+}
+.cs__trigger:focus-visible { outline: 2px solid #b4acff; outline-offset: 2px; }
+.cs__value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs__value.is-placeholder { color: rgb(255 255 255 / 0.72); }
+.cs__chevron { position: absolute; right: 14px; top: 50%; width: 18px; height: 18px; margin-top: -9px; color: #fff; transition: rotate 0.18s ease; pointer-events: none; }
+.cs__trigger[aria-expanded="true"] .cs__chevron { rotate: 180deg; }
+.cs__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 60;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background: rgba(20, 16, 40, 0.82);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-4px) scale(0.98);
+    transform-origin: top center;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+    outline: none;
+}
+.cs.is-up .cs__panel { top: auto; bottom: calc(100% + 6px); transform: translateY(4px) scale(0.98); transform-origin: bottom center; }
+.cs.is-open .cs__panel { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition-delay: 0s; }
+.cs__opt {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 10px;
+    font-size: var(--cf-fs);
+    color: rgb(255 255 255 / 0.82);
+    cursor: pointer;
+    user-select: none;
+}
+.cs__opt::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    bottom: 9px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--card-primary);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+.cs__opt.is-active { background: linear-gradient(90deg, rgb(108 99 255 / 0.18), rgb(200 80 192 / 0.18)); color: #fff; }
+.cs__opt.is-active::before { opacity: 1; }
+.cs__check { width: 16px; height: 16px; flex: none; color: #fff; opacity: 0; }
+.cs__opt[aria-selected="true"] { color: #fff; }
+.cs__opt[aria-selected="true"] .cs__check { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .cs__panel, .cs__chevron, .cs__opt::before { transition: none; } }

@@ -182,6 +182,111 @@ if (form) {
     };
 }
 
+// Custom service dropdown (Kapcsolat form). The native <select> stays in the DOM as the source of truth (name, options, required,
+// custom validity, Formspree value); the custom UI only sets select.value and dispatches input / change. It is switched on for
+// pointer:fine devices or once a real mouse is seen (html.has-cursor); touch devices keep the native picker.
+(() => {
+    const select = document.querySelector('.contact-form-ui select[name="service"]');
+    if (!select) return;
+    const field = select.closest('.contact-field');
+    if (!field) return;
+    const options = [...select.options].filter((o) => o.value !== '');
+    const uid = 'cs-' + Math.random().toString(36).slice(2, 7);
+    const root = document.createElement('div');
+    root.className = 'cs';
+    root.innerHTML =
+        '<button type="button" class="cs__trigger" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="' + uid + '-list" aria-labelledby="' + (select.id ? select.id + '-lbl ' : '') + uid + '-val">' +
+        '<span class="cs__value" id="' + uid + '-val"></span><i data-lucide="chevron-down" class="icon cs__chevron" aria-hidden="true"></i></button>' +
+        '<ul class="cs__panel" role="listbox" id="' + uid + '-list" tabindex="-1" aria-label="' + ((field.querySelector('label') || {}).textContent || '').trim() + '">' +
+        options.map((o, i) => '<li class="cs__opt" role="option" id="' + uid + '-o' + i + '" data-value="' + o.value.replace(/"/g, '&quot;') + '" aria-selected="false"><span>' + o.textContent + '</span><i data-lucide="check" class="icon cs__check" aria-hidden="true"></i></li>').join('') +
+        '</ul>';
+    const lbl = field.querySelector('label');
+    if (lbl && select.id) lbl.id = select.id + '-lbl';
+    field.appendChild(root);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    const trigger = root.querySelector('.cs__trigger');
+    const valueEl = root.querySelector('.cs__value');
+    const list = root.querySelector('.cs__panel');
+    const rows = [...root.querySelectorAll('.cs__opt')];
+    const placeholder = (select.querySelector('option[value=""]') || {}).textContent || '';
+    let active = -1, buffer = '', bufferTimer = 0;
+    const isOpen = () => root.classList.contains('is-open');
+
+    const render = () => {
+        const idx = options.findIndex((o) => o.value === select.value);
+        valueEl.textContent = idx >= 0 ? options[idx].textContent : placeholder;
+        valueEl.classList.toggle('is-placeholder', idx < 0);
+        rows.forEach((r, i) => r.setAttribute('aria-selected', i === idx ? 'true' : 'false'));
+    };
+    const setActive = (i) => {
+        active = Math.max(0, Math.min(rows.length - 1, i));
+        rows.forEach((r, k) => r.classList.toggle('is-active', k === active));
+        trigger.setAttribute('aria-activedescendant', rows[active].id);
+        rows[active].scrollIntoView({ block: 'nearest' });
+    };
+    const open = () => {
+        if (isOpen()) return;
+        const r = field.getBoundingClientRect();
+        const need = list.offsetHeight || rows.length * 40 + 14;
+        root.classList.toggle('is-up', window.innerHeight - r.bottom < need + 16 && r.top > need + 16);   // flips above when there is no room below
+        root.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
+        const sel = options.findIndex((o) => o.value === select.value);
+        setActive(sel >= 0 ? sel : 0);
+    };
+    const close = () => {
+        if (!isOpen()) return;
+        root.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.removeAttribute('aria-activedescendant');
+        rows.forEach((r) => r.classList.remove('is-active'));
+    };
+    const choose = (i) => {
+        select.value = options[i].value;
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        render();
+        close();
+    };
+    select.addEventListener('change', render);
+    if (select.form) select.form.addEventListener('reset', () => setTimeout(render, 0));
+    // the native validation bubble / autofocus lands on the hidden select: forward the focus to the visible trigger
+    select.addEventListener('focus', () => { if (document.documentElement.classList.contains('cs-on')) trigger.focus(); });
+
+    trigger.addEventListener('click', () => (isOpen() ? close() : open()));
+    trigger.addEventListener('keydown', (e) => {
+        const k = e.key;
+        if (k === 'Tab') { close(); return; }
+        if (k === 'Escape') { if (isOpen()) { e.preventDefault(); e.stopPropagation(); close(); } return; }
+        if (k === 'ArrowDown' || k === 'ArrowUp') { e.preventDefault(); if (!isOpen()) open(); else setActive(active + (k === 'ArrowDown' ? 1 : -1)); return; }
+        if (k === 'Home' || k === 'End') { if (isOpen()) { e.preventDefault(); setActive(k === 'Home' ? 0 : rows.length - 1); } return; }
+        if (k === 'Enter' || (k === ' ' && !buffer)) { e.preventDefault(); if (isOpen()) choose(active); else open(); return; }
+        if (k.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {          // type-ahead
+            buffer += k.toLowerCase();
+            clearTimeout(bufferTimer);
+            bufferTimer = setTimeout(() => { buffer = ''; }, 700);
+            const from = isOpen() ? active : options.findIndex((o) => o.value === select.value);
+            const order = rows.map((_, i) => (i + from + (buffer.length > 1 ? 0 : 1)) % rows.length);
+            const hit = order.find((i) => options[i].textContent.toLowerCase().startsWith(buffer));
+            if (hit !== undefined) { if (!isOpen()) open(); setActive(hit); }
+        }
+    });
+    rows.forEach((r, i) => {
+        r.addEventListener('pointermove', () => { if (active !== i) setActive(i); });
+        r.addEventListener('click', () => { choose(i); trigger.focus(); });
+    });
+    list.addEventListener('mousedown', (e) => e.preventDefault());               // keep the focus on the trigger
+    document.addEventListener('pointerdown', (e) => { if (isOpen() && !root.contains(e.target)) close(); });
+    window.addEventListener('blur', close);
+
+    // on: pointer:fine, or as soon as a real mouse is seen
+    const html = document.documentElement;
+    const on = () => { html.classList.add('cs-on'); select.tabIndex = -1; };   // the trigger is the only tab stop
+    if (window.matchMedia('(pointer: fine)').matches || html.classList.contains('has-cursor')) on();
+    else new MutationObserver((_, mo) => { if (html.classList.contains('has-cursor')) { on(); mo.disconnect(); } }).observe(html, { attributes: true, attributeFilter: ['class'] });
+    render();
+})();
+
 // Service modals (pricing)
 const serviceModalTriggers = document.querySelectorAll('.service-modal-trigger');
 const serviceModalOverlays = document.querySelectorAll('.service-modal-overlay');
