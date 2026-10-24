@@ -42,8 +42,11 @@
     /* Szolgáltatások */
     --svc-desc-btn-gap: clamp(36px, 5svh, 60px);                           /* service description -> Részletek / Ajánlatot kérek buttons (same in all three blocks) */
     /* Kapcsolat form card (fields, spacing) */
-    --cf-fs: clamp(16px, 0.95rem + 0.15vw, 17px);                          /* text / placeholder of inputs, select, textarea (>= 16px: no iOS zoom) */
-    --cf-h: clamp(48px, 6.2svh, 56px);                                     /* input / select height */
+    --cf-fs: 16px;                                                         /* text / placeholder of inputs, select, textarea on phones / tablets (>= 16px: no iOS zoom); 15px from 1024px */
+    --cf-h: 48px;                                                          /* input / select height on phones / tablets; clamp(44px, 5.6svh, 48px) from 1024px */
+    --cf-label-scale: 0.74;                                                /* floating label: 16px -> ~11.8px (0.78 -> ~11.7px at 15px) */
+    --cf-label-top: 7px;                                                   /* floating label distance from the field's top edge */
+    --cf-ta-h: 104px;                                                      /* textarea min-height */
     --cf-gap: clamp(10px, 1.4svh, 14px);                                   /* between fields */
     --cf-radius: 14px;
     --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
@@ -62,6 +65,7 @@
 @media (max-width: 767px) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
 @media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
 @media (min-width: 768px) { :root { --btn-fs: clamp(13px, 1.45svh, 15px); --btn-pad-y: clamp(10px, 1.6svh, 15px); --btn-px: clamp(24px, 3.4svh, 34px); } }
+@media (min-width: 1024px) { :root { --cf-fs: 15px; --cf-h: clamp(44px, 5.6svh, 48px); --cf-label-scale: 0.78; --cf-label-top: 5px; } }
 @media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
 @media (min-width: 1024px) { :root { --content-gutter-tight: 96px; } }   /* = logo right edge 76px + 20px */
 
@@ -6630,17 +6634,17 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 .ctc .contact-field input,
 .ctc .contact-field select {
     height: var(--cf-h);
-    padding: calc(var(--cf-h) * 0.38) 16px calc(var(--cf-h) * 0.08);
+    padding: calc(var(--cf-h) * 0.4) 16px calc(var(--cf-h) * 0.06);
 }
-.ctc .contact-field textarea { display: block; min-height: 120px; padding: calc(var(--cf-h) * 0.4) 16px 10px; resize: vertical; }
+.ctc .contact-field textarea { display: block; height: var(--cf-ta-h); min-height: var(--cf-ta-h); padding: calc(var(--cf-h) * 0.4) 16px 10px; resize: vertical; }
 .ctc .contact-field > label {
-    --cf-label-top: calc((var(--cf-h) - 1.2 * var(--cf-fs)) / 2);          /* resting label: vertically centred in the field */
-    top: var(--cf-label-top);
+    --cf-rest-top: calc((var(--cf-h) - 1.2 * var(--cf-fs)) / 2);           /* resting label: vertically centred in the field */
+    top: var(--cf-rest-top);
     font-size: var(--cf-fs);
     line-height: 1.2;
 }
 .ctc .contact-field.is-filled > label,
 .ctc .contact-field:focus-within > label,
-.ctc .contact-field--select > label { transform: translateY(calc(7px - var(--cf-label-top))) scale(0.78); }   /* small label (12.5-13px) sits 7px below the top edge */
+.ctc .contact-field--select > label { transform: translateY(calc(var(--cf-label-top) - var(--cf-rest-top))) scale(var(--cf-label-scale)); }   /* small label (~11.7px) sits --cf-label-top below the top edge */
 .ctc .btn-submit-message { margin-top: max(0px, calc(var(--cf-consent-gap) - var(--cf-gap))); }
-@media (min-width: 900px) and (max-height: 799px) { .ctc .contact-field textarea { min-height: 120px; } }
+@media (min-width: 900px) and (max-height: 799px) { .ctc .contact-field textarea { min-height: var(--cf-ta-h); } }

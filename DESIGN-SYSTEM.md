@@ -105,8 +105,10 @@ Left as they are, because converting them would change the look at 1440×900 or 
 
 | Token | Value | Use |
 |---|---|---|
-| `--cf-fs` | `clamp(16px, 0.95rem + 0.15vw, 17px)` | text / placeholder of inputs, select, textarea (never < 16px, no iOS zoom); the floating label is 0.78 of it (12.5-13px) |
-| `--cf-h` | `clamp(48px, 6.2svh, 56px)` | input / select height (textarea min-height 120px, vertical resize only) |
+| `--cf-fs` | `16px` (< 1024px, no iOS zoom); `15px` (>= 1024px) | text / placeholder of inputs, select, textarea; the floating label is `--cf-label-scale` of it (0.74 / 0.78 -> ~11.8 / 11.7px) |
+| `--cf-h` | `48px` (< 1024px); `clamp(44px, 5.6svh, 48px)` (>= 1024px) | input / select height |
+| `--cf-ta-h` | `104px` | textarea min-height (vertical resize only) |
+| `--cf-label-scale` / `--cf-label-top` | `0.74` / `7px` (< 1024px); `0.78` / `5px` (>= 1024px) | floating label size and distance from the field's top edge |
 | `--cf-gap` | `clamp(10px, 1.4svh, 14px)` | between fields |
 | `--cf-radius` | `14px` | field radius |
 | `--cf-title-gap` | `clamp(24px, 3.4svh, 36px)` | title -> first field |
