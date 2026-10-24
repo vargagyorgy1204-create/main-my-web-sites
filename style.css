@@ -6409,41 +6409,48 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     .cta-row--armed.is-in .cta-row__btn { transition-delay: 0.33s; }
 }
 
-/* ===== HERO: the "Portfólió" secondary text link next to the CTA pill ===== */
+/* ===== .text-link — the secondary text link (hero "Portfólió", the "Ajánlatot kérek" links of Szolgáltatások) =====
+   Base: 1px underline at ~50% about 3px below the baseline of the text; hover / focus-visible: a 2px brand-gradient underline grows over it
+   left -> right (0.35s) while the label fills with the same gradient (background-clip: text) and shifts 4px right. data-cursor="pill" gives it the
+   always-gradient pill frame of the custom cursor. Colour: --tl-color (#111 on light, white on the dark sections).
+   Modifiers: --caps (uppercase label), --arrow (a small down arrow that fades in on hover and then bobs). Height = --btn-h: it centres next to a button. */
 .hero-ctas { column-gap: 28px; }
-.hero-link {
-    --hl-line: -2px;                                        /* underline: 3px below the baseline of the caps */
+.text-link {
+    --tl-color: #111;
+    --tl-line: -2px;                                        /* underline: 3px below the baseline */
     position: relative;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    height: var(--btn-h);                                   /* centred next to the pill */
-    font: 500 var(--btn-fs)/1 'Space Grotesk', sans-serif;  /* the CTA label */
+    height: var(--btn-h);
+    font: 500 var(--btn-fs)/1 'Space Grotesk', sans-serif;  /* same type as the Részletek / CTA labels */
     letter-spacing: 0.5px;
-    text-transform: uppercase;
     text-decoration: none;
-    color: #111;
+    color: var(--tl-color);
+    cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
-/* the label fills with the brand gradient from left to right (background-clip: text, in step with the underline); #111 underneath */
-.hero-link__label {
+.text-link--caps { text-transform: uppercase; }
+.text-link__label {
     position: relative;
     display: inline-block;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    background: var(--card-primary) 0 0 / 0% 100% no-repeat, linear-gradient(#111, #111) 0 0 / 100% 100% no-repeat;   /* explicit sizes on both layers: the size list can be transitioned */
+    background: var(--card-primary) 0 0 / 0% 100% no-repeat, linear-gradient(var(--tl-color), var(--tl-color)) 0 0 / 100% 100% no-repeat;   /* explicit sizes on both layers: the size list can be transitioned */
     -webkit-background-clip: text;
     background-clip: text;
     transition: transform 0.35s ease, background-size 0.35s ease;
 }
-/* base underline (1px, 50%) + the gradient underline (2px) that grows over it from the left */
-.hero-link__label::before, .hero-link__label::after { content: ""; position: absolute; left: 0; right: 0; }
-.hero-link__label::after { bottom: var(--hl-line, -1px); height: 1px; background: #111; opacity: 0.5; }
-.hero-link__label::before { bottom: calc(var(--hl-line, -1px) - 0.5px); height: 2px; z-index: 1; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.35s ease; }
-.hero-link__arrow { flex: none; opacity: 0; translate: -4px 0; transition: opacity 0.3s ease 0.12s, translate 0.3s ease 0.12s; }   /* its space is always reserved: no layout shift */
-.hero-link:focus-visible { outline: 2px solid #C026A3; outline-offset: 6px; border-radius: 4px; }
-.hero-link:focus-visible .hero-link__label, html.has-cursor .hero-link:hover .hero-link__label { transform: translateX(4px); background-size: 100% 100%, 100% 100%; }
-.hero-link:focus-visible .hero-link__label::before, html.has-cursor .hero-link:hover .hero-link__label::before { transform: scaleX(1); }
-@keyframes heroArrowBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
-.hero-link:focus-visible .hero-link__arrow, html.has-cursor .hero-link:hover .hero-link__arrow { opacity: 1; translate: 0 0; animation: heroArrowBob 0.9s ease-in-out 0.45s infinite; }   /* a gentle loop once the arrow has faded in */
-@media (prefers-reduced-motion: reduce) { .hero-link__label, .hero-link__label::before, .hero-link__arrow { transition: none; } .hero-link:focus-visible .hero-link__arrow, html.has-cursor .hero-link:hover .hero-link__arrow { animation: none; } }
+.text-link__label::before, .text-link__label::after { content: ""; position: absolute; left: 0; right: 0; }
+.text-link__label::after { bottom: var(--tl-line); height: 1px; background: var(--tl-color); opacity: 0.5; }
+.text-link__label::before { bottom: calc(var(--tl-line) - 0.5px); height: 2px; z-index: 1; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.35s ease; }
+.text-link__arrow { flex: none; opacity: 0; translate: -4px 0; transition: opacity 0.3s ease 0.12s, translate 0.3s ease 0.12s; }   /* its space is always reserved: no layout shift */
+.text-link:focus-visible { outline: 2px solid #C026A3; outline-offset: 6px; border-radius: 4px; }
+.text-link:focus-visible .text-link__label, html.has-cursor .text-link:hover .text-link__label { transform: translateX(4px); background-size: 100% 100%, 100% 100%; }
+.text-link:focus-visible .text-link__label::before, html.has-cursor .text-link:hover .text-link__label::before { transform: scaleX(1); }
+@keyframes textLinkBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+.text-link:focus-visible .text-link__arrow, html.has-cursor .text-link:hover .text-link__arrow { opacity: 1; translate: 0 0; animation: textLinkBob 0.9s ease-in-out 0.45s infinite; }   /* a gentle loop once the arrow has faded in */
+@media (prefers-reduced-motion: reduce) { .text-link__label, .text-link__label::before, .text-link__arrow { transition: none; } .text-link:focus-visible .text-link__arrow, html.has-cursor .text-link:hover .text-link__arrow { animation: none; } }
+/* the dark sections: white text and base underline */
+#services .text-link { --tl-color: #fff; }
+.svt-actions { column-gap: 28px; align-items: center; }
