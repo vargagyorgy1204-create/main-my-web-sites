@@ -114,9 +114,8 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-title-gap` | `clamp(24px, 3.4svh, 36px)` | title -> first field |
 | `--cf-btn-gap` | `clamp(18px, 2.4svh, 26px)` | consent row -> submit button AND submit button -> confidentiality note (equal) |
 | `--cf-bottom-pad` | `clamp(28px, 4svh, 44px)` | confidentiality note -> card bottom (extra height from the equal-height row is split evenly above and below the content) |
-| `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title and the photo card heading (shared) |
+| `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title and the photo card tagline "Dizájn, kód és mozgás" (on phones capped at `(100vw - 84px) / 17` so the line never wraps) |
 | `--cf-note-fs` | `0.875rem` | "Adatait bizalmasan kezelem." and "Általában 24 órán belül válaszolok." (shared, same colour) |
 | `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 20.5svh, 260px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
-| `--cf-tagline-fs` | `1.2rem` | photo card tagline "Dizájn, kód és mozgás" |
 | `--cf-pc-lines-gap` | `clamp(28px, 4.5svh, 48px)` | photo card: minimum gap between the 3 info lines and the WhatsApp button (the rest of the free height sits there too) |
 | `--cf-pc-note-gap` | `clamp(24px, 3.4svh, 36px)` | photo card: e-mail button -> "Általában 24 órán belül válaszolok." |
