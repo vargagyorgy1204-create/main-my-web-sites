@@ -49,6 +49,7 @@
     --cf-ta-h: 104px;                                                      /* textarea min-height */
     --cf-gap: clamp(10px, 1.4svh, 14px);                                   /* between fields */
     --cf-radius: 14px;
+    --cf-photo-d: clamp(190px, 27svh, 260px);                              /* photo card: portrait diameter on phones / tablets (stacked cards); desktop: clamp(150px, 20.5svh, 260px) so the card never grows taller than the form */
     --cf-title-fs: clamp(1.25rem, 2.2svh, 1.5rem);                         /* "Kérjen árajánlatot" AND the photo card heading */
     --cf-note-fs: 0.875rem;                                                /* "Adatait bizalmasan kezelem." AND "Általában 24 órán belül válaszolok." */
     --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
@@ -67,6 +68,7 @@
 @media (max-width: 767px) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
 @media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
 @media (min-width: 768px) { :root { --btn-fs: clamp(13px, 1.45svh, 15px); --btn-pad-y: clamp(10px, 1.6svh, 15px); --btn-px: clamp(24px, 3.4svh, 34px); } }
+@media (min-width: 1024px) { :root { --cf-photo-d: clamp(150px, 20.5svh, 260px); } }
 @media (min-width: 1024px) { :root { --cf-fs: 15px; --cf-h: clamp(44px, 5.6svh, 48px); --cf-label-scale: 0.78; --cf-label-top: 5px; } }
 @media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
 @media (min-width: 1024px) { :root { --content-gutter-tight: 96px; } }   /* = logo right edge 76px + 20px */
@@ -6682,6 +6684,44 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 #contact .contact-form-note { margin-bottom: 0; font-size: var(--cf-note-fs); color: rgb(159 176 216); text-align: center; }
 #contact .contact-note { margin-top: max(0px, calc(var(--cf-btn-gap) - clamp(8px, 1.1svh, 12px))); }   /* buttons -> note = the form's button -> note (the actions gap is clamp(8px, 1.1svh, 12px)) */
 @media (min-width: 1024px) {
-    /* same inner top / bottom padding as the form card: photo top = form title top, note baseline = form note baseline */
-    .ctc .contact-personal-panel { padding-top: clamp(20px, 2.8svh, 30px); padding-bottom: var(--cf-bottom-pad); }
+    /* bottom padding as the form card's: the note baselines line up */
+    .ctc .contact-personal-panel { padding-bottom: var(--cf-bottom-pad); }
 }
+.ctc .contact-personal-panel { padding-top: clamp(36px, 5svh, 56px); }
+.ctc .contact-profile-header { gap: 0; }
+/* portrait: the gradient ring (::before) rotates slowly, only transform (compositor); the photo and its tilt stay still */
+#contact .contact-photo-square {
+    width: var(--cf-photo-d);
+    height: var(--cf-photo-d);
+    padding: 4px;
+    background: none;
+    isolation: isolate;
+}
+#contact .contact-photo-square::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 50%;
+    background: var(--card-primary);
+    animation: ctcRing 12s linear infinite;
+}
+#contact .contact-photo-square picture { position: relative; z-index: 1; padding: 0; background: none; border-radius: 50%; overflow: hidden; }
+#contact .contact-photo-square img { border: 4px solid #131a2e; box-sizing: border-box; }   /* the dark mat between ring and photo */
+@keyframes ctcRing { to { transform: rotate(360deg); } }
+.contact-profile-id { margin-top: 16px; text-align: center; }
+.contact-profile-id p { margin: 0; }
+.contact-name { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; line-height: 1.3; color: #fff; }
+.contact-role { margin-top: 4px; font-size: 0.85rem; line-height: 1.4; letter-spacing: 0.04em; color: rgb(255 255 255 / 0.65); }
+#contact .contact-status {
+    margin-top: clamp(12px, 1.7svh, 16px);
+    padding: 6px 14px;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.05);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: rgb(255 255 255 / 0.75);
+}
+#contact .status-dot { animation-duration: 2s; }
+@media (prefers-reduced-motion: reduce) { #contact .contact-photo-square::before { animation: none; } }

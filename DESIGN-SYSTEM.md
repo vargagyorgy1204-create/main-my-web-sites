@@ -116,3 +116,4 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-bottom-pad` | `clamp(28px, 4svh, 44px)` | confidentiality note -> card bottom (extra height from the equal-height row is split evenly above and below the content) |
 | `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title and the photo card heading (shared) |
 | `--cf-note-fs` | `0.875rem` | "Adatait bizalmasan kezelem." and "Általában 24 órán belül válaszolok." (shared, same colour) |
+| `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 20.5svh, 260px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
