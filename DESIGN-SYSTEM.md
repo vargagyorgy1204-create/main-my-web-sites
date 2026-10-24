@@ -117,3 +117,4 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title and the photo card heading (shared) |
 | `--cf-note-fs` | `0.875rem` | "Adatait bizalmasan kezelem." and "Általában 24 órán belül válaszolok." (shared, same colour) |
 | `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 20.5svh, 260px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
+| `--cf-tagline-fs` | `1.2rem` | photo card tagline "Dizájn, kód és mozgás" |
