@@ -154,7 +154,7 @@ if (form) {
             return;
         }
         setStatus('', '');
-        if (submitBtn) { submitBtn.disabled = true; submitBtn.setAttribute('aria-busy', 'true'); }
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.setAttribute('aria-busy', 'true'); submitBtn.classList.add('is-sending'); }
         try {
             const response = await fetch(form.action, {
                 method: 'POST',
@@ -169,7 +169,7 @@ if (form) {
         } catch (err) {
             setStatus('Az üzenetet most nem sikerült elküldeni. Kérjük, próbálja újra, vagy írjon a info@varbro.pro címre.', 'error');
         } finally {
-            if (submitBtn) { submitBtn.disabled = false; submitBtn.removeAttribute('aria-busy'); }
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.removeAttribute('aria-busy'); submitBtn.classList.remove('is-sending'); }
         }
     };
 }
