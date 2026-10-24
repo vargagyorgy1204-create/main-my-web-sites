@@ -493,7 +493,7 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
 
 // Hero buttons – liquid fill origin + click ripple
 (function () {
-    document.querySelectorAll('.hbtn').forEach(function (btn) {
+    function bind(btn) {
         function setOrigin(e) {
             var r = btn.getBoundingClientRect();
             btn.style.setProperty('--fx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
@@ -513,7 +513,9 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
             host.appendChild(rip);
             setTimeout(function () { rip.remove(); }, 700);
         });
-    });
+    }
+    document.querySelectorAll('.hbtn').forEach(bind);
+    (window.VB = window.VB || {}).bindHbtn = bind;      /* js/portfolio.js renders one more pill (Instagram card) after this runs */
 })();
 
 // Skills – floating logo preview following the cursor

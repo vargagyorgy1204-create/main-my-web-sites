@@ -4748,7 +4748,7 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 24px 32px;
+  gap: 24px 48px;                          /* QR block <-> pill: ~48px, both vertically centred; wraps (button under the QR) on phones */
   margin-block-start: 8px;
 }
 .pf-ig__qr {
