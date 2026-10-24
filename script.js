@@ -68,21 +68,28 @@ function openThankYou(opener) {
     const m = document.getElementById('thankYouModal');
     if (!m) return;
     thankYouOpener = opener || null;
+    clearTimeout(m._hideTimer);
+    m.classList.remove('is-open');
     m.style.display = 'flex';
+    void m.offsetWidth;
+    m.classList.add('is-open');                    // fades the blurred backdrop in and replays the check draw-in
     const btn = m.querySelector('button');
     if (btn) btn.focus({ preventScroll: true });
-    m.classList.remove('is-open'); void m.offsetWidth; m.classList.add('is-open');   // replays the check draw-in
 }
 function closeModal() {
     const m = document.getElementById('thankYouModal');
     if (!m) return;
-    m.style.display = 'none';
+    m.classList.remove('is-open');                 // fade out, then hide
+    clearTimeout(m._hideTimer);
+    m._hideTimer = setTimeout(() => { m.style.display = 'none'; }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 300);
     if (thankYouOpener) thankYouOpener.focus({ preventScroll: true });
     thankYouOpener = null;
 }
+const thankYouEl = document.getElementById('thankYouModal');
+if (thankYouEl) thankYouEl.addEventListener('click', (e) => { if (e.target === thankYouEl) closeModal(); });   // click outside the card closes
 document.addEventListener('keydown', (e) => {
     const m = document.getElementById('thankYouModal');
-    if (!m || m.style.display !== 'flex') return;
+    if (!m || m.style.display !== 'flex' || !m.classList.contains('is-open')) return;
     if (e.key === 'Escape') closeModal();
     else if (e.key === 'Tab') { e.preventDefault(); const b = m.querySelector('button'); if (b) b.focus({ preventScroll: true }); }   // focus trap: the close button is the only control
 });

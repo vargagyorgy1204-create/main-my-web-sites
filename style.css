@@ -1349,7 +1349,34 @@ body.service-modal-open { overflow: hidden; }
 }
 
 /* Modal */
-.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+/* success modal: the page behind stays visible, blurred; fades in / out with the card (display is toggled by script.js after the fade) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 8, 24, 0.75);                  /* fallback without backdrop-filter */
+    opacity: 0;
+    transition: opacity 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .modal {
+        background: rgba(10, 8, 24, 0.45);
+        -webkit-backdrop-filter: blur(0) saturate(100%);
+        backdrop-filter: blur(0) saturate(100%);
+    }
+    .modal.is-open {
+        -webkit-backdrop-filter: blur(10px) saturate(120%);
+        backdrop-filter: blur(10px) saturate(120%);
+    }
+}
+.modal.is-open { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .modal { transition: none; } }
 .modal-content { background: white; padding: 50px; border-radius: 30px; text-align: center; max-width: 450px; width: 90%; }
 .modal-content i {
     color: #22c55e;
