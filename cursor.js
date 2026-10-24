@@ -8,6 +8,8 @@
 //     box     – buttons, icon buttons, chips, selects, checkbox: frame follows the element's own rect (+4px) and radius (+4px)
 //     card    – big clickable surfaces (own background/border and > 420 x 160): no frame, the ring grows to a small
 //               ring (intentional, unchanged)
+//     pill    – [data-cursor="pill"] (the hero "Portfólió" link): a full pill as tall as a CTA button (--btn-h), horizontal padding --btn-px,
+//               radius = height / 2, centred on the link
 //     view    – [data-cursor="view"] / about photo: the labelled disc (unchanged)
 //   text fields: native text cursor, custom cursor hidden.
 // Rects are measured at hover time and cached; re-measured on scroll, resize, element resize, transitions/animations
@@ -99,6 +101,7 @@
 
     /* which class is this target? decided from style, never from size (except the card class) */
     function classify(el) {
+        if (el.matches('[data-cursor="pill"]')) return 'pill';
         if (el.matches('select, input, [data-cursor="frame"]')) return 'box';
         var cs = getComputedStyle(el);
         var clipText = cs.backgroundClip === 'text' || cs.webkitBackgroundClip === 'text';   /* menu items fill their text on hover */
@@ -113,6 +116,18 @@
         return 'box';
     }
 
+    /* --btn-px resolved to pixels (a clamp() of svh): measured with a throw-away probe, cached per window size */
+    var pxKey = '', pxVal = 0;
+    function btnPx() {
+        var k = window.innerWidth + 'x' + window.innerHeight;
+        if (k !== pxKey) {
+            var d = document.createElement('div');
+            d.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;width:var(--btn-px)';
+            document.body.appendChild(d); pxVal = d.getBoundingClientRect().width || 30; d.remove(); pxKey = k;
+        }
+        return pxVal;
+    }
+
     function computeBox(f) {
         var el = f.el, cs = getComputedStyle(el), b = layoutRect(el), l, t, w, h, rad;
         if (f.kind === 'text') {
@@ -123,6 +138,10 @@
             l = b.l + pl - padH; t = b.t + pt - padV;
             w = b.w - pl - pr + 2 * padH; h = b.h - pt - pb + 2 * padV;
             rad = Math.min(20, h / 2);
+        } else if (f.kind === 'pill') {
+            var px = btnPx();
+            l = b.l - px; t = b.t; w = b.w + 2 * px; h = b.h;     /* the link is --btn-h tall: the frame is exactly a CTA pill */
+            rad = h / 2;
         } else {
             var br = parseFloat(cs.borderTopLeftRadius) || 0;
             l = b.l - 4; t = b.t - 4; w = b.w + 8; h = b.h + 8;

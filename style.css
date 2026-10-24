@@ -6388,6 +6388,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 /* ===== HERO: the "Portfólió" secondary text link next to the CTA pill ===== */
 .hero-ctas { column-gap: 28px; }
 .hero-link {
+    --hl-line: -2px;                                        /* underline: 3px below the baseline of the caps */
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -6400,14 +6401,25 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     color: #111;
     -webkit-tap-highlight-color: transparent;
 }
-.hero-link__label { position: relative; display: inline-block; transition: transform 0.35s ease; }
+/* the label fills with the brand gradient from left to right (background-clip: text, in step with the underline); #111 underneath */
+.hero-link__label {
+    position: relative;
+    display: inline-block;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: var(--card-primary) 0 0 / 0% 100% no-repeat, linear-gradient(#111, #111) 0 0 / 100% 100% no-repeat;   /* explicit sizes on both layers: the size list can be transitioned */
+    -webkit-background-clip: text;
+    background-clip: text;
+    transition: transform 0.35s ease, background-size 0.35s ease;
+}
 /* base underline (1px, 50%) + the gradient underline (2px) that grows over it from the left */
 .hero-link__label::before, .hero-link__label::after { content: ""; position: absolute; left: 0; right: 0; }
-.hero-link__label::after { bottom: -8px; height: 1px; background: currentColor; opacity: 0.5; }
-.hero-link__label::before { bottom: -8.5px; height: 2px; z-index: 1; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.35s ease; }
+.hero-link__label::after { bottom: var(--hl-line, -1px); height: 1px; background: #111; opacity: 0.5; }
+.hero-link__label::before { bottom: calc(var(--hl-line, -1px) - 0.5px); height: 2px; z-index: 1; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.35s ease; }
 .hero-link__arrow { flex: none; opacity: 0; translate: -4px 0; transition: opacity 0.3s ease 0.12s, translate 0.3s ease 0.12s; }   /* its space is always reserved: no layout shift */
 .hero-link:focus-visible { outline: 2px solid #C026A3; outline-offset: 6px; border-radius: 4px; }
-.hero-link:focus-visible .hero-link__label, html.has-cursor .hero-link:hover .hero-link__label { transform: translateX(4px); }
+.hero-link:focus-visible .hero-link__label, html.has-cursor .hero-link:hover .hero-link__label { transform: translateX(4px); background-size: 100% 100%, 100% 100%; }
 .hero-link:focus-visible .hero-link__label::before, html.has-cursor .hero-link:hover .hero-link__label::before { transform: scaleX(1); }
-.hero-link:focus-visible .hero-link__arrow, html.has-cursor .hero-link:hover .hero-link__arrow { opacity: 1; translate: 0 0; }
-@media (prefers-reduced-motion: reduce) { .hero-link__label, .hero-link__label::before, .hero-link__arrow { transition: none; } }
+@keyframes heroArrowBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+.hero-link:focus-visible .hero-link__arrow, html.has-cursor .hero-link:hover .hero-link__arrow { opacity: 1; translate: 0 0; animation: heroArrowBob 0.9s ease-in-out 0.45s infinite; }   /* a gentle loop once the arrow has faded in */
+@media (prefers-reduced-motion: reduce) { .hero-link__label, .hero-link__label::before, .hero-link__arrow { transition: none; } .hero-link:focus-visible .hero-link__arrow, html.has-cursor .hero-link:hover .hero-link__arrow { animation: none; } }
