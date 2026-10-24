@@ -118,3 +118,5 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-note-fs` | `0.875rem` | "Adatait bizalmasan kezelem." and "Általában 24 órán belül válaszolok." (shared, same colour) |
 | `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 20.5svh, 260px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
 | `--cf-tagline-fs` | `1.2rem` | photo card tagline "Dizájn, kód és mozgás" |
+| `--cf-pc-lines-gap` | `clamp(28px, 4.5svh, 48px)` | photo card: minimum gap between the 3 info lines and the WhatsApp button (the rest of the free height sits there too) |
+| `--cf-pc-note-gap` | `clamp(24px, 3.4svh, 36px)` | photo card: e-mail button -> "Általában 24 órán belül válaszolok." |
