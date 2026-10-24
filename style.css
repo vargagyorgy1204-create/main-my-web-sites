@@ -4680,15 +4680,16 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
   border-radius: 999px;
 }
 
+/* "Esettanulmány": exactly the "Részletek" button (the --btn-* tokens): same type, padding, 2px border, 50px radius, gradient hover fill (.pf-btn) */
 .pf-case__btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   inline-size: 100%;
-  min-block-size: 48px;
-  padding-block: 0;
+  padding: var(--btn-pad-y) var(--btn-px);
+  font-size: var(--btn-fs);
 }
+.pf-case__btn:active { scale: 0.98; }
 
 /* ---------- Instagram card ---------- */
 .pf-ig {
@@ -4866,9 +4867,6 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
   .pf-case__btn {
     inline-size: auto;
     align-self: flex-start;
-    min-block-size: 0;
-    padding: clamp(10px, 1.3svh, 14px) 28px;
-    font-size: clamp(13px, 1vw, 15px);
   }
 
   .pf-case__media { display: flex; align-items: flex-start; }
@@ -4898,7 +4896,6 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
   .pf-case__name { font-size: clamp(24px, calc(3.2svh + 1vw), 40px); }
   .pf-case__block p { font-size: 13px; line-height: 1.45; }
   .pf-case__chips li { padding: 3px 10px; font-size: 11.5px; }
-  .pf-case__btn { padding: 9px 22px; font-size: 13px; }
 }
 
 @media (min-width: 900px) and (max-height: 559px) {

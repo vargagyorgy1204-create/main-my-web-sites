@@ -87,7 +87,7 @@
             '</div>' +
             '<div class="pf-case__bottom">' +
               '<ul class="pf-case__chips">' + p.chips.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' +
-              '<button type="button" class="pf-btn pf-case__btn">Esettanulmány <i data-lucide="arrow-right" class="icon"></i></button>' +
+              '<button type="button" class="pf-btn pf-case__btn">Esettanulmány</button>' +
             '</div>' +
           '</div>' +
           '<div class="pf-case__media">' + windowHTML(p) + '</div>' +
