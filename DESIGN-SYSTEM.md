@@ -114,3 +114,5 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-title-gap` | `clamp(24px, 3.4svh, 36px)` | title -> first field |
 | `--cf-btn-gap` | `clamp(18px, 2.4svh, 26px)` | consent row -> submit button AND submit button -> confidentiality note (equal) |
 | `--cf-bottom-pad` | `clamp(28px, 4svh, 44px)` | confidentiality note -> card bottom (extra height from the equal-height row is split evenly above and below the content) |
+| `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title and the photo card heading (shared) |
+| `--cf-note-fs` | `0.875rem` | "Adatait bizalmasan kezelem." and "Általában 24 órán belül válaszolok." (shared, same colour) |
