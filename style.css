@@ -6308,6 +6308,9 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 }
 .cta-row__btn .hbtn__icon { width: calc(var(--btn-h) - 12px); height: calc(var(--btn-h) - 12px); }
 .cta-row__btn .hbtn__icon svg { width: calc((var(--btn-h) - 12px) * 0.5); height: calc((var(--btn-h) - 12px) * 0.5); }
+/* --no-arrow: the Szolgáltatások closing pill and the service modals' bottom pill: no arrow circle, symmetric padding (the label starts where Részletek's does), same height / type / colours / glow / hover */
+.cta-row__btn--no-arrow .hbtn { padding: 0 calc(var(--btn-px) + 2px); }
+.cta-row__btn--no-arrow .hbtn__icon { display: none; }
 .cta-row .cta-l2 { display: block; font-weight: 400; }
 @media (max-width: 767px) {
     .cta-row { flex-direction: column; align-items: flex-start; margin-top: 56px; padding-top: 32px; }
