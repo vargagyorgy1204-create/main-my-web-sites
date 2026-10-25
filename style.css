@@ -1108,6 +1108,15 @@ body.service-modal-open { overflow: hidden; }
     .modal-group__grid--3,
     .modal-group__grid--2 { grid-template-columns: minmax(0, 1fr); }
 }
+/* ---------- bottom CTA row, >= 1024px: exactly two text lines + the pill on the right (never wraps below) ----------
+   line 2 never wraps: its size follows the text block's width (container query units, floor 14px, never above the row's own size) */
+@media (min-width: 1024px) {
+    .service-modal .modal-cta { flex-wrap: nowrap; align-items: center; }
+    .service-modal .modal-cta .cta-row__text { flex: 1 1 0; min-width: 0; container-type: inline-size; }
+    .service-modal .modal-cta .cta-l1 { white-space: nowrap; }
+    .service-modal .modal-cta .cta-l2 { white-space: nowrap; font-size: min(1em, max(14px, 2.05cqw)); }
+    .service-modal .modal-cta .cta-row__btn { flex: none; }
+}
 /* ===== /Service modals ===== */
 
 .service-list li {
