@@ -110,7 +110,7 @@
           '<figure class="pf-ig__qr"><img src="instaqr.png" width="132" height="132" alt="Instagram QR kód" loading="lazy" decoding="async">' +
             '<figcaption>Olvassa be a kódot</figcaption></figure>' +
           /* the same pill component as the closing CTA rows (.cta-row__btn > .hbtn--primary) */
-          '<div class="cta-row__btn pf-ig__btnwrap"><a class="hbtn hbtn--primary" href="' + IG_URL + '" target="_blank" rel="noopener noreferrer">' +
+          '<div class="cta-row__btn cta-row__btn--no-arrow pf-ig__btnwrap"><a class="hbtn hbtn--primary" href="' + IG_URL + '" target="_blank" rel="noopener noreferrer">' +
             '<span class="hbtn__glow" aria-hidden="true"></span><span class="hbtn__fill" aria-hidden="true"></span><span class="hbtn__rip" aria-hidden="true"></span>' +
             '<span class="hbtn__text"><span class="hbtn__roll" data-text="Megnézem az Instagramon">Megnézem az Instagramon</span></span>' +
             '<span class="hbtn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span></a></div>' +
