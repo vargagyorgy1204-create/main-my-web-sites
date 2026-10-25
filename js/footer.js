@@ -13,19 +13,58 @@
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* the text is measured on a hidden twin (never split into letters): its width and per-letter x positions (kerning included) are the reference */
+  var text = wm.textContent.trim();
+  var probe = document.createElement('span');
+  probe.setAttribute('aria-hidden', 'true');
+  probe.textContent = text;
+  probe.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;display:inline-block;margin:0;width:auto;background:none;-webkit-mask-image:none;mask-image:none;pointer-events:none';
+  wmBox.appendChild(probe);
+
+  /* ---- letters: V-A-R-B-R-O as inline-blocks, each placed at the exact x of the unsplit word (so the look is unchanged), each carrying its slice of the
+          word-wide gradient / glint (--lx offset, --ww word width); they rise one by one (style.css .wm-l). Not for reduced motion: the word stays as is. ---- */
+  var letters = null;
+  function layout() {
+    if (reduce) return;
+    if (!letters) {
+      wm.textContent = '';
+      wm.setAttribute('role', 'img');
+      wm.setAttribute('aria-label', 'VarBro');
+      letters = text.split('').map(function (ch, i) {
+        var s = document.createElement('span');
+        s.className = 'wm-l';
+        s.setAttribute('aria-hidden', 'true');
+        s.textContent = ch;
+        s.style.setProperty('--li', i);
+        wm.appendChild(s);
+        return s;
+      });
+      wm.classList.add('wm-split');
+    }
+    var node = probe.firstChild, pl = probe.getBoundingClientRect().left, rg = document.createRange(), targets = [];
+    for (var i = 0; i < text.length; i++) { rg.setStart(node, i); rg.setEnd(node, i + 1); targets.push(rg.getBoundingClientRect().left - pl); }
+    letters.forEach(function (l) { l.style.left = '0px'; });
+    var wl = wm.getBoundingClientRect().left, pad = parseFloat(getComputedStyle(letters[0]).paddingLeft) || 0;
+    letters.forEach(function (l, i) {
+      var natural = l.getBoundingClientRect().left - wl + pad;
+      l.style.left = (targets[i] - natural).toFixed(3) + 'px';
+      l.style.setProperty('--lx', targets[i].toFixed(3) + 'px');
+    });
+    wm.style.setProperty('--ww', wm.clientWidth + 'px');
+  }
+
   /* ---- fit: exact container width, never wider, never taller than 30% of the viewport height ---- */
   function fit() {
     var w = floor.clientWidth;
     if (!w) return;
     floor.style.removeProperty('--wm');
     var size = parseFloat(getComputedStyle(wm).fontSize) || 100;
-    wm.style.display = 'inline-block';                    /* measure the text, not the block */
-    var tw = wm.getBoundingClientRect().width;
-    wm.style.display = '';
+    var tw = probe.getBoundingClientRect().width;         /* the text, not the block */
     if (!tw) return;
     var fitted = size * (w / tw) * 0.995;
     var cap = window.innerHeight * 0.3;
     floor.style.setProperty('--wm', Math.min(fitted, Math.max(cap, 60)).toFixed(2) + 'px');
+    layout();
   }
   var rt;
   function refit() { clearTimeout(rt); rt = setTimeout(fit, 150); }
@@ -34,17 +73,15 @@
 
   if (reduce) return;
 
-  /* ---- entrance, once ---- */
+  /* ---- reveal: the letters rise when the wordmark enters the viewport (after the divider line has started drawing) and fall back down, right to left,
+          when the footer is left downwards ---- */
   if ('IntersectionObserver' in window) {
     floor.classList.add('fw-prep');
-    var io = new IntersectionObserver(function (es) {
-      if (!es[0].isIntersecting) return;
-      io.disconnect();
-      requestAnimationFrame(function () { floor.classList.remove('fw-prep'); floor.classList.add('fw-in'); });
-    }, { threshold: 0.15 });
-    io.observe(floor);
-    /* failsafe: never leave it hidden */
-    setTimeout(function () { if (floor.classList.contains('fw-prep')) { floor.classList.remove('fw-prep'); floor.classList.add('fw-in'); } }, 6000);
+    new IntersectionObserver(function (es) {
+      var e = es[es.length - 1];
+      if (e.isIntersecting) requestAnimationFrame(function () { floor.classList.remove('fw-prep'); floor.classList.add('fw-in'); });
+      else if (e.boundingClientRect.top > 0) { floor.classList.remove('fw-in'); floor.classList.add('fw-prep'); }
+    }, { threshold: 0.15 }).observe(floor);
   }
 
   /* ---- soft highlight following the cursor (x only), eased ---- */

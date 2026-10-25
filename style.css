@@ -5953,8 +5953,32 @@ footer {
     mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0.5) 22%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.12) 55%, rgb(0 0 0 / 0.06) 68%, rgb(0 0 0 / 0.04) 100%);
 }
 /* entrance: set up by js/footer.js (visible without it) */
-.footer-floor.fw-prep .footer-wordmark span { opacity: 0; transform: translateY(12%); }
-.footer-floor.fw-in .footer-wordmark span { opacity: 1; transform: none; transition: opacity 0.9s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.9s cubic-bezier(0.215, 0.61, 0.355, 1); }
+.footer-floor.fw-prep .footer-wordmark span:not(.wm-split):not(.wm-l) { opacity: 0; transform: translateY(12%); }
+.footer-floor.fw-in .footer-wordmark span:not(.wm-split):not(.wm-l) { opacity: 1; transform: none; transition: opacity 0.9s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.9s cubic-bezier(0.215, 0.61, 0.355, 1); }
+/* split wordmark (js/footer.js): the word-wide gradient, glint and fade now live on the letters - each letter paints its slice (tile = the word block, shifted by --lx) */
+.footer-wordmark span.wm-split { background: none; -webkit-mask-image: none; mask-image: none; }
+.footer-wordmark .wm-l {                    /* (the .footer-wordmark span rule above also matches the letters: this one is more specific) */
+    --gx: inherit;                          /* the glint position / strength live on the word (js/footer.js writes them there) */
+    --gi: inherit;
+    display: inline-block;
+    position: relative;
+    padding: 0 0.06em;                      /* paint room for ink that overhangs the advance (letter-spacing -0.02em) ... */
+    margin: 0 -0.06em;                      /* ... without changing the layout */
+    background:
+        radial-gradient(circle 0.9em at var(--gx) 28%, rgb(255 255 255 / calc(var(--gi) * 0.35)), transparent 70%) calc(var(--lx, 0px) * -1 + 0.06em) 0 / var(--ww, 100%) 100% no-repeat,
+        linear-gradient(90deg, #6c63ff 0%, #c850c0 100%) calc(var(--lx, 0px) * -1 + 0.06em) 0 / var(--ww, 100%) 100% no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0.5) 22%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.12) 55%, rgb(0 0 0 / 0.06) 68%, rgb(0 0 0 / 0.04) 100%);
+    mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0.5) 22%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.12) 55%, rgb(0 0 0 / 0.06) 68%, rgb(0 0 0 / 0.04) 100%);
+    transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.5s ease;
+    transition-delay: var(--wd, 0s);
+}
+.footer-floor.fw-prep .wm-l { transform: translateY(100%); opacity: 0; --wd: calc((5 - var(--li)) * 0.06s); }     /* out: falls back, right -> left */
+.footer-floor.fw-in .wm-l { transform: none; opacity: 1; --wd: calc(0.15s + var(--li) * 0.06s); }              /* in: rises, left -> right, a beat after the divider line */
+@media (prefers-reduced-motion: reduce) { .wm-l { transition: none; } }
 
 /* legal row: on the dark lower zone of the wordmark (desktop), in flow above it on phones */
 .footer-legal {
