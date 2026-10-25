@@ -151,6 +151,35 @@ if (form) {
         btn.innerHTML = '<svg class="sent-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Elküldve';
         setTimeout(() => { btn.classList.remove('is-sent'); btn.innerHTML = original; btn.style.minWidth = ''; if (window.lucide) lucide.createIcons(); resolve(); }, 1200);
     });
+    // draft autosave: the text fields and the service (NOT the consent) live in sessionStorage while the visitor types, so a detour
+    // (privacy page, reload) loses nothing; cleared after a successful submit
+    const DRAFT_KEY = 'vb_contact_draft';
+    const DRAFT_FIELDS = ['name', 'email', 'phone', 'service', 'message'];
+    const draftGet = () => { try { return JSON.parse(sessionStorage.getItem(DRAFT_KEY) || 'null'); } catch (e) { return null; } };
+    const draftClear = () => { try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) { /* storage unavailable */ } };
+    let draftTimer = 0;
+    const draftSave = () => {
+        clearTimeout(draftTimer);
+        draftTimer = setTimeout(() => {
+            try {
+                const d = {};
+                DRAFT_FIELDS.forEach((n) => { const el = form.elements[n]; if (el && el.value) d[n] = el.value; });
+                if (Object.keys(d).length) sessionStorage.setItem(DRAFT_KEY, JSON.stringify(d)); else sessionStorage.removeItem(DRAFT_KEY);
+            } catch (e) { /* storage unavailable */ }
+        }, 300);
+    };
+    const draft = draftGet();
+    if (draft) {
+        DRAFT_FIELDS.forEach((n) => {
+            const el = form.elements[n];
+            if (!el || typeof draft[n] !== 'string' || el.value) return;
+            if (el.tagName === 'SELECT' && ![...el.options].some((o) => o.value === draft[n])) return;
+            el.value = draft[n];
+        });
+        syncAll();
+    }
+    form.addEventListener('input', draftSave);
+    form.addEventListener('change', draftSave);
     form.onsubmit = async (e) => {
         e.preventDefault();
         if (submitBtn && submitBtn.disabled) return;
@@ -158,6 +187,7 @@ if (form) {
         if (hp && hp.value) {            // bot: pretend success, send nothing
             form.reset();
             syncAll();
+            draftClear();
             openThankYou(submitBtn);
             return;
         }
@@ -170,6 +200,8 @@ if (form) {
                 headers: { 'Accept': 'application/json' }
             });
             if (!response.ok) throw new Error('HTTP ' + response.status);
+            clearTimeout(draftTimer);
+            draftClear();
             form.reset();
             syncAll();
             await sentMorph(submitBtn);
@@ -286,6 +318,19 @@ if (form) {
     else new MutationObserver((_, mo) => { if (html.classList.contains('has-cursor')) { on(); mo.disconnect(); } }).observe(html, { attributes: true, attributeFilter: ['class'] });
     render();
 })();
+
+// Privacy page: "Vissza a főoldalra" goes back in history (the browser restores the scroll position near the form) when the visitor
+// came from this site; otherwise the link (index.html#contact) is followed
+document.querySelectorAll('[data-smart-back]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+        try {
+            if (e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) {
+                e.preventDefault();
+                history.back();
+            }
+        } catch (err) { /* follow the link */ }
+    });
+});
 
 // Service modals (pricing)
 const serviceModalTriggers = document.querySelectorAll('.service-modal-trigger');

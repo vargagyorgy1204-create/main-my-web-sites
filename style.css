@@ -6815,3 +6815,48 @@ html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
 #contact .contact-consent { gap: 9px; font-size: var(--cf-consent-fs); }
 #contact .contact-consent input { width: var(--cf-check); height: var(--cf-check); border-radius: 6.3px; }
 #contact .contact-consent input::after { inset: 2.7px; }
+
+/* ===== privacy policy modal (js/privacy-modal.js): the blurred backdrop of .modal, a light site card, inner scroll ===== */
+.privacy-modal { z-index: 2200; }
+.privacy-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(760px, calc(100% - 32px));
+    max-height: 85svh;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 30px 80px rgba(8, 6, 24, 0.45);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.privacy-modal.is-open .privacy-card { opacity: 1; transform: none; }
+.privacy-card__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 22px 16px 28px; border-bottom: 1px solid rgba(108, 92, 231, 0.12); }
+.privacy-card__head h2 { margin: 0; font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; font-size: clamp(1.15rem, 2.4vw, 1.5rem); color: #1a1a2e; }
+.privacy-card__x {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(75, 25, 86, 0.07);
+    color: #4B1956;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+html.has-cursor .privacy-card__x:hover, .privacy-card__x:focus-visible { background: var(--card-primary); color: #fff; }
+.privacy-card__x:focus-visible, .privacy-card__body:focus-visible { outline: 2px solid #8b7bff; outline-offset: 2px; }
+.privacy-card__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 18px 28px; text-align: left; }
+.privacy-card__body .policy-updated { margin-top: 0; }
+.privacy-card__body .policy-section { box-shadow: none; background: #f8f7ff; margin-bottom: 12px; }
+.privacy-card__loading { margin: 0; color: #6b7280; }
+.privacy-card__foot { display: flex; justify-content: center; padding: 14px 28px 22px; border-top: 1px solid rgba(108, 92, 231, 0.12); }
+.privacy-card__foot .modal-close-btn { margin-top: 0; }
+@media (max-width: 560px) { .privacy-card__head { padding: 16px 16px 12px 20px; } .privacy-card__body { padding: 14px 18px; } .privacy-card__foot { padding: 12px 18px 18px; } }
+@media (prefers-reduced-motion: reduce) { .privacy-card { transition: none; } }
