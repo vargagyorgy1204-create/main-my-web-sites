@@ -94,7 +94,7 @@ const PROBES = [
   ['services', '#services .svt-sub', 'visible'],
   ['portfolio', '#portfolio .section-heading', 'visible'],
   ['contact', '.contact-form-panel .btn-submit-message', 'animated'],
-  ['footer', 'footer .footer-section:nth-child(3)', 'animated'],
+  ['footer', 'footer .footer-section:nth-child(3) .fr-i', 'animated'],   // the footer rows rise out of their masks (js/footer.js), no longer the column as a block
 ];
 const state = (p, sel) => p.evaluate(s => {
   const e = document.querySelector(s); if (!e) return null;

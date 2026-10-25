@@ -61,8 +61,7 @@
     // Contact
     // Contact: entrance handled by js/contact-footer.js
 
-    // Footer
-    document.querySelectorAll('.footer-section').forEach(function (s, i) { add(s, null, i * 100); });
+    // Footer: the columns reveal line by line (js/footer.js), not as blocks
 
     // Observer
     var observer = new IntersectionObserver(function (entries) {

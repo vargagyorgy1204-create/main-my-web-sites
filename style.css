@@ -6995,3 +6995,11 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 .footer-section:first-child > p { font-size: var(--footer-desc-fs); line-height: 1.6; }
 .footer-section ul li { font-size: var(--footer-link-fs); line-height: var(--footer-link-lh); }
 @media (min-width: 851px) { .footer-section ul li { margin-bottom: calc(var(--footer-row-gap) - var(--footer-row-shrink)); } }
+
+/* ===== footer text reveal (js/footer.js): rows rise out of their own masks; .fr-prep = hidden state, .fr-in = revealed ===== */
+.fr-line { display: block; white-space: nowrap; }
+.fr-i { display: block; transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd, 0s), opacity 0.45s ease var(--rd, 0s); }
+.footer-section.fr-prep .fr-i { transform: translateY(100%); opacity: 0; --rd: calc((var(--rn, 1) - 1 - var(--ri, 0)) * 0.07s); }     /* out: bottom -> top */
+.footer-section.fr-prep.fr-in .fr-i { transform: none; opacity: 1; --rd: calc(var(--ri, 0) * 0.07s); }                                /* in: top -> bottom */
+.footer-section.fr-moving .fr-mask { overflow: clip; }
+@media (prefers-reduced-motion: reduce) { .fr-i { transition: none; } }

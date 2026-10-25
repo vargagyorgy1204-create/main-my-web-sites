@@ -197,6 +197,16 @@
     return best;
   }
   var wide = window.matchMedia('(min-width: 1024px)');                       /* below 1024px the badge is static at the line's right end */
+  function layoutDy(el) {                                                  /* the entrance transforms (column / row reveal) are not part of the layout */
+    var ty = 0;
+    for (var e = el; e && e !== document.body; e = e.parentElement) {
+      if (e.classList && (e.classList.contains('fr-i') || e.classList.contains('footer-section'))) {
+        var t = getComputedStyle(e).transform;
+        if (t && t !== 'none') ty += new DOMMatrix(t).f;
+      }
+    }
+    return ty;
+  }
   function place() {
     badge.style.removeProperty('--fs-shift');
     div.style.removeProperty('--fs-above');
@@ -211,8 +221,7 @@
         var l0 = rg0.getClientRects();
         for (var j = 0; j < l0.length; j++) {
           var r0 = l0[j]; if (!r0.width) continue;
-          var sec = tn.parentElement.closest('.footer-section'), ty = 0;
-          if (sec) { var tm = getComputedStyle(sec).transform; if (tm && tm !== 'none') ty = new DOMMatrix(tm).f; }     /* the column's entrance transform is not part of the layout */
+          var ty = layoutDy(tn.parentElement);
           var bot = r0.bottom - ty; if (bot > cy1) continue;
           var dx = Math.max(r0.left - cx1, 0, cx1 - r0.right), need = Math.sqrt(Math.max(0, Math.pow(R0 + MIN, 2) - dx * dx));
           extra = Math.max(extra, need - (cy1 - bot));
@@ -230,8 +239,8 @@
     while ((node = walker.nextNode())) {                                    /* the glyph boxes only, not the (wider) boxes of their blocks */
       if (!node.nodeValue.trim()) continue;
       var rg = document.createRange(); rg.selectNodeContents(node);
-      var list = rg.getClientRects();
-      for (var i = 0; i < list.length; i++) if (list[i].width) rects.push(list[i]);
+      var list = rg.getClientRects(), dy = layoutDy(node.parentElement);
+      for (var i = 0; i < list.length; i++) if (list[i].width) rects.push({ left: list[i].left, right: list[i].right, top: list[i].top - dy, bottom: list[i].bottom - dy });
     }
     if (clearance(cx0, cy, R, rects) >= MIN) return;                       /* the default spot is fine */
     var maxS = vw - EDGE - R - cx0, minS = wrap.left + R - cx0, best = 0, bestC = -1e9, found = false;
@@ -252,4 +261,110 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(place); else place();
   window.addEventListener('load', place);
   if (window.ResizeObserver) new ResizeObserver(later).observe(document.querySelector('.footer-content'));
+})();
+
+/* ---- footer text reveal: every row (headings, the description's rendered lines, nav links, contact rows) rises out of its own mask. The three columns start
+        together, rows within a column are 0.07s apart top -> bottom (so rows at the same height appear together); reversed (bottom -> top) when the column is left
+        downwards. Vanilla (pages without GSAP share this footer): the lines of the description are measured and re-split on resize. Reduced motion: nothing runs. ---- */
+(function () {
+  'use strict';
+  var foot = document.querySelector('footer');
+  if (!foot || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var secs = [].slice.call(foot.querySelectorAll('.footer-content > .footer-section'));
+  if (!secs.length) return;
+  /* the lines of the description are measured with the real font: wait for it */
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(init);
+  function init() {
+
+  function inner(el) {                                   /* the moving layer inside a mask */
+    var i = el.querySelector(':scope > .fr-i');
+    if (i) return i;
+    i = document.createElement('span');
+    i.className = 'fr-i';
+    while (el.firstChild) i.appendChild(el.firstChild);
+    el.appendChild(i);
+    return i;
+  }
+  function mark(el, idx) { el.classList.add('fr-mask'); inner(el); el.style.setProperty('--ri', idx); }
+
+  /* split a paragraph into its rendered lines (each line = a mask with its own moving layer) */
+  function splitLines(p, from) {
+    var full = p.getAttribute('data-fr-text');
+    if (full === null) { full = p.textContent.replace(/\s+/g, ' ').trim(); p.setAttribute('data-fr-text', full); }
+    p.textContent = '';
+    var words = full.split(' '), spans = words.map(function (w, i) {
+      var s = document.createElement('span');
+      s.textContent = w;
+      p.appendChild(s);
+      if (i < words.length - 1) p.appendChild(document.createTextNode(' '));
+      return s;
+    });
+    var lines = [], top = null;
+    spans.forEach(function (s, i) {
+      var t = Math.round(s.getBoundingClientRect().top);
+      if (top === null || Math.abs(t - top) > 3) { lines.push([]); top = t; }
+      lines[lines.length - 1].push(words[i]);
+    });
+    p.textContent = '';
+    lines.forEach(function (ws, k) {
+      var l = document.createElement('span');
+      l.className = 'fr-line';
+      l.textContent = ws.join(' ');
+      p.appendChild(l);
+      mark(l, from + k);
+    });
+    return lines.length;
+  }
+
+  var rows = [];                                         /* per column: how many rows (for the reverse order) */
+  function build() {
+    secs.forEach(function (sec, si) {
+      var ri = 0, h = sec.querySelector(':scope > h3, :scope > h4');
+      if (h) mark(h, ri++);
+      if (sec.querySelector(':scope > ul')) {                              /* Navigáció: one row per link */
+        [].forEach.call(sec.querySelectorAll(':scope > ul > li'), function (li) { mark(li, ri++); });
+      } else if (sec.classList.contains('footer-section--contact')) {      /* Elérhetőség */
+        [].forEach.call(sec.querySelectorAll(':scope > p'), function (p) {
+          if (p.classList.contains('footer-hours')) {                      /* grid: the label + the 1st value are one row, the 2nd value the next */
+            var lab = p.querySelector(':scope > strong'), vs = p.querySelectorAll('.footer-hours__v > span');
+            mark(lab, ri); mark(vs[0], ri); mark(vs[1], ri + 1); ri += 2;
+          } else mark(p, ri++);
+        });
+      } else {                                                             /* first column: the description's lines */
+        var d = sec.querySelector(':scope > p');
+        if (d) ri += splitLines(d, ri);
+      }
+      sec.style.setProperty('--rn', ri);
+      rows[si] = ri;
+    });
+  }
+  build();
+  secs.forEach(function (sec) { sec.classList.add('fr-prep'); });
+
+  var timers = [];
+  secs.forEach(function (sec, si) {
+    new IntersectionObserver(function (es) {
+      var e = es[es.length - 1], on = e.isIntersecting;
+      if (!on && !(e.boundingClientRect.top > 0)) return;
+      if (on === sec.classList.contains('fr-in')) return;
+      sec.classList.add('fr-moving');                                      /* the masks clip only while rows are travelling (the focus ring is never cut) */
+      sec.classList.toggle('fr-in', on);
+      clearTimeout(timers[si]);
+      timers[si] = setTimeout(function () { sec.classList.remove('fr-moving'); }, 1500 + (rows[si] || 0) * 70);
+    }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' }).observe(sec);
+  });
+
+  /* the description's lines depend on the width: re-split on resize (debounced) */
+  var rt;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      var sec = secs[0], d = sec && !sec.querySelector(':scope > ul') && sec.querySelector(':scope > p');
+      if (!d) return;
+      var h = sec.querySelector(':scope > h3, :scope > h4');
+      var n = splitLines(d, h ? 1 : 0) + (h ? 1 : 0);
+      sec.style.setProperty('--rn', n); rows[0] = n;
+    }, 150);
+  });
+  }
 })();
