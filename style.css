@@ -61,8 +61,8 @@
     --cf-info-fs: 14px;                                                    /* photo card info lines: status, role, invitation */
     --cf-info-color: rgb(159 176 216);
     --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
-    --cf-btn-gap: clamp(18px, 2.4svh, 26px);                               /* consent row -> submit button AND submit button -> "Adatait bizalmasan kezelem." */
-    --cf-bottom-pad: clamp(28px, 4svh, 44px);                              /* "Adatait bizalmasan kezelem." -> card bottom */
+    --cf-btn-gap: clamp(36px, 4.8svh, 52px);                               /* consent row -> submit button (double the former 18-26px) */
+    --cf-bottom-pad: clamp(56px, 8svh, 88px);                              /* submit button AND e-mail button -> card bottom (double the former 28-44px) */
     /* footer: divider line + back-to-top badge */
     --footer-desc-fs: 16px;                                                /* footer description (first column), line-height 1.6 */
     --footer-link-fs: 15.2px;                                              /* Navigáció links and Elérhetőség rows */
