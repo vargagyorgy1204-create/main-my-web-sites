@@ -933,7 +933,7 @@ html.has-cursor .service-modal-close:hover,
     background: linear-gradient(135deg, #5a51e8, #a53bb3);
 }
 
-.pricing-subtitle { margin: 0 0 17px; color: rgb(255 255 255 / 0.7); font-size: 0.88rem; line-height: 1.55; }
+.pricing-subtitle { margin: 0 auto 17px; max-width: 36ch; text-align: center; text-wrap: balance; color: rgb(255 255 255 / 0.7); font-size: 0.88rem; line-height: 1.55; }
 
 .pricing-features { list-style: none; margin: 0 0 22px; padding: 0; display: flex; flex: 1 1 auto; flex-direction: column; gap: 12px; }
 .pricing-features li { position: relative; padding-inline-start: 26px; color: rgb(255 255 255 / 0.88); font-size: 0.87rem; line-height: 1.5; }
