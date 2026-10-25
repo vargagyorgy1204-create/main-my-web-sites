@@ -195,9 +195,9 @@ if (form) {
     const root = document.createElement('div');
     root.className = 'cs';
     root.innerHTML =
-        '<button type="button" class="cs__trigger" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="' + uid + '-list" aria-labelledby="' + (select.id ? select.id + '-lbl ' : '') + uid + '-val">' +
+        '<button type="button" class="cs__trigger" data-cursor="frame" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="' + uid + '-list" aria-labelledby="' + (select.id ? select.id + '-lbl ' : '') + uid + '-val">' +
         '<span class="cs__value" id="' + uid + '-val"></span><i data-lucide="chevron-down" class="icon cs__chevron" aria-hidden="true"></i></button>' +
-        '<ul class="cs__panel" role="listbox" id="' + uid + '-list" tabindex="-1" aria-label="' + ((field.querySelector('label') || {}).textContent || '').trim() + '">' +
+        '<ul class="cs__panel" data-cursor="plain" role="listbox" id="' + uid + '-list" tabindex="-1" aria-label="' + ((field.querySelector('label') || {}).textContent || '').trim() + '">' +
         options.map((o, i) => '<li class="cs__opt" role="option" id="' + uid + '-o' + i + '" data-value="' + o.value.replace(/"/g, '&quot;') + '" aria-selected="false"><span>' + o.textContent + '</span><i data-lucide="check" class="icon cs__check" aria-hidden="true"></i></li>').join('') +
         '</ul>';
     const lbl = field.querySelector('label');

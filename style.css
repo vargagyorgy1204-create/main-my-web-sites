@@ -6760,7 +6760,7 @@ html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
     margin: 0;
     padding: 5.4px;
     list-style: none;
-    background: rgba(20, 16, 40, 0.82);
+    background: rgba(18, 14, 36, 0.96);                    /* nearly opaque: nothing behind the panel is readable */
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.1);
