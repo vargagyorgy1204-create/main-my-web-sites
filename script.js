@@ -929,14 +929,15 @@ document.querySelectorAll('.modal-quote-btn').forEach((button) => {
     fit();
 })();
 
-// Footer: back to top (Lenis when present, native smooth otherwise), focus follows
-document.querySelectorAll('.footer-top-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
+// Footer: back to top (the badge on the divider): Lenis scrollTo(0) ~1.2s when present, native smooth otherwise; the focus moves to the header logo
+document.querySelectorAll('[data-back-top]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
         const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (window.VB && VB.lenis) VB.lenis.scrollTo(0);
+        if (window.VB && VB.lenis) VB.lenis.scrollTo(0, { duration: 1.2, easing: (t) => 1 - Math.pow(1 - t, 3) });
         else window.scrollTo({ top: 0, behavior: calm ? 'auto' : 'smooth' });
-        const target = document.getElementById('hero') || document.body;
-        if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+        const target = document.querySelector('.nav__logo') || document.getElementById('hero') || document.body;
+        if (!target.hasAttribute('tabindex') && !/^(A|BUTTON)$/.test(target.tagName)) target.setAttribute('tabindex', '-1');
         target.focus({ preventScroll: true });
     });
 });

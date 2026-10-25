@@ -124,3 +124,13 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-note-fs` | `0.875rem` | "Adatait bizalmasan kezelem." and "Általában 24 órán belül válaszolok." (shared, same colour) |
 | `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 19.5svh, 186px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
 | `--cf-pc-btn-gap` | `clamp(24px, 3.4svh, 36px)` | photo card: minimum gap above the WhatsApp button and below the e-mail button; the free height is split equally between the two gaps (the note stays at the card bottom) |
+
+## Footer: divider line + back-to-top badge
+
+| Token | Value | Use |
+|---|---|---|
+| `--footer-divider-top` | `clamp(40px, 6svh, 72px)` | link columns -> divider line |
+| `--footer-divider-bottom` | `clamp(24px, 4svh, 48px)` | divider line -> VARBRO wordmark top |
+| `--footer-stamp-d` | `clamp(70px, 9.3svh, 100px)` (76px < 1024px) | back-to-top badge diameter (the hero badge size), centred on the right end of the divider |
+
+The footer columns: description + the four social icons (24px below the text), Navigáció (5 items), Elérhetőség. The old bottom row and the "Vissza a tetejére" pill are gone; the legal row and the wordmark are unchanged.

@@ -26,7 +26,7 @@
         "serviceType": "Web Design"
     }
     </script>
-    <link rel="stylesheet" href="style.css?v=fc1">
+    <link rel="stylesheet" href="style.css?v=fr1">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="/favicon.ico" sizes="any">
@@ -113,11 +113,19 @@
             <div class="footer-section">
                 <h3 class="notranslate" translate="no"><span style="color:#fff;">Var</span>Bro</h3>
                 <p>Weboldalak, arculat és digitális megoldások magyar vállalkozásoknak.</p>
+                <div class="social-links">
+                    <a href="https://wa.me/36307840378" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61590279064624" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/webdeveloper_varbro?igsh=NWV2dGl3bXI2ZXU0" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="mailto:info@varbro.pro" title="Email" aria-label="E-mail"><i class="fas fa-envelope" aria-hidden="true"></i></a>
+                </div>
             </div>
             <div class="footer-section">
                 <h4>Navigáció</h4>
                 <ul>
                     <li><a href="index.html#about">Rólam</a></li>
+                    <li><a href="index.html#skills">Készségek &amp; Technológia</a></li>
+                    <li><a href="index.html#why">Értékek &amp; Garanciák</a></li>
                     <li><a href="index.html#services">Szolgáltatások</a></li>
                     <li><a href="index.html#portfolio">Portfólió</a></li>
                 </ul>
@@ -130,15 +138,22 @@
             </div>
         </div>
         <!-- IMPRESSZUM: add provider data (név, székhely/cím, adószám, nyilvántartási szám) here when the sole-proprietorship is registered -->
-        <div class="footer-bottom">
-            <div class="footer-bottom-side">
-                <div class="social-links">
-                    <a href="https://wa.me/36307840378" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
-                    <a href="https://www.facebook.com/profile.php?id=61590279064624" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-                    <a href="https://www.instagram.com/webdeveloper_varbro?igsh=NWV2dGl3bXI2ZXU0" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-                    <a href="mailto:info@varbro.pro" title="Email" aria-label="E-mail"><i class="fas fa-envelope" aria-hidden="true"></i></a>
-                </div>
-                <button type="button" class="footer-top-btn">Vissza a tetejére <span aria-hidden="true">↑</span></button>
+        <div class="footer-divider">
+            <span class="footer-divider__line" aria-hidden="true"></span>
+            <div class="footer-divider__badge">
+                <a class="stamp footer-stamp" href="#" data-back-top aria-label="Vissza a tetejére">
+                    <svg class="stamp__ring" viewBox="0 0 200 200" aria-hidden="true">
+                        <defs>
+                            <path id="footStampCircle" d="M100,100 m-76,0 a76,76 0 1,1 152,0 a76,76 0 1,1 -152,0"></path>
+                        </defs>
+                        <text class="stamp__text" xml:space="preserve" dominant-baseline="middle">
+                            <textPath href="#footStampCircle" startOffset="0%" textLength="477.52" lengthAdjust="spacing">VISSZA A TETEJÉRE • VISSZA A TETEJÉRE • </textPath>
+                        </text>
+                    </svg>
+                    <span class="stamp__inner" aria-hidden="true">
+                        <i data-lucide="arrow-up" class="icon stamp__icon"></i>
+                    </span>
+                </a>
             </div>
         </div>
         <div class="footer-floor">
@@ -162,9 +177,10 @@
     </div>
 </div>
 
-<script src="script.js?v=53"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="script.js?v=54"></script>
 <script src="nav.js?v=6" defer></script>
 <script src="cursor.js?v=17" defer></script>
-<script src="js/footer.js?v=3" defer></script>
+<script src="js/footer.js?v=4" defer></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* footer.js — the bottom-bleed VARBRO wordmark (all pages with the shared footer).
+/* footer.js — the bottom-bleed VARBRO wordmark and the back-to-top badge on the divider (all pages with the shared footer).
    Vanilla JS on purpose (adatvedelem.html has no GSAP): fits the wordmark to the container width once the
    fonts are ready (refit on resize, debounced), rises it in once when the footer scrolls into view, and on
    pointer devices lets a soft highlight follow the cursor horizontally. Everything is visible without it;
@@ -78,4 +78,39 @@
     }, { passive: true });
   }
   resetOnScrollAway(floor, function () { tgi = 0; kick(); });
+})();
+
+/* ---- divider line + back-to-top badge: drawn / emerging when the footer enters the viewport, reversed when it is left downwards;
+        the badge ring spins faster while a real mouse hovers it (playbackRate eased, no restart of the animation) ---- */
+(function () {
+  'use strict';
+  var div = document.querySelector('.footer-divider');
+  if (!div) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!('IntersectionObserver' in window) || reduce) { div.classList.add('is-in'); }
+  else {
+    var io = new IntersectionObserver(function (es) {
+      var e = es[es.length - 1];
+      if (e.isIntersecting) div.classList.add('is-in');
+      else if (e.boundingClientRect.top > 0) div.classList.remove('is-in');     /* the footer is below the viewport again */
+    }, { threshold: 0.6, rootMargin: '0px 0px -8% 0px' });
+    io.observe(div.querySelector('.footer-divider__badge'));
+  }
+  var stamp = div.querySelector('.footer-stamp'), ring = stamp && stamp.querySelector('.stamp__ring');
+  if (!ring || reduce || !ring.getAnimations) return;
+  var anim = null, rate = 1, goal = 1, raf = 0;
+  function step() {
+    raf = 0;
+    rate += (goal - rate) * 0.1;
+    if (anim) anim.playbackRate = rate;
+    if (Math.abs(goal - rate) > 0.01) raf = requestAnimationFrame(step);
+  }
+  function to(g) {
+    anim = anim || ring.getAnimations()[0];
+    if (!anim) return;
+    goal = g;
+    if (!raf) raf = requestAnimationFrame(step);
+  }
+  stamp.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') to(5); });
+  stamp.addEventListener('pointerleave', function () { to(1); });
 })();
