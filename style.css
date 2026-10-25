@@ -6443,11 +6443,13 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 #contact .contact-actions .btn-email-cta .icon { width: 18px; height: 18px; flex: none; }
 #contact .contact-actions .btn-wa-cta i { width: 18px; font-size: 18px; line-height: 1; text-align: center; flex: none; }
 
-/* -- submit: the "Részletek" button (.svt-btn) on the dark card: outline, gradient fill fades in on hover / focus-visible; sending = label replaced by a 16px spinner at the same size */
+/* -- submit: the "Részletek" button (.svt-btn) on the dark card with the brand gradient in the 2px border AND in the label (one gradient over the button's border box,
+   so the ring and the text read as one piece); hover / focus-visible: the gradient fill fades in and the label turns white; sending = label replaced by a 16px brand-colour spinner */
+@property --sb-w { syntax: '<number>'; inherits: true; initial-value: 0; }
 #contact .btn-submit-message {
+    --sb-w: 0;                                              /* 0 = gradient label, 1 = white label (transitioned) */
     position: relative;
     isolation: isolate;
-    overflow: hidden;
     align-self: center;
     display: inline-block;
     width: auto;
@@ -6457,27 +6459,56 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     font-size: var(--btn-fs);
     letter-spacing: 0.5px;
     line-height: 1.2;
-    color: rgb(255 255 255 / 0.92);
     text-decoration: none;
-    border: 2px solid rgb(255 255 255 / 0.85);
+    border: 2px solid transparent;                          /* the visible ring is the ::after below */
     border-radius: 50px;
-    background: transparent;
     box-shadow: none;
     white-space: nowrap;
     cursor: pointer;
-    transition: color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, scale 0.15s ease;
+    color: #fff;
+    background: transparent;
+    transition: --sb-w 0.3s ease, opacity 0.3s ease, scale 0.15s ease;
 }
-#contact .btn-submit-message::before {
+/* the label: the brand gradient clipped to the text, laid out over the BUTTON's border box (the label box grown by padding + border on every side), so
+   it is the same gradient as the ring; --sb-w fades a white layer over it on hover / focus-visible */
+#contact .btn-submit-message__label {
+    display: block;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background:
+        linear-gradient(rgb(255 255 255 / var(--sb-w)), rgb(255 255 255 / var(--sb-w))),
+        var(--card-primary);
+    background-size: calc(100% + 2 * (var(--btn-px) + 2px)) calc(100% + 2 * (var(--btn-pad-y) + 2px));
+    background-position: calc(-1 * (var(--btn-px) + 2px)) calc(-1 * (var(--btn-pad-y) + 2px));
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+#contact .btn-submit-message::before {                      /* the hover fill */
     content: "";
     position: absolute;
     inset: 0;
     z-index: -1;
+    border-radius: inherit;
     background: var(--card-primary);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
+#contact .btn-submit-message::after {                       /* the gradient border: a ring over the border box */
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: 1;
+    border-radius: inherit;
+    padding: 2px;
+    background: var(--card-primary);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    pointer-events: none;
+}
 html.has-cursor #contact .btn-submit-message:hover:not(:disabled),
-#contact .btn-submit-message:focus-visible { color: #fff; border-color: transparent; }
+#contact .btn-submit-message:focus-visible { --sb-w: 1; }
 html.has-cursor #contact .btn-submit-message:hover:not(:disabled)::before,
 #contact .btn-submit-message:focus-visible::before { opacity: 1; }
 #contact .btn-submit-message:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
@@ -6491,11 +6522,13 @@ html.has-cursor #contact .btn-submit-message:hover:not(:disabled)::before,
     height: 16px;
     margin: -8px 0 0 -8px;
     opacity: 0;
-    color: #fff;
+    color: #8b7bff;                                         /* the brand violet (the label is transparent: the spinner is not) */
+    -webkit-text-fill-color: initial;
 }
 #contact .btn-submit-message.is-sending .btn-submit-message__label { visibility: hidden; }          /* keeps the button's width */
 #contact .btn-submit-message.is-sending .btn-submit-message__spin { opacity: 1; animation: ctcSpin 0.8s linear infinite; }
-#contact .btn-submit-message.is-sent { opacity: 1; background: var(--card-primary); color: #fff; border-color: transparent; }
+#contact .btn-submit-message.is-sent { opacity: 1; background: var(--card-primary); color: #fff; }
+#contact .btn-submit-message.is-sent::before, #contact .btn-submit-message.is-sent::after { opacity: 0; }
 @keyframes ctcSpin { to { rotate: 360deg; } }
 
 /* -- outline variants: a fill wipes in from the left; on the dark panel the text keeps AA contrast (the fill colours are the brand ones) */
