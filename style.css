@@ -7012,3 +7012,22 @@ html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { 
 @keyframes ctcDotRing { from { scale: 0.5; opacity: 0.7; } to { scale: 2.6; opacity: 0; } }
 @keyframes ctcDotHop { 0%, 100% { translate: 0 0; } 40% { translate: 0 -18%; } }
 @media (prefers-reduced-motion: reduce) { #contact .section-heading .sh-char { transition: none; } #contact .section-heading .sh-dot, #contact .section-heading .sh-dot::before { animation: none !important; } }
+
+/* ===== KAPCSOLAT scroll choreography "signal from the dot" (js/contact-footer.js): helper styles only - the rest state is the plain CSS above =====
+   the lead text lines (.rv-*) rise from masks with the heading letters; the SVG overlay (.ctc-signal, pointer-events none) carries the signal line; .cf-sweep /
+   .rv-ring / .rv-clip exist only while a timeline has not completed (all removed in the rest state) */
+.ctc-sub .rv-line { display: block; white-space: nowrap; }
+.ctc-sub .rv-i { display: block; transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd, 0s), opacity 0.45s ease var(--rd, 0s); }
+.ctc-sub.rv-prep .rv-i { transform: translateY(100%); opacity: 0; --rd: calc((var(--rn, 1) - 1 - var(--ri, 0)) * 0.07s); }
+.ctc-sub.rv-prep.rv-in .rv-i { transform: none; opacity: 1; --rd: calc(0.15s + var(--ri, 0) * 0.07s); }
+.ctc-sub.rv-moving .rv-line { overflow: clip; }
+.ctc-signal { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 2; }
+.ctc-signal .sg { fill: none; stroke: url(#ctcSigGrad); stroke-width: 2; stroke-linecap: butt; stroke-dasharray: 1 1.5; stroke-dashoffset: 1; }
+.ctc-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 2; }
+.ctc-ring .sg { stroke-dasharray: 1 1.5; stroke-dashoffset: 1; transform-box: fill-box; transform-origin: 50% 50%; transform: rotate(-90deg); }
+#contact .contact-photo-square.rv-ring::before { opacity: var(--ro, 0); }
+#contact .status-dot { scale: var(--sp, 1); }
+.ctc .contact-field.cf-sweep::after { transform: scaleX(var(--ul, 0)); opacity: var(--uo, 1); transition: none; }
+.contact-form-panel h3 .rv-i { display: block; }
+.contact-form-panel h3.rv-clip { clip-path: inset(-1em -1em 0 -1em); }          /* clips the rising title at the box bottom only (no layout change) */
+@media (prefers-reduced-motion: reduce) { .ctc-signal, .ctc-ring { display: none; } }
