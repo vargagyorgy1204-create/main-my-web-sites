@@ -111,7 +111,7 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-label-scale` / `--cf-label-top` | `0.666` / `6.3px` (< 1024px); `0.78` / `4.5px` (>= 1024px) | floating label size and distance from the field's top edge |
 | `--cf-gap` | `clamp(9px, 1.26svh, 12.6px)` | between fields |
 | `--cf-radius` | `12.6px` | field and dropdown-panel radius |
-| `--cf-fields-w` | `90%` | width of Név, E-mail, Telefonszám, the dropdown (trigger + panel) and the textarea inside the form card; centred, the rest is side margin |
+| `--cf-fields-w` | `min(100%, max(80%, 280px))` | width of Név, E-mail, Telefonszám, the dropdown (trigger + panel) and the textarea inside the form card: 80% of the card's inner width, at least 280px on phones; centred, the rest is side margin |
 | `--cf-pad-x` | `14.4px` | field inner left / right padding and the label offset |
 | `--cf-check` | `19.8px` | consent checkbox |
 | `--cf-consent-fs` | `0.792rem` | consent text (12.7px; gap 9px) |
