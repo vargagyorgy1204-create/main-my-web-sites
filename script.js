@@ -336,13 +336,17 @@ document.querySelectorAll('[data-smart-back]').forEach((a) => {
 const serviceModalTriggers = document.querySelectorAll('.service-modal-trigger');
 const serviceModalOverlays = document.querySelectorAll('.service-modal-overlay');
 
-const closeServiceModals = () => {
+let serviceModalReturn = null;                 // the "Részletek" button that opened the dialog: focus goes back to it
+const closeServiceModals = (returnFocus = true) => {
+    const wasOpen = document.querySelector('.service-modal-overlay.is-open');
     serviceModalOverlays.forEach((overlay) => {
         overlay.classList.remove('is-open');
         overlay.setAttribute('aria-hidden', 'true');
     });
     document.body.classList.remove('service-modal-open');
     if (window.VB && VB.lenis) VB.lenis.start();
+    if (wasOpen && returnFocus !== false && serviceModalReturn) serviceModalReturn.focus({ preventScroll: true });
+    if (wasOpen) serviceModalReturn = null;
 };
 
 serviceModalTriggers.forEach((trigger) => {
@@ -351,11 +355,14 @@ serviceModalTriggers.forEach((trigger) => {
         const targetModal = document.getElementById(targetId);
         if (!targetModal) return;
 
-        closeServiceModals();
+        closeServiceModals(false);
+        serviceModalReturn = trigger;
         targetModal.classList.add('is-open');
         targetModal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('service-modal-open');
         if (window.VB && VB.lenis) VB.lenis.stop();
+        const dlg = targetModal.querySelector('.service-modal');
+        if (dlg) dlg.focus({ preventScroll: true });
     });
 });
 
@@ -377,19 +384,30 @@ serviceModalOverlays.forEach((overlay) => {
 });
 
 document.addEventListener('keydown', (event) => {
+    const open = document.querySelector('.service-modal-overlay.is-open');
     if (event.key === 'Escape') {
         closeServiceModals();
+    } else if (event.key === 'Tab' && open) {
+        // focus trap: Tab / Shift+Tab cycle through the dialog's controls
+        const dlg = open.querySelector('.service-modal');
+        const items = Array.from(dlg.querySelectorAll('button, a[href]')).filter((el) => el.offsetParent !== null);
+        if (!items.length) { event.preventDefault(); return; }
+        const first = items[0], last = items[items.length - 1], cur = document.activeElement;
+        if (!dlg.contains(cur)) { event.preventDefault(); first.focus(); }
+        else if (event.shiftKey && (cur === first || cur === dlg)) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && cur === last) { event.preventDefault(); first.focus(); }
     }
 });
 
-document.querySelectorAll('.modal-quote-btn').forEach((button) => {
-    button.addEventListener('click', () => {
+document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button) => {
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
         const target = button.dataset.redirect || '#contact';
         if (target.charAt(0) !== '#') {
             window.location.href = target;
             return;
         }
-        closeServiceModals();                      // closes the dialog and restarts Lenis
+        closeServiceModals(false);                 // closes the dialog and restarts Lenis (focus goes to the target, not back)
         const el = document.querySelector(target);
         if (!el) return;
         if (window.VB && VB.lenis) VB.lenis.scrollTo(el, { offset: 0 });

@@ -793,6 +793,7 @@ h2 {
     position: relative;
     width: min(1100px, 100%);
     max-height: calc(100vh - 44px);
+    max-height: min(92svh, calc(100vh - 44px));          /* up to 92svh; inner scroll (data-lenis-prevent on the overlay) only if the content is taller */
     overflow: auto;
     padding: 26px 30px;
     border-radius: 28px;
@@ -820,34 +821,37 @@ h2 {
     letter-spacing: -0.01em;
 }
 
-/* Close: sticky, so it stays reachable while the dialog scrolls */
+/* Close: a bare x (no ring, border or background), white 80%; hover = white, the custom cursor draws its circle (data-cursor="circle"). Sticky, so it stays
+   reachable while the dialog scrolls */
 .service-modal-close {
     position: sticky;
-    top: 4px;
+    top: 0;
     z-index: 6;
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
-    margin: 0 -8px -36px auto;
+    width: 40px;
+    height: 40px;
+    margin: -6px -10px -34px auto;
     padding: 0;
+    border: 0;
     border-radius: 50%;
-    border: 1px solid rgb(255 255 255 / 0.28);
-    background: rgb(255 255 255 / 0.08);
-    color: #fff;
-    font-size: 1.35rem;
+    background: none;
+    color: rgb(255 255 255 / 0.8);
+    font-size: 1.7rem;
     line-height: 1;
     cursor: pointer;
-    transition: background 0.25s ease, border-color 0.25s ease;
+    transition: color 0.25s ease;
 }
-.service-modal-close:hover { background: rgb(255 255 255 / 0.18); border-color: rgb(255 255 255 / 0.5); }
+html.has-cursor .service-modal-close:hover,
+.service-modal-close:focus-visible { color: #fff; }
 .service-modal-close:focus-visible,
 .modal-quote-btn:focus-visible { outline: 3px solid var(--m-accent-2); outline-offset: 3px; }
+.service-modal:focus { outline: none; }
 
 .service-pricing-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
+    gap: 16px;
     align-items: stretch;
 }
 
@@ -857,7 +861,7 @@ h2 {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 16px;
+    padding: 22px;
     border-radius: 18px;
     background: rgb(255 255 255 / 0.05);
     border: 1px solid rgb(255 255 255 / 0.1);
@@ -878,7 +882,7 @@ h2 {
     box-shadow: 0 18px 40px -18px var(--m-glow);
 }
 
-.pricing-plan-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.pricing-plan-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .pricing-icon {
     flex: none;
     display: grid;
@@ -906,9 +910,9 @@ h2 {
     background: linear-gradient(135deg, #5a51e8, #a53bb3);
 }
 
-.pricing-subtitle { margin: 0 0 12px; color: rgb(255 255 255 / 0.7); font-size: 0.88rem; line-height: 1.55; }
+.pricing-subtitle { margin: 0 0 17px; color: rgb(255 255 255 / 0.7); font-size: 0.88rem; line-height: 1.55; }
 
-.pricing-features { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex: 1 1 auto; flex-direction: column; gap: 9px; }
+.pricing-features { list-style: none; margin: 0 0 22px; padding: 0; display: flex; flex: 1 1 auto; flex-direction: column; gap: 12px; }
 .pricing-features li { position: relative; padding-inline-start: 26px; color: rgb(255 255 255 / 0.88); font-size: 0.87rem; line-height: 1.5; }
 /* tick: a tiny translucent accent disc with a check mask (no icon font) */
 .pricing-features li::before,
@@ -968,22 +972,14 @@ h2 {
 .modal-quote-btn:hover::before,
 .modal-quote-btn:focus-visible::before { opacity: 1; }
 
-/* ---------- personal-offer strip ---------- */
-.modal-custom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    margin-top: 18px;
-    padding: 16px 20px;
-    border: 1px solid transparent;
-    border-radius: 16px;
-    background:
-        linear-gradient(var(--m-card), var(--m-card)) padding-box,
-        linear-gradient(135deg, var(--m-accent), var(--m-accent-2)) border-box;
-}
-.modal-custom p { margin: 0; max-width: 62ch; color: rgb(255 255 255 / 0.75); font-size: 0.92rem; line-height: 1.55; }
-.modal-custom .modal-quote-btn { flex: none; margin-top: 0; }
+/* ---------- plan links: the section's .text-link component (white, no arrow), left-aligned at the card's bottom ---------- */
+.service-modal .text-link { --tl-color: #fff; }
+button.text-link { padding: 0; border: 0; background: none; }
+.pricing-item .modal-quote-link { align-self: flex-start; margin-top: auto; }
+
+/* ---------- personal-offer row: the shared .cta-row (divider on top, text left, the dark pill right); no card ---------- */
+.service-modal .modal-cta { margin-top: 26px; padding-top: 24px; }
+.modal-group + .modal-cta { margin-top: 26px; }
 
 /* ---------- extra modal: three groups, each with its own accent ---------- */
 .modal-group + .modal-group { margin-top: 22px; }
@@ -1039,40 +1035,40 @@ body.service-modal-open { overflow: hidden; }
     .service-modal { padding: 20px 24px; }
     .service-modal h3 { margin-bottom: 12px; font-size: 1.35rem; }
     .service-pricing-grid { gap: 12px; }
-    .pricing-item { padding: 13px 14px; }
-    .pricing-plan-head { margin-bottom: 7px; gap: 10px; }
+    .pricing-item { padding: 18px 20px; }
+    .pricing-plan-head { margin-bottom: 11px; gap: 10px; }
     .pricing-icon { width: 30px; height: 30px; border-radius: 9px; }
     .pricing-icon svg { width: 17px; height: 17px; }
     .pricing-item h4 { font-size: 0.98rem; }
-    .pricing-subtitle { margin-bottom: 8px; font-size: 0.8rem; line-height: 1.45; }
-    .pricing-features { gap: 5px; margin-bottom: 12px; }
+    .pricing-subtitle { margin-bottom: 13px; font-size: 0.8rem; line-height: 1.45; }
+    .pricing-features { gap: 8px; margin-bottom: 16px; }
     .pricing-features li { padding-inline-start: 24px; font-size: 0.78rem; line-height: 1.4; }
     .pricing-features li::before, .pricing-features li::after { width: 16px; height: 16px; }
     .pricing-watermark { width: 120px; height: 120px; inset-inline-end: -22px; inset-block-end: -26px; }
     .modal-quote-btn { padding: 11px 26px; font-size: 0.88rem; }
-    .modal-custom { margin-top: 12px; padding: 11px 16px; gap: 18px; }
-    .modal-custom p { font-size: 0.82rem; line-height: 1.45; }
+    .service-modal .modal-cta { margin-top: 16px; padding-top: 14px; gap: 16px; }
+    .service-modal .modal-cta .cta-row__text { font-size: 15px; }
 }
 @media (min-width: 901px) and (max-height: 560px) {
     .service-modal-overlay { padding: 10px; }
     .service-modal { max-height: calc(100vh - 20px); padding: 12px 18px 14px; border-radius: 22px; }
     .service-modal h3 { margin: 0 40px 10px 0; font-size: 1.15rem; }
-    .service-modal-close { top: 2px; margin-bottom: -36px; }
     .service-pricing-grid { gap: 10px; }
-    .pricing-item { padding: 12px 14px; border-radius: 14px; }
-    .pricing-plan-head { margin-bottom: 4px; gap: 9px; }
+    .pricing-item { padding: 14px 16px; border-radius: 14px; }
+    .pricing-plan-head { margin-bottom: 6px; gap: 9px; }
     .pricing-icon { width: 26px; height: 26px; border-radius: 8px; }
     .pricing-icon svg { width: 15px; height: 15px; }
     .pricing-item h4 { font-size: 0.92rem; }
     .pricing-badge { padding: 2px 8px; font-size: 0.62rem; }
-    .pricing-subtitle { margin-bottom: 5px; font-size: 0.75rem; line-height: 1.35; }
-    .pricing-features { gap: 4px; margin-bottom: 10px; }
+    .pricing-subtitle { margin-bottom: 7px; font-size: 0.75rem; line-height: 1.35; }
+    .pricing-features { gap: 5px; margin-bottom: 10px; }
     .pricing-features li { padding-inline-start: 22px; font-size: 12.5px; line-height: 1.33; }
     .pricing-features li::before, .pricing-features li::after { width: 15px; height: 15px; inset-block-start: 1px; }
     .pricing-watermark { width: 96px; height: 96px; inset-inline-end: -18px; inset-block-end: -22px; }
     .modal-quote-btn { min-height: 38px; padding: 9px 24px; font-size: 0.84rem; }
-    .modal-custom { margin-top: 10px; padding: 9px 14px; gap: 14px; border-radius: 12px; }
-    .modal-custom p { font-size: 12.5px; line-height: 1.35; }
+    .service-modal .modal-cta { margin-top: 12px; padding-top: 10px; gap: 12px; }
+    .service-modal .modal-cta .cta-row__text { font-size: 13px; }
+    .modal-quote-link.text-link { height: 34px; }
 }
 
 @media (max-width: 900px) {
@@ -1088,8 +1084,7 @@ body.service-modal-open { overflow: hidden; }
     .pricing-watermark { width: 110px; height: 110px; inset-inline-end: -20px; inset-block-end: -24px; }
     .modal-group__grid--3,
     .modal-group__grid--2 { grid-template-columns: minmax(0, 1fr); }
-    .modal-custom { flex-direction: column; align-items: stretch; text-align: center; }
-    .modal-custom .modal-quote-btn { align-self: center; }
+    .service-modal .modal-cta { margin-top: 22px; padding-top: 22px; }
 }
 /* ===== /Service modals ===== */
 
