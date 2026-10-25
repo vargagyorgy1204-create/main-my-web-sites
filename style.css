@@ -42,13 +42,17 @@
     /* Szolgáltatások */
     --svc-desc-btn-gap: clamp(36px, 5svh, 60px);                           /* service description -> Részletek / Ajánlatot kérek buttons (same in all three blocks) */
     /* Kapcsolat form card (fields, spacing) */
-    --cf-fs: 16px;                                                         /* text / placeholder of inputs, select, textarea on phones / tablets (>= 16px: no iOS zoom); 15px from 1024px */
-    --cf-h: 48px;                                                          /* input / select height on phones / tablets; clamp(44px, 5.6svh, 48px) from 1024px */
-    --cf-label-scale: 0.74;                                                /* floating label: 16px -> ~11.8px (0.78 -> ~11.7px at 15px) */
-    --cf-label-top: 7px;                                                   /* floating label distance from the field's top edge */
-    --cf-ta-h: 104px;                                                      /* textarea min-height */
-    --cf-gap: clamp(10px, 1.4svh, 14px);                                   /* between fields */
-    --cf-radius: 14px;
+    --cf-fs: 16px;                                                         /* text / placeholder of inputs, select, textarea on phones / tablets (>= 16px: no iOS zoom); 13.5px from 1024px */
+    --cf-h: 43.2px;                                                        /* input / select height on phones / tablets; clamp(39.6px, 5.04svh, 43.2px) from 1024px */
+    --cf-label-scale: 0.666;                                               /* floating label: 16px -> ~10.7px (0.78 -> ~10.5px at 13.5px) */
+    --cf-label-top: 6.3px;                                                 /* floating label distance from the field's top edge (4.5px from 1024px) */
+    --cf-ta-h: 93.6px;                                                     /* textarea min-height */
+    --cf-gap: clamp(9px, 1.26svh, 12.6px);                                 /* between fields */
+    --cf-radius: 12.6px;
+    --cf-pad-x: 14.4px;                                                    /* field inner left / right padding and the label offset */
+    --cf-check: 19.8px;                                                    /* consent checkbox */
+    --cf-consent-fs: 0.792rem;                                             /* consent text (12.7px) */
+    --cf-opt-h: 36px;                                                      /* custom dropdown option row */
     --cf-tagline-fs: clamp(22px, 1.1rem + 0.5vw, 26px);                    /* photo card tagline "Dizájn, kód és mozgás" (~24px at 1440) */
     --cf-pc-btn-gap: clamp(24px, 3.4svh, 36px);                            /* photo card: minimum gap above the WhatsApp button and below the e-mail button (the free height is split equally between them) */
     --cf-photo-d: clamp(190px, 27svh, 260px);                              /* photo card: portrait diameter on phones / tablets (stacked cards); desktop: clamp(150px, 20.5svh, 260px) so the card never grows taller than the form */
@@ -70,8 +74,8 @@
 @media (max-width: 767px) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
 @media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
 @media (min-width: 768px) { :root { --btn-fs: clamp(13px, 1.45svh, 15px); --btn-pad-y: clamp(10px, 1.6svh, 15px); --btn-px: clamp(24px, 3.4svh, 34px); } }
-@media (min-width: 1024px) { :root { --cf-photo-d: clamp(150px, 20.5svh, 260px); } }
-@media (min-width: 1024px) { :root { --cf-fs: 15px; --cf-h: clamp(44px, 5.6svh, 48px); --cf-label-scale: 0.78; --cf-label-top: 5px; } }
+@media (min-width: 1024px) { :root { --cf-photo-d: clamp(150px, 19.5svh, 186px); } }
+@media (min-width: 1024px) { :root { --cf-fs: 13.5px; --cf-h: clamp(39.6px, 5.04svh, 43.2px); --cf-label-scale: 0.78; --cf-label-top: 4.5px; } }
 @media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
 @media (min-width: 1024px) { :root { --content-gutter-tight: 96px; } }   /* = logo right edge 76px + 20px */
 
@@ -6665,15 +6669,18 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 .ctc .contact-field input,
 .ctc .contact-field select {
     height: var(--cf-h);
-    padding: calc(var(--cf-h) * 0.4) 16px calc(var(--cf-h) * 0.06);
+    padding: calc(var(--cf-h) * 0.4) var(--cf-pad-x) calc(var(--cf-h) * 0.06);
 }
-.ctc .contact-field textarea { display: block; height: var(--cf-ta-h); min-height: var(--cf-ta-h); padding: calc(var(--cf-h) * 0.4) 16px 10px; resize: vertical; }
+.ctc .contact-field textarea { display: block; height: var(--cf-ta-h); min-height: var(--cf-ta-h); padding: calc(var(--cf-h) * 0.4) var(--cf-pad-x) 9px; resize: vertical; }
 .ctc .contact-field > label {
     --cf-rest-top: calc((var(--cf-h) - 1.2 * var(--cf-fs)) / 2);           /* resting label: vertically centred in the field */
     top: var(--cf-rest-top);
+    left: var(--cf-pad-x);
+    max-width: calc(100% - 2 * var(--cf-pad-x));
     font-size: var(--cf-fs);
     line-height: 1.2;
 }
+.ctc .contact-field::after { left: calc(var(--cf-pad-x) * 0.75); right: calc(var(--cf-pad-x) * 0.75); }
 .ctc .contact-field.is-filled > label,
 .ctc .contact-field:focus-within > label,
 .ctc .contact-field--select > label { transform: translateY(calc(var(--cf-label-top) - var(--cf-rest-top))) scale(var(--cf-label-scale)); }   /* small label (~11.7px) sits --cf-label-top below the top edge */
@@ -6776,7 +6783,7 @@ html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
     width: 100%;
     height: 100%;
     margin: 0;
-    padding: calc(var(--cf-h) * 0.4) 44px calc(var(--cf-h) * 0.06) 16px;
+    padding: calc(var(--cf-h) * 0.4) calc(var(--cf-pad-x) * 2.75) calc(var(--cf-h) * 0.06) var(--cf-pad-x);
     border: 0;
     border-radius: var(--cf-radius);
     background: none;
@@ -6790,22 +6797,22 @@ html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
 .cs__trigger:focus-visible { outline: 2px solid #b4acff; outline-offset: 2px; }
 .cs__value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cs__value.is-placeholder { color: rgb(255 255 255 / 0.72); }
-.cs__chevron { position: absolute; right: 14px; top: 50%; width: 18px; height: 18px; margin-top: -9px; color: #fff; transition: rotate 0.18s ease; pointer-events: none; }
+.cs__chevron { position: absolute; right: 12.6px; top: 50%; width: 16.2px; height: 16.2px; margin-top: -8.1px; color: #fff; transition: rotate 0.18s ease; pointer-events: none; }
 .cs__trigger[aria-expanded="true"] .cs__chevron { rotate: 180deg; }
 .cs__panel {
     position: absolute;
     left: 0;
     right: 0;
-    top: calc(100% + 6px);
+    top: calc(100% + 5.4px);
     z-index: 60;
     margin: 0;
-    padding: 6px;
+    padding: 5.4px;
     list-style: none;
     background: rgba(20, 16, 40, 0.82);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
+    border-radius: var(--cf-radius);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
     opacity: 0;
     visibility: hidden;
@@ -6815,7 +6822,7 @@ html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
     transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
     outline: none;
 }
-.cs.is-up .cs__panel { top: auto; bottom: calc(100% + 6px); transform: translateY(4px) scale(0.98); transform-origin: bottom center; }
+.cs.is-up .cs__panel { top: auto; bottom: calc(100% + 5.4px); transform: translateY(4px) scale(0.98); transform-origin: bottom center; }
 .cs.is-open .cs__panel { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition-delay: 0s; }
 .cs__opt {
     position: relative;
@@ -6823,9 +6830,9 @@ html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 10px;
+    height: var(--cf-opt-h);
+    padding: 0 12.6px;
+    border-radius: 9px;
     font-size: var(--cf-fs);
     color: rgb(255 255 255 / 0.82);
     cursor: pointer;
@@ -6835,8 +6842,8 @@ html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
     content: "";
     position: absolute;
     left: 0;
-    top: 9px;
-    bottom: 9px;
+    top: 8px;
+    bottom: 8px;
     width: 2px;
     border-radius: 2px;
     background: var(--card-primary);
@@ -6845,7 +6852,12 @@ html.cs-on .ctc .contact-field--select select option { color: #2d3550; }
 }
 .cs__opt.is-active { background: linear-gradient(90deg, rgb(108 99 255 / 0.18), rgb(200 80 192 / 0.18)); color: #fff; }
 .cs__opt.is-active::before { opacity: 1; }
-.cs__check { width: 16px; height: 16px; flex: none; color: #fff; opacity: 0; }
+.cs__check { width: 14.4px; height: 14.4px; flex: none; color: #fff; opacity: 0; }
 .cs__opt[aria-selected="true"] { color: #fff; }
 .cs__opt[aria-selected="true"] .cs__check { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .cs__panel, .cs__chevron, .cs__opt::before { transition: none; } }
+
+/* consent row: checkbox, text and gap x 0.9 */
+#contact .contact-consent { gap: 9px; font-size: var(--cf-consent-fs); }
+#contact .contact-consent input { width: var(--cf-check); height: var(--cf-check); border-radius: 6.3px; }
+#contact .contact-consent input::after { inset: 2.7px; }

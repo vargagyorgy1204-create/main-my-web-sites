@@ -105,17 +105,21 @@ Left as they are, because converting them would change the look at 1440×900 or 
 
 | Token | Value | Use |
 |---|---|---|
-| `--cf-fs` | `16px` (< 1024px, no iOS zoom); `15px` (>= 1024px) | text / placeholder of inputs, select, textarea; the floating label is `--cf-label-scale` of it (0.74 / 0.78 -> ~11.8 / 11.7px) |
-| `--cf-h` | `48px` (< 1024px); `clamp(44px, 5.6svh, 48px)` (>= 1024px) | input / select height |
-| `--cf-ta-h` | `104px` | textarea min-height (vertical resize only) |
-| `--cf-label-scale` / `--cf-label-top` | `0.74` / `7px` (< 1024px); `0.78` / `5px` (>= 1024px) | floating label size and distance from the field's top edge |
-| `--cf-gap` | `clamp(10px, 1.4svh, 14px)` | between fields |
-| `--cf-radius` | `14px` | field radius |
+| `--cf-fs` | `16px` (< 1024px, no iOS zoom); `13.5px` (>= 1024px) | text / placeholder of inputs, select, textarea, custom dropdown options; the floating label is `--cf-label-scale` of it |
+| `--cf-h` | `43.2px` (< 1024px); `clamp(39.6px, 5.04svh, 43.2px)` (>= 1024px) | input / select / dropdown-trigger height |
+| `--cf-ta-h` | `93.6px` | textarea min-height (vertical resize only) |
+| `--cf-label-scale` / `--cf-label-top` | `0.666` / `6.3px` (< 1024px); `0.78` / `4.5px` (>= 1024px) | floating label size and distance from the field's top edge |
+| `--cf-gap` | `clamp(9px, 1.26svh, 12.6px)` | between fields |
+| `--cf-radius` | `12.6px` | field and dropdown-panel radius |
+| `--cf-pad-x` | `14.4px` | field inner left / right padding and the label offset |
+| `--cf-check` | `19.8px` | consent checkbox |
+| `--cf-consent-fs` | `0.792rem` | consent text (12.7px; gap 9px) |
+| `--cf-opt-h` | `36px` | custom dropdown option row |
 | `--cf-title-gap` | `clamp(24px, 3.4svh, 36px)` | title -> first field |
 | `--cf-btn-gap` | `clamp(18px, 2.4svh, 26px)` | consent row -> submit button AND submit button -> confidentiality note (equal) |
 | `--cf-bottom-pad` | `clamp(28px, 4svh, 44px)` | confidentiality note -> card bottom (extra height from the equal-height row is split evenly above and below the content) |
 | `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title "Kérjen árajánlatot" |
 | `--cf-tagline-fs` | `clamp(22px, 1.1rem + 0.5vw, 26px)` | photo card tagline "Dizájn, kód és mozgás" (on phones capped at `(100vw - 84px) / 17` so the line never wraps) |
 | `--cf-note-fs` | `0.875rem` | "Adatait bizalmasan kezelem." and "Általában 24 órán belül válaszolok." (shared, same colour) |
-| `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 20.5svh, 260px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
+| `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 19.5svh, 186px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
 | `--cf-pc-btn-gap` | `clamp(24px, 3.4svh, 36px)` | photo card: minimum gap above the WhatsApp button and below the e-mail button; the free height is split equally between the two gaps (the note stays at the card bottom) |
