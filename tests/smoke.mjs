@@ -129,7 +129,7 @@ async function indexChecks(vp) {
     const y = await topOf(p, sel);
     if (y == null) { rec(tag, `${sec}: ${sel}`, false, 'probe element missing'); continue; }
     await scrollTo(p, Math.max(0, y - vp.h * 0.45));
-    await until(p, SETTLED_JS, sel, 3500);
+    await until(p, SETTLED_JS, sel, sel.includes('btn-submit') ? 12000 : 3500);          /* the Kapcsolat choreography runs ~6s (dot landing + signal + content) */
     const after = await state(p, sel);
     rec(tag, `${sec}: visible after scroll`, settled(after), after ? `op ${after.op} tf ${after.tf}` : 'missing');
     if (exp === 'animated') {
@@ -139,6 +139,10 @@ async function indexChecks(vp) {
     }
   }
 
+  // the Kapcsolat choreography reveals the photo card when it is in view (stacked layouts: after the form card): show it and let the sequence finish
+  const py = await topOf(p, '#contact .contact-personal-panel');
+  if (py != null) await scrollTo(p, Math.max(0, py - vp.h * 0.3));
+  await p.waitForFunction(() => ![...document.querySelectorAll('#contact *')].some(e => e.style && e.style.opacity === '0' && !e.closest('[aria-hidden="true"]')), null, { timeout: 14000 }).catch(() => {});
   // stuck-at-zero scan: anything in the page body still inline-hidden after the full pass (excluding intentional states)
   await frames(p, 6);
   const stuck = await p.evaluate(() => [...document.querySelectorAll('main *, section *, footer *')]

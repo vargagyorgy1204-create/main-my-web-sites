@@ -149,7 +149,7 @@
        stroke-dashoffset on pathLength 1) with a glowing head at its tip; the lead-text letters the trunk crosses light up (aria-hidden copies, the real text is untouched). */
     var desk = window.matchMedia('(min-width: 1024px)');
     var NS = 'http://www.w3.org/2000/svg';
-    var SPEED = 1000;
+    var SPEED = 1400;
     var sg = null, ring = null, units = [], entered = false, landed = false, pendingOff = 0;
 
     function el(name, attrs, parent) {
