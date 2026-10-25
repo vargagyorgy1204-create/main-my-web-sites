@@ -58,7 +58,11 @@
     --cf-pc-btn-gap: clamp(24px, 3.4svh, 36px);                            /* photo card: minimum gap above the WhatsApp button and below the e-mail button (the free height is split equally between them) */
     --cf-photo-d: clamp(190px, 27svh, 260px);                              /* photo card: portrait diameter on phones / tablets (stacked cards); desktop: clamp(150px, 20.5svh, 260px) so the card never grows taller than the form */
     --cf-title-fs: clamp(1.25rem, 2.2svh, 1.5rem);                         /* "Kérjen árajánlatot" AND the photo card heading */
-    --cf-note-fs: 0.875rem;                                                /* "Adatait bizalmasan kezelem." AND "Általában 24 órán belül válaszolok." */
+    --cf-note-fs: 12px;                                                    /* "Adatait bizalmasan kezelem." AND "Általában 24 órán belül válaszolok." */
+    --cf-note-lh: 1.5;
+    --cf-note-color: rgb(255 255 255 / 0.8);
+    --cf-info-fs: 14px;                                                    /* photo card info lines: status, role, invitation */
+    --cf-info-color: rgb(159 176 216);
     --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
     --cf-btn-gap: clamp(18px, 2.4svh, 26px);                               /* consent row -> submit button AND submit button -> "Adatait bizalmasan kezelem." */
     --cf-bottom-pad: clamp(28px, 4svh, 44px);                              /* "Adatait bizalmasan kezelem." -> card bottom */
@@ -6617,7 +6621,7 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 
 /* ===== KAPCSOLAT photo card: aligned with the form card (>= 1024px), 2-line centred heading, note styled like the form's ===== */
 #contact .contact-note,
-#contact .contact-form-note { margin-bottom: 0; font-size: var(--cf-note-fs); color: rgb(159 176 216); text-align: center; }
+#contact .contact-form-note { margin-bottom: 0; font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: var(--cf-note-fs); line-height: var(--cf-note-lh); color: var(--cf-note-color); text-align: center; }
 @media (min-width: 1024px) {
     /* bottom padding as the form card's: the note baselines line up */
     .ctc .contact-personal-panel { padding-bottom: var(--cf-bottom-pad); }
@@ -6674,10 +6678,10 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 }
 .contact-tagline .ct-and { color: #fff; }
 /* the three info lines under the tagline: status (with the dot), role, invitation - one style, 6px apart */
-#contact .contact-personal-panel .contact-role { margin: 6px 0 0; font-family: inherit; font-weight: 400; font-size: 0.85rem; line-height: 1.4; letter-spacing: 0.04em; text-align: center; color: rgb(255 255 255 / 0.65); }
-#contact .contact-personal-panel .contact-tagline + .contact-role { margin-top: 10px; }
+#contact .contact-personal-panel .contact-role { margin: 0.44em 0 0; font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: var(--cf-info-fs); line-height: 1.4; letter-spacing: 0.04em; text-align: center; color: var(--cf-info-color); }
+#contact .contact-personal-panel .contact-tagline + .contact-role { margin-top: 0.74em; }
 #contact .contact-status .status-text { font-size: inherit; font-weight: inherit; line-height: inherit; letter-spacing: inherit; color: inherit; }   /* the global .status-text (#888, 500) must not make this line lighter */
-#contact .contact-status { display: flex; align-items: center; justify-content: center; gap: 8px; }
+#contact .contact-status { display: flex; align-items: center; justify-content: center; gap: 0.57em; }
 #contact .status-dot {
     flex: none;
     width: 8px;
