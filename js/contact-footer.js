@@ -90,7 +90,7 @@
     /* ---------------------------------------------------------- entrances */
     var formCard = section.querySelector('.contact-form-panel');
     if (formCard) {
-      var items = arr(formCard, 'h3, .contact-field, .contact-consent, .btn-submit-message, .contact-form-note');
+      var items = arr(formCard, 'h3, .contact-field, .contact-consent, .btn-submit-message');
       gsap.set(items, { opacity: 0, y: 12 });
       var f1 = false;
       var playForm = function () {

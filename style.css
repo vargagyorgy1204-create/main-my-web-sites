@@ -58,9 +58,6 @@
     --cf-pc-btn-gap: clamp(24px, 3.4svh, 36px);                            /* photo card: minimum gap above the WhatsApp button and below the e-mail button (the free height is split equally between them) */
     --cf-photo-d: clamp(190px, 27svh, 260px);                              /* photo card: portrait diameter on phones / tablets (stacked cards); desktop: clamp(150px, 20.5svh, 260px) so the card never grows taller than the form */
     --cf-title-fs: clamp(1.25rem, 2.2svh, 1.5rem);                         /* "Kérjen árajánlatot" AND the photo card heading */
-    --cf-note-fs: 12px;                                                    /* "Adatait bizalmasan kezelem." AND "Általában 24 órán belül válaszolok." */
-    --cf-note-lh: 1.5;
-    --cf-note-color: rgb(255 255 255 / 0.8);
     --cf-info-fs: 14px;                                                    /* photo card info lines: status, role, invitation */
     --cf-info-color: rgb(159 176 216);
     --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
@@ -5521,7 +5518,6 @@ html.lenis, html.lenis body { height: auto; }
 /* honeypot: out of sight and out of the tab order */
 .contact-hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 
-.contact-form-note { margin: 0; align-self: flex-end; font-size: 0.82rem; color: #9fb0d8; }
 .contact-form-status { margin: 0; min-height: 1.4em; font-size: 0.88rem; line-height: 1.4; color: #c9d3ef; }
 .contact-form-status.is-error { color: #fca5a5; }
 .contact-form-status.is-ok { color: #86efac; }
@@ -5529,14 +5525,12 @@ html.lenis, html.lenis body { height: auto; }
 .btn-submit-message:focus-visible { outline: 3px solid #b4acff; outline-offset: 3px; }
 
 .contact-photo-square { width: 140px; height: 140px; aspect-ratio: 1 / 1; }
-.contact-note { margin: 0; font-size: 0.86rem; text-align: center; color: #9fb0d8; }
 .btn-wa-cta:focus-visible,
 .btn-email-cta:focus-visible { outline: 3px solid #b4acff; outline-offset: 3px; }
 
 @media (max-width: 900px) {
     .contact-form-panel, .contact-personal-panel { padding: 24px 20px; }
     .btn-submit-message { width: 100%; }
-    .contact-form-note { align-self: center; }
 }
 /* ===== /CONTACT FORM ===== */
 
@@ -5768,7 +5762,6 @@ html.lenis, html.lenis body { height: auto; }
 .ctc .status-dot { animation-duration: 2.4s; }
 .ctc .contact-personal-panel h4 { color: #fff; }
 .ctc .contact-status { color: rgb(255 255 255 / 0.75); }
-.ctc .contact-note { color: rgb(255 255 255 / 0.72); }
 @media (max-width: 899px) { .ctc .contact-photo-square { width: 160px; } }
 @media (prefers-reduced-motion: reduce) { .ctc .contact-photo-square { transition: none; } .ctc .status-dot { animation: none; } }
 
@@ -6566,10 +6559,9 @@ html.has-cursor #contact .contact-actions .btn-email-cta:hover .icon path:first-
 }
 @keyframes ctcSpinStatic { to { rotate: 360deg; } }
 
-/* ===== KAPCSOLAT form: centred title / consent / submit / note; errors only for submit / network failures ===== */
+/* ===== KAPCSOLAT form: centred title / consent / submit; errors only for submit / network failures ===== */
 #contact .contact-form-panel h3 { text-align: center; font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; color: #fff; }   /* the type of the photo card tagline, plain white */
 #contact .contact-consent { align-self: center; justify-content: center; text-align: left; }
-#contact .contact-form-note { align-self: center; text-align: center; font-size: 0.875em; margin-top: max(0px, calc(var(--cf-btn-gap) - var(--cf-gap))); }   /* button -> note = consent -> button (--cf-btn-gap) */
 #contact .contact-form-status { text-align: center; min-height: 0; }
 #contact .contact-form-status:empty { display: none; }
 
@@ -6653,21 +6645,18 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 @media (min-width: 900px) and (max-height: 799px) { .ctc .contact-field textarea { min-height: var(--cf-ta-h); } }
 
 /* ===== KAPCSOLAT photo card: aligned with the form card (>= 1024px), 2-line centred heading, note styled like the form's ===== */
-#contact .contact-note,
-#contact .contact-form-note { margin-bottom: 0; font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: var(--cf-note-fs); line-height: var(--cf-note-lh); color: var(--cf-note-color); text-align: center; }
 @media (min-width: 1024px) {
-    /* bottom padding as the form card's: the note baselines line up */
+    /* bottom padding as the form card's (--cf-bottom-pad): the e-mail button's bottom lines up with the submit button's */
     .ctc .contact-personal-panel { padding-bottom: var(--cf-bottom-pad); }
 }
 .ctc .contact-personal-panel { padding-top: clamp(36px, 5svh, 56px); }
-/* the button group is centred between the last info line and the note: .contact-actions dissolves into the panel's flex column; the panel gap is the minimum gap,
-   the free height goes to two equal auto margins (above WhatsApp, above the note = below e-mail); WhatsApp -> e-mail keeps the small button gap */
+/* .contact-actions dissolves into the panel's flex column: the e-mail button ends at the card's bottom padding (level with the submit button), the free height is
+   one auto margin above WhatsApp (info lines -> WhatsApp, the panel gap is the minimum); WhatsApp -> e-mail keeps the small button gap */
 .ctc .contact-profile-header { gap: 0; }
 .ctc .contact-personal-panel { gap: var(--cf-pc-btn-gap); }
 .ctc .contact-actions { display: contents; }
 .ctc .contact-actions .btn-wa-cta { margin-top: auto; }
 .ctc .contact-actions .btn-email-cta { margin-top: calc(clamp(8px, 1.1svh, 12px) - var(--cf-pc-btn-gap)); }
-.ctc .contact-actions .contact-note { margin-top: auto; }
 .ctc .contact-personal-panel > .contact-profile-header, .ctc .contact-personal-panel > .contact-actions > * { align-self: center; }
 /* portrait: the gradient ring (::before) rotates slowly, only transform (compositor); the photo and its tilt stay still */
 #contact .contact-photo-square {

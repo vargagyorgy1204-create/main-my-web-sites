@@ -117,14 +117,13 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-consent-fs` | `0.792rem` | consent text (12.7px; gap 9px) |
 | `--cf-opt-h` | `36px` | custom dropdown option row |
 | `--cf-title-gap` | `clamp(24px, 3.4svh, 36px)` | title -> first field |
-| `--cf-btn-gap` | `clamp(18px, 2.4svh, 26px)` | consent row -> submit button AND submit button -> confidentiality note (equal) |
-| `--cf-bottom-pad` | `clamp(28px, 4svh, 44px)` | confidentiality note -> card bottom (extra height from the equal-height row is split evenly above and below the content) |
+| `--cf-btn-gap` | `clamp(18px, 2.4svh, 26px)` | consent row -> submit button |
+| `--cf-bottom-pad` | `clamp(28px, 4svh, 44px)` | submit button / e-mail button -> card bottom (the two buttons end on the same line; extra height from the equal-height row is split evenly above and below the form content) |
 | `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title "Kérjen árajánlatot" (Syne 800, letter-spacing −0.02em, plain white: the type of the photo card tagline) |
 | `--cf-tagline-fs` | `clamp(22px, 1.1rem + 0.5vw, 26px)` | photo card tagline "Dizájn, kód és mozgás" (on phones capped at `(100vw - 84px) / 17` so the line never wraps) |
-| `--cf-note-fs` / `--cf-note-lh` / `--cf-note-color` | `12px` / `1.5` / `rgb(255 255 255 / .8)` | "Adatait bizalmasan kezelem." and "Általában 24 órán belül válaszolok." (shared) |
 | `--cf-info-fs` / `--cf-info-color` | `14px` / `rgb(159 176 216)` | photo card info lines: status, role, invitation (letter-spacing .04em; gaps in em) |
 | `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 19.5svh, 186px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
-| `--cf-pc-btn-gap` | `clamp(24px, 3.4svh, 36px)` | photo card: minimum gap above the WhatsApp button and below the e-mail button; the free height is split equally between the two gaps (the note stays at the card bottom) |
+| `--cf-pc-btn-gap` | `clamp(24px, 3.4svh, 36px)` | photo card: minimum gap between the info lines and the WhatsApp button (the free height goes there; the e-mail button ends at the card bottom padding) |
 
 ## Footer: divider line + back-to-top badge
 
