@@ -821,29 +821,35 @@ h2 {
     letter-spacing: -0.01em;
 }
 
-/* Close: a bare x (no ring, border or background), white 80%; hover = white, the custom cursor draws its circle (data-cursor="circle"). Sticky, so it stays
-   reachable while the dialog scrolls */
+/* Close: a bare x drawn with two bars (no ring, border or background), white 80%, white on hover; the custom cursor draws its circle (data-cursor="circle").
+   Its font-size = the title's size (set with the h3 in every tier): the 28px box is centred on the title's cap height (0.766em below the title's top, measured on
+   Syne 800), and the drawn x ends on the content's right line (the cards' right edge). Sticky, so it stays reachable while the dialog scrolls */
 .service-modal-close {
+    --x: rgb(255 255 255 / 0.8);
     position: sticky;
     top: 0;
     z-index: 6;
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    margin: -6px -10px -34px auto;
+    display: block;
+    width: 28px;
+    height: 28px;                       /* >= 0 top margin in every tier: a sticky box cannot leave its container's content box */
+    margin: calc(0.766em - 14px) -8px calc(-14px - 0.766em) auto;
     padding: 0;
     border: 0;
     border-radius: 50%;
     background: none;
-    color: rgb(255 255 255 / 0.8);
-    font-size: 1.7rem;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.55rem;
     line-height: 1;
     cursor: pointer;
-    transition: color 0.25s ease;
+    transition: --x 0.25s ease;
 }
+.service-modal-close::before,
+.service-modal-close::after { content: ""; position: absolute; left: 50%; top: 50%; width: 16px; height: 1.75px; border-radius: 1px; background: var(--x); transition: background 0.25s ease; }
+.service-modal-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.service-modal-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
 html.has-cursor .service-modal-close:hover,
-.service-modal-close:focus-visible { color: #fff; }
+.service-modal-close:focus-visible { --x: #fff; }
 .service-modal-close:focus-visible,
 .modal-quote-btn:focus-visible { outline: 3px solid var(--m-accent-2); outline-offset: 3px; }
 .service-modal:focus { outline: none; }
@@ -865,14 +871,13 @@ html.has-cursor .service-modal-close:hover,
     border-radius: 18px;
     background: rgb(255 255 255 / 0.05);
     border: 1px solid rgb(255 255 255 / 0.1);
-    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;      /* hover = a soft glow only: no lift, no scale, no growing shadow */
 }
 .pricing-item > :not(.pricing-watermark) { position: relative; z-index: 1; }
 .pricing-item:hover {
-    transform: translateY(-3px);
     border-color: rgb(255 255 255 / 0.4);
     border-color: color-mix(in srgb, var(--m-accent) 50%, transparent);
-    box-shadow: 0 16px 36px -16px var(--m-glow);
+    box-shadow: inset 0 0 30px -12px var(--m-glow);
 }
 .pricing-item.is-featured {
     border: 1px solid transparent;
@@ -881,8 +886,9 @@ html.has-cursor .service-modal-close:hover,
         linear-gradient(135deg, var(--m-accent), var(--m-accent-2)) border-box;
     box-shadow: 0 18px 40px -18px var(--m-glow);
 }
+.pricing-item.is-featured:hover { border-color: transparent; box-shadow: 0 18px 40px -18px var(--m-glow), inset 0 0 30px -12px var(--m-glow); }
 
-.pricing-plan-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.pricing-plan-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
 .pricing-icon {
     flex: none;
     display: grid;
@@ -975,7 +981,7 @@ html.has-cursor .service-modal-close:hover,
 /* ---------- plan links: the section's .text-link component (white, no arrow), left-aligned at the card's bottom ---------- */
 .service-modal .text-link { --tl-color: #fff; }
 button.text-link { padding: 0; border: 0; background: none; }
-.pricing-item .modal-quote-link { align-self: flex-start; margin-top: auto; }
+.pricing-item .modal-quote-link { align-self: center; margin-top: auto; }
 
 /* ---------- personal-offer row: the shared .cta-row (divider on top, text left, the dark pill right); no card ---------- */
 /* the space around the row (all three modals, every tier): last card -> divider, divider -> text; the bottom (row -> modal edge) = the visual top (see .service-modal padding) */
@@ -1028,13 +1034,13 @@ body.service-modal-open { overflow: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
     .pricing-item { transition: none; }
-    .pricing-item:hover { transform: none; }
 }
 
 /* ---------- short desktop windows: tighter cards so the two 3-card modals fit ---------- */
 @media (min-width: 901px) and (max-height: 800px) {
     .service-modal { padding: 20px 24px calc(20px + 0.35 * 1.35rem); }
     .service-modal h3 { margin-bottom: 12px; font-size: 1.35rem; }
+    .service-modal-close { font-size: 1.35rem; }
     .service-pricing-grid { gap: 12px; }
     .pricing-item { padding: 18px 20px; }
     .pricing-plan-head { margin-bottom: 11px; gap: 10px; }
@@ -1054,6 +1060,7 @@ body.service-modal-open { overflow: hidden; }
     .service-modal-overlay { padding: 10px; }
     .service-modal { max-height: calc(100vh - 20px); padding: 12px 18px calc(12px + 0.35 * 1.15rem); border-radius: 22px; }
     .service-modal h3 { margin: 0 40px 10px 0; font-size: 1.15rem; }
+    .service-modal-close { font-size: 1.15rem; }
     .service-pricing-grid { gap: 10px; }
     .pricing-item { padding: 14px 16px; border-radius: 14px; }
     .pricing-plan-head { margin-bottom: 6px; gap: 9px; }
@@ -1081,6 +1088,7 @@ body.service-modal-open { overflow: hidden; }
     .service-modal-overlay { padding: 12px; }
     .service-modal { padding: 20px 16px calc(20px + 0.35 * 1.3rem); border-radius: 22px; max-height: calc(100vh - 24px); }
     .service-modal h3 { font-size: 1.3rem; }
+    .service-modal-close { font-size: 1.3rem; }
     .pricing-icon { width: 32px; height: 32px; }
     .pricing-watermark { width: 110px; height: 110px; inset-inline-end: -20px; inset-block-end: -24px; }
     .modal-group__grid--3,
