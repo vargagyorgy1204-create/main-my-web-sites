@@ -6949,3 +6949,14 @@ html.has-cursor .footer-section .social-links a:hover i,
 footer.fs-prep .footer-section .social-links a { opacity: 0; transform: translateY(60%) scale(0.6) rotate(-12deg); pointer-events: none; --rd: calc((3 - var(--i)) * 0.08s); }
 footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: none; pointer-events: auto; --rd: calc(0.2s + var(--i) * 0.08s); }
 @media (prefers-reduced-motion: reduce) { .footer-section .social-links a, .footer-section .social-links a i { transition: none; } }
+
+/* ===== FOOTER back-to-top badge below 1024px (phones + tablets): a static tap target at the line's right end - no magnet, no hover, no cursor logic;
+   it emerges from the line (same reveal), then the text rotates; the line sits closer to the columns and the badge has room below ===== */
+@media (max-width: 1023px) {
+    .footer-divider { margin-top: calc(clamp(28px, 4svh, 40px) + var(--fs-above, 0px)); }      /* --fs-above: js/footer.js adds what the 12px clearance from the text above needs */
+    .footer-floor { margin-top: max(var(--footer-divider-bottom), calc(var(--footer-stamp-d) / 2 + 16px)); }
+    .footer-divider:not(.is-in) .footer-stamp .stamp__ring { animation-play-state: paused; }           /* the rotation starts with the reveal */
+    .footer-stamp:hover .stamp__body { background: var(--stamp-ring); transform: none; }                /* no sticky hover after a tap */
+    html.has-cursor .footer-stamp:hover .stamp__inner { background: #fff; color: var(--stamp-arrow); }
+    .footer-stamp.is-hover .stamp__icon, .footer-stamp.is-hover .stamp__icon--copy { animation: none; }
+}

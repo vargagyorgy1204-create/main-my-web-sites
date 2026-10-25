@@ -114,7 +114,7 @@
   function cancelEnd() { if (endFn) { icon.removeEventListener('animationiteration', endFn); endFn = null; } clearTimeout(endTimer); endTimer = 0; }
   if (stamp && icon && !reduce) {
     stamp.addEventListener('pointerenter', function (e) {
-      if (e.pointerType === 'touch' || !document.documentElement.classList.contains('has-cursor')) return;
+      if (e.pointerType === 'touch' || !document.documentElement.classList.contains('has-cursor') || !window.matchMedia('(min-width: 1024px)').matches) return;
       cancelEnd();
       stamp.classList.add('is-hover');
     });
@@ -139,7 +139,7 @@
     goal = g;
     if (!raf) raf = requestAnimationFrame(step);
   }
-  stamp.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') to(5); });
+  stamp.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch' && window.matchMedia('(min-width: 1024px)').matches) to(5); });
   stamp.addEventListener('pointerleave', function () { to(1); });
 })();
 
@@ -159,8 +159,31 @@
     }
     return best;
   }
+  var wide = window.matchMedia('(min-width: 1024px)');                       /* below 1024px the badge is static at the line's right end */
   function place() {
     badge.style.removeProperty('--fs-shift');
+    div.style.removeProperty('--fs-above');
+    if (!wide.matches) {
+      /* phones / tablets: the badge never moves sideways; if the text above reaches under it, the LINE moves down just enough for >= 12px clearance */
+      var dr0 = div.getBoundingClientRect(), R0 = badge.offsetWidth / 2, wr = div.parentElement.getBoundingClientRect();
+      var cx1 = wr.right - R0, cy1 = dr0.top + dr0.height / 2, extra = 0;
+      var tw = document.createTreeWalker(document.querySelector('.footer-content'), NodeFilter.SHOW_TEXT, null), tn;
+      while ((tn = tw.nextNode())) {
+        if (!tn.nodeValue.trim()) continue;
+        var rg0 = document.createRange(); rg0.selectNodeContents(tn);
+        var l0 = rg0.getClientRects();
+        for (var j = 0; j < l0.length; j++) {
+          var r0 = l0[j]; if (!r0.width) continue;
+          var sec = tn.parentElement.closest('.footer-section'), ty = 0;
+          if (sec) { var tm = getComputedStyle(sec).transform; if (tm && tm !== 'none') ty = new DOMMatrix(tm).f; }     /* the column's entrance transform is not part of the layout */
+          var bot = r0.bottom - ty; if (bot > cy1) continue;
+          var dx = Math.max(r0.left - cx1, 0, cx1 - r0.right), need = Math.sqrt(Math.max(0, Math.pow(R0 + MIN, 2) - dx * dx));
+          extra = Math.max(extra, need - (cy1 - bot));
+        }
+      }
+      if (extra > 0) div.style.setProperty('--fs-above', Math.ceil(extra) + 'px');
+      return;
+    }
     var dr = div.getBoundingClientRect(), wrap = div.parentElement.getBoundingClientRect(), vw = document.documentElement.clientWidth;
     var R = badge.offsetWidth / 2;                                         /* layout size: the reveal transform (scale / rotate) must not leak into the maths */
     var cy = dr.top + dr.height / 2, cx0 = wrap.right - R;                 /* default centre: the right end of the line */
