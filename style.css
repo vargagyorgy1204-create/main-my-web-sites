@@ -63,7 +63,7 @@
     --cf-btn-gap: clamp(18px, 2.4svh, 26px);                               /* consent row -> submit button AND submit button -> "Adatait bizalmasan kezelem." */
     --cf-bottom-pad: clamp(28px, 4svh, 44px);                              /* "Adatait bizalmasan kezelem." -> card bottom */
     /* footer: divider line + back-to-top badge */
-    --footer-divider-top: clamp(40px, 6svh, 72px);                         /* link columns -> divider line */
+    --footer-pad-y: clamp(36px, 5.5svh, 60px);                             /* footer top edge -> column headings AND bottom of the tallest column -> divider line (equal) */
     --footer-divider-bottom: clamp(24px, 4svh, 48px);                      /* divider line -> wordmark top */
     --footer-stamp-d: clamp(70px, 9.3svh, 100px);                          /* back-to-top badge: the hero badge size (76px on phones) */
     /* tight anchor (.section--tight): closer to the top-left; the gutter is the logo's right edge (32 + 44) + 20px, symmetric on the right */
@@ -6810,7 +6810,9 @@ html.has-cursor .privacy-card__x:hover, .privacy-card__x:focus-visible { backgro
 .footer-section .social-links { margin-top: 24px; gap: 12px; }
 .footer-content { margin-bottom: 0; }
 @media (max-width: 1023px) { .footer-content { grid-template-columns: 1fr; gap: 30px; } }
-.footer-divider { position: relative; height: 1px; margin-top: var(--footer-divider-top); z-index: 3; }
+.footer-divider { position: relative; height: 1px; margin-top: var(--footer-pad-y); z-index: 3; }
+footer { padding-top: var(--footer-pad-y); }
+.footer-section ul li:last-child, .footer-section:last-child p:last-child { margin-bottom: 0; }   /* the gap above the divider is measured from the last text line */
 .footer-divider__line {
     position: absolute;
     inset: 0;

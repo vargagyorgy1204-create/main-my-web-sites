@@ -129,7 +129,7 @@ Left as they are, because converting them would change the look at 1440×900 or 
 
 | Token | Value | Use |
 |---|---|---|
-| `--footer-divider-top` | `clamp(40px, 6svh, 72px)` | link columns -> divider line |
+| `--footer-pad-y` | `clamp(36px, 5.5svh, 60px)` | footer top edge -> column headings, and bottom of the tallest column -> divider line (the two gaps are equal) |
 | `--footer-divider-bottom` | `clamp(24px, 4svh, 48px)` | divider line -> VARBRO wordmark top |
 | `--footer-stamp-d` | `clamp(70px, 9.3svh, 100px)` (76px < 1024px) | back-to-top badge diameter (the hero badge size), centred on the right end of the divider |
 
