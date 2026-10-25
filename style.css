@@ -6698,7 +6698,7 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
     -webkit-background-clip: text;
     background-clip: text;
 }
-.contact-tagline .ct-and { color: #fff; }
+.contact-tagline .ct-and { color: rgb(255 255 255 / 0.8); }
 /* the three info lines under the tagline: status (with the dot), role, invitation - one style, 6px apart */
 #contact .contact-personal-panel .contact-role { margin: 0.44em 0 0; font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: var(--cf-info-fs); line-height: 1.4; letter-spacing: 0.04em; text-align: center; color: var(--cf-info-color); }
 #contact .contact-personal-panel .contact-tagline + .contact-role { margin-top: 0.74em; }
