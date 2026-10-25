@@ -40,6 +40,11 @@
     var VIEW = '.about-photo-card, [data-cursor="view"]';
     var TEXT = 'p, h1, h2, h3, h4, li, blockquote';
     var FIELD = 'input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), textarea, [contenteditable="true"]';
+    /* the Kapcsolat form fields (inputs, textarea, the dropdown trigger): ONE behaviour - the frame snaps to the field box and stays
+       static (no drift towards the pointer), the dot follows the pointer, no text capsule, no native I-beam, no hidden cursor; the
+       field's own caret still blinks. Every other text field keeps the native text cursor. */
+    var FORMFIELD = '.contact-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), .contact-field textarea';
+    var FRAMELOCK = FORMFIELD + ', .cs__trigger';
     var MARGIN = 12;            /* the frame never gets closer than this to the viewport edge */
     var HOLD = 90;              /* ms the frame is kept when the pointer crosses a gap between two targets */
 
@@ -102,7 +107,7 @@
     /* which class is this target? decided from style, never from size (except the card class) */
     function classify(el) {
         if (el.matches('[data-cursor="pill"]')) return 'pill';
-        if (el.matches('select, input, [data-cursor="frame"]')) return 'box';
+        if (el.matches('select, input, [data-cursor="frame"]') || el.matches(FORMFIELD)) return 'box';
         var cs = getComputedStyle(el);
         var clipText = cs.backgroundClip === 'text' || cs.webkitBackgroundClip === 'text';   /* menu items fill their text on hover */
         var plainBg = clipText || (alpha(cs.backgroundColor) < 0.05 && cs.backgroundImage === 'none');
@@ -178,7 +183,7 @@
             return;
         }
         if (frame && frame.el === el && frame.kind === kind) return;
-        frame = { el: el, kind: kind, box: null, radius: 10 };
+        frame = { el: el, kind: kind, box: null, radius: 10, lock: el.matches(FRAMELOCK) };
         computeBox(frame);
         ring.classList.add('is-frame');
         ring.classList.toggle('is-pill', kind === 'pill');
@@ -199,7 +204,7 @@
             var b = frame.box;
             var off = (magnet && magnet.contains(frame.el)) ? { x: mOffX, y: mOffY } : { x: 0, y: 0 };
             var cx = b.l + b.w / 2 + off.x, cy = b.t + b.h / 2 + off.y;
-            if (mode === 'focus') { tx = cx; ty = cy; } else { tx = cx + (mx - cx) * 0.1; ty = cy + (my - cy) * 0.1; }
+            if (mode === 'focus' || frame.lock) { tx = cx; ty = cy; } else { tx = cx + (mx - cx) * 0.1; ty = cy + (my - cy) * 0.1; }
         } else if (magnet && magRect) {
             var mcx = magRect.l + magRect.w / 2, mcy = magRect.t + magRect.h / 2;
             tx = mcx + (mx - mcx) * 0.25;
@@ -295,6 +300,7 @@
 
     /* ------------------------------------------------------------ state from the element under the pointer */
     function resolve(t) {
+        if (t && t.closest(FORMFIELD)) return t.closest(FORMFIELD);                         /* form fields: a frame target like the dropdown trigger */
         if (!t || t.closest(FIELD) || t.closest('[data-cursor="plain"]')) return null;   /* plain zones (values accordion): no frame */
         var el = t.closest(LINK);
         if (!el) return null;
@@ -310,7 +316,7 @@
         setFrame(null);
         ring.classList.remove('is-link-small', 'is-magnetic');
         if (!t) return;
-        if (t.closest(FIELD)) { root.classList.add('cursor-on-field'); return; }
+        if (t.closest(FIELD) && !t.closest(FORMFIELD)) { root.classList.add('cursor-on-field'); return; }
         if (t.closest('[data-cursor="plain"]')) return;     /* ring + dot only: no text beam, no frame */
         var view = t.closest(VIEW);
         if (view) {
@@ -405,6 +411,7 @@
         var t = e.target;
         if (!(t instanceof Element) || !focusVisible(t)) return;
         var el = resolve(t);
+        if (el && el.matches(FRAMELOCK) && el === lastEl && mode === 'hover') return;     /* focus by click / typing under the pointer: the frame is already there, no keyboard mode */
         if (!el) { if (t.closest(FIELD)) { setFrame(null); root.classList.add('cursor-on-field'); } return; }
         mode = 'focus';
         cancelHold();
