@@ -1332,13 +1332,6 @@ body.service-modal-open { overflow: hidden; }
     gap: 12px;
 }
 
-#contact .contact-actions .btn-wa-cta,
-#contact .contact-actions .btn-email-cta {
-    width: 220px;
-    padding: 12px 20px;
-    font-size: 0.93rem;
-}
-
 .contact-action-btn {
     display: inline-flex;
     align-items: center;
@@ -1910,44 +1903,6 @@ body.contact-page {
     margin-top: 6px;
 }
 
-.btn-wa-cta,
-.btn-email-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 15px 32px;
-    width: 260px;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: background 0.26s ease, color 0.26s ease, box-shadow 0.26s ease, transform 0.26s ease;
-    cursor: pointer;
-}
-
-.btn-wa-cta {
-    background: transparent;
-    color: #25d366 !important;
-    border: 2px solid #25d366;
-    box-shadow: none;
-}
-
-.btn-wa-cta i {
-    font-size: 1.15rem;
-}
-
-
-.btn-email-cta {
-    background: transparent;
-    color: #C026A3 !important;
-    border: 2px solid #C026A3;
-    box-shadow: none;
-}
-
-.btn-email-cta i {
-    font-size: 1.05rem;
-}
 
 
 /* Mobile */
@@ -1976,10 +1931,6 @@ body.contact-page {
         align-items: center;
     }
 
-    .btn-wa-cta,
-    .btn-email-cta {
-        width: 100%;
-    }
 }
 
 /* GDPR cookie consent banner */
@@ -5801,8 +5752,6 @@ html.lenis, html.lenis body { height: auto; }
 .ctc .contact-profile-header { gap: clamp(10px, 1.3svh, 14px); }
 .ctc .contact-personal-panel h4 { font-size: clamp(1.12rem, 2svh, 1.36rem); }
 .ctc .contact-actions { gap: clamp(8px, 1.1svh, 12px); }
-#contact .contact-actions .btn-wa-cta,
-#contact .contact-actions .btn-email-cta { padding-block: clamp(10px, 1.1svh, 12px); }
 /* compact tier for short windows (e.g. 1366x768) */
 @media (min-width: 900px) and (max-height: 799px) {
     .ctc .contact-field textarea { min-height: 88px; }
@@ -6408,34 +6357,57 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 #services .text-link { --tl-color: #fff; }
 .svt-actions { column-gap: 28px; align-items: center; }
 
-/* ===== KAPCSOLAT buttons: role-based styles, the size of "Részletek" (--btn-* tokens) =====
-   submit = exactly the "Részletek" button (see the submit block below); WhatsApp = green outline + left-to-right wipe; e-mail = magenta outline + wipe.
-   Hover only with a real pointer (html.has-cursor); focus-visible always; reduced motion: colour changes only. */
+/* ===== KAPCSOLAT buttons: the photo card's WhatsApp / e-mail buttons are the submit button's component (--btn-* tokens, Space Grotesk 500, 2px border, 50px radius,
+   transparent), each in its own colour; hover / focus-visible (a real pointer only: html.has-cursor): the button's own colour fades in as the fill (0.3s) and the
+   label turns dark / white; active scale .98. Both buttons share the width of the wider label (.contact-actions is a shrink-wrapped grid). ===== */
 #contact .contact-actions .btn-wa-cta,
 #contact .contact-actions .btn-email-cta {
-    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
     position: relative;
     isolation: isolate;
-    overflow: hidden;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    height: var(--btn-h);                                   /* = the Részletek button, whatever the icon height */
+    height: var(--btn-h);
     padding: 0 var(--btn-px);
-    border: 2px solid transparent;
+    border: 2px solid var(--bc);
     border-radius: 50px;
+    background: transparent;
+    color: var(--tc) !important;
     font: 500 var(--btn-fs)/1.2 'Space Grotesk', sans-serif;
     letter-spacing: 0.5px;
     white-space: nowrap;
     text-decoration: none;
     box-shadow: none;
     cursor: pointer;
-    transition: color 0.35s var(--ease), translate 0.35s var(--ease), box-shadow 0.35s var(--ease), opacity 0.35s var(--ease);
+    transition: color 0.3s ease, scale 0.15s ease;
 }
-#contact .contact-actions .btn-wa-cta, #contact .contact-actions .btn-email-cta { width: auto; min-width: 220px; }
-#contact .contact-actions .btn-email-cta .icon { width: 18px; height: 18px; flex: none; }
-#contact .contact-actions .btn-wa-cta i { width: 18px; font-size: 18px; line-height: 1; text-align: center; flex: none; }
+#contact .contact-actions .btn-wa-cta { --bc: #25D366; --tc: #25D366; --hc: #0B1F17; }       /* #25D366 on the dark card 7.9-8.8:1; on the fill the label is #0B1F17 (8.7:1) */
+#contact .contact-actions .btn-email-cta { --bc: #C026A3; --tc: #E36DD0; --hc: #fff; }       /* #E36DD0 on the dark card 5.8:1; white on #C026A3 5.2:1 */
+#contact .contact-actions .btn-wa-cta::before,
+#contact .contact-actions .btn-email-cta::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--bc);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+html.has-cursor #contact .contact-actions .btn-wa-cta:hover,
+html.has-cursor #contact .contact-actions .btn-email-cta:hover,
+#contact .contact-actions .btn-wa-cta:focus-visible,
+#contact .contact-actions .btn-email-cta:focus-visible { color: var(--hc) !important; }
+html.has-cursor #contact .contact-actions .btn-wa-cta:hover::before,
+html.has-cursor #contact .contact-actions .btn-email-cta:hover::before,
+#contact .contact-actions .btn-wa-cta:focus-visible::before,
+#contact .contact-actions .btn-email-cta:focus-visible::before { opacity: 1; }
+#contact .contact-actions .btn-wa-cta:active,
+#contact .contact-actions .btn-email-cta:active { scale: 0.98; }
+@media (prefers-reduced-motion: reduce) {
+    #contact .contact-actions .btn-wa-cta, #contact .contact-actions .btn-email-cta,
+    #contact .contact-actions .btn-wa-cta::before, #contact .contact-actions .btn-email-cta::before { transition: none; }
+}
 
 /* -- submit: the "Részletek" button (.svt-btn) on the dark card with the brand gradient in the 2px border AND in the label (one gradient over the button's border box,
    so the ring and the text read as one piece); hover / focus-visible: the gradient fill fades in and the label turns white; sending = label replaced by a 16px brand-colour spinner */
@@ -6525,37 +6497,8 @@ html.has-cursor #contact .btn-submit-message:hover:not(:disabled)::before,
 #contact .btn-submit-message.is-sent::before, #contact .btn-submit-message.is-sent::after { opacity: 0; }
 @keyframes ctcSpin { to { rotate: 360deg; } }
 
-/* -- outline variants: a fill wipes in from the left; on the dark panel the text keeps AA contrast (the fill colours are the brand ones) */
-#contact .contact-actions .btn-wa-cta, #contact .contact-actions .btn-email-cta { background: transparent; }
-#contact .contact-actions .btn-wa-cta::before, #contact .contact-actions .btn-email-cta::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 0.35s var(--ease);
-}
-#contact .contact-actions .btn-wa-cta { color: #25D366 !important; border-color: #25D366; }
-#contact .contact-actions .btn-wa-cta::before { background: #25D366; }
-#contact .contact-actions .btn-email-cta { color: #E36DD0 !important; border-color: #C026A3; }          /* #E36DD0 on #10192d = 5.8:1 (#C026A3 itself is 3.3:1) */
-#contact .contact-actions .btn-email-cta::before { background: #C026A3; }
-html.has-cursor #contact .contact-actions .btn-email-cta:hover, #contact .contact-actions .btn-email-cta:focus-visible { color: #fff !important; }
-/* WhatsApp: dark green-black on the green wipe (8.7:1; white would be 2.0:1), in step with the wipe */
-html.has-cursor #contact .contact-actions .btn-wa-cta:hover, #contact .contact-actions .btn-wa-cta:focus-visible { color: #0B1F17 !important; }
-html.has-cursor #contact .contact-actions .btn-wa-cta:hover::before, html.has-cursor #contact .contact-actions .btn-email-cta:hover::before,
-#contact .contact-actions .btn-wa-cta:focus-visible::before, #contact .contact-actions .btn-email-cta:focus-visible::before { transform: scaleX(1); }
-@keyframes ctcWiggle { 0%, 100% { rotate: 0deg; } 25% { rotate: -8deg; } 60% { rotate: 8deg; } 85% { rotate: -3deg; } }
-html.has-cursor #contact .contact-actions .btn-wa-cta:hover i, #contact .contact-actions .btn-wa-cta:focus-visible i { animation: ctcWiggle 0.5s ease 1; }
-#contact .contact-actions .btn-email-cta .icon path { transition: translate 0.35s var(--ease); }
-html.has-cursor #contact .contact-actions .btn-email-cta:hover .icon path:first-child, #contact .contact-actions .btn-email-cta:focus-visible .icon path:first-child { translate: 0 -1.6px; }   /* the envelope flap lifts */
 @media (prefers-reduced-motion: reduce) {
-    #contact .contact-actions .btn-wa-cta, #contact .contact-actions .btn-email-cta,
-    #contact .contact-actions .btn-wa-cta::before, #contact .contact-actions .btn-email-cta::before,
-    #contact .contact-actions .btn-email-cta .icon path { transition: none; }
     #contact .btn-submit-message, #contact .btn-submit-message::before { transition: none; }
-    html.has-cursor #contact .contact-actions .btn-wa-cta:hover i, #contact .contact-actions .btn-wa-cta:focus-visible i { animation: none; }
-    html.has-cursor #contact .contact-actions .btn-email-cta:hover .icon path:first-child, #contact .contact-actions .btn-email-cta:focus-visible .icon path:first-child { translate: none; }
     #contact .btn-submit-message.is-sending .btn-submit-message__spin { animation: ctcSpinStatic 1.6s steps(8) infinite; }
 }
 @keyframes ctcSpinStatic { to { rotate: 360deg; } }
@@ -6651,14 +6594,12 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
     .ctc .contact-personal-panel { padding-bottom: var(--cf-bottom-pad); }
 }
 .ctc .contact-personal-panel { padding-top: clamp(36px, 5svh, 56px); }
-/* .contact-actions dissolves into the panel's flex column: the e-mail button ends at the card's bottom padding (level with the submit button), the free height is
-   one auto margin above WhatsApp (info lines -> WhatsApp, the panel gap is the minimum); WhatsApp -> e-mail keeps the small button gap */
+/* the buttons group (WhatsApp over e-mail, one shared width) ends at the card's bottom padding (level with the submit button); the free height is one auto margin
+   above it (info lines -> WhatsApp, the panel gap is the minimum) */
 .ctc .contact-profile-header { gap: 0; }
 .ctc .contact-personal-panel { gap: var(--cf-pc-btn-gap); }
-.ctc .contact-actions { display: contents; }
-.ctc .contact-actions .btn-wa-cta { margin-top: auto; }
-.ctc .contact-actions .btn-email-cta { margin-top: calc(clamp(8px, 1.1svh, 12px) - var(--cf-pc-btn-gap)); }
-.ctc .contact-personal-panel > .contact-profile-header, .ctc .contact-personal-panel > .contact-actions > * { align-self: center; }
+.ctc .contact-actions { display: grid; justify-items: stretch; row-gap: clamp(8px, 1.1svh, 12px); width: max-content; margin-top: auto; }
+.ctc .contact-personal-panel > .contact-profile-header, .ctc .contact-personal-panel > .contact-actions { align-self: center; }
 /* portrait: the gradient ring (::before) rotates slowly, only transform (compositor); the photo and its tilt stay still */
 #contact .contact-photo-square {
     width: var(--cf-photo-d);
