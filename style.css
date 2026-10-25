@@ -6900,3 +6900,12 @@ html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .
 .footer-section p a:hover::after,
 .footer-section p a:focus-visible::after { transform: scaleX(1); }
 @media (prefers-reduced-motion: reduce) { .footer-section ul li a::after, .footer-section p a::after { transition: none; } }
+
+/* Elérhetőség column: the nav column's rows - the same type (16px / 1.6) and the same row step (the nav item margin), so row n of the contact column
+   sits level with item n of Navigáció. The working hours are ONE item that spans the last two rows: label | two value lines (the 2nd line left-aligned under "H–P") */
+.footer-section--contact p { font-size: 1rem; line-height: 1.6; margin-bottom: clamp(6px, 0.93svh, 10px); }
+@media (max-width: 850px) { .footer-section--contact p { margin-bottom: 2px; } }
+.footer-section--contact .footer-hours { display: grid; grid-template-columns: auto 1fr; column-gap: 0.28em; align-items: start; }
+.footer-section--contact .footer-hours__v > span { display: block; }
+.footer-section--contact .footer-hours__v > span + span { margin-top: clamp(6px, 0.93svh, 10px); }     /* the row step between the two lines */
+@media (max-width: 850px) { .footer-section--contact .footer-hours__v > span + span { margin-top: 2px; } }
