@@ -87,8 +87,19 @@
   var div = document.querySelector('.footer-divider');
   if (!div) return;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var foot = div.closest('footer');
   if (!('IntersectionObserver' in window) || reduce) { div.classList.add('is-in'); }
   else {
+    /* the social icons (the footer's first column, near its top: on phones far above the divider) emerge when THEIR row enters the viewport, one by one */
+    var socials = foot.querySelector('.footer-section .social-links');
+    if (socials) {
+      foot.classList.add('fs-prep');
+      new IntersectionObserver(function (es) {
+        var s = es[es.length - 1];
+        if (s.isIntersecting) foot.classList.add('fs-in');
+        else if (s.boundingClientRect.top > 0) foot.classList.remove('fs-in');   /* below the viewport again: the icons leave in reverse order */
+      }, { threshold: 0.6, rootMargin: '0px 0px -6% 0px' }).observe(socials);
+    }
     var io = new IntersectionObserver(function (es) {
       var e = es[es.length - 1];
       if (e.isIntersecting) div.classList.add('is-in');

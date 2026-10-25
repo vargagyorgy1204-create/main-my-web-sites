@@ -107,6 +107,7 @@
     /* which class is this target? decided from style, never from size (except the card class) */
     function classify(el) {
         if (el.matches('[data-cursor="pill"]')) return 'pill';
+        if (el.matches('[data-cursor="circle"]')) return 'circle';      /* the footer's social icons: a 44px gradient circle centred on the icon */
         if (el.matches('select, input, [data-cursor="frame"]') || el.matches(FORMFIELD)) return 'box';
         var cs = getComputedStyle(el);
         var clipText = cs.backgroundClip === 'text' || cs.webkitBackgroundClip === 'text';   /* menu items fill their text on hover */
@@ -143,6 +144,9 @@
             l = b.l + pl - padH; t = b.t + pt - padV;
             w = b.w - pl - pr + 2 * padH; h = b.h - pt - pb + 2 * padV;
             rad = Math.min(20, h / 2);
+        } else if (f.kind === 'circle') {
+            var cd = 44;
+            l = b.l + b.w / 2 - cd / 2; t = b.t + b.h / 2 - cd / 2; w = cd; h = cd; rad = cd / 2;
         } else if (f.kind === 'pill') {
             var px = btnPx();
             l = b.l - px; t = b.t; w = b.w + 2 * px; h = b.h;     /* the link is --btn-h tall: the frame is exactly a CTA pill */
@@ -183,10 +187,10 @@
             return;
         }
         if (frame && frame.el === el && frame.kind === kind) return;
-        frame = { el: el, kind: kind, box: null, radius: 10, lock: el.matches(FRAMELOCK) };
+        frame = { el: el, kind: kind, box: null, radius: 10, lock: el.matches(FRAMELOCK) || kind === 'circle' };
         computeBox(frame);
         ring.classList.add('is-frame');
-        ring.classList.toggle('is-pill', kind === 'pill');
+        ring.classList.toggle('is-pill', kind === 'pill' || kind === 'circle');     /* the circle shares the pill's gradient ring styling */
         if (window.ResizeObserver) {
             if (!ro) ro = new ResizeObserver(function () { if (frame) measure(); });
             ro.disconnect();

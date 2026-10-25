@@ -150,7 +150,7 @@
 
   /* ---------------------------------------------------------- footer */
   if (footer) {
-    arr(footer, '.social-links a').forEach(function (a) { magnet(a, 4); });
+    /* the social icons have a static circular cursor frame and their own reveal / lift (style.css): no magnet */
     /* the VARBRO wordmark (fit, entrance, highlight) lives in js/footer.js */
   }
 })();
