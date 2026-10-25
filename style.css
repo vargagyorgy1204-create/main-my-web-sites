@@ -790,13 +790,18 @@ h2 {
 .service-modal-overlay { --m-card: color-mix(in srgb, var(--m-bg) 90%, white); }
 
 .service-modal {
+    --sm-r: 28px;                                         /* corner radius = the scroll area's top / bottom inset (the scrollbar stays clear of the corners) */
+    --sm-px: 30px;                                        /* the content's side inset */
+    --sm-fs: 1.55rem;                                     /* the title's size (the close x and the bottom padding follow it) */
     position: relative;
+    display: flex;
+    flex-direction: column;
     width: min(1100px, 100%);
     max-height: calc(100vh - 44px);
-    max-height: min(92svh, calc(100vh - 44px));          /* up to 92svh; inner scroll (data-lenis-prevent on the overlay) only if the content is taller */
-    overflow: auto;
-    padding: 26px 30px calc(26px + 0.35 * 1.55rem);        /* bottom = top: the title's cap offset (0.35 of its size) is added, so row -> modal edge equals modal edge -> title letters visually */
-    border-radius: 28px;
+    max-height: min(92svh, calc(100vh - 44px));          /* up to 92svh; the inner .service-modal__scroll scrolls only if the content is taller */
+    overflow: hidden;                                     /* the shell clips to its rounded corners; the scrolling lives inside */
+    padding: 0;
+    border-radius: var(--sm-r);
     color: #fff;
     font-family: "Montserrat", "Inter", sans-serif;
     background:
@@ -804,13 +809,25 @@ h2 {
         var(--m-bg);
     border: 1px solid rgb(255 255 255 / 0.1);
     box-shadow: 0 30px 80px -24px var(--m-glow), 0 24px 56px rgb(0 0 0 / 0.5);
-    scrollbar-width: thin;
-    scrollbar-color: var(--m-accent) transparent;
-    overscroll-behavior: contain;
 }
-.service-modal::-webkit-scrollbar { width: 8px; }
-.service-modal::-webkit-scrollbar-thumb { background: var(--m-accent); border-radius: 8px; }
-.service-modal::-webkit-scrollbar-track { background: transparent; }
+/* the scroll area: inset by the corner radius top and bottom, 8px from the right edge; the 6px slim scrollbar sits inside (gutter reserved: the content width never changes);
+   bottom padding = the title's cap offset, so row -> modal edge equals modal edge -> title letters visually */
+.service-modal__scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: var(--sm-r) 8px var(--sm-r) 0;
+    padding: 0 calc(var(--sm-px) - 14px) calc(0.35 * var(--sm-fs)) var(--sm-px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+.service-modal__scroll::-webkit-scrollbar { width: 6px; }
+.service-modal__scroll::-webkit-scrollbar-track { background: transparent; }
+.service-modal__scroll::-webkit-scrollbar-thumb { background: rgb(255 255 255 / 0.18); border-radius: 3px; }
+.service-modal__scroll::-webkit-scrollbar-thumb:hover { background: rgb(255 255 255 / 0.32); }
+@supports (-moz-appearance: none) {
+    .service-modal__scroll { scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.18) transparent; }
+}
 
 .service-modal h3 {
     margin: 0 48px 18px 0;
@@ -822,27 +839,27 @@ h2 {
 }
 
 /* Close: a bare x drawn with two bars (no ring, border or background), white 80%, white on hover; the custom cursor draws its circle (data-cursor="circle").
-   Its font-size = the title's size (set with the h3 in every tier): the 28px box is centred on the title's cap height (0.766em below the title's top, measured on
-   Syne 800), and the drawn x ends on the content's right line (the cards' right edge). Sticky, so it stays reachable while the dialog scrolls */
+   Fixed in the shell (it does not scroll away): the 28px box is centred on the title's cap height (0.766em below the title's top, measured on Syne 800) and the
+   drawn x ends on the content's right line (the cards' right edge) */
 .service-modal-close {
     --x: rgb(255 255 255 / 0.8);
-    position: sticky;
-    top: 0;
+    position: absolute;
+    top: calc(var(--sm-r) + 0.766 * var(--sm-fs) - 14px);
+    right: calc(var(--sm-px) - 8px);
     z-index: 6;
     display: block;
     width: 28px;
-    height: 28px;                       /* >= 0 top margin in every tier: a sticky box cannot leave its container's content box */
-    margin: calc(0.766em - 14px) -8px calc(-14px - 0.766em) auto;
+    height: 28px;
+    margin: 0;
     padding: 0;
     border: 0;
     border-radius: 50%;
     background: none;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    font-size: 1.55rem;
+    font-size: 1rem;
     line-height: 1;
     cursor: pointer;
-    transition: --x 0.25s ease;
 }
 .service-modal-close::before,
 .service-modal-close::after { content: ""; position: absolute; left: 50%; top: 50%; width: 16px; height: 1.75px; border-radius: 1px; background: var(--x); transition: background 0.25s ease; }
@@ -992,7 +1009,7 @@ button.text-link { padding: 0; border: 0; background: none; }
 .modal-group + .modal-group { margin-top: 22px; }
 .modal-group--1 { --m-accent: #8b7bff; --m-accent-2: #dca6f0; --m-grad: linear-gradient(135deg, #8b7bff, #c850c0); --m-glow: rgb(139 123 255 / 0.4); }
 .modal-group--2 { --m-accent: #1a8fa3; --m-accent-2: #73d7e8; --m-grad: var(--card-accent-cool); --m-glow: rgb(26 143 163 / 0.45); }
-.modal-group--3 { --m-accent: #e08a2c; --m-accent-2: #ffd08a; --m-grad: linear-gradient(135deg, #b45309, #d97706); --m-glow: rgb(240 162 75 / 0.4); }
+.modal-group--3 { --m-accent: #C026A3; --m-accent-2: #eaaae2; --m-grad: var(--card-accent-warm); --m-glow: rgb(192 38 163 / 0.4); }     /* = --card-accent-warm, as the Design modal */
 .modal-group__title {
     display: flex;
     align-items: center;
@@ -1038,9 +1055,8 @@ body.service-modal-open { overflow: hidden; }
 
 /* ---------- short desktop windows: tighter cards so the two 3-card modals fit ---------- */
 @media (min-width: 901px) and (max-height: 800px) {
-    .service-modal { padding: 20px 24px calc(20px + 0.35 * 1.35rem); }
+    .service-modal { --sm-px: 24px; --sm-fs: 1.35rem; }
     .service-modal h3 { margin-bottom: 12px; font-size: 1.35rem; }
-    .service-modal-close { font-size: 1.35rem; }
     .service-pricing-grid { gap: 12px; }
     .pricing-item { padding: 18px 20px; }
     .pricing-plan-head { margin-bottom: 11px; gap: 10px; }
@@ -1058,9 +1074,8 @@ body.service-modal-open { overflow: hidden; }
 }
 @media (min-width: 901px) and (max-height: 560px) {
     .service-modal-overlay { padding: 10px; }
-    .service-modal { max-height: calc(100vh - 20px); padding: 12px 18px calc(12px + 0.35 * 1.15rem); border-radius: 22px; }
+    .service-modal { --sm-r: 22px; --sm-px: 18px; --sm-fs: 1.15rem; max-height: calc(100vh - 20px); }
     .service-modal h3 { margin: 0 40px 10px 0; font-size: 1.15rem; }
-    .service-modal-close { font-size: 1.15rem; }
     .service-pricing-grid { gap: 10px; }
     .pricing-item { padding: 14px 16px; border-radius: 14px; }
     .pricing-plan-head { margin-bottom: 6px; gap: 9px; }
@@ -1086,9 +1101,8 @@ body.service-modal-open { overflow: hidden; }
 }
 @media (max-width: 680px) {
     .service-modal-overlay { padding: 12px; }
-    .service-modal { padding: 20px 16px calc(20px + 0.35 * 1.3rem); border-radius: 22px; max-height: calc(100vh - 24px); }
+    .service-modal { --sm-r: 22px; --sm-px: 16px; --sm-fs: 1.3rem; max-height: calc(100vh - 24px); }
     .service-modal h3 { font-size: 1.3rem; }
-    .service-modal-close { font-size: 1.3rem; }
     .pricing-icon { width: 32px; height: 32px; }
     .pricing-watermark { width: 110px; height: 110px; inset-inline-end: -20px; inset-block-end: -24px; }
     .modal-group__grid--3,
