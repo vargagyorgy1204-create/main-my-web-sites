@@ -57,7 +57,8 @@
     --cf-tagline-fs: clamp(22px, 1.1rem + 0.5vw, 26px);                    /* photo card tagline "Dizájn, kód és mozgás" (~24px at 1440) */
     --cf-photo-d: clamp(190px, 27svh, 260px);                              /* photo card: portrait diameter on phones / tablets (stacked cards); desktop: clamp(150px, 20.5svh, 260px) so the card never grows taller than the form */
     --cf-title-fs: clamp(1.25rem, 2.2svh, 1.5rem);                         /* "Kérjen árajánlatot" AND the photo card heading */
-    --cf-info-fs: 16px;                                                    /* photo card info lines: status, role, invitation */
+    --cf-info-fs: 16px;
+    --cf-pc-glyph-gap: calc(0.34 * var(--cf-info-fs));   /* last info line: line-box bottom -> glyph baseline, so the visual gap above WhatsApp equals the bottom gap */                                                    /* photo card info lines: status, role, invitation */
     --cf-info-color: rgb(159 176 216);
     --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
     --cf-btn-gap: calc(var(--cf-title-gap) + 0.27 * var(--cf-title-fs));      /* consent row -> submit ring = title letters' bottom -> first field: the title gap + the descender room of the title line (0.27em) */
@@ -6592,7 +6593,7 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
    line and the WhatsApp button and the MINIMUM top padding - the block photo + tagline + 3 lines sits right above the buttons, the free height goes above the photo */
 .ctc .contact-personal-panel { padding-top: var(--cf-bottom-pad); padding-bottom: var(--cf-bottom-pad); gap: 0; }
 .ctc .contact-profile-header { gap: 0; margin-top: auto; }
-.ctc .contact-actions { display: grid; justify-items: stretch; row-gap: clamp(8px, 1.1svh, 12px); width: max-content; margin-top: var(--cf-bottom-pad); }
+.ctc .contact-actions { display: grid; justify-items: stretch; row-gap: clamp(8px, 1.1svh, 12px); width: max-content; margin-top: calc(var(--cf-bottom-pad) - var(--cf-pc-glyph-gap)); }
 .ctc .contact-personal-panel > .contact-profile-header, .ctc .contact-personal-panel > .contact-actions { align-self: center; }
 /* portrait: the gradient ring (::before) rotates slowly, only transform (compositor); the photo and its tilt stay still */
 #contact .contact-photo-square {
