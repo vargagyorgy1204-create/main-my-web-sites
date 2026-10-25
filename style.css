@@ -6841,15 +6841,26 @@ html.has-cursor .privacy-card__x:hover, .privacy-card__x:focus-visible { backgro
 .footer-stamp .stamp__ring { animation-duration: 20s; }
 .footer-stamp .stamp__text { letter-spacing: 0.02em; }
 .footer-stamp .stamp__inner { transition: background 0.3s ease, color 0.3s ease; }
-.footer-stamp .stamp__icon { translate: 0 0; transition: none; }
-html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .stamp__inner { background: var(--card-primary); color: #fff; }
-html.has-cursor .footer-stamp:hover .stamp__icon:not(.stamp__icon--copy), .footer-stamp:focus-visible .stamp__icon { translate: 0 0; animation: fsArrow 1.1s ease-in-out infinite; }
-@keyframes fsArrow {
-    0% { translate: 0 0; }
-    45% { translate: 0 -240%; }
-    46% { translate: 0 240%; }
-    100% { translate: 0 0; }
+/* arrow: two stacked copies inside the centre circle (overflow hidden). While the badge is hovered (class set by js/footer.js on pointerenter /
+   pointerleave of the badge root only) the visible arrow leaves upwards and fades, the copy enters from below; both rest centred, so the
+   cycle restarts seamlessly and a cycle is always finished on leave. transform + opacity only. */
+.footer-stamp .stamp__icon { translate: none; transition: none; transform: none; opacity: 1; z-index: 1; }
+.footer-stamp .stamp__icon--copy { transform: translateY(100%); opacity: 0; }
+.footer-stamp.is-hover .stamp__icon,
+.footer-stamp:focus-visible .stamp__icon { will-change: transform, opacity; animation: fsArrowOut 1.1s ease-in-out infinite; }
+.footer-stamp.is-hover .stamp__icon--copy,
+.footer-stamp:focus-visible .stamp__icon--copy { animation-name: fsArrowIn; }
+@keyframes fsArrowOut {
+    0%   { transform: translateY(0);     opacity: 1; }
+    41%  { transform: translateY(-100%); opacity: 0; }
+    100% { transform: translateY(-100%); opacity: 0; }
 }
+@keyframes fsArrowIn {
+    0%   { transform: translateY(100%); opacity: 0; }
+    41%  { transform: translateY(0);    opacity: 1; }
+    100% { transform: translateY(0);    opacity: 1; }
+}
+html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .stamp__inner { background: var(--card-primary); color: #fff; }
 .footer-stamp:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 .footer-floor { margin-top: var(--footer-divider-bottom); }
 @media (prefers-reduced-motion: reduce) {

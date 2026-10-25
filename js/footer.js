@@ -97,6 +97,23 @@
     io.observe(div.querySelector('.footer-divider__badge'));
   }
   var stamp = div.querySelector('.footer-stamp'), ring = stamp && stamp.querySelector('.stamp__ring');
+  /* arrow hover: .is-hover (CSS loop) is set on pointerenter / removed on pointerleave of the badge ROOT only (no child pointerover restarts);
+     on leave the current cycle is finished (the loop starts and ends centred, so removing the class at an iteration boundary is seamless) */
+  var icon = stamp && stamp.querySelector('.stamp__icon'), endFn = null, endTimer = 0;
+  function cancelEnd() { if (endFn) { icon.removeEventListener('animationiteration', endFn); endFn = null; } clearTimeout(endTimer); endTimer = 0; }
+  if (stamp && icon && !reduce) {
+    stamp.addEventListener('pointerenter', function (e) {
+      if (e.pointerType === 'touch' || !document.documentElement.classList.contains('has-cursor')) return;
+      cancelEnd();
+      stamp.classList.add('is-hover');
+    });
+    stamp.addEventListener('pointerleave', function () {
+      if (!stamp.classList.contains('is-hover') || endFn) return;
+      endFn = function () { cancelEnd(); stamp.classList.remove('is-hover'); };
+      icon.addEventListener('animationiteration', endFn);
+      endTimer = setTimeout(endFn, 1300);                                      /* failsafe */
+    });
+  }
   if (!ring || reduce || !ring.getAnimations) return;
   var anim = null, rate = 1, goal = 1, raf = 0;
   function step() {
