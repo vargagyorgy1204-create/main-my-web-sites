@@ -25,8 +25,8 @@
     }
     </script>
     <script>if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("ap-pre");</script>
-    <link rel="stylesheet" href="style.css?v=fw3">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Sacramento&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=ft1">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -160,11 +160,20 @@
                 <p>&copy; 2026 Varga György – <span class="notranslate" translate="no">VarBro</span>. Minden jog fenntartva.</p>
                 <div class="footer-bottom-links">
                     <a href="adatvedelem.html" class="cookie-settings-link">Adatkezelési tájékoztató</a>
+                    <button id="cookie-settings-trigger" class="cookie-settings-link" type="button">Cookie beállítások</button>
                 </div>
             </div>
         </div>
     </div>
 </footer>
+
+<div id="cookie-consent-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie hozzájárulás" aria-hidden="true">
+    <p class="cookie-banner-text">Ez a weboldal cookie-kat használ a jobb felhasználói élmény érdekében.</p>
+    <div class="cookie-banner-actions">
+        <button id="cookie-accept" class="cookie-btn cookie-btn-accept" type="button">Elfogadom</button>
+        <button id="cookie-decline" class="cookie-btn cookie-btn-decline" type="button">Elutasítom</button>
+    </div>
+</div>
 
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>

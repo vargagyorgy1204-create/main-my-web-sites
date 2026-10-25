@@ -26,8 +26,8 @@
         "serviceType": "Web Design"
     }
     </script>
-    <link rel="stylesheet" href="style.css?v=fw3">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=ft1">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -107,11 +107,50 @@
     </div>
 </main>
 
-<footer class="page-legal" aria-label="Jogi információk">
-    <p>&copy; 2026 Varga György – <span class="notranslate" translate="no">VarBro</span>. Minden jog fenntartva.</p>
-    <div class="page-legal__links">
-        <a href="adatvedelem.html">Adatkezelési tájékoztató</a>
-        <button id="cookie-settings-trigger" type="button">Cookie beállítások</button>
+<footer data-theme="dark">
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="notranslate" translate="no"><span style="color:#fff;">Var</span>Bro</h3>
+                <p>Weboldalak, arculat és digitális megoldások magyar vállalkozásoknak.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Navigáció</h4>
+                <ul>
+                    <li><a href="index.html#about">Rólam</a></li>
+                    <li><a href="index.html#services">Szolgáltatások</a></li>
+                    <li><a href="index.html#portfolio">Portfólió</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Elérhetőség</h4>
+                <p><strong>WhatsApp:</strong> <a href="https://wa.me/36307840378" target="_blank" rel="noopener noreferrer">+36 30 784 0378</a></p>
+                <p><strong>E-mail:</strong> <a href="mailto:info@varbro.pro">info@varbro.pro</a></p>
+                <p><strong>Hely:</strong> Budapest, Magyarország</p>
+            </div>
+        </div>
+        <!-- IMPRESSZUM: add provider data (név, székhely/cím, adószám, nyilvántartási szám) here when the sole-proprietorship is registered -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-side">
+                <div class="social-links">
+                    <a href="https://wa.me/36307840378" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61590279064624" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/webdeveloper_varbro?igsh=NWV2dGl3bXI2ZXU0" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    <a href="mailto:info@varbro.pro" title="Email" aria-label="E-mail"><i class="fas fa-envelope" aria-hidden="true"></i></a>
+                </div>
+                <button type="button" class="footer-top-btn">Vissza a tetejére <span aria-hidden="true">↑</span></button>
+            </div>
+        </div>
+        <div class="footer-floor">
+            <div class="footer-wordmark" aria-hidden="true"><span>VARBRO</span></div>
+            <div class="footer-legal">
+                <p>&copy; 2026 Varga György – <span class="notranslate" translate="no">VarBro</span>. Minden jog fenntartva.</p>
+                <div class="footer-bottom-links">
+                    <a href="adatvedelem.html" class="cookie-settings-link">Adatkezelési tájékoztató</a>
+                    <button id="cookie-settings-trigger" class="cookie-settings-link" type="button">Cookie beállítások</button>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>
 
@@ -126,5 +165,6 @@
 <script src="script.js?v=51"></script>
 <script src="nav.js?v=6" defer></script>
 <script src="cursor.js?v=16" defer></script>
+<script src="js/footer.js?v=3" defer></script>
 </body>
 </html>
