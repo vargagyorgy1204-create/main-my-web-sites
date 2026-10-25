@@ -61,8 +61,9 @@
     --cf-info-fs: 14px;                                                    /* photo card info lines: status, role, invitation */
     --cf-info-color: rgb(159 176 216);
     --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
-    --cf-btn-gap: clamp(36px, 4.8svh, 52px);                               /* consent row -> submit button (double the former 18-26px) */
-    --cf-bottom-pad: clamp(56px, 8svh, 88px);                              /* submit button AND e-mail button -> card bottom (double the former 28-44px) */
+    --cf-btn-gap: var(--cf-title-gap);                                     /* consent row -> submit button = title -> first field (mirrored) */
+    --cf-pad-top: clamp(20px, 2.8svh, 30px);                               /* form card top edge -> title */
+    --cf-bottom-pad: var(--cf-pad-top);                                    /* submit button AND e-mail button -> card bottom = card top -> title (mirrored) */
     /* footer: divider line + back-to-top badge */
     --footer-desc-fs: 16px;                                                /* footer description (first column), line-height 1.6 */
     --footer-link-fs: 15.2px;                                              /* Navigáció links and Elérhetőség rows */
@@ -6612,7 +6613,7 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 }
 
 /* ===== KAPCSOLAT form card: smaller fields, roomier card spacing (--cf-* tokens); the right card is untouched ===== */
-.ctc .contact-form-panel { display: flex; flex-direction: column; justify-content: center; padding-bottom: var(--cf-bottom-pad); }
+.ctc .contact-form-panel { display: flex; flex-direction: column; justify-content: center; padding-top: var(--cf-pad-top); padding-bottom: var(--cf-bottom-pad); }
 .ctc .contact-form-panel h3 { margin-bottom: var(--cf-title-gap); }
 .ctc .contact-form-ui { gap: var(--cf-gap); }
 .ctc .contact-field { width: var(--cf-fields-w); align-self: center; }   /* the fields are narrower than the card, centred; the dropdown panel follows the trigger */
