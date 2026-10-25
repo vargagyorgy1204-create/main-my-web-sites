@@ -143,11 +143,14 @@
       window.addEventListener('resize', function () { clearTimeout(subRt); subRt = setTimeout(function () { if (sub.classList.contains('rv-prep')) splitSub(); }, 150); });
     }
 
-    /* ---- the signal ---- */
+    /* ---- the signal ----
+       Starts only when the dot has landed and settled (its last animationend + 0.1s). Two SVG overlays share the geometry: .ctc-signal--under (z-index 0, behind the
+       lead text) carries the trunk, .ctc-signal (above the cards) the branches that run into the card outlines. Every path is drawn at one constant speed (SPEED px/s,
+       stroke-dashoffset on pathLength 1) with a glowing head at its tip; the lead-text letters the trunk crosses light up (aria-hidden copies, the real text is untouched). */
     var desk = window.matchMedia('(min-width: 1024px)');
     var NS = 'http://www.w3.org/2000/svg';
-    var sg = null, ring = null, units = [], entered = false;
-    var LEAD = 1.5;                                                 /* heading entry -> dot impact (s): the last letter lands at (n-2)*.05+.8, the drop takes .35 */
+    var SPEED = 1000;
+    var sg = null, ring = null, units = [], entered = false, landed = false, pendingOff = 0;
 
     function el(name, attrs, parent) {
       var n = document.createElementNS(NS, name);
@@ -155,34 +158,70 @@
       if (parent) parent.appendChild(n);
       return n;
     }
-    function makeSvg() {
-      var svg = el('svg', { 'class': 'ctc-signal', 'aria-hidden': 'true', focusable: 'false' });
+    function makeSvg(cls, id, paths, heads) {
+      var svg = el('svg', { 'class': 'ctc-signal ' + cls, 'aria-hidden': 'true', focusable: 'false' });
       var defs = el('defs', {}, svg);
-      var g = el('linearGradient', { id: 'ctcSigGrad', gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: 100, y2: 100 }, defs);
+      var g = el('linearGradient', { id: 'ctcSigGrad' + id, gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: 100, y2: 100 }, defs);
       el('stop', { offset: '0', 'stop-color': '#6c63ff' }, g);               /* = --card-primary */
       el('stop', { offset: '1', 'stop-color': '#c850c0' }, g);
-      var grp = el('g', {}, svg), P = {};
-      ['stem', 'brF', 'brP', 'conn', 'outF', 'outP'].forEach(function (k) { P[k] = el('path', { 'class': 'sg', pathLength: 1, d: 'M0 0' }, grp); });
+      var hg = el('radialGradient', { id: 'ctcHead' + id }, defs);
+      el('stop', { offset: '0', 'stop-color': '#f3e8ff', 'stop-opacity': '0.95' }, hg);
+      el('stop', { offset: '0.35', 'stop-color': '#c850c0', 'stop-opacity': '0.55' }, hg);
+      el('stop', { offset: '1', 'stop-color': '#6c63ff', 'stop-opacity': '0' }, hg);
+      var P = {}, H = {};
+      paths.forEach(function (k) { P[k] = el('path', { 'class': 'sg', d: 'M0 0', stroke: 'url(#ctcSigGrad' + id + ')' }, svg); });
+      heads.forEach(function (k) { H[k] = el('circle', { 'class': 'sg-head', r: 11, fill: 'url(#ctcHead' + id + ')' }, svg); });
       section.appendChild(svg);
-      return { svg: svg, grp: grp, grad: g, P: P };
+      return { svg: svg, grad: g, P: P, H: H };
+    }
+    function makeSignal() {
+      var u = makeSvg('ctc-signal--under', 'U', ['trunk'], ['trunk']);
+      var o = makeSvg('', 'O', ['brF', 'brP', 'br2'], ['brF', 'brP', 'br2']);
+      return { u: u, o: o };
     }
     function makeRing() {
       var photo = personal && personal.querySelector('.contact-photo-square'); if (!photo) return null;
       var svg = el('svg', { 'class': 'ctc-ring', 'aria-hidden': 'true', focusable: 'false' });
       var defs = el('defs', {}, svg), g = el('linearGradient', { id: 'ctcRingGrad', x1: 0, y1: 0, x2: 1, y2: 1 }, defs);
       el('stop', { offset: '0', 'stop-color': '#6c63ff' }, g); el('stop', { offset: '1', 'stop-color': '#c850c0' }, g);
-      var c = el('circle', { 'class': 'sg', pathLength: 1, fill: 'none', stroke: 'url(#ctcRingGrad)' }, svg);
+      var c = el('circle', { 'class': 'sg', fill: 'none', stroke: 'url(#ctcRingGrad)' }, svg);
       photo.appendChild(svg);
       return { photo: photo, svg: svg, c: c };
     }
-    function rectPath(x, y, w, h, r, sx, cw) {
+    var f2 = function (v) { return +v.toFixed(2); };
+    /* the outline after its start point (sx, y + .5): clockwise or counter-clockwise, ending back at the start point */
+    function rectBody(x, y, w, h, r, sx, cw) {
       x += 0.5; y += 0.5; w -= 1; h -= 1; r -= 0.5;
       sx = Math.max(x + r, Math.min(x + w - r, sx));
-      var f = function (v) { return +v.toFixed(2); };
-      var A = 'A' + f(r) + ' ' + f(r) + ' 0 0 ';
-      if (cw) return 'M' + f(sx) + ' ' + f(y) + 'H' + f(x + w - r) + A + '1 ' + f(x + w) + ' ' + f(y + r) + 'V' + f(y + h - r) + A + '1 ' + f(x + w - r) + ' ' + f(y + h) + 'H' + f(x + r) + A + '1 ' + f(x) + ' ' + f(y + h - r) + 'V' + f(y + r) + A + '1 ' + f(x + r) + ' ' + f(y) + 'H' + f(sx);
-      return 'M' + f(sx) + ' ' + f(y) + 'H' + f(x + r) + A + '0 ' + f(x) + ' ' + f(y + r) + 'V' + f(y + h - r) + A + '0 ' + f(x + r) + ' ' + f(y + h) + 'H' + f(x + w - r) + A + '0 ' + f(x + w) + ' ' + f(y + h - r) + 'V' + f(y + r) + A + '0 ' + f(x + w - r) + ' ' + f(y) + 'H' + f(sx);
+      var A = 'A' + f2(r) + ' ' + f2(r) + ' 0 0 ';
+      if (cw) return 'H' + f2(x + w - r) + A + '1 ' + f2(x + w) + ' ' + f2(y + r) + 'V' + f2(y + h - r) + A + '1 ' + f2(x + w - r) + ' ' + f2(y + h) + 'H' + f2(x + r) + A + '1 ' + f2(x) + ' ' + f2(y + h - r) + 'V' + f2(y + r) + A + '1 ' + f2(x + r) + ' ' + f2(y) + 'H' + f2(sx);
+      return 'H' + f2(x + r) + A + '0 ' + f2(x) + ' ' + f2(y + r) + 'V' + f2(y + h - r) + A + '0 ' + f2(x + r) + ' ' + f2(y + h) + 'H' + f2(x + w - r) + A + '0 ' + f2(x + w) + ' ' + f2(y + h - r) + 'V' + f2(y + r) + A + '0 ' + f2(x + w - r) + ' ' + f2(y) + 'H' + f2(sx);
     }
+    function clampX(x, l, w, r) { return Math.max(l + r, Math.min(l + w - r, x)); }
+
+    /* the letters of each lead-text line that the trunk crosses (+-1 char): gradient copies laid over them, lit when the tip passes */
+    var glows = [];
+    function layoutGlow(x0, y0, sr) {
+      glows.forEach(function (g) { if (g.el.parentNode) g.el.parentNode.removeChild(g.el); });
+      glows = [];
+      if (!sub || !sub.classList.contains('rv-prep')) return;
+      var sub0 = sub.getBoundingClientRect(), X = sr.left + x0;
+      arr(sub, '.rv-line').forEach(function (line) {
+        var i = line.firstChild, tn = i && i.firstChild;
+        if (!tn || tn.nodeType !== 3) return;
+        var rg = document.createRange(), n = tn.length, hit = -1, k, r;
+        for (k = 0; k < n; k++) { rg.setStart(tn, k); rg.setEnd(tn, k + 1); r = rg.getBoundingClientRect(); if (r.width && r.left <= X && X <= r.right) { hit = k; break; } }
+        if (hit < 0) return;
+        var a = Math.max(0, hit - 1), b = Math.min(n - 1, hit + 1);
+        rg.setStart(tn, a); rg.setEnd(tn, b + 1); r = rg.getBoundingClientRect();
+        var lr = line.getBoundingClientRect(), g = document.createElement('span');
+        g.className = 'sg-glow'; g.setAttribute('aria-hidden', 'true'); g.textContent = tn.data.slice(a, b + 1);
+        g.style.left = (r.left - sub0.left) + 'px'; g.style.top = (lr.top - sub0.top) + 'px'; g.style.height = lr.height + 'px';
+        sub.appendChild(g);
+        glows.push({ el: g, t: Math.max(0, ((lr.top + lr.height / 2) - sr.top - y0) / SPEED) });
+      });
+    }
+
     /* paths from the real element positions (relative to the section) */
     function layoutSignal() {
       if (!sg || !formCard || !personal || !word) return;
@@ -192,31 +231,31 @@
       var d = rel(dm), fs = parseFloat(getComputedStyle(word).fontSize) || 60;
       var x0 = d.l + d.w * 0.5, y0 = d.t + 0.14 * fs + 0.8 * (d.h - 0.28 * fs);     /* the dot glyph's centre x and bottom edge */
       var f = rel(formCard), p = rel(personal), r = parseFloat(getComputedStyle(formCard).borderTopLeftRadius) || 24;
-      var P = sg.P, set = function (k, v) { P[k].setAttribute('d', v); }, W = sr.width, H = sr.height;
-      sg.svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); sg.svg.setAttribute('width', W); sg.svg.setAttribute('height', H);
-      sg.grad.setAttribute('x2', W); sg.grad.setAttribute('y2', H);
+      var cT = Math.min(f.t, p.t), sb = sub ? (rel(sub).t + rel(sub).h) : d.t + d.h;
+      var jy = sb + (cT - sb) / 2;                                    /* the split point: midway between the lead text and the cards */
+      var U = sg.u.P, O = sg.o.P, W = sr.width, H = sr.height;
+      [sg.u, sg.o].forEach(function (s) {
+        s.svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); s.svg.setAttribute('width', W); s.svg.setAttribute('height', H);
+        s.grad.setAttribute('x2', W); s.grad.setAttribute('y2', H);
+      });
+      U.trunk.setAttribute('d', 'M' + f2(x0) + ' ' + f2(y0) + 'V' + f2(jy));
       if (desk.matches) {
-        var cT = Math.min(f.t, p.t), sb = sub ? (rel(sub).t + rel(sub).h) : d.t + d.h;
-        var jy = cT - Math.min(16, Math.max(6, (cT - sb) * 0.4)), fcx = f.l + f.w / 2, pcx = p.l + p.w / 2;
-        set('stem', 'M' + x0 + ' ' + y0 + 'V' + jy);
-        set('brF', 'M' + x0 + ' ' + jy + 'H' + fcx + 'V' + f.t);
-        set('brP', 'M' + x0 + ' ' + jy + 'H' + pcx + 'V' + p.t);
-        set('conn', 'M0 0');
-        set('outF', rectPath(f.l, f.t, f.w, f.h, r, fcx, false));
-        set('outP', rectPath(p.l, p.t, p.w, p.h, r, pcx, true));
+        var fcx = f.l + f.w / 2, pcx = p.l + p.w / 2;
+        O.brF.setAttribute('d', 'M' + f2(x0) + ' ' + f2(jy) + 'H' + f2(fcx) + 'V' + f2(f.t + 0.5) + rectBody(f.l, f.t, f.w, f.h, r, fcx, false));
+        O.brP.setAttribute('d', 'M' + f2(x0) + ' ' + f2(jy) + 'H' + f2(pcx) + 'V' + f2(p.t + 0.5) + rectBody(p.l, p.t, p.w, p.h, r, pcx, true));
+        O.br2.setAttribute('d', 'M0 0');
       } else {
-        set('stem', 'M' + x0 + ' ' + y0 + 'V' + f.t);
-        set('brF', 'M0 0'); set('brP', 'M0 0');
-        set('outF', rectPath(f.l, f.t, f.w, f.h, r, x0, true));
-        var sx2 = Math.max(p.l + r, Math.min(p.l + p.w - r, x0));
-        set('conn', 'M' + sx2 + ' ' + (f.t + f.h) + 'V' + p.t);
-        set('outP', rectPath(p.l, p.t, p.w, p.h, r, sx2, true));
+        var sx1 = clampX(x0, f.l, f.w, r), sx2 = clampX(x0, p.l, p.w, r);
+        O.brF.setAttribute('d', 'M' + f2(x0) + ' ' + f2(jy) + 'V' + f2(f.t + 0.5) + (sx1 !== x0 ? 'H' + f2(sx1) : '') + rectBody(f.l, f.t, f.w, f.h, r, sx1, true));
+        O.brP.setAttribute('d', 'M0 0');
+        O.br2.setAttribute('d', 'M' + f2(sx2) + ' ' + f2(f.t + f.h) + 'V' + f2(p.t + 0.5) + rectBody(p.l, p.t, p.w, p.h, r, sx2, true));
       }
       if (ring) {                                                    /* the photo ring: a circle in the same box as the CSS ring (stroke = its 4px) */
         var D = ring.photo.offsetWidth, sw = 4;
         ring.svg.setAttribute('viewBox', '0 0 ' + D + ' ' + D);
         ring.c.setAttribute('cx', D / 2); ring.c.setAttribute('cy', D / 2); ring.c.setAttribute('r', D / 2 - sw / 2); ring.c.setAttribute('stroke-width', sw);
       }
+      layoutGlow(x0, y0, sr);
     }
 
     var VARS = ['--ul', '--uo', '--ro', '--sp'];
@@ -234,10 +273,10 @@
       arr(section, '.contact-field').forEach(function (f) { f.classList.remove('cf-sweep'); });
       if (ring) ring.photo.classList.remove('rv-ring');
       var h3 = formCard.querySelector('h3'); if (h3) h3.classList.remove('rv-clip');
-      if (sg) sg.svg.style.display = 'none';
+      if (sg) { sg.u.svg.style.display = 'none'; sg.o.svg.style.display = 'none'; }
     }
     function unsettle() {                                            /* the helper state again (build / before a reverse) */
-      if (sg) sg.svg.style.display = '';
+      if (sg) { sg.u.svg.style.display = ''; sg.o.svg.style.display = ''; }
       arr(section, '.contact-field').forEach(function (f) { f.classList.add('cf-sweep'); });
       if (ring) ring.photo.classList.add('rv-ring');
       var h3 = formCard.querySelector('h3'); if (h3) h3.classList.add('rv-clip');
@@ -247,8 +286,20 @@
       tl.fromTo(card, { backgroundColor: 'rgba(255,255,255,0)', borderColor: 'rgba(255,255,255,0)', boxShadow: '0 24px 60px -24px rgba(0,0,0,0)' },
         { backgroundColor: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', boxShadow: '0 24px 60px -24px rgba(0,0,0,0.55)', duration: 0.4, ease: 'none' }, at);
     }
-    function draw(tl, p, at, dur, ease) {
-      tl.fromTo(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: ease || 'power1.inOut' }, at);
+    /* one path drawn at the constant SPEED, its glowing head riding the tip (fading out as the path closes); returns the duration */
+    function drawFlow(tl, p, head, at) {
+      var len = p.getTotalLength(), dur = Math.max(0.05, len / SPEED);
+      p.style.strokeDasharray = f2(len) + ' ' + f2(len * 2);              /* px units: GSAP rounds the offset to whole px, a normalised pathLength would step */
+      tl.fromTo(p, { strokeDashoffset: len }, {
+        strokeDashoffset: 0, duration: dur, ease: 'none',
+        onUpdate: function () {
+          if (!head) return;
+          var pr = this.progress(), pt = p.getPointAtLength(pr * len);
+          head.setAttribute('cx', f2(pt.x)); head.setAttribute('cy', f2(pt.y));
+          head.style.opacity = pr <= 0 || pr >= 1 ? 0 : Math.min(1, pr / 0.03, (1 - pr) / 0.08);
+        }
+      }, at);
+      return dur;
     }
     function formContent(tl, b) {
       var h3 = formCard.querySelector('h3'), inner = h3 && h3.querySelector('.rv-i');
@@ -264,7 +315,9 @@
     function photoContent(tl, b) {
       var photo = personal.querySelector('.contact-photo-square'), img = photo && photo.querySelector('img');
       if (ring) {
-        draw(tl, ring.c, b, 0.6, 'power2.inOut');
+        var cl = ring.c.getTotalLength();
+        ring.c.style.strokeDasharray = f2(cl) + ' ' + f2(cl * 2);
+        tl.fromTo(ring.c, { strokeDashoffset: cl }, { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' }, b);
         tl.fromTo(photo, { '--ro': 0 }, { '--ro': 1, duration: 0.25, ease: 'none' }, b + 0.55);
         tl.fromTo(ring.svg, { opacity: 1 }, { opacity: 0, duration: 0.25, ease: 'none' }, b + 0.55);
       }
@@ -287,36 +340,39 @@
     function build() {
       killUnits();
       if (!formCard || !personal || !sg) return;
-      layoutSignal();
-      var P = sg.P, A = mkTl(), B = null;
       unsettle();
+      layoutSignal();
+      var U = sg.u, O = sg.o, A = mkTl(), B = null;
+      A.fromTo([U.svg, O.svg], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0);      /* nothing is visible before the timeline starts */
+      var tb = drawFlow(A, U.P.trunk, U.H.trunk, 0);
+      glows.forEach(function (g) {
+        A.fromTo(g.el, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: 'power1.out' }, g.t);
+        A.to(g.el, { opacity: 0, duration: 1.2, ease: 'power1.in' }, g.t + 0.12);
+      });
       if (desk.matches) {
-        draw(A, P.stem, 0, 0.45);
-        draw(A, P.brF, 0.45, 0.35); draw(A, P.brP, 0.45, 0.35);
-        draw(A, P.outF, 0.8, 0.7); draw(A, P.outP, 0.8, 0.7);
-        A.fromTo(sg.grp, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: 'none' }, 1.5);
-        cardTween(A, formCard, 1.5); cardTween(A, personal, 1.5);
-        formContent(A, 1.25); photoContent(A, 1.2);
+        var d1 = drawFlow(A, O.P.brF, O.H.brF, tb), d2 = drawFlow(A, O.P.brP, O.H.brP, tb), te = tb + Math.max(d1, d2);
+        A.fromTo([U.P.trunk, O.P.brF, O.P.brP], { opacity: 1 }, { opacity: 0, duration: 0.3, ease: 'none' }, te);
+        cardTween(A, formCard, te); cardTween(A, personal, te);
+        formContent(A, te + 0.05); photoContent(A, te);
         units = [{ tl: A, gate: null }];
       } else {
+        var d = drawFlow(A, O.P.brF, O.H.brF, tb), te1 = tb + d;
+        A.fromTo([U.P.trunk, O.P.brF], { opacity: 1 }, { opacity: 0, duration: 0.3, ease: 'none' }, te1);
+        cardTween(A, formCard, te1);
+        formContent(A, te1 + 0.05);
         B = mkTl();
-        draw(A, P.stem, 0, 0.6);
-        draw(A, P.outF, 0.6, 0.7);
-        A.fromTo([P.stem, P.outF], { opacity: 1 }, { opacity: 0, duration: 0.3, ease: 'none' }, 1.3);
-        cardTween(A, formCard, 1.3);
-        formContent(A, 1.0);
-        draw(B, P.conn, 0, 0.35);
-        draw(B, P.outP, 0.35, 0.7);
-        B.fromTo([P.conn, P.outP], { opacity: 1 }, { opacity: 0, duration: 0.3, ease: 'none' }, 1.05);
-        cardTween(B, personal, 1.05);
-        photoContent(B, 0.85);
-        units = [{ tl: A, gate: null }, { tl: B, gate: personal, vis: false }];
+        var d3 = drawFlow(B, O.P.br2, O.H.br2, 0);
+        B.fromTo(O.P.br2, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: 'none' }, d3);
+        cardTween(B, personal, d3);
+        photoContent(B, d3);
+        units = [{ tl: A, gate: null }, { tl: B, gate: personal, vis: false, gateAt: te1 }];
       }
       units.forEach(function (u) { u.tl.progress(0); });
     }
 
-    /* start / resume every unit that may run now; delay = the heading entry -> dot impact lead for the first unit */
+    /* start / resume every unit that may run now; the first one only after the dot has landed */
     function tryStarts(delay) {
+      if (!landed) return;
       units.forEach(function (u, i) {
         var pr = u.tl.progress();
         if (u.call) return;
@@ -326,29 +382,33 @@
         if (u.gate) {
           var prev = units[i - 1];
           if (!u.vis || prev.tl.progress() === 0) return;
-          wait = Math.max(0, 1.0 - prev.tl.time());                  /* the second card's line leaves the first card's closing outline */
+          wait = Math.max(0, u.gateAt - prev.tl.time());             /* the second card's line leaves the first card's closing outline */
         }
         u.tl.timeScale(1);
         if (wait > 0) u.call = gsap.delayedCall(wait, function () { u.call = null; u.tl.play(); tryStarts(0); });
         else u.tl.play();
       });
     }
+    /* reverse ~1s whatever was drawn; returns that duration (s), 0 when nothing had started */
     function reverseAll() {
       units.forEach(function (u) { if (u.call) { u.call.kill(); u.call = null; } });
-      if (units.every(function (u) { return u.tl.progress() === 0; })) return;
+      var dur = 0;
+      units.forEach(function (u) { if (u.tl.progress() > 0) dur = Math.max(dur, u.tl.time() / Math.max(2.6, u.tl.time())); });
+      if (!dur) return 0;
       unsettle();
-      units.forEach(function (u) { if (u.tl.progress() > 0) u.tl.timeScale(2.6).reverse(); });
+      units.forEach(function (u) { if (u.tl.progress() > 0) u.tl.timeScale(Math.max(2.6, u.tl.time())).reverse(); });
+      return dur;
     }
     function finishAll() {                                           /* the visitor interacts mid-animation: jump to the end state */
       if (!units.length) return;
       units.forEach(function (u) { if (u.call) { u.call.kill(); u.call = null; } u.tl.timeScale(1).progress(1); });
     }
-    function onHeading(on) {
-      subOn(on);
-      entered = on;
+    /* the dot's drop animation has ended (js below): the signal starts 0.1s later */
+    function onLanded() {
+      landed = true;
       if (!sg) return;
-      if (on) { layoutSignal(); tryStarts(units.length && units[0].tl.progress() === 0 ? LEAD : 0); }
-      else reverseAll();
+      if (units.length && units.every(function (u) { return u.tl.progress() === 0; })) build();     /* fresh geometry / durations */
+      tryStarts(0.1);
     }
     [formCard, personal].forEach(function (c) {
       if (!c) return;
@@ -360,12 +420,17 @@
         var on = es[es.length - 1].isIntersecting;
         units.forEach(function (u) { if (u.gate === personal) u.vis = on; });
         if (!on) return;
-        if (!entered && units.length && units[0].tl.progress() === 0) { entered = true; subOn(true); }      /* the heading was flung past: the cards start the choreography */
-        if (entered) tryStarts(units.length && units[0].tl.progress() === 0 ? 0.3 : 0);
+        if (!entered && !landed && word && word.getBoundingClientRect().bottom < 0 && units.length && units[0].tl.progress() === 0) { entered = true; landed = true; subOn(true); }      /* the heading was flung past: the cards start the choreography */
+        tryStarts(units.length && units[0].tl.progress() === 0 ? 0.3 : 0);
       }, { threshold: 0.12 }).observe(personal);
     }
     var sgRt;
-    window.addEventListener('resize', function () { clearTimeout(sgRt); sgRt = setTimeout(layoutSignal, 150); });
+    window.addEventListener('resize', function () {
+      clearTimeout(sgRt);
+      sgRt = setTimeout(function () {
+        if (units.length && units.every(function (u) { return u.tl.progress() === 0; })) build(); else layoutSignal();
+      }, 150);
+    });
     if (desk.addEventListener) desk.addEventListener('change', function () {
       if (!sg || !units.length) return;
       var done = units.every(function (u) { return u.tl.progress() === 1; });
@@ -379,9 +444,9 @@
       if (!formCard || !personal) return;
       var h3 = formCard.querySelector('h3');
       if (h3 && !h3.querySelector('.rv-i')) { var i = document.createElement('span'); i.className = 'rv-i'; while (h3.firstChild) i.appendChild(h3.firstChild); h3.appendChild(i); }
-      sg = makeSvg(); ring = makeRing();
+      sg = makeSignal(); ring = makeRing();
       build();
-      if (entered) tryStarts(0);
+      if (landed) tryStarts(0.1);
     });
 
     /* ---------------------------------------------------------- the giant word
@@ -395,20 +460,37 @@
         chars.forEach(function (ch, i) { ch.style.setProperty('--ci', i); });
         word.style.setProperty('--cn', chars.length);
         word.classList.add('fx-prep');
-        var timer = 0, first = true;
+        var timer = 0, landTimer = 0, first = true;
         var dot = word.querySelector('.sh-dot');
-        if (dot) dot.addEventListener('animationend', function (ev) { if (ev.animationName === 'ctcDotDrop' && word.classList.contains('fx-in')) word.classList.add('fx-done'); });
+        /* the signal waits for the dot: its drop animation (drop, squash, bounce, settle) has ended */
+        if (dot) dot.addEventListener('animationend', function (ev) { if (ev.animationName === 'ctcDotDrop' && word.classList.contains('fx-in')) { word.classList.add('fx-done'); clearTimeout(landTimer); onLanded(); } });
+        var applyHeading = function (on) {
+          if (!on) { word.classList.remove('fx-done'); landed = false; clearTimeout(landTimer); }
+          word.classList.add('fx-moving');                                   /* the masks clip only while the letters travel */
+          word.classList.toggle('fx-in', on);
+          subOn(on);
+          if (on) { clearTimeout(landTimer); landTimer = setTimeout(function () { if (!landed && entered) onLanded(); }, 5000); }     /* fail-safe only: the dot animation never reported */
+          clearTimeout(timer);
+          timer = setTimeout(function () { word.classList.remove('fx-moving'); }, 2000);
+        };
         new IntersectionObserver(function (es) {
           var e = es[es.length - 1], on = e.isIntersecting;
           if (!on && !(e.boundingClientRect.top > 0)) return;
+          if (pendingOff) {                                                  /* leaving: the signal is retracting, the dot stays until it is back */
+            if (on) { clearTimeout(pendingOff); pendingOff = 0; entered = true; tryStarts(0); }
+            return;
+          }
           if (on === word.classList.contains('fx-in')) return;
-          if (!on) word.classList.remove('fx-done');
-          word.classList.add('fx-moving');                                   /* the masks clip only while the letters travel */
-          word.classList.toggle('fx-in', on);
-          if (on && first) { first = false; playHead(); }
-          onHeading(on);
-          clearTimeout(timer);
-          timer = setTimeout(function () { word.classList.remove('fx-moving'); }, 2000);
+          if (on) {
+            entered = true;
+            if (first) { first = false; playHead(); }
+            applyHeading(true);
+          } else {
+            entered = false;
+            var rd = sg ? reverseAll() : 0;
+            if (rd > 0) pendingOff = setTimeout(function () { pendingOff = 0; applyHeading(false); }, rd * 1000 + 60);
+            else applyHeading(false);
+          }
         }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }).observe(word);
       };
       if (word.classList.contains('is-split')) setup();

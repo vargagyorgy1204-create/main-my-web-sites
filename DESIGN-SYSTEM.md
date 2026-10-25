@@ -146,15 +146,13 @@ The footer columns: description + the four social icons (24px below the text), N
 
 ## Motion: Kapcsolat "signal from the dot" (js/contact-footer.js + style.css, end of file)
 
-One scroll choreography per entry, no layout animation (transform / opacity / stroke / paint only), rest state = the plain CSS (all inline styles and helper classes are removed when the timelines complete). t = 0 is the dot impact of "Üzenjen." (heading entry + 1.5s).
+One scroll choreography per entry, no layout animation (transform / opacity / stroke / paint only), rest state = the plain CSS (all inline styles and helper classes are removed when the timelines complete). The signal starts ONLY after the dot of "Üzenjen." has landed (the `ctcDotDrop` animationend = `fx-done`, + 0.1s); before that the SVG overlays are `visibility: hidden` and every path is fully undrawn. t = 0 is that start.
 
-| t (s) | desktop >= 1024px | < 1024px (stacked) |
-|---|---|---|
-| lead text | line masks rise with the heading letters (0.07s stagger, CSS `.ctc-sub .rv-*`) | same |
-| 0 - 0.45 | 2px `--card-primary` line grows down from the dot (SVG overlay `.ctc-signal`, pathLength 1, stroke-dashoffset) | line drops to the form card (0.6s) |
-| 0.45 - 0.8 | splits above the cards, left to the form card, right to the photo card (0.35s) | - |
-| 0.8 - 1.5 | both cards' outlines are traced (0.7s, SVG rect path with the card radius) | form card outline (0.6 - 1.3) |
-| 1.5 | signal fades (0.3s), card glass (background, border, shadow) fades in (0.4s) | per card; the photo card's own timeline (line from the form card's bottom, outline, glass) starts when the card is in view |
-| 1.2 - 2.7 | form: title rises from its mask, fields (0.07s stagger, gradient underline sweeps), consent, submit (scale .94 -> 1); photo: ring circle drawn (0.6s) then the CSS ring, photo un-blur, tagline, info lines, dot pulse (`--sp`), buttons | same per card |
-
-Reverse (scroll back above the section): the same timelines reversed at 2.6x (~1s), then the heading as before. Interaction (focus / pointerdown in a card) jumps the timelines to the end. `prefers-reduced-motion`: no overlay, no hidden states. Helper tokens: `--ul`/`--uo` (field underline sweep), `--ro` (photo ring), `--sp` (status dot scale, `scale: var(--sp, 1)`), classes `.cf-sweep`, `.rv-ring`, `.rv-clip` exist only during the animation.
+- **Speed:** every path is drawn at one constant speed, `SPEED = 1000` px/s (`stroke-dasharray` / `stroke-dashoffset` in px, the length from `getTotalLength()`), a glowing head (radial-gradient circle) rides the tip and fades out as the path closes.
+- **Two overlays:** `.ctc-signal--under` (z-index 0, behind the lead text) = the trunk; `.ctc-signal` (z-index 2, above the cards) = the branches. Trunk: dot bottom -> split point (midway between the lead text bottom and the cards top).
+- **Desktop >= 1024px:** two branches in parallel, each ONE continuous path = horizontal segment + vertical to the card's top centre + the full outline (radius 24, clockwise for the photo card, counter-clockwise for the form card). When both outlines have closed: signal fades (0.3s), card glass (background, border, shadow) fades in (0.4s), content plays.
+- **< 1024px:** trunk, then one path to the form card top + its outline; the second path (card 1 bottom -> card 2 top + outline) starts when card 2 is in view and the first outline has closed. Each card's glass + content follow its own outline.
+- **Letter glow:** the lead text characters the trunk crosses (+-1 char per line) get aria-hidden gradient copies (`.sg-glow`, absolutely positioned from `Range` rects; the real text is untouched), lit when the tip reaches that line and faded over 1.2s.
+- **Content (as before):** form title from its mask, fields (0.07s stagger, gradient underline sweep), consent, submit (scale .94 -> 1); photo ring circle drawn then the CSS ring, un-blur, tagline, info lines, dot pulse (`--sp`), buttons.
+- **Reverse** (scroll back above the section): the timelines run backwards in ~1s, the heading letters / dot reverse only after that (the dot stays until the signal is back in it). Interaction (focus / pointerdown in a card) jumps the timelines to the end. `prefers-reduced-motion`: no overlay, no glow, no hidden states.
+- Helper tokens: `--ul`/`--uo` (field underline sweep), `--ro` (photo ring), `--sp` (status dot scale, `scale: var(--sp, 1)`), classes `.cf-sweep`, `.rv-ring`, `.rv-clip` exist only during the animation.
