@@ -3525,7 +3525,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     place-items: center;
     border-radius: 999px;
     background: var(--stamp-ring);
-    transition: background 0.3s ease, transform 0.3s ease, translate 0.3s cubic-bezier(0.4, 0, 0.2, 1);   /* the magnet offset is eased: coarse pointer steps and the first contact never make the badge jump */
+    transition: background 0.3s ease, transform 0.3s ease;      /* the magnet offset (translate) is applied directly, as before: no easing lag */
 }
 
 .stamp:hover .stamp__body {
