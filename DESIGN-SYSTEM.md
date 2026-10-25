@@ -122,9 +122,8 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-bottom-pad` | `calc(var(--cf-btn-gap) * 1.4 - 1px)` | the submit ring's outer edge / the e-mail button -> card bottom = 1.4 x the gap consent row -> submit ring (optical compensation; the card's 1px border is included; the two buttons end on the same line) |
 | `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title "Kérjen árajánlatot" (Syne 800, letter-spacing −0.02em, plain white: the type of the photo card tagline) |
 | `--cf-tagline-fs` | `clamp(22px, 1.1rem + 0.5vw, 26px)` | photo card tagline "Dizájn, kód és mozgás" (on phones capped at `(100vw - 84px) / 17` so the line never wraps) |
-| `--cf-info-fs` / `--cf-info-color` | `14px` / `rgb(159 176 216)` | photo card info lines: status, role, invitation (letter-spacing .04em; gaps in em) |
-| `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 19.5svh, 186px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
-| `--cf-pc-btn-gap` | `clamp(24px, 3.4svh, 36px)` | photo card: minimum gap between the info lines and the WhatsApp button (the free height goes there; the e-mail button ends at the card bottom padding) |
+| `--cf-info-fs` / `--cf-info-color` | `16px` / `rgb(159 176 216)` | photo card info lines: status, role, invitation (letter-spacing .04em; line gap 0.3em, tagline -> first line 0.74em, status dot 0.57em). Photo card layout: padding top = bottom = `--cf-bottom-pad`; the block photo + tagline + lines sits directly above the buttons, lines -> WhatsApp = `--cf-bottom-pad`, free height above the photo |
+| `--cf-photo-d` | `clamp(190px, 27svh, 260px)` (< 1024px); `clamp(150px, 19svh, 176px)` (>= 1024px, so the photo card is never taller than the form card) | photo card: portrait diameter |
 
 ## Footer: divider line + back-to-top badge
 
