@@ -131,3 +131,54 @@
   stamp.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') to(5); });
   stamp.addEventListener('pointerleave', function () { to(1); });
 })();
+
+/* ---- badge placement: it sits at the right end of the divider; if that would bring it closer than 12px to the footer text (the divider got closer to the
+        columns), it slides ALONG the line - first as far right as the viewport allows, otherwise to the nearest free spot between the columns. The spacing never changes. ---- */
+(function () {
+  'use strict';
+  var div = document.querySelector('.footer-divider');
+  var badge = div && div.querySelector('.footer-divider__badge');
+  if (!badge) return;
+  var MIN = 12, EDGE = 6, timer = 0;
+  function clearance(cx, cy, R, rects) {
+    var best = 1e9;
+    for (var i = 0; i < rects.length; i++) {
+      var r = rects[i], dx = Math.max(r.left - cx, 0, cx - r.right), dy = Math.max(r.top - cy, 0, cy - r.bottom);
+      best = Math.min(best, Math.hypot(dx, dy) - R);
+    }
+    return best;
+  }
+  function place() {
+    badge.style.removeProperty('--fs-shift');
+    var dr = div.getBoundingClientRect(), wrap = div.parentElement.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    var R = badge.offsetWidth / 2;                                         /* layout size: the reveal transform (scale / rotate) must not leak into the maths */
+    var cy = dr.top + dr.height / 2, cx0 = wrap.right - R;                 /* default centre: the right end of the line */
+    var rects = [];
+    document.querySelectorAll('.footer-content .social-links a').forEach(function (a) { rects.push(a.getBoundingClientRect()); });
+    var walker = document.createTreeWalker(document.querySelector('.footer-content'), NodeFilter.SHOW_TEXT, null), node;
+    while ((node = walker.nextNode())) {                                    /* the glyph boxes only, not the (wider) boxes of their blocks */
+      if (!node.nodeValue.trim()) continue;
+      var rg = document.createRange(); rg.selectNodeContents(node);
+      var list = rg.getClientRects();
+      for (var i = 0; i < list.length; i++) if (list[i].width) rects.push(list[i]);
+    }
+    if (clearance(cx0, cy, R, rects) >= MIN) return;                       /* the default spot is fine */
+    var maxS = vw - EDGE - R - cx0, minS = wrap.left + R - cx0, best = 0, bestC = -1e9, found = false;
+    for (var s = 2; s <= Math.max(maxS, -minS) && !found; s += 2) {        /* the smallest shift that clears the text; right first, then left */
+      var dirs = [s, -s];
+      for (var k = 0; k < 2; k++) {
+        var d = dirs[k];
+        if (d > maxS || d < minS) continue;
+        var c = clearance(cx0 + d, cy, R, rects);
+        if (c >= MIN) { best = d; found = true; break; }
+        if (c > bestC) { bestC = c; best = d; }
+      }
+    }
+    badge.style.setProperty('--fs-shift', best.toFixed(1) + 'px');
+  }
+  function later() { clearTimeout(timer); timer = setTimeout(place, 120); }
+  window.addEventListener('resize', later);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(place); else place();
+  window.addEventListener('load', place);
+  if (window.ResizeObserver) new ResizeObserver(later).observe(document.querySelector('.footer-content'));
+})();

@@ -63,7 +63,7 @@
     --cf-btn-gap: clamp(18px, 2.4svh, 26px);                               /* consent row -> submit button AND submit button -> "Adatait bizalmasan kezelem." */
     --cf-bottom-pad: clamp(28px, 4svh, 44px);                              /* "Adatait bizalmasan kezelem." -> card bottom */
     /* footer: divider line + back-to-top badge */
-    --footer-pad-y: clamp(36px, 5.5svh, 60px);                             /* footer top edge -> column headings AND bottom of the tallest column -> divider line (equal) */
+    --footer-pad-y: clamp(33px, calc(5.5svh - 3px), 57px);                             /* footer top edge -> column headings AND bottom of the tallest column -> divider line (equal) */
     --footer-divider-bottom: clamp(24px, 4svh, 48px);                      /* divider line -> wordmark top */
     --footer-stamp-d: clamp(70px, 9.3svh, 100px);                          /* back-to-top badge: the hero badge size (76px on phones) */
     /* tight anchor (.section--tight): closer to the top-left; the gutter is the logo's right edge (32 + 44) + 20px, symmetric on the right */
@@ -6830,7 +6830,7 @@ footer { padding-top: var(--footer-pad-y); }
 }
 .footer-divider__badge {
     position: absolute;
-    right: 0;
+    right: calc(var(--fs-shift, 0px) * -1);       /* js/footer.js slides the badge along the line to keep >= 12px clear of the footer text (right end by default) */
     top: 50%;
     width: var(--footer-stamp-d);
     margin-top: calc(var(--footer-stamp-d) / -2);
