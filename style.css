@@ -5828,8 +5828,6 @@ footer {
     display: inline-block;
     transition: color 0.3s ease;
 }
-.footer-section ul li a::after,
-.footer-section p a::after,
 .footer-bottom-links .cookie-settings-link::after {
     content: "";
     position: absolute;
@@ -6878,3 +6876,27 @@ html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .
     .footer-divider__line, .footer-divider__badge, .footer-divider.is-in .footer-divider__badge { transition: none; }
     .footer-stamp .stamp__icon { animation: none !important; }
 }
+
+/* footer text links (navigation, phone, e-mail): no underline at rest; a 2px brand-gradient underline grows left -> right on hover / focus-visible, 3px below the baseline
+   (the text-link underline: --card-primary, 0.35s). top = line centre + 0.3585em (Montserrat: baseline below the centre) + 3px, so it also holds in the taller mobile tap boxes */
+.footer-section ul li a::after,
+.footer-section p a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(50% + 0.3585em + 3px);
+    bottom: auto;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--card-primary);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.35s ease;
+    pointer-events: none;
+}
+.footer-section ul li a:hover::after,
+.footer-section ul li a:focus-visible::after,
+.footer-section p a:hover::after,
+.footer-section p a:focus-visible::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) { .footer-section ul li a::after, .footer-section p a::after { transition: none; } }
