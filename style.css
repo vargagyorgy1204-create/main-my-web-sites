@@ -6965,3 +6965,16 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 .footer-section.fr-prep.fr-in .fr-i { transform: none; opacity: 1; --rd: calc(var(--ri, 0) * 0.07s); }                                /* in: top -> bottom */
 .footer-section.fr-moving .fr-mask { overflow: clip; }
 @media (prefers-reduced-motion: reduce) { .fr-i { transition: none; } }
+
+/* ===== KAPCSOLAT heading "ÜZENJEN.": staggered letter reveal (js/contact-footer.js sets --ci, .fx-prep, .fx-in, .fx-moving) =====
+   the letters use the individual transform properties (translate / scale / opacity), the proximity hover keeps `transform` - no conflict; the masks clip only while moving */
+#contact .section-heading .sh-char {
+    transition: translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.5s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s);
+}
+#contact .section-heading .sh-mask { overflow: visible; }
+#contact .section-heading.fx-moving .sh-mask { overflow: clip; }
+#contact .section-heading.fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * 0.05s); }                  /* out: right -> left */
+#contact .section-heading.fx-prep .sh-dot { translate: 0 0; scale: 0.4; --cd: 0s; }                                                                  /* the dot leaves first */
+#contact .section-heading.fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * 0.05s); }                                       /* in: left -> right */
+#contact .section-heading.fx-prep.fx-in .sh-dot { scale: 1; --cd: calc((var(--cn) - 1) * 0.05s + 0.2s); }                                            /* the dot pops in last */
+@media (prefers-reduced-motion: reduce) { #contact .section-heading .sh-char { transition: none; } }

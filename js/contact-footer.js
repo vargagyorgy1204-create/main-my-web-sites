@@ -119,24 +119,28 @@
     };
 
     /* ---------------------------------------------------------- the giant word
-       Letters, accent dot and the proximity hover come from js/heading-fx.js; here only the entrance: the letters rise out of their masks. */
+       Letters, accent dot and the proximity hover come from js/heading-fx.js (the .sh-char letters inside their .sh-mask). The reveal is CSS (style.css, #contact
+       .section-heading .fx-*): the letters rise out of their masks one by one, the dot pops in last; reversed (right -> left) when the heading is left downwards.
+       Here: the letter indices, the trigger and the eyebrow / sub entrance. */
     var word = section.querySelector('.section-heading');
     if (word) {
       var setup = function () {
         var chars = arr(word, '.sh-char');
-        if (!chars.length) { playHead(); return; }
-        var dot = chars[chars.length - 1];
-        var body = chars.slice(0, dot.classList.contains('sh-dot') ? -1 : undefined);
-        gsap.set(chars, { yPercent: 110, rotation: function (i) { return i % 2 ? 8 : -8; }, transformOrigin: '0% 100%' });
-        var done = false;
-        var play = function () {
-          if (done) return; done = true;
-          playHead();
-          var tl = gsap.timeline({ onComplete: function () { gsap.set(chars, { clearProps: 'transform' }); } });
-          tl.to(body, { yPercent: 0, rotation: 0, duration: 0.9, ease: 'power4.out', stagger: 0.05 });
-          if (body.length !== chars.length) tl.to(dot, { yPercent: 0, rotation: 0, duration: 0.8, ease: 'back.out(2.4)' }, '>-0.3');
-        };
-        ST.create({ trigger: word, start: 'top 80%', once: true, onEnter: play, onLeave: play });
+        if (!chars.length || !('IntersectionObserver' in window)) { playHead(); return; }
+        chars.forEach(function (ch, i) { ch.style.setProperty('--ci', i); });
+        word.style.setProperty('--cn', chars.length);
+        word.classList.add('fx-prep');
+        var timer = 0, first = true;
+        new IntersectionObserver(function (es) {
+          var e = es[es.length - 1], on = e.isIntersecting;
+          if (!on && !(e.boundingClientRect.top > 0)) return;
+          if (on === word.classList.contains('fx-in')) return;
+          word.classList.add('fx-moving');                                   /* the masks clip only while the letters travel */
+          word.classList.toggle('fx-in', on);
+          if (on && first) { first = false; playHead(); }
+          clearTimeout(timer);
+          timer = setTimeout(function () { word.classList.remove('fx-moving'); }, 2000);
+        }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }).observe(word);
       };
       if (word.classList.contains('is-split')) setup();
       else {
