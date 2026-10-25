@@ -63,7 +63,7 @@
     --cf-title-gap: clamp(24px, 3.4svh, 36px);                             /* form title -> first field */
     --cf-btn-gap: calc(var(--cf-title-gap) + 0.27 * var(--cf-title-fs));      /* consent row -> submit ring = title letters' bottom -> first field: the title gap + the descender room of the title line (0.27em) */
     --cf-pad-top: clamp(20px, 2.8svh, 30px);                               /* form card top edge -> title */
-    --cf-bottom-pad: calc(var(--cf-pad-top) + 0.345 * var(--cf-title-fs));    /* submit ring AND e-mail button -> card bottom = card top -> the title's visible letters (the top padding + the title line's ascender room, 0.345em) */
+    --cf-bottom-pad: calc(var(--cf-btn-gap) - 0.5px);                         /* submit ring (outer edge) AND e-mail button -> card bottom = consent row -> submit ring (the card's 1px border makes up the rest) */
     /* footer: divider line + back-to-top badge */
     --footer-desc-fs: 16px;                                                /* footer description (first column), line-height 1.6 */
     --footer-link-fs: 15.2px;                                              /* Navigáció links and Elérhetőség rows */
