@@ -53,7 +53,85 @@
         scrollTrigger: { trigger: row, start: 'top 75%', end: 'top 30%', scrub: 0.6 }
       });
 
-    entrance(row, q(row, '.svt-tagline, .svt-actions, .svt-list li'), 'top 70%');
+  });
+
+  /* ---- "lines that build the page": per block, the description rises line by line, then the buttons; the list's dividers draw left -> right, each row's
+     number and title rise from their masks. >= 1024px it starts when the word's fill is ~30% (the fill runs 'top 75%' -> 'top 30%': 30% = 'top 61.5%'); below it
+     starts when the block enters the viewport. Leaving upwards plays it in the opposite order. CSS (style.css, .svt-row.rv-prep / .rv-in) does the motion;
+     here: the line masks, the per-element delays (--d-in / --d-out) and the trigger. */
+  function splitLines(p) {
+    var full = p.getAttribute('data-rv-text');
+    if (full === null) { full = p.textContent.replace(/\s+/g, function (m) { return m === ' ' ? m : ' '; }).trim(); p.setAttribute('data-rv-text', full); }   /* only plain spaces break: a no-break space stays inside its word */
+    p.textContent = '';
+    var words = full.split(' '), spans = words.map(function (w, i) {
+      var s = document.createElement('span'); s.textContent = w; p.appendChild(s);
+      if (i < words.length - 1) p.appendChild(document.createTextNode(' '));
+      return s;
+    });
+    var lines = [], top = null;
+    spans.forEach(function (s, i) {
+      var t = Math.round(s.getBoundingClientRect().top);
+      if (top === null || Math.abs(t - top) > 3) { lines.push([]); top = t; }
+      lines[lines.length - 1].push(words[i]);
+    });
+    p.textContent = '';
+    lines.forEach(function (ws) {
+      var l = document.createElement('span'), i = document.createElement('span');
+      l.className = 'rv-line'; i.className = 'rv-i'; i.textContent = ws.join(' ');
+      l.appendChild(i); p.appendChild(l);
+    });
+    return q(p, '.rv-i');
+  }
+  function delays(row) {
+    var items = [];                                              /* [element, in-delay] */
+    var lines = q(row, '.svt-tagline .rv-i');
+    lines.forEach(function (e, i) { items.push([e, i * 0.07]); });
+    var a0 = lines.length * 0.07 + 0.25;
+    q(row, '.svt-actions > *').forEach(function (e, j) { items.push([e, a0 + j * 0.08]); });
+    items.push([row.querySelector('.svt-list'), 0.1]);
+    q(row, '.svt-list li').forEach(function (li, k) {
+      var line = 0.1 + 0.12 * (k + 1);
+      items.push([li, line]);
+      items.push([li.querySelector('.svt-list__ni'), line + 0.3]);
+      items.push([li.querySelector('.svt-list__ti'), line + 0.38]);
+    });
+    var max = 0;
+    items.forEach(function (it) { max = Math.max(max, it[1]); });
+    items.forEach(function (it) {                                /* leaving: what came last goes first, a little faster */
+      it[0].style.setProperty('--d-in', it[1].toFixed(2) + 's');
+      it[0].style.setProperty('--d-out', ((max - it[1]) * 0.5).toFixed(2) + 's');
+    });
+  }
+  function prepRow(row) {
+    var tag = row.querySelector('.svt-tagline');
+    if (tag) splitLines(tag);
+    delays(row);
+    row.classList.add('rv-prep');
+  }
+  var rvTimers = [];
+  function setIn(row, i, on) {
+    row.classList.add('rv-moving');                              /* the masks clip only while things travel */
+    row.classList.toggle('rv-in', on);
+    clearTimeout(rvTimers[i]);
+    rvTimers[i] = setTimeout(function () { row.classList.remove('rv-moving'); }, 2600);
+  }
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
+    rows.forEach(function (row, i) {
+      prepRow(row);
+      window.ScrollTrigger.create({
+        trigger: row, end: 'max',
+        start: function () { return window.innerWidth >= 1024 ? 'top 61.5%' : 'top 85%'; },
+        onEnter: function () { setIn(row, i, true); },
+        onLeaveBack: function () { setIn(row, i, false); }
+      });
+    });
+    var rt;
+    window.addEventListener('resize', function () {              /* the lines depend on the width */
+      clearTimeout(rt);
+      rt = setTimeout(function () {
+        rows.forEach(function (row) { var tag = row.querySelector('.svt-tagline'); if (tag) splitLines(tag); delays(row); });
+      }, 150);
+    });
   });
 
   /* closing row (the shared .cta-row): divider, line 1, line 2, button in order; reversed when scrolling back up */

@@ -5335,10 +5335,6 @@ html.lenis, html.lenis body { height: auto; }
   border-block-start: 1px solid var(--svt-line);
 }
 .svt-list li {
-  display: flex;
-  align-items: baseline;
-  gap: 20px;
-  padding-block: 14px;
   border-block-end: 1px solid var(--svt-line);
 }
 .svt-list__n {
@@ -5400,7 +5396,6 @@ html.lenis, html.lenis body { height: auto; }
   .svt-word { margin-block: 0 16px; }
   .svt-details { gap: 20px; }
   .svt-tagline { margin-block-end: 24px; }
-  .svt-list li { padding-block: 9px; }
 }
 
 /* ---------- height-aware proportions (desktop >= 768px) ----------
@@ -5417,7 +5412,6 @@ html.lenis, html.lenis body { height: auto; }
   }
   .svt-details { gap: clamp(18px, 3svh, 32px); }
   .svt-tagline { font-size: clamp(1.05rem, min(1.6vw, 2.7svh), 1.35rem); margin-block-end: var(--svc-desc-btn-gap); }
-  .svt-list li { padding-block: clamp(8px, 1.4svh, 14px); }
   .svt-list__t { font-size: clamp(0.95rem, min(1.3vw, 2.2svh), 1.2rem); }
 }
 /* the labels above the giant titles are gone: the bottom padding grows by their height so each block keeps its place (the title sits where the label was) */
@@ -7066,3 +7060,69 @@ html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { 
 .ctc-signal .sg-head { opacity: 0; pointer-events: none; }
 .ctc-sub { position: relative; }
 .ctc-sub .sg-glow { position: absolute; z-index: 1; white-space: pre; pointer-events: none; opacity: 0; color: transparent; -webkit-text-fill-color: transparent; background: linear-gradient(90deg, #8b7bff, #e060cf); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 0 6px rgb(200 80 192 / 0.65)); }
+
+/* ===== SERVICES: "lines that build the page" - list rows, reveal, hover (js/services.js; script.js opens the modal) =====
+   Rest state = the plain layout: the dividers are 1px pseudo lines on the old border positions (the borders themselves are transparent), every moving layer
+   (.rv-i, .svt-list__ni / __ti, the lines) is only transformed / faded while a row carries .rv-prep; --d-in / --d-out (set by JS) are the per-element delays. */
+.svt-row[data-row="1"] { --row-accent: var(--card-primary); }
+.svt-row[data-row="2"] { --row-accent: #C026A3; }
+.svt-row[data-row="3"] { --row-accent: var(--card-accent-cool); }
+.svt-list { position: relative; border-block-start-color: transparent; }
+.svt-list::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--svt-line); transform-origin: left center; }
+.svt-list li { position: relative; display: block; padding-block: 0; border-block-end-color: transparent; }
+.svt-list li::after,
+.svt-list li::before { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; transform-origin: left center; pointer-events: none; }
+.svt-list li::after { background: var(--svt-line); }
+.svt-list li::before { z-index: 1; height: 2px; background: var(--row-accent); transform: scaleX(0); transition: transform 0.45s ease; }       /* the hover accent line */
+.svt-list__row {
+  display: grid;
+  grid-template-columns: 3ch minmax(0, 1fr) auto;       /* a fixed number column: every title starts at the same x */
+  align-items: baseline;
+  column-gap: 20px;
+  width: 100%;
+  padding: 14px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: inherit;                                 /* the rows keep the list's old line height */
+  text-align: left;
+  cursor: pointer;
+}
+@media (min-width: 768px) { .svt-list__row { padding-block: clamp(8px, 1.4svh, 14px); } }
+@media (max-height: 559px) { .svt-list__row { padding-block: 9px; } }
+.svt-list__row:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
+.svt-list__n { display: block; font-variant-numeric: tabular-nums; }
+.svt-list__ni, .svt-list__ti { display: block; }
+.svt-list__t { display: block; min-width: 0; transition: translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.svt-list__go { display: grid; place-items: center; align-self: center; color: #fff; opacity: 0; translate: -6px 0; transition: opacity 0.3s ease, translate 0.3s ease; }   /* its space is always reserved: no layout shift */
+.svt-list__go .icon { width: 18px; height: 18px; }
+/* hover (a real pointer only): the accent line fills the divider, the number takes the brand gradient, the title shifts 8px, the arrow fades in */
+html.has-cursor .svt-list li:hover::before { transform: scaleX(1); }
+html.has-cursor .svt-list li:hover .svt-list__ni { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
+html.has-cursor .svt-list li:hover .svt-list__t { translate: 8px 0; }
+html.has-cursor .svt-list li:hover .svt-list__go { opacity: 0.9; translate: 0 0; }
+
+/* the tagline's lines (one mask per rendered line, built in JS) */
+.svt-tagline .rv-line { display: block; white-space: nowrap; }
+.svt-tagline .rv-i { display: block; }
+
+/* reveal: .rv-prep = hidden, .rv-in = shown; the masks clip only while .rv-moving */
+.svt-row.rv-prep .rv-i { transform: translateY(100%); opacity: 0; --rd: var(--d-out, 0s); transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd), opacity 0.45s ease var(--rd); }
+.svt-row.rv-prep.rv-in .rv-i { transform: none; opacity: 1; --rd: var(--d-in, 0s); }
+.svt-row.rv-prep .svt-actions > * { transform: translateY(12px); opacity: 0; --rd: var(--d-out, 0s); transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd), opacity 0.5s ease var(--rd); }
+.svt-row.rv-prep.rv-in .svt-actions > * { transform: none; opacity: 1; --rd: var(--d-in, 0s); }
+.svt-row.rv-prep .svt-btn { transition: color 0.3s ease, border-color 0.3s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd), opacity 0.5s ease var(--rd); }
+.svt-row.rv-prep .svt-list::before,
+.svt-row.rv-prep .svt-list li::after { transform: scaleX(0); --rd: var(--d-out, 0s); transition: transform 0.5s ease var(--rd); }
+.svt-row.rv-prep.rv-in .svt-list::before,
+.svt-row.rv-prep.rv-in .svt-list li::after { transform: scaleX(1); --rd: var(--d-in, 0s); }
+.svt-row.rv-prep .svt-list__ni, .svt-row.rv-prep .svt-list__ti { transform: translateY(110%); --rd: var(--d-out, 0s); transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd); }
+.svt-row.rv-prep.rv-in .svt-list__ni, .svt-row.rv-prep.rv-in .svt-list__ti { transform: none; --rd: var(--d-in, 0s); }
+.svt-row.rv-moving .svt-tagline .rv-line, .svt-row.rv-moving .svt-list__n, .svt-row.rv-moving .svt-list__t { overflow: clip; }
+@media (prefers-reduced-motion: reduce) { .svt-row .rv-i, .svt-row .svt-actions > *, .svt-row .svt-list::before, .svt-row .svt-list li::after, .svt-row .svt-list__ni, .svt-row .svt-list__ti { transition: none; } }
+
+/* a list row of Szolgáltatások opened this dialog: the matching plan card / group glows briefly (the class is added and removed by script.js; the card's own 0.3s transitions make the pulse) */
+.service-modal .pricing-item.is-pulse { border-color: var(--m-accent-2); box-shadow: 0 0 0 1px var(--m-accent-2), 0 0 28px 2px var(--m-glow); }

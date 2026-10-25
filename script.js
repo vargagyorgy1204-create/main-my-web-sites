@@ -349,21 +349,49 @@ const closeServiceModals = (returnFocus = true) => {
     if (wasOpen) serviceModalReturn = null;
 };
 
-serviceModalTriggers.forEach((trigger) => {
-    trigger.addEventListener('click', () => {
-        const targetId = trigger.dataset.modalTarget;
-        const targetModal = document.getElementById(targetId);
-        if (!targetModal) return;
+// opens a service dialog; focusIdx (from a list row of the section) highlights the matching plan card / group and scrolls the dialog to it
+const openServiceModal = (trigger, focusIdx) => {
+    const targetModal = document.getElementById(trigger.dataset.modalTarget);
+    if (!targetModal) return;
 
-        closeServiceModals(false);
-        serviceModalReturn = trigger;
-        targetModal.classList.add('is-open');
-        targetModal.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('service-modal-open');
-        if (window.VB && VB.lenis) VB.lenis.stop();
-        const dlg = targetModal.querySelector('.service-modal');
-        if (dlg) dlg.focus({ preventScroll: true });
-    });
+    closeServiceModals(false);
+    serviceModalReturn = trigger;
+    targetModal.classList.add('is-open');
+    targetModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('service-modal-open');
+    if (window.VB && VB.lenis) VB.lenis.stop();
+    const dlg = targetModal.querySelector('.service-modal');
+    if (dlg) dlg.focus({ preventScroll: true });
+
+    if (Number.isInteger(focusIdx)) {
+        window.setTimeout(() => {                  // after the dialog's own entrance (cards stagger up to ~0.8s)
+            if (!targetModal.classList.contains('is-open')) return;
+            const groups = targetModal.querySelectorAll('.modal-group');
+            const scroller = targetModal.querySelector('.service-modal__scroll');
+            let marked;
+            if (groups.length) {                   // Extra: the group; its label goes to the top of the scroll area
+                const g = groups[focusIdx];
+                if (!g) return;
+                if (scroller) scroller.scrollTo({ top: scroller.scrollTop + g.getBoundingClientRect().top - scroller.getBoundingClientRect().top, behavior: 'smooth' });
+                marked = Array.from(g.querySelectorAll('.pricing-item'));
+            } else {
+                const card = targetModal.querySelectorAll('.pricing-item')[focusIdx];
+                if (!card) return;
+                if (scroller && scroller.scrollHeight > scroller.clientHeight + 1) card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                marked = [card];
+            }
+            marked.forEach((el) => el.classList.add('is-pulse'));      // a 1.2s glow pulse: in 0.3s, hold, out 0.3s (the card's own transition)
+            window.setTimeout(() => marked.forEach((el) => el.classList.remove('is-pulse')), 650);
+        }, 820);
+    }
+};
+
+serviceModalTriggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => openServiceModal(trigger));
+});
+// the rows of the Szolgáltatások lists are real buttons: they open the block's dialog on the matching plan / group
+document.querySelectorAll('.svt-list__row').forEach((row) => {
+    row.addEventListener('click', () => openServiceModal(row, parseInt(row.dataset.focus, 10)));
 });
 
 if (typeof lucide !== 'undefined') {
