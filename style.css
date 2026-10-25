@@ -3509,17 +3509,26 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     --stamp-hover: var(--card-primary);
     --stamp-arrow: #6c63ff;
     position: relative;
-    display: grid;
-    place-items: center;
+    display: block;
     inline-size: min(150px, 88%);
     aspect-ratio: 1;
     border-radius: 999px;
-    background: var(--stamp-ring);
     text-decoration: none;
-    transition: background 0.3s ease, transform 0.3s ease;
+}
+/* the root is static (fixed size and position) and owns :hover / is-hover; a ring of 8px around it is invisible hit area, so the pointer can't
+   "fall off" the badge because of its own magnetic movement. Everything visible lives in .stamp__body, the only thing cursor.js moves (translate). */
+.stamp::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; }
+.stamp__body {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--stamp-ring);
+    transition: background 0.3s ease, transform 0.3s ease, translate 0.3s cubic-bezier(0.4, 0, 0.2, 1);   /* the magnet offset is eased: coarse pointer steps and the first contact never make the badge jump */
 }
 
-.stamp:hover {
+.stamp:hover .stamp__body {
     background: var(--stamp-hover);
     transform: scale(1.05);
 }

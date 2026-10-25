@@ -36,7 +36,7 @@
     var enabled = false, broken = false, lastTouch = 0;
 
     var LINK = 'a, button, [role="button"], label, summary, select, input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="button"], [data-cursor="frame"], .hero-chip, .skills-dot, .about-sign';
-    var MAGNETIC = '.hbtn, .burger, .nav__logo, .menu__link, .modal-quote-btn, .stamp:not(.footer-stamp), .service-modal-trigger, .svt-btn, .pf-btn, .btn-about';
+    var MAGNETIC = '.hbtn, .burger, .nav__logo, .menu__link, .modal-quote-btn, .stamp, .service-modal-trigger, .svt-btn, .pf-btn, .btn-about';
     var VIEW = '.about-photo-card, [data-cursor="view"]';
     var TEXT = 'p, h1, h2, h3, h4, li, blockquote';
     var FIELD = 'input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), textarea, [contenteditable="true"]';
@@ -291,6 +291,8 @@
         if (magnet && magRect) {
             var dx = (mx - (magRect.l + magRect.w / 2)) / (magRect.w / 2);
             var dy = (my - (magRect.t + magRect.h / 2)) / (magRect.h / 2);
+            dx = Math.max(-1.5, Math.min(1.5, dx));     /* a flick out of the element delivers one far-away pointermove before the pointerover that releases the magnet: never follow it */
+            dy = Math.max(-1.5, Math.min(1.5, dy));
             mOffX = dx * 8;
             mOffY = dy * 6;
             magnet.style.translate = mOffX.toFixed(2) + 'px ' + mOffY.toFixed(2) + 'px';
@@ -376,9 +378,11 @@
             setFrame(null);
             ring.classList.add('is-link-small');
         } else {
-            setFrame(el, kind);
+            setFrame(el.querySelector(':scope > [data-magnet-inner]') || el, kind);
         }
         var mag = el.closest(MAGNETIC);
+        var magIn = mag && mag.querySelector(':scope > [data-magnet-inner]');     /* badges: the static root keeps the hover, the inner body moves */
+        if (magIn) mag = magIn;
         if (mag !== magnet) {
             releaseMagnet();
             if (mag) { magnet = mag; magRect = layoutRect(mag); }
@@ -420,7 +424,7 @@
         root.classList.toggle('cursor-dark', isDark(el));
         ring.classList.remove('is-view', 'is-text', 'is-link-small', 'is-magnetic');
         var kind = classify(el);
-        if (kind === 'card') { setFrame(null); ring.classList.add('is-link-small'); } else { setFrame(el, kind); }
+        if (kind === 'card') { setFrame(null); ring.classList.add('is-link-small'); } else { setFrame(el.querySelector(':scope > [data-magnet-inner]') || el, kind); }
         kick();
     });
     document.addEventListener('focusout', function () {
