@@ -131,10 +131,13 @@
         word.style.setProperty('--cn', chars.length);
         word.classList.add('fx-prep');
         var timer = 0, first = true;
+        var dot = word.querySelector('.sh-dot');
+        if (dot) dot.addEventListener('animationend', function (ev) { if (ev.animationName === 'ctcDotDrop' && word.classList.contains('fx-in')) word.classList.add('fx-done'); });
         new IntersectionObserver(function (es) {
           var e = es[es.length - 1], on = e.isIntersecting;
           if (!on && !(e.boundingClientRect.top > 0)) return;
           if (on === word.classList.contains('fx-in')) return;
+          if (!on) word.classList.remove('fx-done');
           word.classList.add('fx-moving');                                   /* the masks clip only while the letters travel */
           word.classList.toggle('fx-in', on);
           if (on && first) { first = false; playHead(); }

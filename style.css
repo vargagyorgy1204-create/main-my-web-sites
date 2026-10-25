@@ -6974,8 +6974,41 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 }
 #contact .section-heading .sh-mask { overflow: visible; }
 #contact .section-heading.fx-moving .sh-mask { overflow: clip; }
-#contact .section-heading.fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * 0.05s); }                  /* out: right -> left */
-#contact .section-heading.fx-prep .sh-dot { translate: 0 0; scale: 0.4; --cd: 0s; }                                                                  /* the dot leaves first */
+#contact .section-heading.fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * 0.05s + 0.2s); }          /* out: right -> left, after the dot has left */
+#contact .section-heading.fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
 #contact .section-heading.fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * 0.05s); }                                       /* in: left -> right */
-#contact .section-heading.fx-prep.fx-in .sh-dot { scale: 1; --cd: calc((var(--cn) - 1) * 0.05s + 0.2s); }                                            /* the dot pops in last */
-@media (prefers-reduced-motion: reduce) { #contact .section-heading .sh-char { transition: none; } }
+/* the dot: after the last letter has landed it drops from above (ease-in .35s), squashes on impact (.08s), bounces once (.18s) and settles; a thin gradient ring ripples out at the
+   impact (the ::before, transform / opacity only, out of the flow). The dot's own mask never clips (the ring and the drop leave the box). --dd = the drop's start. */
+#contact .section-heading { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
+#contact .section-heading .sh-mask:has(> .sh-dot) { overflow: visible; }
+#contact .section-heading.fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
+#contact .section-heading.fx-prep.fx-in.fx-done .sh-dot { animation: none; }
+#contact .section-heading .sh-dot::before {
+    content: "";
+    position: absolute;
+    left: var(--ring-x, 50%);
+    top: var(--ring-y, 71%);
+    width: var(--ring-d, 0.26em);
+    height: var(--ring-d, 0.26em);
+    margin: calc(var(--ring-d, 0.26em) / -2) 0 0 calc(var(--ring-d, 0.26em) / -2);
+    border-radius: 50%;
+    background: var(--card-primary);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+    opacity: 0;
+    pointer-events: none;
+}
+#contact .section-heading.fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
+html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
+@keyframes ctcDotDrop {
+    0%   { translate: 0 -120%; scale: 1 1; opacity: 0; animation-timing-function: ease-in; }
+    4%   { opacity: 1; }
+    48%  { translate: 0 0; scale: 1 1; opacity: 1; animation-timing-function: ease-out; }
+    59%  { translate: 0 0; scale: 1.25 0.75; opacity: 1; animation-timing-function: ease-out; }
+    71%  { translate: 0 -25%; scale: 1 1; opacity: 1; animation-timing-function: ease-in; }
+    83%  { translate: 0 0; scale: 1.08 0.92; opacity: 1; animation-timing-function: ease-out; }
+    100% { translate: 0 0; scale: 1 1; opacity: 1; }
+}
+@keyframes ctcDotRing { from { scale: 0.5; opacity: 0.7; } to { scale: 2.6; opacity: 0; } }
+@keyframes ctcDotHop { 0%, 100% { translate: 0 0; } 40% { translate: 0 -18%; } }
+@media (prefers-reduced-motion: reduce) { #contact .section-heading .sh-char { transition: none; } #contact .section-heading .sh-dot, #contact .section-heading .sh-dot::before { animation: none !important; } }
