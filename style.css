@@ -49,6 +49,7 @@
     --cf-ta-h: 93.6px;                                                     /* textarea min-height */
     --cf-gap: clamp(9px, 1.26svh, 12.6px);                                 /* between fields */
     --cf-radius: 12.6px;
+    --cf-fields-w: 90%;                                                    /* Név, E-mail, Telefonszám, dropdown, textarea: width within the form card (centred) */
     --cf-pad-x: 14.4px;                                                    /* field inner left / right padding and the label offset */
     --cf-check: 19.8px;                                                    /* consent checkbox */
     --cf-consent-fs: 0.792rem;                                             /* consent text (12.7px) */
@@ -6659,6 +6660,7 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 .ctc .contact-form-panel { display: flex; flex-direction: column; justify-content: center; padding-bottom: var(--cf-bottom-pad); }
 .ctc .contact-form-panel h3 { margin-bottom: var(--cf-title-gap); }
 .ctc .contact-form-ui { gap: var(--cf-gap); }
+.ctc .contact-field { width: var(--cf-fields-w); align-self: center; }   /* the fields are narrower than the card, centred; the dropdown panel follows the trigger */
 .ctc .contact-field input,
 .ctc .contact-field select,
 .ctc .contact-field textarea {
