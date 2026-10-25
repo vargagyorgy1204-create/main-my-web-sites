@@ -117,9 +117,9 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--cf-consent-fs` | `0.792rem` | consent text (12.7px; gap 9px) |
 | `--cf-opt-h` | `36px` | custom dropdown option row |
 | `--cf-title-gap` | `clamp(24px, 3.4svh, 36px)` | title -> first field |
-| `--cf-btn-gap` | `var(--cf-title-gap)` | consent row -> submit button: mirrors title -> first field |
+| `--cf-btn-gap` | `calc(var(--cf-title-gap) + 0.27 * var(--cf-title-fs))` | consent row -> the submit button's ring (outer edge) = the title's visible letters' bottom -> first field (measured on the rendered glyphs) |
 | `--cf-pad-top` | `clamp(20px, 2.8svh, 30px)` | form card top edge -> title |
-| `--cf-bottom-pad` | `var(--cf-pad-top)` | submit button / e-mail button -> card bottom: mirrors card top -> title (the two buttons end on the same line; extra height from the equal-height row is split evenly above and below the form content) |
+| `--cf-bottom-pad` | `calc(var(--cf-pad-top) + 0.345 * var(--cf-title-fs))` | the submit ring's outer edge / the e-mail button -> card bottom = card top -> the title's visible letters (padding + the title line's ascender room; the two buttons end on the same line) |
 | `--cf-title-fs` | `clamp(1.25rem, 2.2svh, 1.5rem)` | form title "Kérjen árajánlatot" (Syne 800, letter-spacing −0.02em, plain white: the type of the photo card tagline) |
 | `--cf-tagline-fs` | `clamp(22px, 1.1rem + 0.5vw, 26px)` | photo card tagline "Dizájn, kód és mozgás" (on phones capped at `(100vw - 84px) / 17` so the line never wraps) |
 | `--cf-info-fs` / `--cf-info-color` | `14px` / `rgb(159 176 216)` | photo card info lines: status, role, invitation (letter-spacing .04em; gaps in em) |
