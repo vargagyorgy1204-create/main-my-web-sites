@@ -6556,7 +6556,7 @@ html.has-cursor #contact .contact-actions .btn-email-cta:hover .icon path:first-
 @keyframes ctcSpinStatic { to { rotate: 360deg; } }
 
 /* ===== KAPCSOLAT form: centred title / consent / submit / note; errors only for submit / network failures ===== */
-#contact .contact-form-panel h3 { text-align: center; }
+#contact .contact-form-panel h3 { text-align: center; font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -0.02em; color: #fff; }   /* the type of the photo card tagline, plain white */
 #contact .contact-consent { align-self: center; justify-content: center; text-align: left; }
 #contact .contact-form-note { align-self: center; text-align: center; font-size: 0.875em; margin-top: max(0px, calc(var(--cf-btn-gap) - var(--cf-gap))); }   /* button -> note = consent -> button (--cf-btn-gap) */
 #contact .contact-form-status { text-align: center; min-height: 0; }
