@@ -63,6 +63,11 @@
     --cf-btn-gap: clamp(18px, 2.4svh, 26px);                               /* consent row -> submit button AND submit button -> "Adatait bizalmasan kezelem." */
     --cf-bottom-pad: clamp(28px, 4svh, 44px);                              /* "Adatait bizalmasan kezelem." -> card bottom */
     /* footer: divider line + back-to-top badge */
+    --footer-desc-fs: 16px;                                                /* footer description (first column), line-height 1.6 */
+    --footer-link-fs: 15.2px;                                              /* Navigáció links and Elérhetőség rows */
+    --footer-link-lh: 1.75;
+    --footer-row-gap: clamp(6px, 0.93svh, 10px);                           /* the gap between two rows when the row is 25.6px tall (16px x 1.6); it shrinks by the extra line-height so the row STEP stays the same */
+    --footer-row-shrink: calc(var(--footer-link-fs) * var(--footer-link-lh) - 25.6px);
     --footer-pad-y: clamp(33px, calc(5.5svh - 3px), 57px);                             /* footer top edge -> column headings AND bottom of the tallest column -> divider line (equal) */
     --footer-divider-bottom: clamp(24px, 4svh, 48px);                      /* divider line -> wordmark top */
     --footer-stamp-d: clamp(70px, 9.3svh, 100px);                          /* back-to-top badge: the hero badge size (76px on phones) */
@@ -6927,12 +6932,12 @@ html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .
 
 /* Elérhetőség column: the nav column's rows - the same type (16px / 1.6) and the same row step (the nav item margin), so row n of the contact column
    sits level with item n of Navigáció. The working hours are ONE item that spans the last two rows: label | two value lines (the 2nd line left-aligned under "H–P") */
-.footer-section--contact p { font-size: 1rem; line-height: 1.6; margin-bottom: clamp(6px, 0.93svh, 10px); }
-@media (max-width: 850px) { .footer-section--contact p { margin-bottom: 2px; } }
+.footer-section--contact p { font-size: var(--footer-link-fs); line-height: var(--footer-link-lh); margin-bottom: calc(var(--footer-row-gap) - var(--footer-row-shrink)); }
+@media (max-width: 850px) { .footer-section--contact p { margin-bottom: 2px; } .footer-section--contact p:not(:has(a)) { margin-bottom: calc(2px - var(--footer-row-shrink)); } }   /* rows with a link are 36px tall (tap target): their step does not depend on the line-height */
 .footer-section--contact .footer-hours { display: grid; grid-template-columns: auto 1fr; column-gap: 0.28em; align-items: start; }
 .footer-section--contact .footer-hours__v > span { display: block; }
-.footer-section--contact .footer-hours__v > span + span { margin-top: clamp(6px, 0.93svh, 10px); }     /* the row step between the two lines */
-@media (max-width: 850px) { .footer-section--contact .footer-hours__v > span + span { margin-top: 2px; } }
+.footer-section--contact .footer-hours__v > span + span { margin-top: calc(var(--footer-row-gap) - var(--footer-row-shrink)); }     /* the row step between the two lines */
+@media (max-width: 850px) { .footer-section--contact .footer-hours__v > span + span { margin-top: calc(2px - var(--footer-row-shrink)); } }
 
 /* ===== FOOTER social icons: bare glyphs, gradient fill + lift on hover, staggered reveal (footer only: the menu overlay keeps its own .social-links) ===== */
 .footer-section .social-links { gap: 4px; margin: 24px 0 0 -9px; }                       /* 40px hit boxes 4px apart = 22px between the 22px glyphs; -9px: the first glyph sits on the column edge */
@@ -6984,3 +6989,9 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
     html.has-cursor .footer-stamp:hover .stamp__inner { background: #fff; color: var(--stamp-arrow); }
     .footer-stamp.is-hover .stamp__icon, .footer-stamp.is-hover .stamp__icon--copy { animation: none; }
 }
+
+/* footer typography: description 16px / 1.6; the Navigáció links 15.2px / 1.75 (the contact rows have the same type, above); the row margin is reduced by the
+   extra line-height, so the row step, the column heights and the nav <-> contact row alignment are exactly as before */
+.footer-section:first-child > p { font-size: var(--footer-desc-fs); line-height: 1.6; }
+.footer-section ul li { font-size: var(--footer-link-fs); line-height: var(--footer-link-lh); }
+@media (min-width: 851px) { .footer-section ul li { margin-bottom: calc(var(--footer-row-gap) - var(--footer-row-shrink)); } }

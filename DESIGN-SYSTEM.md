@@ -134,3 +134,11 @@ Left as they are, because converting them would change the look at 1440×900 or 
 | `--footer-stamp-d` | `clamp(70px, 9.3svh, 100px)` (76px < 1024px) | back-to-top badge diameter (the hero badge size), centred on the right end of the divider |
 
 The footer columns: description + the four social icons (24px below the text), Navigáció (5 items), Elérhetőség. The old bottom row and the "Vissza a tetejére" pill are gone; the legal row and the wordmark are unchanged.
+
+## Footer typography tokens
+
+| Token | Value | Use |
+|---|---|---|
+| `--footer-desc-fs` | `16px` (line-height 1.6) | footer description, first column |
+| `--footer-link-fs` / `--footer-link-lh` | `15.2px` / `1.75` (26.6px) | Navigáció links and the Elérhetőség rows (same type, rows level with each other) |
+| `--footer-row-gap` | `clamp(6px, 0.93svh, 10px)` | row gap at the old 25.6px row height; the real margin is this minus `--footer-row-shrink` (= 26.6px - 25.6px), so the row step is unchanged |
