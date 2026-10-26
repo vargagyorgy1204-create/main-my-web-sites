@@ -12,6 +12,79 @@
 
   var VB = window.VB || {};
   var section = document.getElementById('services');
+  /* ---- the focus-row hover (>= 1024px): .is-hot on the <li> for a real pointer and for keyboard focus-visible; .has-hot on the list dims the others.
+     No GSAP needed: style.css does every effect (band, odometer, wave, teaser, arrow). Here: the state, the title letters (split only while hot, so the
+     rest state keeps its kerning) and the arrow's stroke setup. Touch: nothing. */
+  var hotMq = window.matchMedia ? window.matchMedia('(min-width: 1024px)') : { matches: false };
+  function hotLists() { return Array.prototype.slice.call(document.querySelectorAll('#services .svt-list')); }
+  function splitTitle(li) {
+    var tt = li.querySelector('.svt-list__tt');
+    if (!tt || tt.getAttribute('data-split')) return;
+    var text = tt.textContent, ci = 0;
+    tt.setAttribute('data-t', text); tt.setAttribute('data-split', '1'); tt.textContent = '';
+    text.split(' ').forEach(function (w, wi) {
+      if (wi) tt.appendChild(document.createTextNode(' '));
+      var ws = document.createElement('span'); ws.className = 'wv-w';
+      for (var k = 0; k < w.length; k++) {
+        var c = document.createElement('span'); c.className = 'wv-c'; c.textContent = w.charAt(k); c.style.setProperty('--ci', ci++); ws.appendChild(c);
+      }
+      tt.appendChild(ws);
+    });
+  }
+  function joinTitle(li) {
+    var tt = li.querySelector('.svt-list__tt');
+    if (!tt || !tt.getAttribute('data-split')) return;
+    tt.textContent = tt.getAttribute('data-t'); tt.removeAttribute('data-split');
+  }
+  function heat(li, on) {
+    var list = li.parentNode;
+    clearTimeout(li._joinT);
+    if (on) {
+      if (!hotMq.matches) return;
+      splitTitle(li);
+      list.classList.add('has-hot'); li.classList.add('is-hot');
+    } else {
+      li.classList.remove('is-hot');
+      if (!list.querySelector('li.is-hot')) list.classList.remove('has-hot');
+      li._joinT = setTimeout(function () { if (!li.classList.contains('is-hot')) joinTitle(li); }, 900);
+    }
+  }
+  function setupHot() {
+    var lx = -1, ly = -1;
+    hotLists().forEach(function (list) {
+      Array.prototype.slice.call(list.querySelectorAll('li')).forEach(function (li) {
+        var row = li.querySelector('.svt-list__row');
+        if (!row) return;
+        var go = li.querySelector('.svt-list__go');
+        if (go && !go.getAttribute('data-draw')) {              /* the Lucide arrow: both strokes get pathLength 1 so the dash can draw them */
+          var ps = go.querySelectorAll('path');
+          if (ps.length) { Array.prototype.forEach.call(ps, function (p) { p.setAttribute('pathLength', '1'); }); go.setAttribute('data-draw', ''); }
+        }
+        row.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') heat(li, true); });
+        row.addEventListener('pointerleave', function () { heat(li, false); });
+        row.addEventListener('focus', function () { try { if (row.matches(':focus-visible')) heat(li, true); } catch (err) { /* ignore */ } });
+        row.addEventListener('blur', function () { heat(li, false); });
+      });
+    });
+    /* smooth / wheel scrolling moves rows under a resting mouse without pointer events: re-test on scroll */
+    document.addEventListener('pointermove', function (e) { lx = e.clientX; ly = e.clientY; }, { passive: true });
+    var tick = false;
+    window.addEventListener('scroll', function () {
+      if (tick || lx < 0) return; tick = true;
+      requestAnimationFrame(function () {
+        tick = false;
+        var u = document.elementFromPoint(lx, ly);
+        Array.prototype.slice.call(document.querySelectorAll('#services li.is-hot')).forEach(function (li) {
+          if (!u || !li.contains(u)) { var r = li.querySelector('.svt-list__row'); if (!(r && r === document.activeElement && r.matches(':focus-visible'))) heat(li, false); }
+        });
+      });
+    }, { passive: true });
+    if (hotMq.addEventListener) hotMq.addEventListener('change', function () { if (!hotMq.matches) Array.prototype.slice.call(document.querySelectorAll('#services li.is-hot')).forEach(function (li) { heat(li, false); }); });
+  }
+  if (section) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupHot); else setupHot();
+  }
+
   if (!section || !VB.gsap || !VB.hasST || VB.reduceMotion) return;
 
   var gsap = VB.gsap;

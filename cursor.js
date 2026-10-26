@@ -309,6 +309,7 @@
         if (t && t.closest(FORMFIELD)) return t.closest(FORMFIELD);                         /* form fields: a frame target like the dropdown trigger */
         if (t && window.innerWidth < 1024 && t.closest('.footer-stamp')) return null;     /* the footer badge is a plain tap target below 1024px: no frame, no magnet */
         if (!t || t.closest(FIELD) || t.closest('[data-cursor="plain"]')) return null;   /* plain zones (values accordion): no frame */
+        if (t.closest('[data-cursor="view"]')) return null;                              /* a labelled disc (the service list rows: "Megnézem"), never a frame */
         var el = t.closest(LINK);
         if (!el) return null;
         if (el.tagName === 'LABEL') {

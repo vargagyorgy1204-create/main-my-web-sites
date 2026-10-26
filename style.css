@@ -7070,10 +7070,8 @@ html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { 
 .svt-list { position: relative; border-block-start-color: transparent; }
 .svt-list::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--svt-line); transform-origin: left center; }
 .svt-list li { position: relative; display: block; padding-block: 0; border-block-end-color: transparent; }
-.svt-list li::after,
-.svt-list li::before { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; transform-origin: left center; pointer-events: none; }
-.svt-list li::after { background: var(--svt-line); }
-.svt-list li::before { z-index: 1; height: 2px; background: var(--row-accent); transform: scaleX(0); transition: transform 0.45s ease; }       /* the hover accent line */
+.svt-list li::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--svt-line); transform-origin: left center; pointer-events: none; }
+.svt-list li { isolation: isolate; transition: opacity 0.3s ease; }
 .svt-list__row {
   display: grid;
   grid-template-columns: 3ch minmax(0, 1fr) auto;       /* a fixed number column: every title starts at the same x */
@@ -7093,17 +7091,57 @@ html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { 
 }
 @media (min-width: 768px) { .svt-list__row { padding-block: clamp(8px, 1.4svh, 14px); } }
 @media (max-height: 559px) { .svt-list__row { padding-block: 9px; } }
+@media (min-width: 1024px) { .svt-list__row { padding-block: calc(clamp(8px, 1.4svh, 14px) + 3px); } }       /* + 3px (static): room for the title + the teaser inside the row, so nothing shifts on hover */
+@media (min-width: 1024px) and (max-height: 559px) { .svt-list__row { padding-block: 12px; } }
 .svt-list__row:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
-.svt-list__n { display: block; font-variant-numeric: tabular-nums; }
+.svt-list__n { display: block; font-variant-numeric: tabular-nums; clip-path: inset(0 -4px); }
 .svt-list__ni, .svt-list__ti { display: block; }
+.svt-list__ti { position: relative; }
 .svt-list__t { display: block; min-width: 0; transition: translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.svt-list__go { display: grid; place-items: center; align-self: center; color: #fff; opacity: 0; translate: -6px 0; transition: opacity 0.3s ease, translate 0.3s ease; }   /* its space is always reserved: no layout shift */
+/* the teaser under the title: one line; >= 1024px it sits inside the row's height and appears on hover, below 1024px it is always shown */
+.svt-list__tz { display: block; margin-top: 2px; font-family: 'Montserrat', sans-serif; font-size: 13.5px; font-weight: 400; line-height: 1.3; letter-spacing: 0; white-space: nowrap; color: rgb(255 255 255 / 0.7); }
+@media (min-width: 1024px) {
+  .svt-list__tz { position: absolute; left: 0; top: 100%; margin: 0; opacity: 0; translate: 0 6px; transition: opacity 0.35s ease, translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+}
+/* the arrow: drawn with its stroke (pathLength 1, set in JS), slides out to the right on leave */
+.svt-list__go { display: grid; place-items: center; align-self: center; color: #fff; opacity: 0; translate: 10px 0; transition: opacity 0.3s ease, translate 0.3s ease; }   /* its space is always reserved: no layout shift */
 .svt-list__go .icon { width: 18px; height: 18px; }
-/* hover (a real pointer only): the accent line fills the divider, the number takes the brand gradient, the title shifts 8px, the arrow fades in */
-html.has-cursor .svt-list li:hover::before { transform: scaleX(1); }
-html.has-cursor .svt-list li:hover .svt-list__ni { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
-html.has-cursor .svt-list li:hover .svt-list__t { translate: 8px 0; }
-html.has-cursor .svt-list li:hover .svt-list__go { opacity: 0.9; translate: 0 0; }
+.svt-list__go[data-draw] path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0s 0.3s; }
+
+/* the digits: two copies each (current + gradient), the odometer rolls them */
+.od { position: relative; display: inline-block; }
+.od-t { display: inline-block; transition: translate 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--di, 0) * 0.05s); }
+.od-t2 { position: absolute; left: 0; top: 0; translate: 0 115%; color: transparent; -webkit-text-fill-color: transparent;
+  background: var(--card-primary); background-size: 200% 100%; background-position: calc(var(--di, 0) * 100%) 0; -webkit-background-clip: text; background-clip: text; }
+
+/* the focus-row hover (class .is-hot on the <li>, set by js/services.js for a real pointer and for keyboard focus, >= 1024px):
+   the other rows dim, a glow band in the block's accent sweeps in behind the row, the number rolls to the gradient, the title waves and rises 7px,
+   the teaser fades in under it, the arrow draws itself. Everything is transform / opacity / clip-path. */
+.svt-row[data-row="1"] { --row-edge: #8b7bff; }
+.svt-row[data-row="2"] { --row-edge: #e060cf; }
+.svt-row[data-row="3"] { --row-edge: #4fc3d6; }
+.svt-list li::before { content: ""; position: absolute; z-index: -1; inset: 0 -12px; border-radius: 12px; background: var(--row-accent); opacity: 0.14; clip-path: inset(0 100% 0 0 round 12px); transition: clip-path 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); pointer-events: none; }
+.svt-list__row::before { content: ""; position: absolute; z-index: -1; left: -12px; top: 0; bottom: 0; width: 2px; border-radius: 2px; background: var(--row-edge); clip-path: inset(0 100% 0 0); transition: clip-path 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); pointer-events: none; }
+.svt-list.has-hot li:not(.is-hot) { opacity: 0.35; }
+.svt-list li.is-hot::before, .svt-list li.is-hot .svt-list__row::before { clip-path: inset(0 0 0 0 round 12px); }
+.svt-list li.is-hot .od-t:not(.od-t2) { translate: 0 -115%; }
+.svt-list li.is-hot .od-t2 { translate: 0 0; }
+@media (min-width: 1024px) {
+  .svt-list li.is-hot .svt-list__t { translate: 0 -7px; }
+  .svt-list li.is-hot .svt-list__tz { opacity: 1; translate: 0 0; }
+}
+.svt-list li.is-hot .svt-list__go { opacity: 1; translate: 0 0; transition: opacity 0.15s ease, translate 0.3s ease; }
+.svt-list li.is-hot .svt-list__go[data-draw] path { stroke-dashoffset: 0; transition: stroke-dashoffset 0.4s ease; }
+.svt-list li.is-hot .svt-list__go[data-draw] path + path { transition-delay: 0.12s; }
+.wv-w { display: inline-block; white-space: nowrap; }
+.wv-c { display: inline-block; }
+@keyframes svtWave { 0%, 100% { translate: 0 0; } 45% { translate: 0 -3px; } }
+.svt-list li.is-hot .wv-c { animation: svtWave 0.35s ease calc(var(--ci, 0) * 0.015s) both; }
+@media (prefers-reduced-motion: reduce) {
+  .svt-list li, .svt-list__t, .svt-list__tz, .svt-list__go, .od-t, .svt-list li::before, .svt-list__row::before, .svt-list__go[data-draw] path { transition: none !important; }
+  .svt-list li.is-hot .wv-c { animation: none; }
+  .svt-list li.is-hot .svt-list__t { translate: none; }
+}
 
 /* the tagline's lines (one mask per rendered line, built in JS) */
 .svt-tagline .rv-line { display: block; white-space: nowrap; }
