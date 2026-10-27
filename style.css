@@ -4226,59 +4226,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     transform-origin: left center;
 }
 .process__step { position: relative; }
-.process__node {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #0f1629;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: rgba(255, 255, 255, 0.6);
-    transition: background 0.5s ease, border-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.process__step.is-active .process__node {
-    background: var(--card-primary);
-    border-color: transparent;
-    color: #fff;
-    transform: scale(1.06);
-    box-shadow: 0 0 0 6px rgba(108, 99, 255, 0.16), 0 10px 30px rgba(192, 38, 163, 0.4);
-}
-.process__body {
-    margin-top: 28px;
-    opacity: 0.3;
-    transform: translateY(14px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.process__step.is-active .process__body { opacity: 1; transform: none; }
-/* the step icon lives inside the number circle as a big, cropped, decorative background (behind the number, clipped by the circle) */
-.process__node { overflow: hidden; }
-.process__node .process__bg {
-    position: absolute;
-    left: -30%; top: -30%;
-    width: 160%; height: 160%;
-    z-index: -1;
-    color: #fff;
-    opacity: 0;
-    transform: translate(34%, 40%) rotate(-12deg);
-    pointer-events: none;
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.process__step.is-active .process__node { text-shadow: 0 1px 5px rgba(24, 12, 70, 0.5); }   /* keeps the number crisp over the icon strokes */
-.process__step.is-active .process__bg { opacity: 0.16; transform: translate(18%, 22%) rotate(-12deg); }
-.process__step:nth-of-type(2) .process__bg { transition-delay: 0.08s; }
-.process__step:nth-of-type(3) .process__bg { transition-delay: 0.16s; }
-.process__step:nth-of-type(4) .process__bg { transition-delay: 0.24s; }
-html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: translate(18%, 22%) rotate(0deg) scale(1.05); transition: opacity 0.4s ease, transform 0.4s ease; transition-delay: 0s; }
-@media (prefers-reduced-motion: reduce) {
-    .process__node .process__bg, html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: translate(18%, 22%) rotate(-12deg); transition: none; }
-}
+/* (the step circle, its ring, number, check and the body states: see the Együttműködés block at the end of the file) */
 .process__title {
     margin: 0 0 12px;
     font-family: 'Syne', sans-serif;
@@ -4345,14 +4293,11 @@ html.has-cursor .process__step:hover .process__bg { opacity: 0.16; transform: tr
     .process__body { margin-top: 4px; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .process__node, .process__body { transition: none; }
-}
 
 /* Steps – pinned (sticky) mode: section stays on screen while the line draws step by step */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     /* section = the stage (its content + --section-top above + --section-bottom below, never more than one viewport) + 220svh of pin run; --stage-h is set by script.js */
-    #steps { height: calc(100vh + 220vh); height: calc(100svh + 220svh); height: calc(var(--stage-h, 100svh) + 220svh); padding: 0; }
+    #steps { height: calc(100vh + 220vh); height: calc(100svh + 240svh); height: calc(var(--stage-h, 100svh) + 240svh); padding: 0; }
     .steps-pin {
         position: sticky;
         top: 0;
@@ -6091,8 +6036,7 @@ footer { padding-bottom: var(--cb-h, 0px); }
 /* ===== Értékek & Garanciák: eyebrow + heading identical to Rólam / Készségek ===== */
 #why .section-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
 
-/* ===== Együttműködés: eyebrow + heading identical to Rólam / Készségek / Értékek ===== */
-#steps .section-eyebrow { margin-bottom: var(--eyebrow-head-gap); }
+/* ===== Együttműködés: the head is one large line (.steps-title, see the block at the end of the file) ===== */
 /* pinned timeline: with the larger heading, the gaps give way first so the scaled block (--fit) stays as close to 1 as possible */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
 }
@@ -6193,7 +6137,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     #why .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
 }
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-    #steps .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
+    #steps .steps-title { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
 }
 
 /* ===== ÉRTÉKEK & GARANCIÁK — bottom gap, then the pinned stage with scroll-driven cards (js/why-pin.js) =====
@@ -7198,3 +7142,93 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
 /* single view: the last action's visual bottom = the top padding (the icon tile's top / the title's letters): no extra bottom padding, the scroll area's bottom inset is 7px shorter for the tile layout */
 .service-modal[data-view="single"] > .service-modal__scroll { padding-bottom: 0; }
 .service-modal[data-view="single"]:not(.extra-modal) > .service-modal__scroll { margin-bottom: calc(var(--sm-r) - 7px); }
+
+/* ===== EGYÜTTMŰKÖDÉS: "charge running along the line" (script.js: the steps IIFE) =====
+   Head: one large line (the section heading's typography) - "Együttműködés" decodes (random letters settle left -> right), "1/4" is an odometer
+   reel in the brand gradient. Steps: the circles are plain outlines; a gradient ring draws when a step is reached, the number rolls to the gradient, the ring
+   turns slowly while the step is current; a passed step turns its number into a check and sends one ripple. States: .is-active (reached), .is-current
+   (the latest), .is-done (passed). Transform / opacity / stroke only. */
+.steps-title {
+    margin: 0;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: var(--section-heading-size);
+    line-height: var(--section-heading-lh);
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-align: left;
+    color: #fff;
+    overflow-wrap: normal;
+}
+.steps-title .st-word { display: inline-block; white-space: nowrap; }
+.st-ch { display: inline-block; text-align: center; }
+.st-count { display: inline-block; }
+.st-reel > span, .st-count > span:last-child { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }      /* the gradient sits on each moving piece: a clip-to-text ancestor would paint the untransformed text */
+.st-reel { display: inline-block; vertical-align: top; height: calc(var(--section-heading-lh) * 1em); overflow: clip; }
+.st-reel > span { display: block; text-align: right; transform: translateY(calc(var(--cur, 0) * -100%)); transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.pn-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.process__node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: rgb(255 255 255 / 0.45);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.process__node::before { content: ""; position: absolute; z-index: -1; inset: -10px; border-radius: 50%; background: radial-gradient(circle, rgb(200 80 192 / 0.38), rgb(108 99 255 / 0.18) 45%, transparent 70%); opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+.process__node::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1.5px solid rgb(200 80 192 / 0.7); opacity: 0; pointer-events: none; }
+.pn-ring { position: absolute; inset: -1px; width: 56px; height: 56px; overflow: visible; transform: rotate(-90deg); pointer-events: none; }
+.pn-ring circle { fill: none; stroke: url(#pnGrad); stroke-width: 2; opacity: 0; }
+.pn-ring[data-draw] circle { opacity: 1; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.7s ease; }
+.pn-num { position: relative; display: block; line-height: 1.4; clip-path: inset(0 -3px); }
+.pn-n { display: block; transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.pn-n2 { position: absolute; inset: 0; translate: 0 115%; color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
+.pn-check { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; stroke: url(#pnGrad); stroke-width: 2.5; pointer-events: none; }
+.pn-check path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.4s ease; }
+.pn-check:not([data-draw]) path { stroke-dasharray: none; stroke-dashoffset: 0; opacity: 0; }
+
+.process__step.is-active .process__node { transform: scale(1.12); }
+.process__step.is-active .pn-ring[data-draw] circle { stroke-dashoffset: 0; }
+.process__step.is-active .pn-n:not(.pn-n2) { translate: 0 -115%; }
+.process__step.is-active .pn-n2 { translate: 0 0; }
+.process__step.is-current .process__node::before { opacity: 1; }
+.process__step.is-current .pn-ring { animation: pnSpin 12s linear infinite; }
+.process__step.is-done .process__node { transform: scale(1.05); }
+.process__step.is-done .process__node::before { opacity: 0.3; }
+.process__step.is-done .pn-n2 { translate: 0 -115%; }
+.process__step.is-done .pn-check[data-draw] path { stroke-dashoffset: 0; transition-delay: 0.15s; }
+.process__step.is-done .process__node::after { animation: pnRipple 0.7s ease-out both; }
+@keyframes pnSpin { from { transform: rotate(-90deg); } to { transform: rotate(270deg); } }
+@keyframes pnRipple { from { transform: scale(1); opacity: 0.7; } to { transform: scale(2.3); opacity: 0; } }
+/* the body: dim title until the step is reached, the description rises line by line from masks (the .rv-* rules, toggled with .is-active) */
+.process__body { opacity: 1; transform: none; transition: none; }
+.process__title { color: rgb(255 255 255 / 0.4); -webkit-text-fill-color: rgb(255 255 255 / 0.4); transition: color 0.5s ease, -webkit-text-fill-color 0.5s ease; }
+.process__step.is-active .process__title { color: #fff; -webkit-text-fill-color: #fff; }
+@media (min-width: 768px) { .process__text { max-width: 30ch; text-wrap: balance; } }
+.process__text .rv-line { display: block; white-space: nowrap; }
+.process__text .rv-i { display: block; transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd, 0s), opacity 0.45s ease var(--rd, 0s); }
+.process__text.rv-prep .rv-i { transform: translateY(100%); opacity: 0; --rd: 0s; }
+.process__text.rv-prep.rv-in .rv-i { transform: none; opacity: 1; --rd: calc(0.15s + var(--ri, 0) * 0.07s); }
+.process__text.rv-moving .rv-line { overflow: clip; }
+/* the charge: a glowing head at the tip of the filling line (JS moves it; desktop and phone layouts, not the 2 x 2 tablet one) */
+.process__head { position: absolute; left: 0; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: radial-gradient(circle, #fff 0, rgb(200 80 192 / 0.9) 35%, transparent 70%); opacity: 0; pointer-events: none; will-change: transform; }
+@media (min-width: 768px) and (max-width: 1199px) { .process__head { display: none; } }
+@media (max-width: 767px) { .process__head { left: 50%; top: 0; } }
+@media (prefers-reduced-motion: reduce) {
+    .process__node, .process__node::before, .pn-ring[data-draw] circle, .pn-n, .pn-check path, .st-reel > span, .process__title, .process__text .rv-i { transition: none !important; }
+    .process__step.is-current .pn-ring { animation: none; }
+    .process__step.is-done .process__node::after { animation: none; }
+    .process__head { display: none; }
+}
+@media (max-width: 767px) { .steps-title { font-size: min(var(--section-heading-size), calc((100vw - 40px) / 16)); } }      /* "EGYÜTTMŰKÖDÉS" (15.7em) must fit between the phone gutters */
+#steps-cta .hbtn { justify-content: center; }

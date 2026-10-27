@@ -888,7 +888,9 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     });
 })();
 
-// Steps - process line drawn by scroll progress (pinned step-by-step on large screens)
+// Steps (Együttműködés) - "charge running along the line": the section pins on large screens (240svh of run), the scroll progress reaches the steps 1 -> 4 one after the other
+// (nothing is lit before the pin begins), the line fills with a glowing head, the counter in the head rolls 1/4 -> 4/4, "Együttműködés" decodes when the section enters.
+// Phones (< 768px) / short windows: no pin, a step is reached when it gets to ~60% of the viewport. Reduced motion: everything shown completed (4/4).
 (function () {
     var section = document.getElementById('steps');
     var process = document.querySelector('.process');
@@ -897,17 +899,96 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var pinQuery = window.matchMedia('(min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)');
     var ticking = false;
+    var title = section.querySelector('.steps-title');
+    var reel = section.querySelector('.st-reel');
+    var line = process.querySelector('.process__line');
+    var tip = process.querySelector('.process__head');
+    var texts = steps.map(function (s) { return s.querySelector('.process__text'); });
     /* the closing row (.cta-row, shared with Szolgáltatások) plays its sequential entrance only in the pinned layout */
     var ctaRow = section.querySelector('.cta-row');
     function armCta() { if (ctaRow) ctaRow.classList.toggle('cta-row--armed', pinQuery.matches); }
     armCta(); window.addEventListener('resize', armCta);
+    /* the KAPCSOLAT pill is exactly as large as the Szolgáltatások CTA pill (their labels differ in length): it takes that pill's width */
+    function matchPill() {
+        var mine = ctaRow && ctaRow.querySelector('.hbtn'), ref = document.querySelector('#services-cta .hbtn');
+        if (!mine || !ref) return;
+        mine.style.minWidth = '';
+        var w = ref.getBoundingClientRect().width;
+        if (w > mine.getBoundingClientRect().width) mine.style.minWidth = w.toFixed(2) + 'px';
+    }
+    window.addEventListener('resize', matchPill); window.addEventListener('load', matchPill);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(matchPill);
+    matchPill();
+
+    /* the Lucide check and the ring circles are drawn with their stroke: pathLength 1 */
+    steps.forEach(function (step) {
+        var c = step.querySelector('.pn-ring circle'), ring = step.querySelector('.pn-ring'), ck = step.querySelector('.pn-check');
+        if (c && ring) { c.setAttribute('pathLength', '1'); ring.setAttribute('data-draw', ''); }
+        if (ck) { Array.prototype.forEach.call(ck.querySelectorAll('path, polyline'), function (p) { p.setAttribute('pathLength', '1'); }); ck.setAttribute('data-draw', ''); }
+    });
+
+    /* ---- the descriptions: one mask per rendered line, risen when the step is reached ---- */
+    function splitText(p) {
+        var full = p.getAttribute('data-rv-text');
+        if (full === null) { full = p.textContent.replace(/\s+/g, ' ').trim(); p.setAttribute('data-rv-text', full); }
+        p.textContent = '';
+        var words = full.split(' '), spans = words.map(function (w, i) {
+            var s = document.createElement('span'); s.textContent = w; p.appendChild(s);
+            if (i < words.length - 1) p.appendChild(document.createTextNode(' '));
+            return s;
+        });
+        var lines = [], top = null;
+        spans.forEach(function (s, i) {
+            var t = Math.round(s.getBoundingClientRect().top);
+            if (top === null || Math.abs(t - top) > 3) { lines.push([]); top = t; }
+            lines[lines.length - 1].push(words[i]);
+        });
+        p.textContent = '';
+        lines.forEach(function (ws, k) {
+            var l = document.createElement('span'), i = document.createElement('span');
+            l.className = 'rv-line'; i.className = 'rv-i'; i.textContent = ws.join(' ');
+            l.style.setProperty('--ri', k); l.appendChild(i); p.appendChild(l);
+        });
+    }
+    var splitDone = false;
+    function splitAll() {
+        if (reduce) return;
+        texts.forEach(function (p, i) {
+            if (!p) return;
+            splitText(p); p.classList.add('rv-prep');
+            p.classList.toggle('rv-in', steps[i].classList.contains('is-active'));         /* in sync with the steps already reached */
+        });
+        splitDone = true;
+    }
+
+    /* ---- the state: cur = the latest reached step (-1: none), fin = the last step is passed too ---- */
+    var curState = -2, finState = null, movingT = [];
+    function setState(cur, fin) {
+        if (cur === curState && fin === finState) return;
+        curState = cur; finState = fin;
+        steps.forEach(function (step, i) {
+            var reached = i <= cur, done = i < cur || (i === cur && fin);
+            step.classList.toggle('is-active', reached);
+            step.classList.toggle('is-current', i === cur && !fin);
+            step.classList.toggle('is-done', done);
+            var p = texts[i];
+            if (p && p.classList.contains('rv-prep') && p.classList.contains('rv-in') !== reached) {
+                p.classList.add('rv-moving'); p.classList.toggle('rv-in', reached);
+                clearTimeout(movingT[i]); movingT[i] = setTimeout(function () { p.classList.remove('rv-moving'); }, 1600);
+            }
+        });
+        if (reel) reel.style.setProperty('--cur', String(Math.max(0, cur)));
+    }
 
     function setProgress(p) {
         process.style.setProperty('--progress', p.toFixed(3));
-        steps.forEach(function (step, i) {
-            var threshold = steps.length > 1 ? i / (steps.length - 1) : 0;
-            step.classList.toggle('is-active', i === 0 ? p > 0.001 || pinQuery.matches : p >= threshold - 0.02);
-        });
+        /* the glowing head at the tip of the filling line (desktop: along x, phone: along y) */
+        if (tip && line) {
+            var vertical = window.innerWidth < 768, len = vertical ? line.offsetHeight : line.offsetWidth;
+            var x = vertical ? 0 : p * len, y = vertical ? p * len : 0;
+            tip.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+            tip.style.opacity = p > 0.003 && p < 0.997 ? '1' : '0';
+        }
     }
 
     /* Fill 0 -> 1 across the nodes: a short hold on every node (the hold lengths
@@ -929,6 +1010,13 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         }
         return 1;
     }
+    /* the pinned timeline: step 1 is reached just after the pin begins (nothing before), the others when the line gets to them, the last one is passed at the end */
+    var T0 = 0.07, TDONE = 0.97;
+    function reachedAt(p, t) {
+        var n = steps.length, cur = t >= T0 ? 0 : -1;
+        for (var i = 1; i < n; i++) if (p >= i / (n - 1) - 0.02) cur = i;
+        return cur;
+    }
 
     function fit() {
         var inner = section.querySelector('.steps-inner');
@@ -939,8 +1027,8 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         var avail = window.innerHeight - parseFloat(pcs.paddingTop) - parseFloat(pcs.paddingBottom);
         section.style.setProperty('--fit', '1');
         var natural = inner.offsetHeight;
-        /* the section heading is laid out at size / fit, so it always renders at the common size: only the rest scales */
-        var hd = inner.querySelector('.section-heading');
+        /* the head line is laid out at size / fit, so it always renders at the common size: only the rest scales */
+        var hd = inner.querySelector('.steps-title');
         var fixedH = hd ? hd.offsetHeight : 0;
         var s = natural > fixedH ? Math.max(0.55, Math.min(1, (avail - fixedH) / (natural - fixedH))) : 1;
         section.style.setProperty('--fit', s.toFixed(3));
@@ -950,23 +1038,29 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     function update() {
         ticking = false;
-        if (reduce) { setProgress(1); section.classList.add('steps-done'); if (ctaRow) ctaRow.classList.add('is-in'); return; }
+        if (reduce) { setProgress(1); setState(steps.length - 1, true); section.classList.add('steps-done'); if (ctaRow) ctaRow.classList.add('is-in'); return; }
         var r = section.getBoundingClientRect();
         var vh = window.innerHeight;
         if (pinQuery.matches) {
             var pinEl = section.querySelector('.steps-pin');
             var total = Math.max(1, r.height - (pinEl ? pinEl.offsetHeight : vh));
             var t = Math.max(0, Math.min(1, -r.top / total));
-            setProgress(staged(t));
-            section.classList.toggle('steps-done', t >= 0.94);
-            if (ctaRow) ctaRow.classList.toggle('is-in', t >= 0.94);
+            var p = staged(t);
+            setProgress(p);
+            setState(reachedAt(p, t), t >= TDONE);
+            section.classList.toggle('steps-done', t >= TDONE);
+            if (ctaRow) ctaRow.classList.toggle('is-in', t >= TDONE);
         } else {
-            var pr = process.getBoundingClientRect();
-            var start = vh * 0.85;
-            var span = Math.max(pr.height, 120) + vh * 0.3;
-            setProgress(Math.max(0, Math.min(1, (start - pr.top) / span)));
+            /* no pin: a step is reached when it gets to ~60% of the viewport; the line follows the nodes */
+            var mark = vh * 0.6, cur = -1, nodes = steps.map(function (s) { return s.querySelector('.process__node').getBoundingClientRect(); });
+            nodes.forEach(function (nb, i) { if (nb.top + nb.height / 2 < mark) cur = i; });
+            var first = nodes[0].top + nodes[0].height / 2, last = nodes[nodes.length - 1].top + nodes[nodes.length - 1].height / 2;
+            setProgress(Math.max(0, Math.min(1, (mark - first) / Math.max(1, last - first))));
+            var bodyB = steps[steps.length - 1].getBoundingClientRect().bottom;
+            var fin = cur === steps.length - 1 && bodyB < vh * 0.85;
+            setState(cur, fin);
             section.classList.add('steps-done');
-            if (ctaRow) ctaRow.classList.add('is-in');
+            if (ctaRow) ctaRow.classList.toggle('is-in', fin || (cur === steps.length - 1));
         }
     }
 
@@ -975,11 +1069,63 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
             ticking = true;
             requestAnimationFrame(update);
         }
+        scheduleSnap();
+    }
+
+    /* ---- gentle snap (pinned only): after the scroll stops, settle on the nearest step (like Értékek) ---- */
+    var snapT = 0, TARGETS = [0.09, 0.3467, 0.6533, 0.985];
+    function scheduleSnap() { clearTimeout(snapT); snapT = setTimeout(snap, 180); }
+    function snap() {
+        if (reduce || !pinQuery.matches || !window.VB || !VB.lenis || VB.lenis.isScrolling) return;
+        var r = section.getBoundingClientRect(), pinEl = section.querySelector('.steps-pin');
+        var total = Math.max(1, r.height - (pinEl ? pinEl.offsetHeight : window.innerHeight));
+        var t = -r.top / total;
+        if (t < 0.03 || t > 0.995) return;
+        var best = TARGETS[0];
+        TARGETS.forEach(function (x) { if (Math.abs(x - t) < Math.abs(best - t)) best = x; });
+        var dy = (best - t) * total;
+        if (Math.abs(dy) < 6) return;
+        VB.lenis.scrollTo(window.scrollY + dy, { duration: 0.6 });
+    }
+
+    /* ---- "Együttműködés" decodes: random capitals settle into the real letters, left -> right (~0.9s). Each letter keeps its real width while it is scrambled: no layout shift ---- */
+    var decodeWord = title && title.querySelector('.st-decode'), decodeChars = null, decodeRaf = 0, played = false;
+    function prepDecode() {
+        if (!decodeWord || decodeChars) return;
+        var text = decodeWord.textContent; decodeWord.textContent = '';
+        decodeChars = text.split('').map(function (ch) {
+            var s = document.createElement('span'); s.className = 'st-ch'; s.textContent = ch; s.setAttribute('data-c', ch); decodeWord.appendChild(s); return s;
+        });
+    }
+    function decode() {
+        if (reduce || !decodeWord) return;
+        prepDecode();
+        cancelAnimationFrame(decodeRaf);
+        var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', n = decodeChars.length, T = 900, t0 = performance.now(), widths = decodeChars.map(function (s) { return s.getBoundingClientRect().width; });
+        decodeChars.forEach(function (s, i) { s.style.width = widths[i] + 'px'; });
+        function tickD(now) {
+            var e = now - t0, settled = 0;
+            decodeChars.forEach(function (s, i) {
+                var at = 150 + (T - 150) * (i / Math.max(1, n - 1));
+                if (e >= at) { s.textContent = s.getAttribute('data-c'); settled++; }
+                else s.textContent = POOL.charAt(Math.floor(Math.random() * POOL.length));
+            });
+            if (settled < n) decodeRaf = requestAnimationFrame(tickD);
+            else decodeChars.forEach(function (s) { s.style.width = ''; });
+        }
+        decodeRaf = requestAnimationFrame(tickD);
+    }
+    if (title && 'IntersectionObserver' in window && !reduce) {
+        new IntersectionObserver(function (es) {
+            var e = es[es.length - 1];
+            if (e.isIntersecting && !played) { played = true; decode(); }
+            else if (!e.isIntersecting) played = false;
+        }, { threshold: 0.6 }).observe(title);
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', function () { fit(); onScroll(); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(); update(); });
+    window.addEventListener('resize', function () { fit(); if (splitDone) splitAll(); onScroll(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { splitAll(); fit(); update(); });
     fit();
     update();
 })();

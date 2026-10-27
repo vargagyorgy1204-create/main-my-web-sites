@@ -90,7 +90,7 @@ const PROBES = [
   ['skills', '#skills .skills-list > li:nth-child(5)', 'animated'],
   ['skills', '#skills .skills-head h2', 'animated'],
   ['why', '#why .why-panel:nth-child(3)', 'animated'],
-  ['steps', '#steps .steps-head h2', 'animated'],
+  ['steps', '#steps .steps-title', 'visible'],
   ['services', '#services .svt-sub', 'visible'],
   ['portfolio', '#portfolio .section-heading', 'visible'],
   ['contact', '.contact-form-panel .btn-submit-message', 'animated'],
@@ -377,7 +377,7 @@ async function layoutChecks(vp) {
     const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */); await p2.close(); return r;
   })();
   const all = eb.concat(eb2);
-  rec(tag, 'eight section eyebrows on index + one on myapproach exist', eb.length === 8 && eb2.length === 1, `${eb.length}+${eb2.length}`);
+  rec(tag, 'seven section eyebrows on index (Együttműködés has none: its head is the large .steps-title) + one on myapproach exist', eb.length === 7 && eb2.length === 1, `${eb.length}+${eb2.length}`);
   rec(tag, 'all eyebrows share font / size / weight / spacing / uppercase', new Set(all).size === 1 && /uppercase/.test(all[0]), [...new Set(all)].join(' || '));
   const ebTxt = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => e.textContent.trim()));
   rec(tag, 'eyebrow labels are written in normal case', ebTxt.every(t => t !== t.toUpperCase() || t.length < 2), ebTxt.join(' / '));
@@ -448,7 +448,7 @@ async function titleSystem(vp) {
     ['about', 'index', '#about', '.abt-eyebrow', null, '.about-photo-card', true],
     ['skills', 'index', '#skills', '#skills .section-eyebrow', '#skills .section-heading', '#skills .skills-list', true, '#skills .skills-list'],
     ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .why-panels', true, '#why .why-panels'],
-    ['steps', 'index', '#steps', '#steps .section-eyebrow', '#steps .section-heading', '#steps .process', true, '#steps .process'],
+    ['steps', 'index', '#steps', '#steps .steps-title', null, '#steps .process', true, '#steps .process'],   // Együttműködés: no eyebrow / section heading - its head is one large line (.steps-title), documented exception
     ['services', 'index', '#services', '.svt-eyebrow', '#services .section-heading', '.svt-row', true, '.svt-row'],
     ['portfolio', 'index', '#portfolio', '.pf__eyebrow', '#portfolio .section-heading', '.pf__sub', true, null],
     ['contact', 'index', '#contact', '.ctc-eyebrow', '#contact .section-heading', '.contact-grid', true, '.contact-grid'],
@@ -491,7 +491,7 @@ async function titleSystem(vp) {
   // tight anchor (.section--tight): --section-top = hdr + clamp(8px, 1.6svh, 20px); gutter 96px (>= 1024px) / 20px, content spans gutter -> gutter
   const expTopT = r0.hdr + Math.min(20, Math.max(8, 0.016 * vp.h));
   const expLeftT = vp.w >= 1024 ? 96 : 20;
-  rec(tag, 'eyebrow typography identical in all sections', new Set(rows.map(r => r.typo)).size === 1, [...new Set(rows.map(r => r.typo))].join(' || '));
+  rec(tag, 'eyebrow typography identical in all sections (Együttműködés has none: its head is the large .steps-title)', new Set(rows.filter(r => r.name !== 'steps').map(r => r.typo)).size === 1, [...new Set(rows.filter(r => r.name !== 'steps').map(r => r.typo))].join(' || '));
   // Rólam is the one exception to the anchor system: its eyebrow lives inside the white text card (typography is still checked above)
   const anchored = rows.filter(r => r.name !== 'about');
   const wide = anchored.filter(r => !r.tight), tight = anchored.filter(r => r.tight);
@@ -509,10 +509,10 @@ async function titleSystem(vp) {
   const hr = rows.filter(r => r.headTypo && !['hero'].includes(r.name));
   rec(tag, 'section headings: same font / weight / uppercase / letter-spacing / line-height', new Set(hr.map(r => r.headTypo.sig)).size === 1, [...new Set(hr.map(r => r.headTypo.sig))].join(' || '));
   const fss = hr.map(r => r.headTypo.fs);
-  rec(tag, 'section headings: identical rendered size in all 6', Math.max(...fss) - Math.min(...fss) < 0.6, hr.map(r => `${r.name}:${r.headTypo.fs.toFixed(1)}`).join(' '));
+  rec(tag, 'section headings: identical rendered size in all 5', Math.max(...fss) - Math.min(...fss) < 0.6, hr.map(r => `${r.name}:${r.headTypo.fs.toFixed(1)}`).join(' '));
   const lhs = hr.map(r => r.headTypo.lineH);
-  rec(tag, 'section headings: identical RENDERED line height in all 6 (transforms cannot hide a smaller heading)', Math.max(...lhs) - Math.min(...lhs) < 0.6, hr.map(r => `${r.name}:${r.headTypo.lineH.toFixed(1)}`).join(' '));
-  rec(tag, 'section headings: split in letters, accent dot, aria-label', hr.length === 6 && hr.every(r => r.headTypo.split && r.headTypo.dots === 1 && r.headTypo.aria), hr.map(r => `${r.name}:${r.headTypo.split}/${r.headTypo.dots}/${r.headTypo.aria}`).join(' '));
+  rec(tag, 'section headings: identical RENDERED line height in all 5 (transforms cannot hide a smaller heading)', Math.max(...lhs) - Math.min(...lhs) < 0.6, hr.map(r => `${r.name}:${r.headTypo.lineH.toFixed(1)}`).join(' '));
+  rec(tag, 'section headings: split in letters, accent dot, aria-label', hr.length === 5 && hr.every(r => r.headTypo.split && r.headTypo.dots === 1 && r.headTypo.aria), hr.map(r => `${r.name}:${r.headTypo.split}/${r.headTypo.dots}/${r.headTypo.aria}`).join(' '));
   rec(tag, 'section headings: no word sticks out of the viewport', hr.every(r => r.headTypo.right <= r.clientW + 0.5), hr.map(r => `${r.name}:${Math.round(r.headTypo.right)}`).join(' '));
   const badHead = rows.filter(r => r.headLeft != null && Math.abs(r.headLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.headLeft)}`);
   rec(tag, 'heading left = eyebrow left', badHead.length === 0, badHead.join(' '));
@@ -528,7 +528,7 @@ async function headingFx(vp, mouse) {
   const ctx = await newCtx(vp, mouse ? {} : {});
   const p = await open(ctx, 'index', tag, errs);
   await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
-  for (const sec of ['skills', 'why', 'steps', 'portfolio', 'contact']) {
+  for (const sec of ['skills', 'why', 'portfolio', 'contact']) {
     await p.evaluate(s => { const e = document.querySelector('#' + s + ' .section-heading'); const y = e.getBoundingClientRect().top + scrollY - innerHeight * 0.35; if (window.VB && VB.lenis) VB.lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y); }, sec);
     // letters exist and their reveal (Kapcsolat: letters rise) is over
     await until(p, s => { const cs = [...document.querySelectorAll('#' + s + ' .section-heading .sh-char')]; return cs.length > 0 && cs.every(c => { const t = getComputedStyle(c).transform; return t === 'none' || /^matrix\(1, 0, 0, 1, 0(\.\d+)?, 0(\.\d+)?\)$/.test(t); }); }, sec, 4000);
@@ -658,7 +658,7 @@ async function whyPin(vp) {
   // the next section starts normally after the pin
   await p.evaluate(() => { VB.lenis.scrollTo(document.getElementById('steps').getBoundingClientRect().top + scrollY, { immediate: true }); });
   await frames(p, 10);
-  const sx = await p.evaluate(() => { const s = document.getElementById('steps'), pin = s.querySelector('.steps-pin') || s, e = s.querySelector('.section-eyebrow').getBoundingClientRect(); return { top: e.top - (getComputedStyle(pin).position === 'sticky' ? 0 : s.getBoundingClientRect().top) }; });
+  const sx = await p.evaluate(() => { const s = document.getElementById('steps'), pin = s.querySelector('.steps-pin') || s, e = s.querySelector('.steps-title').getBoundingClientRect(); return { top: e.top - (getComputedStyle(pin).position === 'sticky' ? 0 : s.getBoundingClientRect().top) }; });
   const expTop = (vp.w < 768 ? 76 : 92) + Math.min(20, Math.max(8, 0.016 * vp.h));            // tight anchor
   rec(tag, 'next section (Együttműködés) starts at its normal anchor after the pin', Math.abs(sx.top - expTop) <= 2, `eyebrow ${sx.top.toFixed(1)} want ${expTop.toFixed(1)}`);
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
