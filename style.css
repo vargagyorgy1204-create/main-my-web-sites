@@ -7162,5 +7162,17 @@ html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { 
 .svt-row.rv-moving .svt-tagline .rv-line, .svt-row.rv-moving .svt-list__n, .svt-row.rv-moving .svt-list__t { overflow: clip; }
 @media (prefers-reduced-motion: reduce) { .svt-row .rv-i, .svt-row .svt-actions > *, .svt-row .svt-list::before, .svt-row .svt-list li::after, .svt-row .svt-list__ni, .svt-row .svt-list__ti { transition: none; } }
 
-/* a list row of Szolgáltatások opened this dialog: the matching plan card / group glows briefly (the class is added and removed by script.js; the card's own 0.3s transitions make the pulse) */
-.service-modal .pricing-item.is-pulse { border-color: var(--m-accent-2); box-shadow: 0 0 0 1px var(--m-accent-2), 0 0 28px 2px var(--m-glow); }
+/* ===== service dialogs: the single-item view (a list row of Szolgáltatások opens one plan card / one group; data-view="single" on the dialog, .is-item on the item; script.js) ===== */
+.service-modal__scroll { transition: opacity 0.15s ease; }
+.service-modal__scroll.is-fading { opacity: 0; }                  /* the crossfade of the switch to the full view: 0.15s out, the swap, 0.15s in */
+.service-modal h3:focus { outline: none; }
+.modal-all-link { display: none; height: 32px; margin: 0 0 14px; gap: 8px; }
+.modal-all-link .icon { width: 14px; height: 14px; flex: none; }
+.service-modal[data-view="single"] .modal-all-link { display: inline-flex; }
+.service-modal[data-view="single"] h3 { margin-bottom: 8px; }
+.service-modal[data-view="single"] .pricing-item:not(.is-item) { display: none; }            /* not rendered, not just invisible */
+.service-modal[data-view="single"] .modal-group:not(.is-item) { display: none; }
+.service-modal[data-view="single"] .modal-group.is-item .pricing-item { display: flex; }
+.service-modal[data-view="single"] > .service-modal__scroll > .service-pricing-grid { grid-template-columns: minmax(0, min(560px, 100%)); justify-content: center; }
+.service-modal[data-view="single"] .modal-group + .modal-group { margin-top: 0; }
+@media (prefers-reduced-motion: reduce) { .service-modal__scroll { transition: none; } }

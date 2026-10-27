@@ -349,47 +349,76 @@ const closeServiceModals = (returnFocus = true) => {
     if (wasOpen) serviceModalReturn = null;
 };
 
-// opens a service dialog; focusIdx (from a list row of the section) highlights the matching plan card / group and scrolls the dialog to it
+// the dialog's two views: the full one (every plan / group, the block's title) or a single item (one plan card, or one group of the Extra dialog), opened from a list row
+const setServiceView = (modal, idx) => {
+    const dlg = modal.querySelector('.service-modal');
+    const h3 = dlg && dlg.querySelector('h3');
+    if (!dlg || !h3) return;
+    if (!h3.dataset.full) h3.dataset.full = h3.textContent;
+    dlg.querySelectorAll('.is-item').forEach((el) => el.classList.remove('is-item'));
+    const scroller = dlg.querySelector('.service-modal__scroll');
+    if (scroller) scroller.scrollTop = 0;
+    const groups = dlg.querySelectorAll('.modal-group');
+    const item = Number.isInteger(idx) ? (groups.length ? groups[idx] : dlg.querySelectorAll('.pricing-item')[idx]) : null;
+    if (!item) {
+        dlg.removeAttribute('data-view');
+        dlg.removeAttribute('data-item');
+        h3.textContent = h3.dataset.full;
+        return;
+    }
+    item.classList.add('is-item');
+    dlg.setAttribute('data-view', 'single');
+    dlg.setAttribute('data-item', String(idx));
+    h3.textContent = (groups.length ? item.querySelector('.modal-group__title') : item.querySelector('h4')).textContent.trim();
+};
+
+// opens a service dialog; focusIdx (from a list row of the section) opens the single-item view of that plan / group, no focusIdx the full view
 const openServiceModal = (trigger, focusIdx) => {
     const targetModal = document.getElementById(trigger.dataset.modalTarget);
     if (!targetModal) return;
 
     closeServiceModals(false);
     serviceModalReturn = trigger;
+    setServiceView(targetModal, focusIdx);          // reopening always starts from the right view (the full one for "Részletek")
     targetModal.classList.add('is-open');
     targetModal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('service-modal-open');
     if (window.VB && VB.lenis) VB.lenis.stop();
     const dlg = targetModal.querySelector('.service-modal');
-    if (dlg) dlg.focus({ preventScroll: true });
-
-    if (Number.isInteger(focusIdx)) {
-        window.setTimeout(() => {                  // after the dialog's own entrance (cards stagger up to ~0.8s)
-            if (!targetModal.classList.contains('is-open')) return;
-            const groups = targetModal.querySelectorAll('.modal-group');
-            const scroller = targetModal.querySelector('.service-modal__scroll');
-            let marked;
-            if (groups.length) {                   // Extra: the group; its label goes to the top of the scroll area
-                const g = groups[focusIdx];
-                if (!g) return;
-                if (scroller) scroller.scrollTo({ top: scroller.scrollTop + g.getBoundingClientRect().top - scroller.getBoundingClientRect().top, behavior: 'smooth' });
-                marked = Array.from(g.querySelectorAll('.pricing-item'));
-            } else {
-                const card = targetModal.querySelectorAll('.pricing-item')[focusIdx];
-                if (!card) return;
-                if (scroller && scroller.scrollHeight > scroller.clientHeight + 1) card.scrollIntoView({ block: 'center', behavior: 'smooth' });
-                marked = [card];
-            }
-            marked.forEach((el) => el.classList.add('is-pulse'));      // a 1.2s glow pulse: in 0.3s, hold, out 0.3s (the card's own transition)
-            window.setTimeout(() => marked.forEach((el) => el.classList.remove('is-pulse')), 650);
-        }, 820);
+    // the overlay fades in from visibility:hidden: focus() on a hidden element does nothing, so move focus into the dialog a moment later
+    if (dlg) {
+        let tries = 0;
+        const moveFocus = () => {
+            if (!targetModal.classList.contains('is-open') || dlg.contains(document.activeElement) || tries++ > 12) return;
+            dlg.focus({ preventScroll: true });
+            if (document.activeElement !== dlg) window.setTimeout(moveFocus, 40);
+        };
+        window.setTimeout(moveFocus, 40);
     }
 };
+
+// "Az összes csomag megtekintése": the SAME open dialog switches to the full view (short crossfade), focus moves to the title
+document.querySelectorAll('.modal-all-link').forEach((link) => {
+    link.addEventListener('click', () => {
+        const modal = link.closest('.service-modal-overlay');
+        const scroller = modal && modal.querySelector('.service-modal__scroll');
+        if (!modal || !scroller) return;
+        const swap = () => {
+            setServiceView(modal);
+            scroller.classList.remove('is-fading');
+            const h3 = modal.querySelector('.service-modal h3');
+            if (h3) h3.focus({ preventScroll: true });
+        };
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { swap(); return; }
+        scroller.classList.add('is-fading');
+        window.setTimeout(swap, 150);
+    });
+});
 
 serviceModalTriggers.forEach((trigger) => {
     trigger.addEventListener('click', () => openServiceModal(trigger));
 });
-// the rows of the Szolgáltatások lists are real buttons: they open the block's dialog on the matching plan / group
+// the rows of the Szolgáltatások lists are real buttons: they open the block's dialog in the single-item view of the matching plan / group
 document.querySelectorAll('.svt-list__row').forEach((row) => {
     row.addEventListener('click', () => openServiceModal(row, parseInt(row.dataset.focus, 10)));
 });
