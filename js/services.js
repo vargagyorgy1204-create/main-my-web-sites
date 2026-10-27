@@ -85,6 +85,75 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupHot); else setupHot();
   }
 
+
+  /* ---- the section head: the shared .section-heading with its staggered letter reveal + dropping dot (the .fx-* rules in style.css, shared with Kapcsolat) and the lead's
+     line-by-line reveal (.rv-*). They start together when the heading enters the viewport and play backwards when it is left downwards. No GSAP needed. */
+  function setupIntro() {
+    var reduceMo = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var word = section.querySelector('.svt-intro .section-heading'), sub = section.querySelector('.svt-sub');
+    if (reduceMo || !('IntersectionObserver' in window)) return;
+    var subOn = function () {};
+    if (sub) {
+      var subTimer = 0;
+      var splitSub = function () {
+        var full = sub.getAttribute('data-rv-text');
+        if (full === null) { full = sub.textContent.replace(/\s+/g, ' ').trim(); sub.setAttribute('data-rv-text', full); }
+        sub.textContent = '';
+        var words = full.split(' '), spans = words.map(function (w, i) {
+          var s = document.createElement('span'); s.textContent = w; sub.appendChild(s);
+          if (i < words.length - 1) sub.appendChild(document.createTextNode(' '));
+          return s;
+        });
+        var lines = [], top = null;
+        spans.forEach(function (s, i) {
+          var t = Math.round(s.getBoundingClientRect().top);
+          if (top === null || Math.abs(t - top) > 3) { lines.push([]); top = t; }
+          lines[lines.length - 1].push(words[i]);
+        });
+        sub.textContent = '';
+        lines.forEach(function (ws, k) {
+          var l = document.createElement('span'), i = document.createElement('span');
+          l.className = 'rv-line'; i.className = 'rv-i'; i.textContent = ws.join(' ');
+          l.style.setProperty('--ri', k); l.appendChild(i); sub.appendChild(l);
+        });
+        sub.style.setProperty('--rn', lines.length);
+      };
+      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { splitSub(); sub.classList.add('rv-prep'); });
+      subOn = function (on) {
+        if (!sub.classList.contains('rv-prep')) return;
+        sub.classList.add('rv-moving');
+        sub.classList.toggle('rv-in', on);
+        clearTimeout(subTimer);
+        subTimer = setTimeout(function () { sub.classList.remove('rv-moving'); }, 2200);
+      };
+      var subRt;
+      window.addEventListener('resize', function () { clearTimeout(subRt); subRt = setTimeout(function () { if (sub.classList.contains('rv-prep')) splitSub(); }, 150); });
+    }
+    if (!word) return;
+    var go = function () {
+      var chars = Array.prototype.slice.call(word.querySelectorAll('.sh-char'));
+      if (!chars.length) return;
+      chars.forEach(function (ch, i) { ch.style.setProperty('--ci', i); });
+      word.style.setProperty('--cn', chars.length);
+      word.classList.add('fx-prep');
+      var timer = 0, dot = word.querySelector('.sh-dot');
+      if (dot) dot.addEventListener('animationend', function (ev) { if (ev.animationName === 'ctcDotDrop' && word.classList.contains('fx-in')) word.classList.add('fx-done'); });
+      new IntersectionObserver(function (es) {
+        var e = es[es.length - 1], on = e.isIntersecting;
+        if (!on && !(e.boundingClientRect.top > 0)) return;
+        if (on === word.classList.contains('fx-in')) return;
+        if (!on) word.classList.remove('fx-done');
+        word.classList.add('fx-moving');                                   /* the masks clip only while the letters travel */
+        word.classList.toggle('fx-in', on);
+        subOn(on);
+        clearTimeout(timer);
+        timer = setTimeout(function () { word.classList.remove('fx-moving'); }, 2000);
+      }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }).observe(word);
+    };
+    if (word.classList.contains('is-split')) go(); else word.addEventListener('vb:heading-split', go, { once: true });
+  }
+  if (section) setupIntro();
+
   if (!section || !VB.gsap || !VB.hasST || VB.reduceMotion) return;
 
   var gsap = VB.gsap;
@@ -113,7 +182,7 @@
     });
   }
 
-  entrance(section.querySelector('.svt-intro'), q(section, '.svt-intro > *'), 'top 85%');
+  entrance(section.querySelector('.svt-intro'), q(section, '.svt-intro > .svt-eyebrow'), 'top 85%');           /* the heading and the lead have their own reveal (setupIntro) */
 
   rows.forEach(function (row) {
     /* Outline word -> gradient fill, left to right, scrubbed. The negative
