@@ -86,92 +86,73 @@
   }
 
 
-  /* ---- the head sentence: the lines rise from masks, then the keywords fill (left -> right, 0.15s apart); the keywords scroll to their block (Lenis, header offset);
-     a vertical mini-index in the corridor's left margin (>= 1024px) shows which block is in view. No GSAP needed. */
-  function scrollToBlock(n) {
-    var word = section.querySelector('.svt-row[data-row="' + n + '"] .svt-word');
-    if (!word) return;
-    var hdr = window.innerWidth < 768 ? 76 : 92;                  /* the giant word lands 24px under the header */
-    if (window.VB && VB.lenis) VB.lenis.scrollTo(word, { offset: -(hdr + 24) });
-    else window.scrollTo({ top: word.getBoundingClientRect().top + window.scrollY - hdr - 24, behavior: 'smooth' });
-  }
-  function setupSentence() {
+  /* ---- the section head: the shared .section-heading with its staggered letter reveal + dropping dot (the .fx-* rules in style.css, shared with Kapcsolat) and the lead's
+     line-by-line reveal (.rv-*). They start together when the heading enters the viewport and play backwards when it is left downwards. No GSAP needed. */
+  function setupIntro() {
     var reduceMo = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var sub = section.querySelector('.svt-sub');
-    section.addEventListener('click', function (e) {              /* delegated: the sentence is rebuilt when its lines are measured again */
-      var b = e.target.closest ? e.target.closest('.svt-kw, .svt-index__i') : null;
-      if (b) scrollToBlock(parseInt(b.getAttribute('data-kw'), 10));
-    });
-    /* ---- the mini-index ---- */
-    var index = section.querySelector('.svt-index'), rowsEl = Array.prototype.slice.call(section.querySelectorAll('.svt-row'));
-    if (index && sub && rowsEl.length) {
-      var items = Array.prototype.slice.call(index.querySelectorAll('.svt-index__i')), tick = false, wide = window.matchMedia('(min-width: 1024px)');
-      var update = function () {
-        tick = false;
-        if (!wide.matches) { index.classList.remove('is-show'); return; }
-        var vh = window.innerHeight, hdr = 92;
-        var subB = sub.getBoundingClientRect().bottom, lastB = rowsEl[rowsEl.length - 1].getBoundingClientRect().bottom;
-        index.classList.toggle('is-show', subB < hdr + 24 && lastB > vh * 0.4);       /* in when the sentence has left, out after the last block */
-        var on = -1;
-        rowsEl.forEach(function (r, i) { var b = r.getBoundingClientRect(); if (b.top < vh * 0.5 && b.bottom > vh * 0.5) on = i; });
-        if (on < 0 && rowsEl[0].getBoundingClientRect().top > vh * 0.5) on = 0;
-        items.forEach(function (it, i) { it.classList.toggle('is-on', i === on); });
-      };
-      var req = function () { if (!tick) { tick = true; requestAnimationFrame(update); } };
-      window.addEventListener('scroll', req, { passive: true }); window.addEventListener('resize', req); update();
-    }
-    if (!sub || reduceMo || !('IntersectionObserver' in window)) return;
-    /* ---- the line reveal: the words and the keyword groups are the tokens; a line = a run of tokens, wrapped in a mask ---- */
-    var orig = sub.innerHTML, subTimer = 0, kwTimer = 0;
-    var splitSub = function () {
-      sub.innerHTML = orig;
-      Array.prototype.slice.call(sub.childNodes).forEach(function (n) {
-        if (n.nodeType !== 3) return;
-        var parts = n.data.split(/( +)/), frag = document.createDocumentFragment();
-        parts.forEach(function (t) {
-          if (!t) return;
-          if (/^ +$/.test(t)) frag.appendChild(document.createTextNode(' '));
-          else { var s = document.createElement('span'); s.className = 'svt-t'; s.textContent = t; frag.appendChild(s); }
+    var word = section.querySelector('.svt-intro .section-heading'), sub = section.querySelector('.svt-sub');
+    if (reduceMo || !('IntersectionObserver' in window)) return;
+    var subOn = function () {};
+    if (sub) {
+      var subTimer = 0;
+      var splitSub = function () {
+        var full = sub.getAttribute('data-rv-text');
+        if (full === null) { full = sub.textContent.replace(/\s+/g, ' ').trim(); sub.setAttribute('data-rv-text', full); }
+        sub.textContent = '';
+        var words = full.split(' '), spans = words.map(function (w, i) {
+          var s = document.createElement('span'); s.textContent = w; sub.appendChild(s);
+          if (i < words.length - 1) sub.appendChild(document.createTextNode(' '));
+          return s;
         });
-        sub.replaceChild(frag, n);
-      });
-      var toks = Array.prototype.slice.call(sub.children), lines = [], top = null;
-      toks.forEach(function (t) {
-        var y = Math.round(t.getBoundingClientRect().top);
-        if (top === null || Math.abs(y - top) > 3) { lines.push([]); top = y; }
-        lines[lines.length - 1].push(t);
-      });
-      var made = lines.map(function (ts, k) {
-        var l = document.createElement('span'), i = document.createElement('span');
-        l.className = 'rv-line'; i.className = 'rv-i'; l.style.setProperty('--ri', k); l.appendChild(i);
-        ts.forEach(function (t, j) { if (j) i.appendChild(document.createTextNode(' ')); i.appendChild(t); });
-        return l;
-      });
-      sub.textContent = '';
-      made.forEach(function (l) { sub.appendChild(l); });
-      sub.style.setProperty('--rn', made.length);
-    };
-    var setOn = function (on) {
-      if (!sub.classList.contains('rv-prep')) return;
-      sub.classList.add('rv-moving');
-      clearTimeout(kwTimer); clearTimeout(subTimer);
-      if (on) { sub.classList.add('rv-in'); kwTimer = setTimeout(function () { sub.classList.add('kw-in'); }, 650); }
-      else { sub.classList.remove('kw-in'); sub.classList.remove('rv-in'); }
-      subTimer = setTimeout(function () { sub.classList.remove('rv-moving'); }, 2600);
-    };
-    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
-      splitSub(); sub.classList.add('rv-prep');
+        var lines = [], top = null;
+        spans.forEach(function (s, i) {
+          var t = Math.round(s.getBoundingClientRect().top);
+          if (top === null || Math.abs(t - top) > 3) { lines.push([]); top = t; }
+          lines[lines.length - 1].push(words[i]);
+        });
+        sub.textContent = '';
+        lines.forEach(function (ws, k) {
+          var l = document.createElement('span'), i = document.createElement('span');
+          l.className = 'rv-line'; i.className = 'rv-i'; i.textContent = ws.join(' ');
+          l.style.setProperty('--ri', k); l.appendChild(i); sub.appendChild(l);
+        });
+        sub.style.setProperty('--rn', lines.length);
+      };
+      (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { splitSub(); sub.classList.add('rv-prep'); });
+      subOn = function (on) {
+        if (!sub.classList.contains('rv-prep')) return;
+        sub.classList.add('rv-moving');
+        sub.classList.toggle('rv-in', on);
+        clearTimeout(subTimer);
+        subTimer = setTimeout(function () { sub.classList.remove('rv-moving'); }, 2200);
+      };
+      var subRt;
+      window.addEventListener('resize', function () { clearTimeout(subRt); subRt = setTimeout(function () { if (sub.classList.contains('rv-prep')) splitSub(); }, 150); });
+    }
+    if (!word) return;
+    var go = function () {
+      var chars = Array.prototype.slice.call(word.querySelectorAll('.sh-char'));
+      if (!chars.length) return;
+      chars.forEach(function (ch, i) { ch.style.setProperty('--ci', i); });
+      word.style.setProperty('--cn', chars.length);
+      word.classList.add('fx-prep');
+      var timer = 0, dot = word.querySelector('.sh-dot');
+      if (dot) dot.addEventListener('animationend', function (ev) { if (ev.animationName === 'ctcDotDrop' && word.classList.contains('fx-in')) word.classList.add('fx-done'); });
       new IntersectionObserver(function (es) {
         var e = es[es.length - 1], on = e.isIntersecting;
         if (!on && !(e.boundingClientRect.top > 0)) return;
-        if (on === sub.classList.contains('rv-in')) return;
-        setOn(on);
-      }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }).observe(sub);
-      var rt;
-      window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { var was = sub.classList.contains('rv-in'); splitSub(); if (was) sub.classList.add('rv-in'); }, 150); });
-    });
+        if (on === word.classList.contains('fx-in')) return;
+        if (!on) word.classList.remove('fx-done');
+        word.classList.add('fx-moving');                                   /* the masks clip only while the letters travel */
+        word.classList.toggle('fx-in', on);
+        subOn(on);
+        clearTimeout(timer);
+        timer = setTimeout(function () { word.classList.remove('fx-moving'); }, 2000);
+      }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }).observe(word);
+    };
+    if (word.classList.contains('is-split')) go(); else word.addEventListener('vb:heading-split', go, { once: true });
   }
-  if (section) setupSentence();
+  if (section) setupIntro();
 
   if (!section || !VB.gsap || !VB.hasST || VB.reduceMotion) return;
 
@@ -201,7 +182,7 @@
     });
   }
 
-  entrance(section.querySelector('.svt-intro'), q(section, '.svt-intro > .svt-eyebrow'), 'top 85%');           /* the sentence has its own reveal (setupSentence) */
+  entrance(section.querySelector('.svt-intro'), q(section, '.svt-intro > .svt-eyebrow'), 'top 85%');           /* the heading and the lead have their own reveal (setupIntro) */
 
   rows.forEach(function (row) {
     /* Outline word -> gradient fill, left to right, scrubbed. The negative
