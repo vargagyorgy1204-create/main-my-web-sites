@@ -356,6 +356,8 @@ const setServiceView = (modal, idx) => {
     if (!dlg || !h3) return;
     if (!h3.dataset.full) h3.dataset.full = h3.textContent;
     dlg.querySelectorAll('.is-item').forEach((el) => el.classList.remove('is-item'));
+    const iconSlot = dlg.querySelector('.svm-icon');
+    if (iconSlot) iconSlot.innerHTML = '';
     const scroller = dlg.querySelector('.service-modal__scroll');
     if (scroller) scroller.scrollTop = 0;
     const groups = dlg.querySelectorAll('.modal-group');
@@ -367,6 +369,8 @@ const setServiceView = (modal, idx) => {
         return;
     }
     item.classList.add('is-item');
+    const planIcon = !groups.length && item.querySelector('.pricing-icon');
+    if (iconSlot && planIcon) iconSlot.innerHTML = planIcon.innerHTML;          // the plan's icon tile goes above the centred title
     dlg.setAttribute('data-view', 'single');
     dlg.setAttribute('data-item', String(idx));
     h3.textContent = (groups.length ? item.querySelector('.modal-group__title') : item.querySelector('h4')).textContent.trim();

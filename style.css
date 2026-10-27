@@ -7162,23 +7162,33 @@ html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { 
 .svt-row.rv-moving .svt-tagline .rv-line, .svt-row.rv-moving .svt-list__n, .svt-row.rv-moving .svt-list__t { overflow: clip; }
 @media (prefers-reduced-motion: reduce) { .svt-row .rv-i, .svt-row .svt-actions > *, .svt-row .svt-list::before, .svt-row .svt-list li::after, .svt-row .svt-list__ni, .svt-row .svt-list__ti { transition: none; } }
 
-/* ===== service dialogs: the single-item view (a list row of Szolgáltatások opens one plan card / one group; data-view="single" on the dialog, .is-item on the item; script.js) ===== */
+/* ===== service dialogs: the single-item view (a list row of Szolgáltatások opens one plan / one group; data-view="single" on the dialog, .is-item on the item; script.js) =====
+   Webfejlesztés / Dizájn: cardless - the dialog itself is the item's page, everything centred (icon, title, description, checklist block, link, divider, "Az összes ..." link, CTA row),
+   the item's watermark stays in the bottom-right corner behind the content. Extra: the chosen group keeps its cards, only the header / link placement are shared. */
 .service-modal__scroll { transition: opacity 0.15s ease; }
-.service-modal__scroll.is-fading { opacity: 0; }                  /* the crossfade of the switch to the full view: 0.15s out, the swap, 0.15s in */
+.service-modal__scroll.is-fading { opacity: 0; }                  /* the crossfade of the switch to the full view: 0.15s out, the swap, the content back at 0.3s */
 .service-modal h3:focus { outline: none; }
-.modal-all-link { display: none; height: 32px; margin: 0 0 14px; gap: 8px; }
-.service-modal[data-view="single"] .modal-all-link { display: inline-flex; }
-.service-modal[data-view="single"] h3 { margin-bottom: 8px; }
+.svm-icon, .modal-all { display: none; }
+.modal-all-link { height: 32px; gap: 8px; }
+.service-modal[data-view="single"] { isolation: isolate; }
+.service-modal[data-view="single"] h3 { margin: 0 48px 12px; text-align: center; }
+.service-modal[data-view="single"] .modal-all { display: block; margin-top: 32px; padding-top: 20px; border-top: 1px solid rgb(255 255 255 / 0.1); text-align: center; }
 .service-modal[data-view="single"] .pricing-item:not(.is-item) { display: none; }            /* not rendered, not just invisible */
 .service-modal[data-view="single"] .modal-group:not(.is-item) { display: none; }
 .service-modal[data-view="single"] .modal-group.is-item .pricing-item { display: flex; }
-.service-modal[data-view="single"] > .service-modal__scroll > .service-pricing-grid { grid-template-columns: minmax(0, min(560px, 100%)); justify-content: center; }
 .service-modal[data-view="single"] .modal-group + .modal-group { margin-top: 0; }
-@media (prefers-reduced-motion: reduce) { .service-modal__scroll { transition: none; } }
-
-/* the Webfejlesztés / Dizájn dialogs are narrower in the single view (one card + the link + the CTA row); the width eases while switching to the full view (.is-switching, script.js) */
-.service-modal[data-view="single"]:not(.extra-modal) { max-width: 760px; }
+/* Webfejlesztés / Dizájn */
+.service-modal[data-view="single"]:not(.extra-modal) { max-width: 620px; }
+.service-modal[data-view="single"]:not(.extra-modal) .svm-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 13px; }
+.service-modal[data-view="single"]:not(.extra-modal) .svm-icon svg { width: 26px; height: 26px; }
+.service-modal[data-view="single"]:not(.extra-modal) > .service-modal__scroll > .service-pricing-grid { grid-template-columns: minmax(0, 1fr); }
+.service-modal[data-view="single"]:not(.extra-modal) .pricing-item.is-item { position: static; overflow: visible; padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; animation: none; }
+.service-modal[data-view="single"]:not(.extra-modal) .pricing-plan-head { display: none; }
+.service-modal[data-view="single"]:not(.extra-modal) .pricing-subtitle { max-width: 40ch; margin-bottom: 24px; }
+.service-modal[data-view="single"]:not(.extra-modal) .pricing-features { flex: none; width: fit-content; max-width: 100%; margin: 0 auto 28px; }
+.service-modal[data-view="single"]:not(.extra-modal) .pricing-item .modal-quote-link { margin-top: 0; }
+@media (min-width: 1024px) { .service-modal[data-view="single"]:not(.extra-modal) .modal-cta .cta-row__text { font-size: 16px; } }       /* the 620px dialog: the two lines + the pill still fit side by side */
+.service-modal[data-view="single"]:not(.extra-modal) .pricing-watermark { z-index: -1; inset-inline-end: -28px; inset-block-end: -34px; }
 .service-modal.is-switching { transition: max-width 0.3s ease; }
 .service-modal[data-view="single"]:not(.extra-modal).is-switching { max-width: 1100px; }      /* the width eases from the click; the view swaps (invisibly) at 0.15s, the content fades back in at 0.3s */
-.service-modal__scroll.is-fading { transition: opacity 0.15s ease; }
-@media (prefers-reduced-motion: reduce) { .service-modal.is-switching { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .service-modal__scroll { transition: none; } .service-modal.is-switching { transition: none; } }
