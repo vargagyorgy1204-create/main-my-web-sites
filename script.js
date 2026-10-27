@@ -403,15 +403,19 @@ document.querySelectorAll('.modal-all-link').forEach((link) => {
         const modal = link.closest('.service-modal-overlay');
         const scroller = modal && modal.querySelector('.service-modal__scroll');
         if (!modal || !scroller) return;
+        const dlg = modal.querySelector('.service-modal');
         const swap = () => {
             setServiceView(modal);
-            scroller.classList.remove('is-fading');
             const h3 = modal.querySelector('.service-modal h3');
             if (h3) h3.focus({ preventScroll: true });
         };
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { swap(); return; }
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { swap(); scroller.classList.remove('is-fading'); return; }
+        // the content fades out (0.15s), the view swaps while it is invisible and the dialog's width eases (0.3s, from the click), then the content fades in
+        dlg.classList.add('is-switching');
         scroller.classList.add('is-fading');
         window.setTimeout(swap, 150);
+        window.setTimeout(() => { scroller.classList.remove('is-fading'); }, 310);
+        window.setTimeout(() => { dlg.classList.remove('is-switching'); }, 360);
     });
 });
 

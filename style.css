@@ -796,7 +796,8 @@ h2 {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: min(1100px, 100%);
+    width: 100%;
+    max-width: 1100px;
     max-height: calc(100vh - 44px);
     max-height: min(92svh, calc(100vh - 44px));          /* up to 92svh; the inner .service-modal__scroll scrolls only if the content is taller */
     overflow: hidden;                                     /* the shell clips to its rounded corners; the scrolling lives inside */
@@ -1110,13 +1111,12 @@ body.service-modal-open { overflow: hidden; }
     .modal-group__grid--3,
     .modal-group__grid--2 { grid-template-columns: minmax(0, 1fr); }
 }
-/* ---------- bottom CTA row, >= 1024px: exactly two text lines + the pill on the right (never wraps below) ----------
-   line 2 never wraps: its size follows the text block's width (container query units, floor 14px, never above the row's own size) */
+/* ---------- bottom CTA row, >= 1024px: exactly two text lines + the pill on the right (never wraps below); both lines are short and never wrap ---------- */
 @media (min-width: 1024px) {
     .service-modal .modal-cta { flex-wrap: nowrap; align-items: center; }
-    .service-modal .modal-cta .cta-row__text { flex: 1 1 0; min-width: 0; container-type: inline-size; }
+    .service-modal .modal-cta .cta-row__text { flex: 1 1 auto; min-width: 0; }
     .service-modal .modal-cta .cta-l1 { white-space: nowrap; }
-    .service-modal .modal-cta .cta-l2 { white-space: nowrap; font-size: min(1em, max(14px, 2.05cqw)); }
+    .service-modal .modal-cta .cta-l2 { white-space: nowrap; }
     .service-modal .modal-cta .cta-row__btn { flex: none; }
 }
 /* ===== /Service modals ===== */
@@ -7167,7 +7167,6 @@ html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { 
 .service-modal__scroll.is-fading { opacity: 0; }                  /* the crossfade of the switch to the full view: 0.15s out, the swap, 0.15s in */
 .service-modal h3:focus { outline: none; }
 .modal-all-link { display: none; height: 32px; margin: 0 0 14px; gap: 8px; }
-.modal-all-link .icon { width: 14px; height: 14px; flex: none; }
 .service-modal[data-view="single"] .modal-all-link { display: inline-flex; }
 .service-modal[data-view="single"] h3 { margin-bottom: 8px; }
 .service-modal[data-view="single"] .pricing-item:not(.is-item) { display: none; }            /* not rendered, not just invisible */
@@ -7176,3 +7175,10 @@ html.has-cursor #contact .section-heading.fx-done:has(.sh-word:hover) .sh-dot { 
 .service-modal[data-view="single"] > .service-modal__scroll > .service-pricing-grid { grid-template-columns: minmax(0, min(560px, 100%)); justify-content: center; }
 .service-modal[data-view="single"] .modal-group + .modal-group { margin-top: 0; }
 @media (prefers-reduced-motion: reduce) { .service-modal__scroll { transition: none; } }
+
+/* the Webfejlesztés / Dizájn dialogs are narrower in the single view (one card + the link + the CTA row); the width eases while switching to the full view (.is-switching, script.js) */
+.service-modal[data-view="single"]:not(.extra-modal) { max-width: 760px; }
+.service-modal.is-switching { transition: max-width 0.3s ease; }
+.service-modal[data-view="single"]:not(.extra-modal).is-switching { max-width: 1100px; }      /* the width eases from the click; the view swaps (invisibly) at 0.15s, the content fades back in at 0.3s */
+.service-modal__scroll.is-fading { transition: opacity 0.15s ease; }
+@media (prefers-reduced-motion: reduce) { .service-modal.is-switching { transition: none; } }
