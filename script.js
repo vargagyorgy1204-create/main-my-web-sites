@@ -888,9 +888,10 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     });
 })();
 
-// Steps (Együttműködés) - "charge running along the line": ONE path, scrubbed by the scroll: ring 1 (the head goes around the circle, from its left point, clockwise) -> segment 1 ->
-// ring 2 -> segment 2 -> ... -> ring 4. A step is reached when the head arrives at its circle, passed when its ring is complete. The section pins on large screens (240svh of run;
-// nothing is lit before the pin begins), the counter in the head rolls 1/4 -> 4/4, both words of the head decode when the section enters.
+// Steps (Együttműködés) - "charge running along the line": ONE chain (a single svg: circle tracks + line tracks + their gradient fills, tangent joins, one stroke width, one gradient),
+// scrubbed by the scroll: the head enters circle 1 at its left point, goes round it (the ring fills), leaves at the right point -> segment 1 -> circle 2 -> ... -> circle 4. A step is reached
+// when the head arrives at its circle, passed when it leaves. The section pins on large screens (240svh of run; nothing is lit before the pin begins), the counter rolls 1/4 -> 4/4,
+// the two heading lines rise letter by letter from masks (one soft sheen each) when the section enters, then the counter and the dot appear.
 // Phones (< 768px) / short windows: no pin, the path follows the circles (the mark is ~60% of the viewport). Reduced motion: everything shown completed (4/4).
 (function () {
     var section = document.getElementById('steps');
@@ -904,7 +905,6 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     var title = section.querySelector('.steps-title');
     var reel = section.querySelector('.st-reel');
     var tip = process.querySelector('.process__head');
-    var segs = steps.map(function (s) { return s.querySelector('.process__seg'); });
     var nodes = steps.map(function (s) { return s.querySelector('.process__node'); });
     var texts = steps.map(function (s) { return s.querySelector('.process__text'); });
     /* the closing row (.cta-row, shared with Szolgáltatások) plays its sequential entrance only in the pinned layout */
@@ -923,10 +923,9 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(matchPill);
     matchPill();
 
-    /* the Lucide check and the ring circles are drawn with their stroke: pathLength 1 */
+    /* the Lucide check is drawn with its stroke: pathLength 1 */
     steps.forEach(function (step) {
-        var c = step.querySelector('.pn-ring circle'), ring = step.querySelector('.pn-ring'), ck = step.querySelector('.pn-check');
-        if (c && ring) { c.setAttribute('pathLength', '1'); ring.setAttribute('data-draw', ''); }
+        var ck = step.querySelector('.pn-check');
         if (ck) { Array.prototype.forEach.call(ck.querySelectorAll('path, polyline'), function (p) { p.setAttribute('pathLength', '1'); }); ck.setAttribute('data-draw', ''); }
     });
 
@@ -965,11 +964,71 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     }
 
     /* ---- the charge path: pieces ring0, seg0, ring1, seg1, ... (weights: a ring 0.55, a segment 1); pos 0..TW along it, -1 = not started ---- */
-    var WR = 0.55, WS = 1, ringS = [], ringE = [], segS = [], segE = [], TW = 0;
+    /* a ring that is followed by a line is 1.5 turns (enter at the left point, round the whole circle, on over the top half to the right point where the line leaves); the last one is 1 turn */
+    var WR = 0.55, WS = 1, ringS = [], ringE = [], segS = [], segE = [], WRk = [], TURN = [], TW = 0;
     for (var k = 0; k < N; k++) {
-        ringS[k] = TW; TW += WR; ringE[k] = TW;
+        TURN[k] = k < N - 1 ? 1.5 : 1; WRk[k] = WR * TURN[k];
+        ringS[k] = TW; TW += WRk[k]; ringE[k] = TW;
         if (k < N - 1) { segS[k] = TW; TW += WS; segE[k] = TW; }
     }
+    var SW = 2, geo = null, chain = null, chainFil = { rings: [], segs: [] }, vertical = false;
+    /* the chain svg: built once, laid out (in the unscaled local pixels of .process) by layoutChain */
+    function svgEl(tag, attrs, parent) {
+        var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (var a in attrs) e.setAttribute(a, attrs[a]);
+        if (parent) parent.appendChild(e);
+        return e;
+    }
+    var chainTrk = { rings: [], segs: [] };
+    function buildChain() {
+        chain = svgEl('svg', { 'class': 'pn-chain', 'aria-hidden': 'true', focusable: 'false' });
+        var defs = svgEl('defs', {}, chain), g = svgEl('linearGradient', { id: 'pnChainGrad', gradientUnits: 'userSpaceOnUse', x1: '0', y1: '0', x2: '1', y2: '0' }, defs);
+        svgEl('stop', { offset: '0', 'stop-color': '#6c63ff' }, g); svgEl('stop', { offset: '1', 'stop-color': '#c850c0' }, g);
+        var trk = svgEl('g', {}, chain), fil = svgEl('g', { 'class': 'pn-fills' }, chain);
+        for (var i = 0; i < N; i++) {
+            chainTrk.rings[i] = svgEl('path', { 'class': 'pn-trk' }, trk);
+            chainFil.rings[i] = svgEl('path', { 'class': 'pn-fil', pathLength: '1' }, fil);
+            if (i < N - 1) { chainTrk.segs[i] = svgEl('line', { 'class': 'pn-trk' }, trk); chainFil.segs[i] = svgEl('line', { 'class': 'pn-fil', pathLength: '1' }, fil); }
+        }
+        chain._grad = g;
+        process.insertBefore(chain, process.firstChild);
+    }
+    function localPos(n, step) {                                    /* the node's position in the unscaled local pixels of .process (sub-pixel: the step's rect + the node's offset in it; the node itself may be scaled) */
+        var pr = process.getBoundingClientRect(), sr = step.getBoundingClientRect(), k = pr.width / (process.offsetWidth || 1) || 1;
+        return { x: (sr.left - pr.left) / k + n.offsetLeft, y: (sr.top - pr.top) / k + n.offsetTop };
+    }
+    function layoutChain() {
+        if (!chain) buildChain();
+        var W = process.offsetWidth, H = process.offsetHeight;
+        vertical = window.innerWidth < 768;
+        chain.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+        geo = { rings: [], segs: [], a0: vertical ? 1.5 * Math.PI : Math.PI };
+        var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+        nodes.forEach(function (n, i) {
+            var p = localPos(n, steps[i]), w = n.offsetWidth, r = w / 2 - SW / 2, cx = p.x + w / 2, cy = p.y + n.offsetHeight / 2;
+            geo.rings[i] = { cx: cx, cy: cy, r: r };
+            minX = Math.min(minX, cx - w / 2); maxX = Math.max(maxX, cx + w / 2); minY = Math.min(minY, cy - w / 2); maxY = Math.max(maxY, cy + w / 2);
+            var sx = cx + r * Math.cos(geo.a0), sy = cy + r * Math.sin(geo.a0), ox = cx - r * Math.cos(geo.a0), oy = cy - r * Math.sin(geo.a0);
+            var d = 'M' + sx + ' ' + sy + 'A' + r + ' ' + r + ' 0 1 1 ' + ox + ' ' + oy + 'A' + r + ' ' + r + ' 0 1 1 ' + sx + ' ' + sy;
+            chainTrk.rings[i].setAttribute('d', d); chainFil.rings[i].setAttribute('d', d);
+        });
+        for (var i = 0; i < N - 1; i++) {
+            var a = geo.rings[i], b = geo.rings[i + 1], o = a.r + SW / 2, s = null;           /* o = the ring's outer edge */
+            if (Math.abs(a.cy - b.cy) < 2 && b.cx > a.cx) s = { x1: a.cx + o, y1: a.cy, x2: b.cx - o, y2: a.cy };
+            else if (Math.abs(a.cx - b.cx) < 2 && b.cy > a.cy) s = { x1: a.cx, y1: a.cy + o, x2: a.cx, y2: b.cy - o };
+            geo.segs[i] = s;
+            [chainTrk.segs[i], chainFil.segs[i]].forEach(function (e) {
+                if (s) { e.setAttribute('x1', s.x1); e.setAttribute('y1', s.y1); e.setAttribute('x2', s.x2); e.setAttribute('y2', s.y2); e.style.display = ''; }
+                else e.style.display = 'none';
+            });
+        }
+        var g = chain._grad;
+        g.setAttribute('x1', vertical ? (minX + maxX) / 2 : minX); g.setAttribute('x2', vertical ? (minX + maxX) / 2 : maxX);
+        g.setAttribute('y1', vertical ? minY : (minY + maxY) / 2); g.setAttribute('y2', vertical ? maxY : (minY + maxY) / 2);
+    }
+    layoutChain();
+    window.addEventListener('load', layoutChain);
+    if ('ResizeObserver' in window) new ResizeObserver(layoutChain).observe(process);
     function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
 
     /* ---- the state: cur = the latest step the head has arrived at (-1: none), doneTo = the last step whose ring is complete (-1: none) ---- */
@@ -995,10 +1054,11 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     function applyPos(pos, finAll) {
         var cur = -1, doneTo = -1;
         for (var i = 0; i < N; i++) {
-            var rf = clamp01((pos - ringS[i]) / WR), sf = i < N - 1 ? clamp01((pos - segS[i]) / WS) : 0;
+            var g = clamp01((pos - ringS[i]) / WRk[i]), rf = Math.min(1, g * TURN[i]), sf = i < N - 1 ? clamp01((pos - segS[i]) / WS) : 0;
             steps[i].style.setProperty('--ring', rf.toFixed(3));
             steps[i].style.setProperty('--seg', sf.toFixed(3));
-            steps[i].classList.toggle('is-full', rf >= 0.999);
+            setFill(chainFil.rings[i], rf);
+            if (i < N - 1) setFill(chainFil.segs[i], geo && geo.segs[i] ? sf : 0);
             if (pos >= ringS[i]) cur = i;
             if (pos > ringE[i] + 1e-6) doneTo = i;
         }
@@ -1006,18 +1066,22 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         setState(cur, doneTo);
         placeHead(pos);
     }
-    var origin = { x: 0, y: 0 };
+    function setFill(e, f) {                                        /* the gradient fill of one piece: dash offset = 1 - fraction; an undrawn round cap would leave a dot */
+        if (!e) return;
+        e.style.strokeDashoffset = (1 - f).toFixed(4); e.style.visibility = f > 0.0005 ? 'visible' : 'hidden';
+    }
     function placeHead(pos) {
         if (!tip || reduce) return;
         if (pos <= 0.0001 || pos >= TW - 0.0001) { tip.style.opacity = '0'; return; }
-        var pr = process.getBoundingClientRect(), x = null, y = null;
+        if (!geo) return;
+        var x = null, y = null;
         for (var i = 0; i < N && x === null; i++) {
-            if (pos <= ringE[i]) {                                        /* around circle i: from its left point, clockwise */
-                var nb = nodes[i].getBoundingClientRect(), r = nb.width / 2 - 1, th = Math.PI + clamp01((pos - ringS[i]) / WR) * 2 * Math.PI;
-                x = nb.left + nb.width / 2 + r * Math.cos(th) - pr.left; y = nb.top + nb.height / 2 + r * Math.sin(th) - pr.top;
-            } else if (i < N - 1 && pos <= segE[i]) {                     /* along segment i, towards the next circle */
-                var sb = segs[i].getBoundingClientRect(), f = clamp01((pos - segS[i]) / WS), vertical = window.innerWidth < 768;
-                x = (vertical ? sb.left + sb.width / 2 : sb.left + f * sb.width) - pr.left; y = (vertical ? sb.top + f * sb.height : sb.top + sb.height / 2) - pr.top;
+            if (pos <= ringE[i]) {                                        /* round circle i: in at its left (top on phones) point, clockwise; 1.5 turns, out at the opposite point */
+                var rg = geo.rings[i], th = geo.a0 + clamp01((pos - ringS[i]) / WRk[i]) * TURN[i] * 2 * Math.PI;
+                x = rg.cx + rg.r * Math.cos(th); y = rg.cy + rg.r * Math.sin(th);
+            } else if (i < N - 1 && pos <= segE[i]) {                     /* along line i, towards the next circle */
+                var s = geo.segs[i], f = clamp01((pos - segS[i]) / WS);
+                if (s) { x = s.x1 + f * (s.x2 - s.x1); y = s.y1 + f * (s.y2 - s.y1); }
             }
         }
         if (x === null) { tip.style.opacity = '0'; return; }
@@ -1064,7 +1128,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
             var mark = vh * 0.6, R = 36, yc = nodes.map(function (n) { var b = n.getBoundingClientRect(); return b.top + b.height / 2; });
             var pos = -1;
             for (var i = 0; i < N; i++) {
-                if (mark >= yc[i] - R && mark <= yc[i] + R) { pos = ringS[i] + (mark - (yc[i] - R)) / (2 * R) * WR; break; }
+                if (mark >= yc[i] - R && mark <= yc[i] + R) { pos = ringS[i] + (mark - (yc[i] - R)) / (2 * R) * WRk[i]; break; }
                 if (i < N - 1 && mark > yc[i] + R && mark < yc[i + 1] - R) { pos = segS[i] + (mark - (yc[i] + R)) / Math.max(1, yc[i + 1] - yc[i] - 2 * R) * WS; break; }
                 if (i === N - 1 && mark > yc[i] + R) pos = TW;
             }
@@ -1101,68 +1165,61 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         VB.lenis.scrollTo(window.scrollY + dy, { duration: 0.6 });
     }
 
-    /* ---- the head decodes: "Együttműködés", then (0.25s after it settled) "lépésben", then the counter appears. Random capitals settle into the real letters, left -> right,
-       ~1.4s per word. Each letter keeps its real width while it is scrambled: no layout shift ---- */
-    var words = title ? Array.prototype.slice.call(title.querySelectorAll('.st-decode')) : [], count = title && title.querySelector('.st-nb');          /* the counter with its dot */
-    var decodeRaf = [0, 0], decodeTimers = [], played = false, prepped = false;
-    function setHide(w, on) { w.classList.toggle('st-hide', on); }
-    function prepDecode() {
-        if (prepped) return; prepped = true;
+    /* ---- the heading: every letter rises from its own mask (translate + opacity, nothing is ever swapped), line 1 first; line 2 starts 0.3s after line 1 landed; a soft sheen
+       sweeps each line once after it landed; then the counter rises and the dot pops. Leaving downwards (scrolling back up) drops the lines back, without sheen ---- */
+    var STAG = 0.035, DUR = 0.8, GAP2 = 0.3;
+    var words = title ? Array.prototype.slice.call(title.querySelectorAll('.st-rv')) : [], count = title && title.querySelector('.st-nb');
+    var played = false, movingTimer = 0;
+    function prepTitle() {
         words.forEach(function (w) {
             var text = w.textContent, chars = []; w.textContent = '';
             text.split(' ').forEach(function (part, pi) {               /* every word of the text is an unbreakable group, the spaces stay real (wrapping on phones) */
                 if (pi) w.appendChild(document.createTextNode(' '));
                 var g = document.createElement('span'); g.className = 'st-wd';
                 part.split('').forEach(function (ch) {
-                    var s = document.createElement('span'); s.className = 'st-ch'; s.textContent = ch; s.setAttribute('data-c', ch); g.appendChild(s); chars.push(s);
+                    var m = document.createElement('span'); m.className = 'st-mk';
+                    var s = document.createElement('span'); s.className = 'st-ch'; s.textContent = ch; m.appendChild(s); g.appendChild(m); chars.push(s);
                 });
                 w.appendChild(g);
             });
             w._chars = chars;
         });
+        var n1 = words[0]._chars.length, n2 = words[1]._chars.length;
+        var land1 = (n1 - 1) * STAG + DUR, start2 = land1 + GAP2, land2 = start2 + (n2 - 1) * STAG + DUR;
+        words[0]._chars.forEach(function (s, i) { s.style.setProperty('--cd', (i * STAG).toFixed(3) + 's'); s.style.setProperty('--rd', (0.12 + (n1 - 1 - i) * 0.02).toFixed(3) + 's'); });
+        words[1]._chars.forEach(function (s, i) { s.style.setProperty('--cd', (start2 + i * STAG).toFixed(3) + 's'); s.style.setProperty('--rd', ((n2 - 1 - i) * 0.02).toFixed(3) + 's'); });
+        words[0]._chars.concat(words[1]._chars).forEach(function (s, i) { s.style.setProperty('--sd', (i < n1 ? land1 : land2).toFixed(3) + 's'); });
+        title.style.setProperty('--nd', land2.toFixed(3) + 's');
+        title._total = (land2 + 1.6) * 1000;
+        measureSheen();
     }
-    function decodeWord(w, idx, T, done) {
-        var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', chars = w._chars, n = chars.length, t0 = performance.now();
-        var widths = chars.map(function (s) { return s.getBoundingClientRect().width; });
-        chars.forEach(function (s, i) { s.style.width = widths[i] + 'px'; });
-        setHide(w, false);
-        function tickD(now) {
-            var e = now - t0, settled = 0;
-            chars.forEach(function (s, i) {
-                var at = 200 + (T - 200) * (i / Math.max(1, n - 1));
-                if (e >= at) { s.textContent = s.getAttribute('data-c'); settled++; }
-                else s.textContent = POOL.charAt(Math.floor(Math.random() * POOL.length));
-            });
-            if (settled < n) decodeRaf[idx] = requestAnimationFrame(tickD);
-            else { chars.forEach(function (s) { s.style.width = ''; }); if (done) done(); }
-        }
-        decodeRaf[idx] = requestAnimationFrame(tickD);
-    }
-    function stopDecode() { decodeRaf.forEach(cancelAnimationFrame); decodeTimers.forEach(clearTimeout); decodeTimers = []; }
-    function resetDecode() { stopDecode(); words.forEach(function (w) { setHide(w, true); }); if (count) count.classList.add('st-hide'); }
-    function runDecode() {
-        if (reduce || words.length < 2) return;
-        prepDecode(); resetDecode();
-        decodeWord(words[0], 0, 1400, function () {
-            decodeTimers.push(setTimeout(function () {
-                decodeWord(words[1], 1, 1400, function () { if (count) count.classList.remove('st-hide'); });
-            }, 250));
+    function measureSheen() {                                           /* per letter: its offset in the line (unscaled px) and the line's width, so one band spans the line */
+        if (!title || !words.length || !words[0]._chars) return;
+        words.forEach(function (w) {
+            var line = w.closest('.st-line'), lr = line.getBoundingClientRect(), k = lr.width / (line.offsetWidth || 1) || 1;
+            var first = w._chars[0].getBoundingClientRect(), last = w._chars[w._chars.length - 1].getBoundingClientRect(), x0 = first.left, ww = (last.right - first.left) / k;
+            w._chars.forEach(function (s) { s.style.setProperty('--cx', ((s.getBoundingClientRect().left - x0) / k).toFixed(1) + 'px'); s.style.setProperty('--ww', ww.toFixed(1) + 'px'); });
         });
     }
-    if (title && words.length === 2 && !reduce) { words.forEach(function (w) { setHide(w, true); }); if (count) count.classList.add('st-hide'); }
-    if (title && 'IntersectionObserver' in window && !reduce) {
-        new IntersectionObserver(function (es) {
-            var e = es[es.length - 1];
-            if (e.isIntersecting && !played) { played = true; runDecode(); }
-            else if (!e.isIntersecting && played) { played = false; stopDecode(); words.forEach(function (w) { setHide(w, true); }); if (count) count.classList.add('st-hide'); }
-        }, { threshold: 0.6 }).observe(title);
-    } else if (title && words.length === 2) {
-        words.forEach(function (w) { setHide(w, false); }); if (count) count.classList.remove('st-hide');
+    function titleState(on) {
+        clearTimeout(movingTimer);
+        title.classList.add('fx-moving'); title.classList.toggle('fx-in', on);
+        movingTimer = setTimeout(function () { title.classList.remove('fx-moving'); }, on ? title._total : 1800);
+    }
+    if (title && words.length === 2 && !reduce) {
+        prepTitle(); title.classList.add('fx-prep');
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(function (es) {
+                var e = es[es.length - 1];
+                if (e.isIntersecting && !played) { played = true; titleState(true); }
+                else if (!e.isIntersecting && played && e.boundingClientRect.top > 0) { played = false; titleState(false); }
+            }, { threshold: 0.6 }).observe(title);
+        } else titleState(true);
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', function () { fit(); if (splitDone) splitAll(); onScroll(); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { splitAll(); fit(); update(); });
+    window.addEventListener('resize', function () { fit(); if (splitDone) splitAll(); layoutChain(); measureSheen(); onScroll(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { splitAll(); fit(); layoutChain(); measureSheen(); update(); });
     fit();
     update();
 })();
