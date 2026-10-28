@@ -890,8 +890,8 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
 // Steps (Együttműködés) - "charge running along the line": ONE chain (a single svg: circle tracks + line tracks + their gradient fills, tangent joins, one stroke width, one gradient),
 // scrubbed by the scroll: the head enters circle 1 at its left point, goes round it (the ring fills), leaves at the right point -> segment 1 -> circle 2 -> ... -> circle 4. A step is reached
-// when the head arrives at its circle, passed when it leaves. The section pins on large screens (240svh of run; nothing is lit before the pin begins), the counter rolls 1/4 -> 4/4,
-// the two heading lines rise letter by letter from masks (one soft sheen each) when the section enters, then the counter and the dot appear.
+// when the head arrives at its circle, passed when it leaves. The section pins on large screens (240svh of run; nothing is lit before the pin begins), the counter rolls 0/4 -> 4/4 with the steps,
+// the heading plays the shared letter-rise reveal (+ dropping dot) when the section top reaches 85% of the viewport.
 // Phones (< 768px) / short windows: no pin, the path follows the circles (the mark is ~60% of the viewport). Reduced motion: everything shown completed (4/4).
 (function () {
     var section = document.getElementById('steps');
@@ -903,7 +903,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     var pinQuery = window.matchMedia('(min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)');
     var ticking = false;
     var title = section.querySelector('.steps-title');
-    var reel = section.querySelector('.st-reel');
+    var reel = section.querySelector('.st-reel'), counter = section.querySelector('.st-count');
     var tip = process.querySelector('.process__head');
     var nodes = steps.map(function (s) { return s.querySelector('.process__node'); });
     var texts = steps.map(function (s) { return s.querySelector('.process__text'); });
@@ -1047,7 +1047,8 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
                 clearTimeout(movingT[i]); movingT[i] = setTimeout(function () { p.classList.remove('rv-moving'); }, 1600);
             }
         });
-        if (reel) reel.style.setProperty('--cur', String(Math.max(0, cur)));
+        if (reel) reel.style.setProperty('--cur', String(cur + 1));            /* 0/4 (dim) before step 1, then 1..4 exactly with the steps; rolls back on reverse */
+        if (counter) counter.classList.toggle('on', cur >= 0);
     }
 
     /* pos -> every ring / segment fraction, the state and the glowing head */
@@ -1165,61 +1166,46 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         VB.lenis.scrollTo(window.scrollY + dy, { duration: 0.6 });
     }
 
-    /* ---- the heading: every letter rises from its own mask (translate + opacity, nothing is ever swapped), line 1 first; line 2 starts 0.3s after line 1 landed; a soft sheen
-       sweeps each line once after it landed; then the counter rises and the dot pops. Leaving downwards (scrolling back up) drops the lines back, without sheen ---- */
-    var STAG = 0.035, DUR = 0.8, GAP2 = 0.3;
-    var words = title ? Array.prototype.slice.call(title.querySelectorAll('.st-rv')) : [], count = title && title.querySelector('.st-nb');
-    var played = false, movingTimer = 0;
-    function prepTitle() {
-        words.forEach(function (w) {
-            var text = w.textContent, chars = []; w.textContent = '';
-            text.split(' ').forEach(function (part, pi) {               /* every word of the text is an unbreakable group, the spaces stay real (wrapping on phones) */
-                if (pi) w.appendChild(document.createTextNode(' '));
-                var g = document.createElement('span'); g.className = 'st-wd';
-                part.split('').forEach(function (ch) {
-                    var m = document.createElement('span'); m.className = 'st-mk';
-                    var s = document.createElement('span'); s.className = 'st-ch'; s.textContent = ch; m.appendChild(s); g.appendChild(m); chars.push(s);
+    /* ---- the heading: the SAME reveal as "Három terület, egy kézből." (the shared .fx-* rules in style.css: letters rise from their masks, the accent dot drops with a ripple; the
+       proximity hover comes from js/heading-fx.js) - compressed to <= 1.3s and started EARLY: when the section top enters 85% of the viewport (before the pin begins), so it has
+       landed before step 1 charges. Leaving downwards (scrolling back up) reverses it. The counter is not part of it (see setState). ---- */
+    var chars = [];
+    if (title) {
+        Array.prototype.forEach.call(title.querySelectorAll('.st-rv'), function (rv) {
+            var frag = document.createDocumentFragment();
+            rv.textContent.split(' ').forEach(function (w, wi, all) {
+                var word = document.createElement('span'); word.className = 'sh-word'; word.setAttribute('aria-hidden', 'true');
+                Array.from(w).forEach(function (c) {
+                    var m = document.createElement('span'); m.className = 'sh-mask';
+                    var s = document.createElement('span'); s.className = 'sh-char'; s.setAttribute('data-c', c.toUpperCase()); s.textContent = c; m.appendChild(s); word.appendChild(m); chars.push(s);
                 });
-                w.appendChild(g);
+                frag.appendChild(word);
+                if (wi < all.length - 1) frag.appendChild(document.createTextNode(' '));
             });
-            w._chars = chars;
+            rv.parentNode.replaceChild(frag, rv);
         });
-        var n1 = words[0]._chars.length, n2 = words[1]._chars.length;
-        var land1 = (n1 - 1) * STAG + DUR, start2 = land1 + GAP2, land2 = start2 + (n2 - 1) * STAG + DUR;
-        words[0]._chars.forEach(function (s, i) { s.style.setProperty('--cd', (i * STAG).toFixed(3) + 's'); s.style.setProperty('--rd', (0.12 + (n1 - 1 - i) * 0.02).toFixed(3) + 's'); });
-        words[1]._chars.forEach(function (s, i) { s.style.setProperty('--cd', (start2 + i * STAG).toFixed(3) + 's'); s.style.setProperty('--rd', ((n2 - 1 - i) * 0.02).toFixed(3) + 's'); });
-        words[0]._chars.concat(words[1]._chars).forEach(function (s, i) { s.style.setProperty('--sd', (i < n1 ? land1 : land2).toFixed(3) + 's'); });
-        title.style.setProperty('--nd', land2.toFixed(3) + 's');
-        title._total = (land2 + 1.6) * 1000;
-        measureSheen();
-    }
-    function measureSheen() {                                           /* per letter: its offset in the line (unscaled px) and the line's width, so one band spans the line */
-        if (!title || !words.length || !words[0]._chars) return;
-        words.forEach(function (w) {
-            var line = w.closest('.st-line'), lr = line.getBoundingClientRect(), k = lr.width / (line.offsetWidth || 1) || 1;
-            var first = w._chars[0].getBoundingClientRect(), last = w._chars[w._chars.length - 1].getBoundingClientRect(), x0 = first.left, ww = (last.right - first.left) / k;
-            w._chars.forEach(function (s) { s.style.setProperty('--cx', ((s.getBoundingClientRect().left - x0) / k).toFixed(1) + 'px'); s.style.setProperty('--ww', ww.toFixed(1) + 'px'); });
-        });
-    }
-    function titleState(on) {
-        clearTimeout(movingTimer);
-        title.classList.add('fx-moving'); title.classList.toggle('fx-in', on);
-        movingTimer = setTimeout(function () { title.classList.remove('fx-moving'); }, on ? title._total : 1800);
-    }
-    if (title && words.length === 2 && !reduce) {
-        prepTitle(); title.classList.add('fx-prep');
-        if ('IntersectionObserver' in window) {
+        var dotCh = title.querySelector('.sh-dot'); if (dotCh) chars.push(dotCh);          /* the dot is the last letter (after the counter) */
+        chars.forEach(function (s, i) { s.style.setProperty('--ci', i); });
+        title.style.setProperty('--cn', chars.length);
+        title._shChars = chars; title.classList.add('is-split');
+        if (!reduce && 'IntersectionObserver' in window) {
+            var hTimer = 0;
+            title.classList.add('fx-prep');
+            if (dotCh) dotCh.addEventListener('animationend', function (ev) { if (ev.animationName === 'ctcDotDrop' && title.classList.contains('fx-in')) title.classList.add('fx-done'); });
             new IntersectionObserver(function (es) {
-                var e = es[es.length - 1];
-                if (e.isIntersecting && !played) { played = true; titleState(true); }
-                else if (!e.isIntersecting && played && e.boundingClientRect.top > 0) { played = false; titleState(false); }
-            }, { threshold: 0.6 }).observe(title);
-        } else titleState(true);
+                var e = es[es.length - 1], on = e.isIntersecting;
+                if (!on && !(e.boundingClientRect.top > 0)) return;
+                if (on === title.classList.contains('fx-in')) return;
+                if (!on) title.classList.remove('fx-done');
+                title.classList.add('fx-moving'); title.classList.toggle('fx-in', on);
+                clearTimeout(hTimer); hTimer = setTimeout(function () { title.classList.remove('fx-moving'); }, 2000);
+            }, { rootMargin: '0px 0px -15% 0px', threshold: 0 }).observe(section);
+        }
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', function () { fit(); if (splitDone) splitAll(); layoutChain(); measureSheen(); onScroll(); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { splitAll(); fit(); layoutChain(); measureSheen(); update(); });
+    window.addEventListener('resize', function () { fit(); if (splitDone) splitAll(); layoutChain(); onScroll(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { splitAll(); fit(); layoutChain(); update(); });
     fit();
     update();
 })();

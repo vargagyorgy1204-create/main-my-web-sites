@@ -6895,21 +6895,21 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 
 /* ===== KAPCSOLAT + SZOLGÁLTATÁSOK headings ("ÜZENJEN.", "HÁROM TERÜLET, EGY KÉZBŐL."): staggered letter reveal (js/contact-footer.js sets --ci, .fx-prep, .fx-in, .fx-moving) =====
    the letters use the individual transform properties (translate / scale / opacity), the proximity hover keeps `transform` - no conflict; the masks clip only while moving */
-:is(#contact, #services) .section-heading .sh-char {
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-char {
     transition: translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.5s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s);
 }
-:is(#contact, #services) .section-heading .sh-mask { overflow: visible; }
-:is(#contact, #services) .section-heading.fx-moving .sh-mask { overflow: clip; }
-:is(#contact, #services) .section-heading.fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * 0.05s + 0.2s); }          /* out: right -> left, after the dot has left */
-:is(#contact, #services) .section-heading.fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
-:is(#contact, #services) .section-heading.fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * 0.05s); }                                       /* in: left -> right */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-mask { overflow: visible; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-moving .sh-mask { overflow: clip; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * var(--stg, 0.05s) + 0.2s); }          /* out: right -> left, after the dot has left */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * var(--stg, 0.05s)); }                                       /* in: left -> right */
 /* the dot: after the last letter has landed it drops from above (ease-in .35s), squashes on impact (.08s), bounces once (.18s) and settles; a thin gradient ring ripples out at the
    impact (the ::before, transform / opacity only, out of the flow). The dot's own mask never clips (the ring and the drop leave the box). --dd = the drop's start. */
-:is(#contact, #services) .section-heading { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
-:is(#contact, #services) .section-heading .sh-mask:has(> .sh-dot) { overflow: visible; }
-:is(#contact, #services) .section-heading.fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
-:is(#contact, #services) .section-heading.fx-prep.fx-in.fx-done .sh-dot { animation: none; }
-:is(#contact, #services) .section-heading .sh-dot::before {
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title) { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-mask:has(> .sh-dot) { overflow: visible; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep.fx-in.fx-done .sh-dot { animation: none; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-dot::before {
     content: "";
     position: absolute;
     left: var(--ring-x, 50%);
@@ -6924,8 +6924,8 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
     opacity: 0;
     pointer-events: none;
 }
-:is(#contact, #services) .section-heading.fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
-html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
+html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
 @keyframes ctcDotDrop {
     0%   { translate: 0 -120%; scale: 1 1; opacity: 0; animation-timing-function: ease-in; }
     4%   { opacity: 1; }
@@ -6937,7 +6937,7 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
 }
 @keyframes ctcDotRing { from { scale: 0.5; opacity: 0.7; } to { scale: 2.6; opacity: 0; } }
 @keyframes ctcDotHop { 0%, 100% { translate: 0 0; } 40% { translate: 0 -18%; } }
-@media (prefers-reduced-motion: reduce) { :is(#contact, #services) .section-heading .sh-char { transition: none; } :is(#contact, #services) .section-heading .sh-dot, :is(#contact, #services) .section-heading .sh-dot::before { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { :is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-char { transition: none; } :is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-dot, :is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-dot::before { animation: none !important; } }
 
 /* ===== KAPCSOLAT scroll choreography "signal from the dot" (js/contact-footer.js): helper styles only - the rest state is the plain CSS above =====
    the lead text lines (.rv-*) rise from masks with the heading letters; the SVG overlay (.ctc-signal, pointer-events none) carries the signal line; .cf-sweep /
@@ -7118,12 +7118,10 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
     color: #fff;
     overflow-wrap: normal;
 }
-.steps-title .st-word { display: inline-block; white-space: nowrap; }
-.st-ch { display: inline-block; text-align: center; }
 .st-count { display: inline-block; }
-.st-reel > span, .st-count > span:last-child { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }      /* the gradient sits on each moving piece: a clip-to-text ancestor would paint the untransformed text */
+.st-reel > span { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }      /* the gradient sits on each moving piece: a clip-to-text ancestor would paint the untransformed text */
 .st-reel { display: inline-block; vertical-align: top; height: calc(var(--section-heading-lh) * 1em); overflow: clip; }
-.st-reel > span { display: block; text-align: left; transform: translateY(calc(var(--cur, 0) * -100%)); transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.st-reel > span { display: block; text-align: left; transform: translateY(calc(var(--cur, 0) * -100%)); transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
 
 .process__node {
     position: relative;
@@ -7143,21 +7141,20 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
 }
 .process__node::before { content: ""; position: absolute; z-index: -1; inset: -10px; border-radius: 50%; background: radial-gradient(circle, rgb(200 80 192 / 0.38), rgb(108 99 255 / 0.18) 45%, transparent 70%); opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
 .process__node::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1.5px solid rgb(200 80 192 / 0.7); opacity: 0; pointer-events: none; }
-.pn-num { position: relative; display: block; line-height: 1.4; clip-path: inset(0 -3px); }
-.pn-n { display: block; transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.pn-n2 { position: absolute; inset: 0; translate: 0 115%; color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
+.pn-num { position: relative; display: block; width: 2.4em; height: 1.4em; line-height: 1.4; font-variant-numeric: tabular-nums; clip-path: inset(0 -3px); }
+.pn-n { position: absolute; inset: 0; display: block; text-align: center; text-indent: 0.08em; line-height: 1.4; letter-spacing: inherit; transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.pn-n2 { translate: 0 115%; color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
 .pn-check { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; stroke: #fff; stroke-width: 2.3; pointer-events: none; }      /* ~45% of the circle, 2.5px stroke */
 .pn-check path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.4s ease; }
 .pn-check { visibility: hidden; transition: visibility 0s 0.45s; }                         /* an undrawn dash would still leave its round cap as a dot */
 .process__step.is-done .pn-check { visibility: visible; transition-delay: 0s; }
 .pn-check:not([data-draw]) path { stroke-dasharray: none; stroke-dashoffset: 0; opacity: 0; }
 
-.process__step.is-active .process__node { transform: scale(1.12); }
 .process__step.is-active .pn-n:not(.pn-n2) { translate: 0 -115%; }
 .process__step.is-active .pn-n2 { translate: 0 0; }
-.process__step.is-current .process__node::before { opacity: 1; }
-.process__step.is-done .process__node { transform: scale(1.05); }
-.process__step.is-done .process__node::before { opacity: 0.3; }
+.process__node::before { scale: 0.85; transition: opacity 0.5s ease, scale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.process__step.is-current .process__node::before { opacity: 1; scale: 1.12; }
+.process__step.is-done .process__node::before { opacity: 0.3; scale: 1.05; }
 .process__step.is-done .pn-n2 { translate: 0 -115%; }
 .process__step.is-done .pn-check[data-draw] path { stroke-dashoffset: 0; transition-delay: 0.15s; }
 .process__step.is-done .process__node::after { animation: pnRipple 0.7s ease-out both; }
@@ -7186,45 +7183,28 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
 /* ===== EGYÜTTMŰKÖDÉS refinements: two-line head, segments that wrap the circles, one charge path ===== */
 .steps-title .st-line { display: block; }
 .st-nb { display: inline-block; white-space: nowrap; margin-left: 0.35em; }          /* the counter and its dot never part; 0.35em after the text */
-.steps-title .st-word.st-wrap { display: inline; white-space: normal; }               /* "Lépésről lépésre": one line on desktop, may wrap before the counter on phones */
-.st-wd { display: inline-block; white-space: nowrap; }
 #steps .steps-head { margin-bottom: var(--head-steps-gap); }
 @media (min-width: 768px) and (max-width: 1199px) { .process__head { display: none; } }
 @media (max-width: 767px) { :root { --cta-line-fs: 16px; } }
 @media (min-width: 1200px) { .process__text { max-width: none; width: calc(100% + 20px); } }      /* four columns: the description may reach 20px into the column gap (12px stay free) so it keeps two lines at 1366 too */
 @media (min-width: 1200px) and (max-width: 1319px) { :root { --cta-line-fs: 16px; } }      /* the narrowest desktop columns (1280): the shared line size is 16px, so the descriptions keep two lines */
 
-/* ===== EGYÜTTMŰKÖDÉS: calm heading reveal + the line and the circles as one chain ===== */
-/* Heading: every letter rises from its own mask (translate + opacity only, no character ever changes); line 2 starts 0.3s after line 1 landed; one soft sheen
-   sweeps each line once after it landed; then the counter rises and the dot pops. JS sets --cd / --rd (letter delays), --sd (sheen start), --nd (counter), --cx / --ww (sheen mapping). */
-.steps-title .st-line { position: relative; }
-.st-mk { display: inline-block; padding-top: 0.25em; margin-top: -0.25em; }
-.steps-title:not(.fx-in) .st-mk, .steps-title.fx-moving .st-mk { overflow: clip; }                 /* the masks clip only while letters move */
-.steps-title.fx-prep .st-ch {
-    translate: 0 100%; opacity: 0;
-    transition: translate 0.45s ease var(--rd, 0s), opacity 0.3s ease var(--rd, 0s);
-    color: transparent; -webkit-text-fill-color: transparent;
-    background: linear-gradient(100deg, transparent 0 40%, rgb(108 99 255 / 0.45) 46%, rgb(200 80 192 / 0.55) 50%, transparent 60% 100%) no-repeat calc(-1.9 * var(--ww, 0px) - var(--cx, 0px)) 0 / calc(3 * var(--ww, 0px)) 100%, #fff;
-    -webkit-background-clip: text; background-clip: text;
-}
-.steps-title.fx-prep.fx-in .st-ch {
-    translate: 0 0; opacity: 1;
-    transition: translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.5s ease var(--cd, 0s);
-    animation: stSheen 0.9s cubic-bezier(0.45, 0, 0.25, 1) var(--sd, 0s) both;
-}
-@keyframes stSheen {
-    from { background-position: calc(-1.9 * var(--ww, 0px) - var(--cx, 0px)) 0, 0 0; }
-    to { background-position: calc(-0.1 * var(--ww, 0px) - var(--cx, 0px)) 0, 0 0; }
-}
-.steps-title.fx-prep .st-nb { opacity: 0; transform: translateY(0.25em); transition: opacity 0.3s ease, transform 0.3s ease; }
-.steps-title.fx-prep.fx-in .st-nb { opacity: 1; transform: none; transition: opacity 0.5s ease var(--nd, 0s), transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--nd, 0s); }
-.st-nb .sh-dot { display: inline-block; transform-origin: 50% 80%; }
-.steps-title.fx-prep .st-nb .sh-dot { scale: 0; opacity: 0; transition: scale 0.2s ease, opacity 0.2s ease; }
-.steps-title.fx-prep.fx-in .st-nb .sh-dot { scale: 1; opacity: 1; transition: scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--nd, 0s) + 0.45s), opacity 0.15s ease calc(var(--nd, 0s) + 0.45s); }
-@media (prefers-reduced-motion: reduce) { .steps-title .st-ch, .steps-title .st-nb, .st-nb .sh-dot { transition: none !important; animation: none !important; } }
+/* ===== EGYÜTTMŰKÖDÉS: services-style heading reveal (shared .fx-* rules above), counter synced to the steps, the line and the circles as one chain ===== */
 /* The chain (script.js builds one svg over .process): circle tracks, line tracks, and their gradient fills share one stroke width (2px), round caps and ONE gradient mapped along the
    whole row. Each line runs from the outer edge of circle N to the outer edge of circle N+1 on the centre line (tangent joins); nothing is drawn inside a circle. */
 .pn-chain { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .pn-chain .pn-trk { fill: none; stroke: rgb(255 255 255 / 0.12); stroke-width: 2; stroke-linecap: round; }
 .pn-chain .pn-fil { fill: none; stroke: url(#pnChainGrad); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; visibility: hidden; }
 .pn-chain .pn-fills { filter: drop-shadow(0 0 5px rgb(200 80 192 / 0.5)); }
+
+/* heading: shared reveal, compressed to <= 1.3s (letters 0.01s apart, 0.55s each, the dot drops at 0.45s); the counter is NOT part of it (script.js: driven by the step state only) */
+#steps .steps-title { --stg: 0.01s; --dd: 0.45s; }
+#steps .steps-title .sh-char { transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.35s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s); }
+#steps .steps-title .sh-dot { transition: none; }
+/* the counter: dim "0/4" from the start (white 28%, no gradient); with step 1 it rolls to 1 and takes the brand gradient (0.4s), then 2, 3, 4; "/4" stays still */
+.st-reel > span:first-child { background: none; color: rgb(255 255 255 / 0.28); -webkit-text-fill-color: rgb(255 255 255 / 0.28); }
+.st-count > span:last-child { position: relative; display: inline-block; color: rgb(255 255 255 / 0.28); -webkit-text-fill-color: rgb(255 255 255 / 0.28); transition: color 0.4s ease, -webkit-text-fill-color 0.4s ease; }
+.st-count > span:last-child::after { content: "/4"; position: absolute; left: 0; top: 0; color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; opacity: 0; transition: opacity 0.4s ease; }
+.st-count.on > span:last-child { color: transparent; -webkit-text-fill-color: transparent; }
+.st-count.on > span:last-child::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .st-count > span:last-child, .st-count > span:last-child::after, .st-reel > span { transition: none !important; } }

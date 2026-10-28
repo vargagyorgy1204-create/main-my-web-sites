@@ -13,7 +13,7 @@
   'use strict';
 
   var root = document.documentElement;
-  var headings = Array.prototype.slice.call(document.querySelectorAll('.section-heading'));
+  var headings = Array.prototype.slice.call(document.querySelectorAll('.section-heading, .steps-title'));
   if (!headings.length) return;
 
   var VB = (window.VB = window.VB || {});
