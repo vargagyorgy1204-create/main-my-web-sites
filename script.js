@@ -1103,16 +1103,22 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     /* ---- the head decodes: "Együttműködés", then (0.25s after it settled) "lépésben", then the counter appears. Random capitals settle into the real letters, left -> right,
        ~1.4s per word. Each letter keeps its real width while it is scrambled: no layout shift ---- */
-    var words = title ? Array.prototype.slice.call(title.querySelectorAll('.st-decode')) : [], count = title && title.querySelector('.st-count');
+    var words = title ? Array.prototype.slice.call(title.querySelectorAll('.st-decode')) : [], count = title && title.querySelector('.st-nb');          /* the counter with its dot */
     var decodeRaf = [0, 0], decodeTimers = [], played = false, prepped = false;
-    function setHide(w, on) { w.classList.toggle('st-hide', on); var d = w.parentNode.querySelector('.sh-dot'); if (d) d.classList.toggle('st-hide', on); }      /* the dot belongs to its word */
+    function setHide(w, on) { w.classList.toggle('st-hide', on); }
     function prepDecode() {
         if (prepped) return; prepped = true;
         words.forEach(function (w) {
-            var text = w.textContent; w.textContent = '';
-            w._chars = text.split('').map(function (ch) {
-                var s = document.createElement('span'); s.className = 'st-ch'; s.textContent = ch; s.setAttribute('data-c', ch); w.appendChild(s); return s;
+            var text = w.textContent, chars = []; w.textContent = '';
+            text.split(' ').forEach(function (part, pi) {               /* every word of the text is an unbreakable group, the spaces stay real (wrapping on phones) */
+                if (pi) w.appendChild(document.createTextNode(' '));
+                var g = document.createElement('span'); g.className = 'st-wd';
+                part.split('').forEach(function (ch) {
+                    var s = document.createElement('span'); s.className = 'st-ch'; s.textContent = ch; s.setAttribute('data-c', ch); g.appendChild(s); chars.push(s);
+                });
+                w.appendChild(g);
             });
+            w._chars = chars;
         });
     }
     function decodeWord(w, idx, T, done) {

@@ -6094,7 +6094,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     #why .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
 }
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-    #steps .steps-title { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
+    #steps .steps-title { font-size: calc(min(var(--section-heading-size), var(--st-cap)) / var(--fit, 1)); }
 }
 
 /* ===== ÉRTÉKEK & GARANCIÁK — bottom gap, then the pinned stage with scroll-driven cards (js/why-pin.js) =====
@@ -7106,10 +7106,11 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
    turns slowly while the step is current; a passed step turns its number into a check and sends one ripple. States: .is-active (reached), .is-current
    (the latest), .is-done (passed). Transform / opacity / stroke only. */
 .steps-title {
+    --st-cap: calc(min(100vw - 2 * var(--content-gutter), var(--content-max)) / 20.3);        /* "Lépésről lépésre 1/4." is 20.2em wide: it stays on one line between the gutters */
     margin: 0;
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: var(--section-heading-size);
+    font-size: min(var(--section-heading-size), var(--st-cap));
     line-height: var(--section-heading-lh);
     letter-spacing: -0.02em;
     text-transform: uppercase;
@@ -7192,10 +7193,12 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
 
 /* ===== EGYÜTTMŰKÖDÉS refinements: two-line head, segments that wrap the circles, one charge path ===== */
 .steps-title .st-line { display: block; }
-.st-nb { display: inline-block; white-space: nowrap; }                 /* "lépésben" and its dot never part */
+.st-nb { display: inline-block; white-space: nowrap; margin-left: 0.35em; }          /* the counter and its dot never part; 0.35em after the text */
+.steps-title .st-word.st-wrap { display: inline; white-space: normal; }               /* "Lépésről lépésre": one line on desktop, may wrap before the counter on phones */
+.st-wd { display: inline-block; white-space: nowrap; }
 .st-hide { visibility: hidden; }
-.st-count { transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.st-count.st-hide { visibility: visible; opacity: 0; transform: translateY(0.25em); }
+.st-nb { transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.st-nb.st-hide { visibility: visible; opacity: 0; transform: translateY(0.25em); }
 #steps .steps-head { margin-bottom: var(--head-steps-gap); }
 /* the connecting segments: from the ring's outer edge + 6px (the active circle is scaled 1.12 from its left edge) to the next circle's left edge - 6px; nothing runs inside a circle */
 .process__seg { position: absolute; top: 27px; left: 69px; width: calc(100% + var(--gap) - 75px); height: 2px; border-radius: 2px; background: rgb(255 255 255 / 0.12); pointer-events: none; }
