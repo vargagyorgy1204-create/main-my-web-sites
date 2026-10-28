@@ -33,6 +33,8 @@
     --step-circle-title: clamp(20px, 2.6svh, 32px);                        /* number circle -> step title */
     --step-title-desc: clamp(10px, 1.4svh, 16px);                          /* step title -> description */
     --step-desc-divider: clamp(32px, 5svh, 56px);                          /* description -> divider above the CTA row */
+    --cta-line-fs: 18px;                                                   /* the closing row's text lines = the step descriptions (16px on phones) */
+    --head-steps-gap: clamp(40px, 6svh, 72px);                             /* Együttműködés: heading -> the steps row */
     --divider-cta: clamp(24px, 3.4svh, 40px);                              /* divider -> CTA row */
     /* outline / pill buttons of Szolgáltatások + the CTA row: one size (the "Részletek" button is the reference) */
     --btn-fs: 15px;
@@ -4207,24 +4209,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     padding: 0;
     list-style: none;
 }
-.process__line {
-    position: absolute;
-    top: 27px;
-    left: 28px;
-    right: calc((100% - var(--gap) * (var(--n) - 1)) / var(--n) - 28px);
-    height: 2px;
-    border-radius: 2px;
-    background: rgba(255, 255, 255, 0.12);
-}
-.process__fill {
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--card-primary);
-    box-shadow: 0 0 14px rgba(200, 80, 192, 0.55);
-    transform: scaleX(var(--progress, 0));
-    transform-origin: left center;
-}
 .process__step { position: relative; }
 /* (the step circle, its ring, number, check and the body states: see the Együttműködés block at the end of the file) */
 .process__title {
@@ -4247,24 +4231,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 /* tablet: 2 x 2 columns, one line per row (node 1-2 and node 3-4) */
 @media (min-width: 768px) and (max-width: 1199px) {
     .process { --n: 2; grid-template-columns: repeat(2, 1fr); row-gap: 48px; }
-    .process__fill { transform: scaleX(clamp(0, calc(var(--progress, 0) * 3), 1)); }
-    .process__step:nth-child(4)::before,
-    .process__step:nth-child(4)::after {
-        content: "";
-        position: absolute;
-        top: 27px;
-        left: 28px;
-        width: calc(100% + var(--gap) - 0px);
-        height: 2px;
-        border-radius: 2px;
-    }
-    .process__step:nth-child(4)::before { background: rgba(255, 255, 255, 0.12); }
-    .process__step:nth-child(4)::after {
-        background: var(--card-primary);
-        box-shadow: 0 0 14px rgba(200, 80, 192, 0.55);
-        transform: scaleX(clamp(0, calc((var(--progress, 0) - 0.6667) * 3), 1));
-        transform-origin: left center;
-    }
 }
 .process__text {
     margin: 0;
@@ -4280,15 +4246,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     .steps-head { margin-bottom: 44px; }
     .process { grid-template-columns: 1fr; gap: 40px; }
     .process__title { min-height: 0; }
-    .process__line {
-        top: 28px;
-        bottom: 28px;
-        left: 27px;
-        right: auto;
-        width: 2px;
-        height: auto;
-    }
-    .process__fill { transform: scaleY(var(--progress, 0)); transform-origin: top center; }
     .process__step { display: grid; grid-template-columns: 56px 1fr; column-gap: 20px; align-items: start; }
     .process__body { margin-top: 4px; }
 }
@@ -6241,7 +6198,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     margin: 0;
     max-width: none;
     font-family: 'Montserrat', sans-serif;
-    font-size: 18px;                      /* the original size of the closing line (16px on phones) */
+    font-size: var(--cta-line-fs);        /* the original size of the closing line (16px on phones) */
     line-height: 1.35;
     color: rgba(255, 255, 255, 0.72);
 }
@@ -6263,7 +6220,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 .cta-row .cta-l2 { display: block; font-weight: 400; }
 @media (max-width: 767px) {
     .cta-row { flex-direction: column; align-items: flex-start; margin-top: 56px; padding-top: 32px; }
-    .cta-row .cta-row__text { font-size: 16px; }
+    .cta-row .cta-row__text { font-size: var(--cta-line-fs); }
 }
 @media (prefers-reduced-motion: no-preference) {
     .cta-row--armed:not(.is-in) { border-top-color: transparent; pointer-events: none; transition: border-color 0.6s ease 0.16s; }
@@ -7165,7 +7122,7 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
 .st-count { display: inline-block; }
 .st-reel > span, .st-count > span:last-child { color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }      /* the gradient sits on each moving piece: a clip-to-text ancestor would paint the untransformed text */
 .st-reel { display: inline-block; vertical-align: top; height: calc(var(--section-heading-lh) * 1em); overflow: clip; }
-.st-reel > span { display: block; text-align: right; transform: translateY(calc(var(--cur, 0) * -100%)); transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.st-reel > span { display: block; text-align: left; transform: translateY(calc(var(--cur, 0) * -100%)); transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
 .pn-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 .process__node {
@@ -7187,43 +7144,43 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
 }
 .process__node::before { content: ""; position: absolute; z-index: -1; inset: -10px; border-radius: 50%; background: radial-gradient(circle, rgb(200 80 192 / 0.38), rgb(108 99 255 / 0.18) 45%, transparent 70%); opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
 .process__node::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1.5px solid rgb(200 80 192 / 0.7); opacity: 0; pointer-events: none; }
-.pn-ring { position: absolute; inset: -1px; width: 56px; height: 56px; overflow: visible; transform: rotate(-90deg); pointer-events: none; }
+.pn-ring { position: absolute; inset: -1px; width: 56px; height: 56px; overflow: visible; transform: rotate(180deg); pointer-events: none; }
 .pn-ring circle { fill: none; stroke: url(#pnGrad); stroke-width: 2; opacity: 0; }
-.pn-ring[data-draw] circle { opacity: 1; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.7s ease; }
+.pn-ring[data-draw] circle { opacity: 1; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--ring, 0)); }       /* scrubbed by the scroll: the head going around the circle */
 .pn-num { position: relative; display: block; line-height: 1.4; clip-path: inset(0 -3px); }
 .pn-n { display: block; transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
 .pn-n2 { position: absolute; inset: 0; translate: 0 115%; color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
-.pn-check { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; stroke: url(#pnGrad); stroke-width: 2.5; pointer-events: none; }
+.pn-check { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; stroke: #fff; stroke-width: 2.3; pointer-events: none; }      /* ~45% of the circle, 2.5px stroke */
 .pn-check path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.4s ease; }
+.pn-check { visibility: hidden; transition: visibility 0s 0.45s; }                         /* an undrawn dash would still leave its round cap as a dot */
+.process__step.is-done .pn-check { visibility: visible; transition-delay: 0s; }
 .pn-check:not([data-draw]) path { stroke-dasharray: none; stroke-dashoffset: 0; opacity: 0; }
 
 .process__step.is-active .process__node { transform: scale(1.12); }
-.process__step.is-active .pn-ring[data-draw] circle { stroke-dashoffset: 0; }
 .process__step.is-active .pn-n:not(.pn-n2) { translate: 0 -115%; }
 .process__step.is-active .pn-n2 { translate: 0 0; }
 .process__step.is-current .process__node::before { opacity: 1; }
-.process__step.is-current .pn-ring { animation: pnSpin 12s linear infinite; }
+.process__step.is-current.is-full .pn-ring { animation: pnSpin 12s linear infinite; }      /* turns only once the ring is complete (the last step, until the row below appears) */
 .process__step.is-done .process__node { transform: scale(1.05); }
 .process__step.is-done .process__node::before { opacity: 0.3; }
 .process__step.is-done .pn-n2 { translate: 0 -115%; }
 .process__step.is-done .pn-check[data-draw] path { stroke-dashoffset: 0; transition-delay: 0.15s; }
 .process__step.is-done .process__node::after { animation: pnRipple 0.7s ease-out both; }
-@keyframes pnSpin { from { transform: rotate(-90deg); } to { transform: rotate(270deg); } }
+@keyframes pnSpin { from { transform: rotate(180deg); } to { transform: rotate(540deg); } }
 @keyframes pnRipple { from { transform: scale(1); opacity: 0.7; } to { transform: scale(2.3); opacity: 0; } }
 /* the body: dim title until the step is reached, the description rises line by line from masks (the .rv-* rules, toggled with .is-active) */
 .process__body { opacity: 1; transform: none; transition: none; }
 .process__title { color: rgb(255 255 255 / 0.4); -webkit-text-fill-color: rgb(255 255 255 / 0.4); transition: color 0.5s ease, -webkit-text-fill-color 0.5s ease; }
 .process__step.is-active .process__title { color: #fff; -webkit-text-fill-color: #fff; }
-@media (min-width: 768px) { .process__text { max-width: 30ch; text-wrap: balance; } }
+@media (min-width: 768px) { .process__text { max-width: min(100%, 30ch); text-wrap: balance; } }
+.process__text { font-size: var(--cta-line-fs); line-height: 1.45; }
 .process__text .rv-line { display: block; white-space: nowrap; }
 .process__text .rv-i { display: block; transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd, 0s), opacity 0.45s ease var(--rd, 0s); }
 .process__text.rv-prep .rv-i { transform: translateY(100%); opacity: 0; --rd: 0s; }
 .process__text.rv-prep.rv-in .rv-i { transform: none; opacity: 1; --rd: calc(0.15s + var(--ri, 0) * 0.07s); }
 .process__text.rv-moving .rv-line { overflow: clip; }
 /* the charge: a glowing head at the tip of the filling line (JS moves it; desktop and phone layouts, not the 2 x 2 tablet one) */
-.process__head { position: absolute; left: 0; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: radial-gradient(circle, #fff 0, rgb(200 80 192 / 0.9) 35%, transparent 70%); opacity: 0; pointer-events: none; will-change: transform; }
-@media (min-width: 768px) and (max-width: 1199px) { .process__head { display: none; } }
-@media (max-width: 767px) { .process__head { left: 50%; top: 0; } }
+.process__head { position: absolute; left: 0; top: 0; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: radial-gradient(circle, #fff 0, rgb(200 80 192 / 0.9) 35%, transparent 70%); opacity: 0; pointer-events: none; will-change: transform; }
 @media (prefers-reduced-motion: reduce) {
     .process__node, .process__node::before, .pn-ring[data-draw] circle, .pn-n, .pn-check path, .st-reel > span, .process__title, .process__text .rv-i { transition: none !important; }
     .process__step.is-current .pn-ring { animation: none; }
@@ -7232,3 +7189,24 @@ html.has-cursor :is(#contact, #services) .section-heading.fx-done:has(.sh-word:h
 }
 @media (max-width: 767px) { .steps-title { font-size: min(var(--section-heading-size), calc((100vw - 40px) / 16)); } }      /* "EGYÜTTMŰKÖDÉS" (15.7em) must fit between the phone gutters */
 #steps-cta .hbtn { justify-content: center; }
+
+/* ===== EGYÜTTMŰKÖDÉS refinements: two-line head, segments that wrap the circles, one charge path ===== */
+.steps-title .st-line { display: block; }
+.st-nb { display: inline-block; white-space: nowrap; }                 /* "lépésben" and its dot never part */
+.st-hide { visibility: hidden; }
+.st-count { transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.st-count.st-hide { visibility: visible; opacity: 0; transform: translateY(0.25em); }
+#steps .steps-head { margin-bottom: var(--head-steps-gap); }
+/* the connecting segments: from the ring's outer edge + 6px (the active circle is scaled 1.12 from its left edge) to the next circle's left edge - 6px; nothing runs inside a circle */
+.process__seg { position: absolute; top: 27px; left: 69px; width: calc(100% + var(--gap) - 75px); height: 2px; border-radius: 2px; background: rgb(255 255 255 / 0.12); pointer-events: none; }
+.process__step:last-child .process__seg { display: none; }
+.process__fill { position: absolute; inset: 0; border-radius: inherit; background: var(--card-primary); box-shadow: 0 0 14px rgb(200 80 192 / 0.55); transform: scaleX(var(--seg, 0)); transform-origin: left center; }
+@media (min-width: 768px) and (max-width: 1199px) { .process__step:nth-child(2) .process__seg { display: none; } }      /* the 2 x 2 tablet grid: no segment across the row break */
+@media (max-width: 767px) {
+    .process__seg { top: 66px; left: 27px; width: 2px; height: calc(100% - 36px); }
+    .process__fill { transform: scaleY(var(--seg, 0)); transform-origin: top center; }
+}
+@media (min-width: 768px) and (max-width: 1199px) { .process__head { display: none; } }
+@media (max-width: 767px) { :root { --cta-line-fs: 16px; } }
+@media (min-width: 1200px) { .process__text { max-width: none; width: calc(100% + 20px); } }      /* four columns: the description may reach 20px into the column gap (12px stay free) so it keeps two lines at 1366 too */
+@media (min-width: 1200px) and (max-width: 1319px) { :root { --cta-line-fs: 16px; } }      /* the narrowest desktop columns (1280): the shared line size is 16px, so the descriptions keep two lines */

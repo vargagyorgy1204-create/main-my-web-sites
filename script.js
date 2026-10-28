@@ -888,21 +888,24 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     });
 })();
 
-// Steps (Együttműködés) - "charge running along the line": the section pins on large screens (240svh of run), the scroll progress reaches the steps 1 -> 4 one after the other
-// (nothing is lit before the pin begins), the line fills with a glowing head, the counter in the head rolls 1/4 -> 4/4, "Együttműködés" decodes when the section enters.
-// Phones (< 768px) / short windows: no pin, a step is reached when it gets to ~60% of the viewport. Reduced motion: everything shown completed (4/4).
+// Steps (Együttműködés) - "charge running along the line": ONE path, scrubbed by the scroll: ring 1 (the head goes around the circle, from its left point, clockwise) -> segment 1 ->
+// ring 2 -> segment 2 -> ... -> ring 4. A step is reached when the head arrives at its circle, passed when its ring is complete. The section pins on large screens (240svh of run;
+// nothing is lit before the pin begins), the counter in the head rolls 1/4 -> 4/4, both words of the head decode when the section enters.
+// Phones (< 768px) / short windows: no pin, the path follows the circles (the mark is ~60% of the viewport). Reduced motion: everything shown completed (4/4).
 (function () {
     var section = document.getElementById('steps');
     var process = document.querySelector('.process');
     if (!section || !process) return;
     var steps = Array.prototype.slice.call(process.querySelectorAll('.process__step'));
+    var N = steps.length;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var pinQuery = window.matchMedia('(min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)');
     var ticking = false;
     var title = section.querySelector('.steps-title');
     var reel = section.querySelector('.st-reel');
-    var line = process.querySelector('.process__line');
     var tip = process.querySelector('.process__head');
+    var segs = steps.map(function (s) { return s.querySelector('.process__seg'); });
+    var nodes = steps.map(function (s) { return s.querySelector('.process__node'); });
     var texts = steps.map(function (s) { return s.querySelector('.process__text'); });
     /* the closing row (.cta-row, shared with Szolgáltatások) plays its sequential entrance only in the pinned layout */
     var ctaRow = section.querySelector('.cta-row');
@@ -961,15 +964,23 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         splitDone = true;
     }
 
-    /* ---- the state: cur = the latest reached step (-1: none), fin = the last step is passed too ---- */
-    var curState = -2, finState = null, movingT = [];
-    function setState(cur, fin) {
-        if (cur === curState && fin === finState) return;
-        curState = cur; finState = fin;
+    /* ---- the charge path: pieces ring0, seg0, ring1, seg1, ... (weights: a ring 0.55, a segment 1); pos 0..TW along it, -1 = not started ---- */
+    var WR = 0.55, WS = 1, ringS = [], ringE = [], segS = [], segE = [], TW = 0;
+    for (var k = 0; k < N; k++) {
+        ringS[k] = TW; TW += WR; ringE[k] = TW;
+        if (k < N - 1) { segS[k] = TW; TW += WS; segE[k] = TW; }
+    }
+    function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+
+    /* ---- the state: cur = the latest step the head has arrived at (-1: none), doneTo = the last step whose ring is complete (-1: none) ---- */
+    var curState = -2, doneState = -2, movingT = [];
+    function setState(cur, doneTo) {
+        if (cur === curState && doneTo === doneState) return;
+        curState = cur; doneState = doneTo;
         steps.forEach(function (step, i) {
-            var reached = i <= cur, done = i < cur || (i === cur && fin);
+            var reached = i <= cur, done = i <= doneTo;
             step.classList.toggle('is-active', reached);
-            step.classList.toggle('is-current', i === cur && !fin);
+            step.classList.toggle('is-current', reached && !done);
             step.classList.toggle('is-done', done);
             var p = texts[i];
             if (p && p.classList.contains('rv-prep') && p.classList.contains('rv-in') !== reached) {
@@ -980,43 +991,43 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         if (reel) reel.style.setProperty('--cur', String(Math.max(0, cur)));
     }
 
-    function setProgress(p) {
-        process.style.setProperty('--progress', p.toFixed(3));
-        /* the glowing head at the tip of the filling line (desktop: along x, phone: along y) */
-        if (tip && line) {
-            var vertical = window.innerWidth < 768, len = vertical ? line.offsetHeight : line.offsetWidth;
-            var x = vertical ? 0 : p * len, y = vertical ? p * len : 0;
-            tip.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
-            tip.style.opacity = p > 0.003 && p < 0.997 ? '1' : '0';
+    /* pos -> every ring / segment fraction, the state and the glowing head */
+    function applyPos(pos, finAll) {
+        var cur = -1, doneTo = -1;
+        for (var i = 0; i < N; i++) {
+            var rf = clamp01((pos - ringS[i]) / WR), sf = i < N - 1 ? clamp01((pos - segS[i]) / WS) : 0;
+            steps[i].style.setProperty('--ring', rf.toFixed(3));
+            steps[i].style.setProperty('--seg', sf.toFixed(3));
+            steps[i].classList.toggle('is-full', rf >= 0.999);
+            if (pos >= ringS[i]) cur = i;
+            if (pos > ringE[i] + 1e-6) doneTo = i;
         }
+        if (finAll) doneTo = N - 1;
+        setState(cur, doneTo);
+        placeHead(pos);
     }
-
-    /* Fill 0 -> 1 across the nodes: a short hold on every node (the hold lengths
-       reproduce the original 3-step timing when there are 3 steps). */
-    function staged(t) {
-        var n = Math.max(2, steps.length), segs = n - 1;
-        var start = 0.08, end = 0.92, hold = 0.08;
-        var seg = (end - start - (segs - 1) * hold) / segs;
-        if (t < start) return 0;
-        if (t >= end) return 1;
-        var x = t - start;
-        for (var i = 0; i < segs; i++) {
-            if (x < seg) return (i + x / seg) / segs;
-            x -= seg;
-            if (i < segs - 1) {
-                if (x < hold) return (i + 1) / segs;
-                x -= hold;
+    var origin = { x: 0, y: 0 };
+    function placeHead(pos) {
+        if (!tip || reduce) return;
+        if (pos <= 0.0001 || pos >= TW - 0.0001) { tip.style.opacity = '0'; return; }
+        var pr = process.getBoundingClientRect(), x = null, y = null;
+        for (var i = 0; i < N && x === null; i++) {
+            if (pos <= ringE[i]) {                                        /* around circle i: from its left point, clockwise */
+                var nb = nodes[i].getBoundingClientRect(), r = nb.width / 2 - 1, th = Math.PI + clamp01((pos - ringS[i]) / WR) * 2 * Math.PI;
+                x = nb.left + nb.width / 2 + r * Math.cos(th) - pr.left; y = nb.top + nb.height / 2 + r * Math.sin(th) - pr.top;
+            } else if (i < N - 1 && pos <= segE[i]) {                     /* along segment i, towards the next circle */
+                var sb = segs[i].getBoundingClientRect(), f = clamp01((pos - segS[i]) / WS), vertical = window.innerWidth < 768;
+                x = (vertical ? sb.left + sb.width / 2 : sb.left + f * sb.width) - pr.left; y = (vertical ? sb.top + f * sb.height : sb.top + sb.height / 2) - pr.top;
             }
         }
-        return 1;
+        if (x === null) { tip.style.opacity = '0'; return; }
+        tip.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+        tip.style.opacity = '1';
     }
-    /* the pinned timeline: step 1 is reached just after the pin begins (nothing before), the others when the line gets to them, the last one is passed at the end */
-    var T0 = 0.07, TDONE = 0.97;
-    function reachedAt(p, t) {
-        var n = steps.length, cur = t >= T0 ? 0 : -1;
-        for (var i = 1; i < n; i++) if (p >= i / (n - 1) - 0.02) cur = i;
-        return cur;
-    }
+
+    /* the pinned timeline: t -> pos; step 1 is reached just after the pin begins (nothing before) */
+    var T0 = 0.07, T1 = 0.93, TDONE = 0.97;
+    function posAt(t) { return t < T0 ? -1 : clamp01((t - T0) / (T1 - T0)) * TW; }
 
     function fit() {
         var inner = section.querySelector('.steps-inner');
@@ -1038,29 +1049,29 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     function update() {
         ticking = false;
-        if (reduce) { setProgress(1); setState(steps.length - 1, true); section.classList.add('steps-done'); if (ctaRow) ctaRow.classList.add('is-in'); return; }
+        if (reduce) { applyPos(TW, true); section.classList.add('steps-done'); if (ctaRow) ctaRow.classList.add('is-in'); return; }
         var r = section.getBoundingClientRect();
         var vh = window.innerHeight;
         if (pinQuery.matches) {
             var pinEl = section.querySelector('.steps-pin');
             var total = Math.max(1, r.height - (pinEl ? pinEl.offsetHeight : vh));
             var t = Math.max(0, Math.min(1, -r.top / total));
-            var p = staged(t);
-            setProgress(p);
-            setState(reachedAt(p, t), t >= TDONE);
+            applyPos(posAt(t), t >= TDONE);
             section.classList.toggle('steps-done', t >= TDONE);
             if (ctaRow) ctaRow.classList.toggle('is-in', t >= TDONE);
         } else {
-            /* no pin: a step is reached when it gets to ~60% of the viewport; the line follows the nodes */
-            var mark = vh * 0.6, cur = -1, nodes = steps.map(function (s) { return s.querySelector('.process__node').getBoundingClientRect(); });
-            nodes.forEach(function (nb, i) { if (nb.top + nb.height / 2 < mark) cur = i; });
-            var first = nodes[0].top + nodes[0].height / 2, last = nodes[nodes.length - 1].top + nodes[nodes.length - 1].height / 2;
-            setProgress(Math.max(0, Math.min(1, (mark - first) / Math.max(1, last - first))));
-            var bodyB = steps[steps.length - 1].getBoundingClientRect().bottom;
-            var fin = cur === steps.length - 1 && bodyB < vh * 0.85;
-            setState(cur, fin);
+            /* no pin: the path follows the circles: the mark (~60% of the viewport) is a position along it; a ring takes +-36px of scroll */
+            var mark = vh * 0.6, R = 36, yc = nodes.map(function (n) { var b = n.getBoundingClientRect(); return b.top + b.height / 2; });
+            var pos = -1;
+            for (var i = 0; i < N; i++) {
+                if (mark >= yc[i] - R && mark <= yc[i] + R) { pos = ringS[i] + (mark - (yc[i] - R)) / (2 * R) * WR; break; }
+                if (i < N - 1 && mark > yc[i] + R && mark < yc[i + 1] - R) { pos = segS[i] + (mark - (yc[i] + R)) / Math.max(1, yc[i + 1] - yc[i] - 2 * R) * WS; break; }
+                if (i === N - 1 && mark > yc[i] + R) pos = TW;
+            }
+            var bodyB = steps[N - 1].getBoundingClientRect().bottom;
+            applyPos(pos, pos >= TW && bodyB < vh * 0.85);
             section.classList.add('steps-done');
-            if (ctaRow) ctaRow.classList.toggle('is-in', fin || (cur === steps.length - 1));
+            if (ctaRow) ctaRow.classList.toggle('is-in', pos >= ringS[N - 1]);
         }
     }
 
@@ -1072,8 +1083,10 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         scheduleSnap();
     }
 
-    /* ---- gentle snap (pinned only): after the scroll stops, settle on the nearest step (like Értékek) ---- */
-    var snapT = 0, TARGETS = [0.09, 0.3467, 0.6533, 0.985];
+    /* ---- gentle snap (pinned only): after the scroll stops, settle where a ring is complete (like Értékek) ---- */
+    var snapT = 0, TARGETS = [];
+    for (var q = 0; q < N - 1; q++) TARGETS.push(T0 + ringE[q] / TW * (T1 - T0));
+    TARGETS.push(0.985);
     function scheduleSnap() { clearTimeout(snapT); snapT = setTimeout(snap, 180); }
     function snap() {
         if (reduce || !pinQuery.matches || !window.VB || !VB.lenis || VB.lenis.isScrolling) return;
@@ -1088,39 +1101,57 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         VB.lenis.scrollTo(window.scrollY + dy, { duration: 0.6 });
     }
 
-    /* ---- "Együttműködés" decodes: random capitals settle into the real letters, left -> right (~0.9s). Each letter keeps its real width while it is scrambled: no layout shift ---- */
-    var decodeWord = title && title.querySelector('.st-decode'), decodeChars = null, decodeRaf = 0, played = false;
+    /* ---- the head decodes: "Együttműködés", then (0.25s after it settled) "lépésben", then the counter appears. Random capitals settle into the real letters, left -> right,
+       ~1.4s per word. Each letter keeps its real width while it is scrambled: no layout shift ---- */
+    var words = title ? Array.prototype.slice.call(title.querySelectorAll('.st-decode')) : [], count = title && title.querySelector('.st-count');
+    var decodeRaf = [0, 0], decodeTimers = [], played = false, prepped = false;
+    function setHide(w, on) { w.classList.toggle('st-hide', on); var d = w.parentNode.querySelector('.sh-dot'); if (d) d.classList.toggle('st-hide', on); }      /* the dot belongs to its word */
     function prepDecode() {
-        if (!decodeWord || decodeChars) return;
-        var text = decodeWord.textContent; decodeWord.textContent = '';
-        decodeChars = text.split('').map(function (ch) {
-            var s = document.createElement('span'); s.className = 'st-ch'; s.textContent = ch; s.setAttribute('data-c', ch); decodeWord.appendChild(s); return s;
+        if (prepped) return; prepped = true;
+        words.forEach(function (w) {
+            var text = w.textContent; w.textContent = '';
+            w._chars = text.split('').map(function (ch) {
+                var s = document.createElement('span'); s.className = 'st-ch'; s.textContent = ch; s.setAttribute('data-c', ch); w.appendChild(s); return s;
+            });
         });
     }
-    function decode() {
-        if (reduce || !decodeWord) return;
-        prepDecode();
-        cancelAnimationFrame(decodeRaf);
-        var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', n = decodeChars.length, T = 900, t0 = performance.now(), widths = decodeChars.map(function (s) { return s.getBoundingClientRect().width; });
-        decodeChars.forEach(function (s, i) { s.style.width = widths[i] + 'px'; });
+    function decodeWord(w, idx, T, done) {
+        var POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', chars = w._chars, n = chars.length, t0 = performance.now();
+        var widths = chars.map(function (s) { return s.getBoundingClientRect().width; });
+        chars.forEach(function (s, i) { s.style.width = widths[i] + 'px'; });
+        setHide(w, false);
         function tickD(now) {
             var e = now - t0, settled = 0;
-            decodeChars.forEach(function (s, i) {
-                var at = 150 + (T - 150) * (i / Math.max(1, n - 1));
+            chars.forEach(function (s, i) {
+                var at = 200 + (T - 200) * (i / Math.max(1, n - 1));
                 if (e >= at) { s.textContent = s.getAttribute('data-c'); settled++; }
                 else s.textContent = POOL.charAt(Math.floor(Math.random() * POOL.length));
             });
-            if (settled < n) decodeRaf = requestAnimationFrame(tickD);
-            else decodeChars.forEach(function (s) { s.style.width = ''; });
+            if (settled < n) decodeRaf[idx] = requestAnimationFrame(tickD);
+            else { chars.forEach(function (s) { s.style.width = ''; }); if (done) done(); }
         }
-        decodeRaf = requestAnimationFrame(tickD);
+        decodeRaf[idx] = requestAnimationFrame(tickD);
     }
+    function stopDecode() { decodeRaf.forEach(cancelAnimationFrame); decodeTimers.forEach(clearTimeout); decodeTimers = []; }
+    function resetDecode() { stopDecode(); words.forEach(function (w) { setHide(w, true); }); if (count) count.classList.add('st-hide'); }
+    function runDecode() {
+        if (reduce || words.length < 2) return;
+        prepDecode(); resetDecode();
+        decodeWord(words[0], 0, 1400, function () {
+            decodeTimers.push(setTimeout(function () {
+                decodeWord(words[1], 1, 1400, function () { if (count) count.classList.remove('st-hide'); });
+            }, 250));
+        });
+    }
+    if (title && words.length === 2 && !reduce) { words.forEach(function (w) { setHide(w, true); }); if (count) count.classList.add('st-hide'); }
     if (title && 'IntersectionObserver' in window && !reduce) {
         new IntersectionObserver(function (es) {
             var e = es[es.length - 1];
-            if (e.isIntersecting && !played) { played = true; decode(); }
-            else if (!e.isIntersecting) played = false;
+            if (e.isIntersecting && !played) { played = true; runDecode(); }
+            else if (!e.isIntersecting && played) { played = false; stopDecode(); words.forEach(function (w) { setHide(w, true); }); if (count) count.classList.add('st-hide'); }
         }, { threshold: 0.6 }).observe(title);
+    } else if (title && words.length === 2) {
+        words.forEach(function (w) { setHide(w, false); }); if (count) count.classList.remove('st-hide');
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
