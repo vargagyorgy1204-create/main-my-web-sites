@@ -297,7 +297,7 @@
   }
   if (rows[2]) {
     gsap.fromTo(section, { '--svt-bg': BG.violet }, {
-      '--svt-bg': BG.teal, ease: 'none',
+      '--svt-bg': BG.teal, ease: 'none', immediateRender: false,         /* a fromTo renders its start value at once: without this the violet start of step 2 overrode the graphite start of step 1 (the section was violet before its first step: a hard edge after Együttműködés) */
       scrollTrigger: { trigger: rows[2], start: 'top 85%', end: 'top 35%', scrub: true }
     });
   }
