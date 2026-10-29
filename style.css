@@ -1075,6 +1075,7 @@ body.service-modal-open { overflow: hidden; }
     .pricing-watermark { width: 120px; height: 120px; inset-inline-end: -22px; inset-block-end: -26px; }
     .modal-quote-btn { padding: 11px 26px; font-size: 0.88rem; }
     .service-modal .modal-cta { gap: 16px; }
+    .service-modal .modal-cta { --cta-fs: 15px; }
     .service-modal .modal-cta .cta-row__text { font-size: 15px; }
 }
 @media (min-width: 901px) and (max-height: 560px) {
@@ -1095,6 +1096,7 @@ body.service-modal-open { overflow: hidden; }
     .pricing-watermark { width: 96px; height: 96px; inset-inline-end: -18px; inset-block-end: -22px; }
     .modal-quote-btn { min-height: 38px; padding: 9px 24px; font-size: 0.84rem; }
     .service-modal .modal-cta { gap: 12px; }
+    .service-modal .modal-cta { --cta-fs: 13px; }
     .service-modal .modal-cta .cta-row__text { font-size: 13px; }
     .modal-quote-link.text-link { height: 34px; }
 }
@@ -1115,7 +1117,7 @@ body.service-modal-open { overflow: hidden; }
 }
 /* ---------- bottom CTA row, >= 1024px: exactly two text lines + the pill on the right (never wraps below); both lines are short and never wrap ---------- */
 @media (min-width: 1024px) {
-    .service-modal .modal-cta { flex-wrap: nowrap; align-items: center; }
+    .service-modal .modal-cta { flex-wrap: nowrap; align-items: center; padding-top: calc(var(--sm-txt) + var(--cta-lift)); }      /* pill + text side by side: the same extra divider gap as the closing rows */
     .service-modal .modal-cta .cta-row__text { flex: 1 1 auto; min-width: 0; }
     .service-modal .modal-cta .cta-l1 { white-space: nowrap; }
     .service-modal .modal-cta .cta-l2 { white-space: nowrap; }
@@ -6191,14 +6193,18 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     flex-wrap: wrap;
     gap: 24px;
     margin-top: 0;
-    padding-top: var(--divider-cta);
+    --cta-fs: var(--cta-line-fs);
+    /* divider -> TOP EDGE of the pill = divider -> visual glyph top of line 1 (the cap/ascender top sits ~0.22em below the text box top): the extra gap lifts the text box + pill pair by
+       that offset, corrected for a pill that is not as tall as the two text lines (2 x 1.35em); the pill stays centred to the two lines. Phones (pill below the text): unchanged (below) */
+    --cta-lift: max(0px, calc(0.22 * var(--cta-fs) + (var(--btn-h) - 2.7 * var(--cta-fs)) / 2));
+    padding-top: calc(var(--divider-cta) + var(--cta-lift));
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 .cta-row .cta-row__text {
     margin: 0;
     max-width: none;
     font-family: 'Montserrat', sans-serif;
-    font-size: var(--cta-line-fs);        /* the original size of the closing line (16px on phones) */
+    font-size: var(--cta-fs);        /* the original size of the closing line (16px on phones) */
     line-height: 1.35;
     color: rgba(255, 255, 255, 0.72);
 }
@@ -6219,7 +6225,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 .cta-row__btn--no-arrow .hbtn__icon { display: none; }
 .cta-row .cta-l2 { display: block; font-weight: 400; }
 @media (max-width: 767px) {
-    .cta-row { flex-direction: column; align-items: flex-start; margin-top: 56px; padding-top: 32px; }
+    .cta-row { flex-direction: column; align-items: flex-start; margin-top: 56px; padding-top: 32px; }      /* the pill below the text: spacing as before */
     .cta-row .cta-row__text { font-size: var(--cta-line-fs); }
 }
 @media (prefers-reduced-motion: no-preference) {
