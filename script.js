@@ -852,16 +852,19 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         panels.forEach(function (p, i) {
             var on = p === panel;
             p.classList.toggle('is-active', on);
-            p.classList.toggle('is-next', i === s + 1);          /* "up next": the next collapsed card's number + label stay at full opacity */
+            p.classList.toggle('is-next', i === s + 1);          /* "up next": the next card gets the rising water and keeps its label at full opacity */
+            p.classList.toggle('is-passed', i < s);
             p.style.setProperty('--k', i > s ? 1 : 0);
             var tab = p.querySelector('.why-panel__tab');
             if (tab) tab.setAttribute('aria-expanded', on ? 'true' : 'false');
         });
         if (!(API && API.pinned)) {                              /* not pinned (reduced motion, tablets, short windows): passed numbers filled, the rest outlined; the pin scrubs --nf itself */
-            panels.forEach(function (p, k) { p.style.setProperty('--nf', k <= s ? 1 : 0); });
+            panels.forEach(function (p, k) { p.style.setProperty('--nf', k <= s ? 1 : 0); setLv(p, k < s ? 0.15 : k === s ? 1 : 0); });
         }
     }
 
+    /* the water level of a card (--lv 0..1); a dry card (0) is not rendered at all */
+    function setLv(p, v) { p.style.setProperty('--lv', v); p.classList.toggle('is-dry', v === 0); }
     var API;
     var defaultPanel = panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0];
     activate(defaultPanel);
@@ -887,7 +890,13 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     /* js/why-pin.js (>= 1024px, motion allowed) takes over `pinned` / `onSelect`: a click scrolls to the step of that card and the
        scroll position opens it. Everywhere else a click / tap opens the card directly (phones: tapping the open card closes it). */
-    API = (window.VB = window.VB || {}).why = { panels: panels, activate: activate, pinned: false, onSelect: null };
+    API = (window.VB = window.VB || {}).why = { panels: panels, activate: activate, setLv: setLv, pinned: false, onSelect: null };
+
+    /* the waves only run while the section is on screen */
+    var whySection = document.getElementById('why');
+    if (whySection && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function (es) { whySection.classList.toggle('is-off', !es[es.length - 1].isIntersecting); }, { threshold: 0 }).observe(whySection);
+    }
 
     /* ---- the open-state pieces: title letters rise from masks, description rises line by line, icon strokes draw (pathLength 1) ---- */
     panels.forEach(function (panel) {
@@ -973,10 +982,16 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         if (seen) { seen.disconnect(); seen = null; }
         if (!phone.matches) { activate(panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0]); return; }
         panels.forEach(function (p) { p.classList.remove('is-next'); });
-        if (reduceWhy || !('IntersectionObserver' in window)) { panels.forEach(function (p) { p.classList.add('is-active'); }); return; }
-        panels.forEach(function (p) { p.classList.remove('is-active'); });
+        if (reduceWhy || !('IntersectionObserver' in window)) { panels.forEach(function (p) { p.classList.add('is-active'); setLv(p, 1); }); return; }
+        panels.forEach(function (p) { p.classList.remove('is-active', 'is-passed'); setLv(p, 0); });
         seen = new IntersectionObserver(function (es) {
-            es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-active'); seen.unobserve(e.target); } });
+            es.forEach(function (e) {
+                if (!e.isIntersecting) return;
+                var p = e.target;
+                seen.unobserve(p);
+                setLv(p, 1);                                                          /* the water fills the card (1s), then the card opens */
+                setTimeout(function () { p.classList.add('is-active'); }, 950);
+            });
         }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' });
         panels.forEach(function (p) { seen.observe(p); });
     }

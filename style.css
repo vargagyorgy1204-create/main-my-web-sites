@@ -7220,15 +7220,16 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .why-panel.is-active { box-shadow: 0 24px 50px var(--ac-sh); }
 
 /* background reveal: the gradient grows from the bottom-left corner (150% of the reference radius covers the opposite corner), collapses back on close */
-.why-panel::before { opacity: 1; clip-path: circle(0% at 0 100%); transition: clip-path 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.why-panel.is-active::before { clip-path: circle(150% at 0 100%); transition-duration: 0.6s; }
+.why-panel::before { z-index: 1; opacity: 0; transition: opacity 0.45s ease; }          /* the open card's gradient fades in over the water that has filled the card (the corner circle is gone) */
+.why-panel.is-active::before { opacity: 1; transition-duration: 0.6s; }
 
 /* collapsed: number + a 3px inset top strip in the accent; up next = the next card's number and label at full opacity, the others at 55% */
 /* collapsed number = progress: Syne 800 outline in the card's accent (centred at the top); the fill overlay (--nf 0..1, set by js/why-pin.js) rises from the bottom:
    passed cards 1, the NEXT card = scroll progress to its step, the rest 0. The up-next label stays at full opacity, the other labels 55% */
 .why-panel__num {
-    position: relative; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 2.6vw, 40px); line-height: 1; letter-spacing: 0;
-    color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1.5px var(--ac-n);
+    position: relative; font-family: 'Syne', sans-serif; font-weight: 800; line-height: 1; letter-spacing: 0;
+    font-size: clamp(18px, min(1.9vw, calc(var(--wc, 120px) * 0.62 / var(--num-em, 2.3))), 32px);          /* <= ~62% of the collapsed card's width */
+    color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1.75px var(--ac-n);
 }
 .why-panel__num-fill {
     position: absolute; inset: 0; background: var(--panel-bg); -webkit-background-clip: text; background-clip: text;
@@ -7294,7 +7295,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .why-panel::before { clip-path: none; opacity: 0; transition: none; }
+    .why-panel::before { opacity: 0; transition: none; }
     .why-panel.is-active::before { opacity: 1; }
     .why-panel__big { -webkit-text-stroke: 0; }
     .why-panel__big-fill { clip-path: none; transition: none; }
@@ -7314,3 +7315,55 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .why-panel:nth-child(5) .why-panel__text { --why-text-ch: 36ch; }      /* the shortest text (05) would set in 3 lines at the shared 40ch: its measure is 4ch narrower */
 .why-panel__text .nw { white-space: nowrap; }
 .why-panel__text .wl > span { white-space: nowrap; }
+
+/* ===== ÉRTÉKEK: water fills the next card (js/why-pin.js sets --lv per card; script.js the static states / phones) =====
+   --lv = the water level 0..1: passed cards sit at a calm 0.15, the NEXT card rises with the scroll progress to its step, the open card is at 1 (its gradient fades in over the
+   water, which fills the width as the card widens). The water is a gradient block moved with transform; two masked sine strips (amplitude 6px) slide sideways by exactly one period
+   (CSS animation, compositor only; paused while the section is off-screen). The collapsed number + label exist twice (dark + white .why-panel__tab-w): clip-path insets bound to the same
+   --lv expression keep the white one under the surface and the dark one above it. Level expression: surface (mean) y = (1 - lv) * (H + 14px) - 21px. */
+.why-panel--v { --wv-s: #8f89ff; --wv-a: #6c63ff; --wv-d: #5147d6; }
+.why-panel--m { --wv-s: #e06fcb; --wv-a: #C026A3; --wv-d: #8f1a7b; }
+.why-panel--t { --wv-s: #4fc0d3; --wv-a: #1a8fa3; --wv-d: #0e5f70; }
+.why-panel__water {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.94; will-change: transform;
+    background: linear-gradient(180deg, var(--wv-s) 0%, var(--wv-a) 45%, var(--wv-d) 100%);
+    transform: translateY(calc((1 - var(--lv, 0)) * (100% + 14px) - 14px));
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s;
+}
+.why-panel.is-dry .why-panel__water { visibility: hidden; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s 0.3s; }
+.why-panel.is-passed .why-panel__water { opacity: 0.38; }
+.why-panel__wave {
+    position: absolute; left: 0; top: -14px; width: 1100px; height: 14px; background: var(--wv-s); will-change: transform;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14' preserveAspectRatio='none'%3E%3Cpath d='M0 7Q30 -5 60 7T120 7V14H0Z'/%3E%3C/svg%3E") 0 0 / 120px 14px repeat-x;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14' preserveAspectRatio='none'%3E%3Cpath d='M0 7Q30 -5 60 7T120 7V14H0Z'/%3E%3C/svg%3E") 0 0 / 120px 14px repeat-x;
+}
+.why-panel__wave.wa { animation: whyWaveA 5s linear infinite; }
+.why-panel__wave.wb { opacity: 0.55; -webkit-mask-position: 60px 0; mask-position: 60px 0; animation: whyWaveB 8s linear infinite; }
+.why-panel.is-passed .why-panel__wave.wa { animation-duration: 14s; }
+.why-panel.is-passed .why-panel__wave.wb { animation-duration: 22s; }
+@keyframes whyWaveA { to { transform: translateX(-120px); } }
+@keyframes whyWaveB { from { transform: translateX(-120px); } to { transform: translateX(0); } }
+#why.is-off .why-panel__wave { animation-play-state: paused; }
+
+/* the white copy of the number + label (only the next card has it): it takes the layout of the tab, clipped to the part below the water line */
+.why-panel__tab-w { display: none; }
+.why-panel__tab-w .why-panel__num { color: transparent; -webkit-text-stroke-color: #fff; }
+.why-panel__tab-w .why-panel__label { color: #fff; }
+.why-panel__tab-w .why-panel__label, .why-panel.is-next .why-panel__tab-w .why-panel__label { opacity: 1; }
+@media (min-width: 768px) {
+    .why-panel__tab-w {
+        position: absolute; inset: 0 auto 0 0; width: var(--wc); z-index: 2; pointer-events: none;
+        flex-direction: column; justify-content: space-between; align-items: center; padding: 28px 0 32px; box-sizing: border-box;
+        transition: clip-path 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease;
+    }
+    .why-panel.is-next .why-panel__tab-w { display: flex; clip-path: inset(calc((1 - var(--lv, 0)) * (100% + 14px) - 21px) 0 0 0); }
+    .why-panel.is-active .why-panel__tab-w { opacity: 0; }
+    .why-panel.is-next .why-panel__tab { clip-path: inset(0 0 calc(var(--lv, 0) * 100% - (1 - var(--lv, 0)) * 14px + 21px) 0); transition: opacity 0.3s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), clip-path 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+}
+
+/* phones: the water fills the card once (1s) when it enters the view, then it opens */
+@media (max-width: 767px) { .why-panel__water { transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s; } }
+@media (prefers-reduced-motion: reduce) {
+    .why-panel__water, .why-panel__tab-w, .why-panel.is-next .why-panel__tab { transition: none !important; }
+    .why-panel__wave { animation: none !important; }
+}
