@@ -7246,7 +7246,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .why-panel__num { transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
 .why-panel.is-active .why-panel__num { transform: translateY(-6px) scale(1.35); }
 .why-panel__num, .why-panel__label { opacity: 0.55; transition: opacity 0.4s ease; }
-.why-panel.is-passed .why-panel__num, .why-panel.is-passed .why-panel__label { opacity: 0.8; }
+.why-panel.is-passed .why-panel__num, .why-panel.is-passed .why-panel__label { opacity: 1; }
 .why-panel.is-next .why-panel__num, .why-panel.is-next .why-panel__label { opacity: 1; }
 
 /* open card: the body keeps its fixed-width box; the number + icon balance the top, the content sits centred in the lower 55% */
@@ -7335,7 +7335,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 }
 .why-panel.is-active .why-panel__water { opacity: 1; }          /* the filled card: fully opaque, so the open gradient fades in without any colour change */
 .why-panel.is-dry .why-panel__water { visibility: hidden; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s 0.3s; }
-.why-panel.is-passed .why-panel__water { opacity: 0.38; }
+.why-panel.is-passed .why-panel__water { opacity: 0.65; }
 .why-panel__wave {
     position: absolute; left: 0; right: 0; top: -14px; height: 14px;
     /* the crest strips carry the same gradient (sized to the card, taken from the card's top rows) plus a light veil: the surface is slightly lighter */
