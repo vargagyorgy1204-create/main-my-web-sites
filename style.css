@@ -7366,3 +7366,12 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 /* lighter surface below the crest, fading out when the card opens */
 .why-panel__water::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 70px; background: linear-gradient(180deg, rgb(255 255 255 / 0.24), rgb(255 255 255 / 0)); transition: opacity 0.6s ease; }
 .why-panel.is-active .why-panel__water::after { opacity: 0; }
+
+/* ===== Értékek open card, height-aware (script.js fitOpen sets --fit-num / --fit-gap / --fit-icon on the row, and --why-r1 = where the content region starts) ===== */
+@media (min-width: 768px) {
+    .why-panel__big { font-size: calc(clamp(88px, 17svh, 170px) * var(--fit-num, 1)); }
+    .why-panel__body { grid-template-rows: var(--why-r1, 45%) 1fr; }
+    .why-panel__icon { width: calc(clamp(36px, 4.8svh, 52px) * var(--fit-icon, 1)); height: calc(clamp(36px, 4.8svh, 52px) * var(--fit-icon, 1)); margin-bottom: calc(clamp(10px, 1.8svh, 20px) * var(--fit-gap, 1)); }
+    .why-panel__title { margin-bottom: calc(clamp(8px, 1.1svh, 12px) * var(--fit-gap, 1)); font-size: calc(clamp(24px, min(2.4vw, 3.4svh), 36px) * var(--fit-title, 1)); }
+    .why-panel__text { line-height: var(--fit-lh, 1.6); }
+}

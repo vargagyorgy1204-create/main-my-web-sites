@@ -894,7 +894,37 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         panels.forEach(function (p) { phRo.observe(p); });
     }
     var fitRaf = 0;
-    function queueFit() { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fitLabels); }
+    /* height-aware open card: the description must always be fully visible with >= 24px under it (the fit aims at 26px). Compression levels, tried in order until the tallest content fits:
+       (1) the big number to 80% / (2) 60%, (3) the gaps icon -> title -> description to 60%, (4) the icon tile to 78%, (5) the description's line height to 1.45, (6) the title to 85%. The content region starts under the (smaller) number. */
+    var FIT = [{}, { num: 0.8 }, { num: 0.6 }, { num: 0.6, gap: 0.6 }, { num: 0.6, gap: 0.6, icon: 0.78 },
+        { num: 0.6, gap: 0.6, icon: 0.78, lh: 1.45 }, { num: 0.6, gap: 0.6, icon: 0.78, lh: 1.45, title: 0.85 }];
+    function applyFit(row_, f) {
+        row_.style.setProperty('--fit-num', f.num || 1);
+        row_.style.setProperty('--fit-gap', f.gap || 1);
+        row_.style.setProperty('--fit-icon', f.icon || 1);
+        row_.style.setProperty('--fit-lh', f.lh || 1.6);
+        row_.style.setProperty('--fit-title', f.title || 1);
+        row_.style.removeProperty('--why-r1');
+    }
+    function fitOpen() {
+        if (phone.matches) { applyFit(row, {}); return; }
+        var H = panels[0].offsetHeight;
+        if (!H) return;
+        var body = panels[0].querySelector('.why-panel__body'), big = panels[0].querySelector('.why-panel__big');
+        var pb = parseFloat(getComputedStyle(body).paddingBottom) || 0, best = FIT.length - 1, r1 = 0.45 * (H - pb);
+        for (var L = 0; L < FIT.length; L++) {
+            applyFit(row, FIT[L]);
+            var ch = 0;
+            panels.forEach(function (p) { ch = Math.max(ch, p.querySelector('.why-panel__content').offsetHeight); });
+            var cs = getComputedStyle(big);
+            r1 = L === 0 ? 0.45 * (H - pb) : (parseFloat(cs.top) || 0) + parseFloat(cs.fontSize) + 10;
+            if (ch + 2 * Math.max(0, 26 - pb) <= (H - pb) - r1) { best = L; break; }
+        }
+        applyFit(row, FIT[best]);
+        if (best > 0) row.style.setProperty('--why-r1', r1.toFixed(1) + 'px');
+        row.setAttribute('data-fit', best);
+    }
+    function queueFit() { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(function () { fitLabels(); fitOpen(); }); }
     if (window.ResizeObserver) new ResizeObserver(queueFit).observe(row); else window.addEventListener('resize', queueFit);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueFit);
     queueFit();
@@ -965,6 +995,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     function splitAll() {
         if (reduceWhy) return;
         panels.forEach(function (panel) { var p = panel.querySelector('.why-panel__text'); if (p) splitLines(p); });
+        queueFit();                                                    /* the line count may have changed */
     }
     function prepIcons() {
         panels.forEach(function (panel) {
