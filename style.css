@@ -6139,31 +6139,44 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 #why.is-pinned .why-head { flex: none; margin-bottom: var(--head-gap); }
 /* the cards take whatever is left under the heading (the heading, eyebrow and bottom gap never give way): low windows get shorter cards */
 #why.is-pinned .why-panels { flex: 1 1 0; height: auto; min-height: 240px; }
-/* ===== ÉRTÉKEK cards: zero layout shift =====
-   The row (>= 768px) has a fixed geometry: every card is absolutely positioned at left: 0 and slid with transform: translateX() to the x
-   it has in the current state; only its width changes (a size change does not move any start edge, and nothing else in the layout moves).
-   Closed card = (row - 5 gaps - 12px of borders) / 10 + 2px, open card = (row - 72px) / 2 + 2px: exactly the old flex-grow 1 : 5 split (flex-basis 0 shares the free space after the borders). --i = card index (static),
-   --k = 1 when the open card sits before this one (set by script.js). cqw = the row's width. Same durations / easings as before.
-   Inner layers do not depend on the animated width either: the closed label is centred in a fixed closed-width box and slides with
-   transform, the open content / big number live in a fixed open-width box. */
+/* ===== ÉRTÉKEK cards: zero layout shift, one openness per card =====
+   The row (>= 768px) has a fixed geometry: every card is absolutely positioned at left: 0 and slid with transform: translateX() to the x it has in the current state; only its width changes.
+   Closed card = (row - 5 gaps - 12px of borders) / 10 + 2px, open card = (row - 72px) / 2 + 2px (the old flex-grow 1 : 5 split). cqw = the row's width.
+   The geometry of every card is ONE function of the six openness numbers --o0..--o5 (0 closed .. 1 open, set on the row by script.js, each transitioned as a registered number):
+   width = wc + (wo - wc) * o_i, left = i * (wc + 12px) + (wo - wc) * (o_0 + ... + o_(i-1)). So left_(i+1) = left_i + width_i + 12px at EVERY frame, also when a transition is
+   interrupted and retargeted: the gap between neighbours is constant and no card can cover another.
+   Inner layers do not depend on the animated width: the closed label is centred in a fixed closed-width box, the open content lives in a fixed open-width box, the big number is anchored to the card's right edge. */
+@property --o0 { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --o1 { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --o2 { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --o3 { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --o4 { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --o5 { syntax: '<number>'; inherits: true; initial-value: 0; }
 @media (min-width: 768px) {
-    .why-panels { display: block; position: relative; container-type: inline-size; }
+    .why-panels {
+        display: block; position: relative; container-type: inline-size;
+        --o0: 1;                                           /* before script.js runs the first card is the open one */
+        transition: --o0 0.7s cubic-bezier(0.16, 1, 0.3, 1), --o1 0.7s cubic-bezier(0.16, 1, 0.3, 1), --o2 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                    --o3 0.7s cubic-bezier(0.16, 1, 0.3, 1), --o4 0.7s cubic-bezier(0.16, 1, 0.3, 1), --o5 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
     .why-panel {
         --wc: calc((100cqw - 72px) / 10 + 2px);
         --wo: calc((100cqw - 72px) / 2 + 2px);
+        --oi: var(--o0); --before: 0;
         position: absolute;
         top: 0; bottom: 0; left: 0;
         flex: none;
-        width: var(--wc);
-        transform: translateX(calc(var(--i, 0) * (var(--wc) + 12px) + var(--k, 0) * (var(--wo) - var(--wc))));
-        transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.45s ease, border-color 0.3s ease, box-shadow 0.45s ease;
+        width: calc(var(--wc) + (var(--wo) - var(--wc)) * var(--oi));
+        transform: translateX(calc(var(--i, 0) * (var(--wc) + 12px) + (var(--wo) - var(--wc)) * var(--before)));
+        transition: background 0.45s ease, border-color 0.3s ease, box-shadow 0.45s ease;
     }
-    .why-panel.is-active { width: var(--wo); }
-    .why-panel:nth-child(1) { --i: 0; } .why-panel:nth-child(2) { --i: 1; } .why-panel:nth-child(3) { --i: 2; }
-    .why-panel:nth-child(4) { --i: 3; } .why-panel:nth-child(5) { --i: 4; } .why-panel:nth-child(6) { --i: 5; }
-    .why-panel:nth-child(n+2) { --k: 1; }                 /* before script.js runs the first card is the open one */
-    .why-panel__tab { right: auto; width: var(--wc); transition: opacity 0.3s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
-    .why-panel.is-active .why-panel__tab { transform: translateX(calc((var(--wo) - var(--wc)) / 2)); }
+    .why-panel:nth-child(1) { --i: 0; --oi: var(--o0); --before: 0; }
+    .why-panel:nth-child(2) { --i: 1; --oi: var(--o1); --before: var(--o0); }
+    .why-panel:nth-child(3) { --i: 2; --oi: var(--o2); --before: calc(var(--o0) + var(--o1)); }
+    .why-panel:nth-child(4) { --i: 3; --oi: var(--o3); --before: calc(var(--o0) + var(--o1) + var(--o2)); }
+    .why-panel:nth-child(5) { --i: 4; --oi: var(--o4); --before: calc(var(--o0) + var(--o1) + var(--o2) + var(--o3)); }
+    .why-panel:nth-child(6) { --i: 5; --oi: var(--o5); --before: calc(var(--o0) + var(--o1) + var(--o2) + var(--o3) + var(--o4)); }
+    .why-panel__tab { right: auto; width: var(--wc); transition: opacity 0.3s ease; transform: translateX(calc((var(--wo) - var(--wc)) / 2 * var(--oi))); }
     .why-panel__body { right: auto; width: var(--wo); }
     .why-panel__content { width: min(460px, calc(var(--wo) - 72px)); }
 }
@@ -7282,7 +7295,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
     .why-panel.is-active .why-panel__body { grid-template-rows: none; padding: 26px 22px 28px; }
     .why-panel__content { min-width: 0; max-width: none; overflow: visible; }
     .why-panel__icon { display: grid; width: 44px; height: 44px; margin-bottom: 14px; }
-    .why-panel__title { display: block; font-size: 26px; }
+    .why-panel__title { display: block; font-size: min(26px, 5.6vw); overflow-wrap: anywhere; }          /* the longest word (Felhasználóbarát) fits a 390px card */
     .why-panel__big { display: block; top: 10px; right: 16px; font-size: 72px; }
     .why-panel__text { font-size: 15px; }
 }
@@ -7354,7 +7367,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
     }
     .why-panel.is-next .why-panel__tab-w { display: flex; clip-path: inset(calc((1 - var(--lv, 0)) * (100% + 14px) - 21px) 0 0 0); }
     .why-panel.is-active .why-panel__tab-w { opacity: 0; }
-    .why-panel.is-next .why-panel__tab { clip-path: inset(0 0 calc(var(--lv, 0) * 100% - (1 - var(--lv, 0)) * 14px + 21px) 0); transition: opacity 0.3s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), clip-path 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .why-panel.is-next .why-panel__tab { clip-path: inset(0 0 calc(var(--lv, 0) * 100% - (1 - var(--lv, 0)) * 14px + 21px) 0); transition: opacity 0.3s ease, clip-path 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
 }
 
 /* phones: the water fills the card once (1s) when it enters the view, then it opens */
@@ -7375,3 +7388,14 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
     .why-panel__title { margin-bottom: calc(clamp(8px, 1.1svh, 12px) * var(--fit-gap, 1)); font-size: calc(clamp(24px, min(2.4vw, 3.4svh), 36px) * var(--fit-title, 1)); }
     .why-panel__text { line-height: var(--fit-lh, 1.6); }
 }
+
+/* ===== Értékek: clean card transitions =====
+   the big number is a child of the card (anchored to its right edge) and fades out before the card narrows; the open content shows early and leaves fast, so a large card is never empty */
+.why-panel__big { z-index: 2; opacity: 0; transition: opacity 0.07s linear; }
+.why-panel.is-active .why-panel__big { opacity: 1; transition: opacity 0.25s ease 0.08s; }
+.why-panel__body { transition: opacity 0.16s ease, visibility 0.16s ease; }
+.why-panel.is-active .why-panel__body { transition: opacity 0.2s ease, visibility 0s; }
+.why-panel.is-active .why-panel__icon svg[data-draw] * { transition: stroke-dashoffset 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.why-panel.is-active .why-panel__title .wk > span { transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--ci, 0) * 0.02s); }
+.why-panel.is-active .why-panel__text .wl > span { transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.1s + var(--li, 0) * 0.08s), opacity 0.35s ease calc(0.1s + var(--li, 0) * 0.08s); }
+@media (prefers-reduced-motion: reduce) { .why-panels { transition: none; } .why-panel__big, .why-panel.is-active .why-panel__big { transition: none; } }

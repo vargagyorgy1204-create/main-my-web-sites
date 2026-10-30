@@ -854,7 +854,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
             p.classList.toggle('is-active', on);
             p.classList.toggle('is-next', i === s + 1);          /* "up next": the next card gets the rising water and keeps its label at full opacity */
             p.classList.toggle('is-passed', i < s);
-            p.style.setProperty('--k', i > s ? 1 : 0);
+            p.parentNode.style.setProperty('--o' + i, on ? 1 : 0);          /* the row's openness numbers drive every card's width and position (style.css) */
             var tab = p.querySelector('.why-panel__tab');
             if (tab) tab.setAttribute('aria-expanded', on ? 'true' : 'false');
         });
