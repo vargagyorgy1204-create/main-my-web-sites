@@ -6910,21 +6910,21 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 
 /* ===== KAPCSOLAT + SZOLGÁLTATÁSOK headings ("ÜZENJEN.", "HÁROM TERÜLET, EGY KÉZBŐL."): staggered letter reveal (js/contact-footer.js sets --ci, .fx-prep, .fx-in, .fx-moving) =====
    the letters use the individual transform properties (translate / scale / opacity), the proximity hover keeps `transform` - no conflict; the masks clip only while moving */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-char {
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-char {
     transition: translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.5s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s);
 }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-mask { overflow: visible; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-moving .sh-mask { overflow: clip; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * var(--stg, 0.05s) + 0.2s); }          /* out: right -> left, after the dot has left */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * var(--stg, 0.05s)); }                                       /* in: left -> right */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-mask { overflow: visible; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-moving .sh-mask { overflow: clip; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * var(--stg, 0.05s) + 0.2s); }          /* out: right -> left, after the dot has left */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * var(--stg, 0.05s)); }                                       /* in: left -> right */
 /* the dot: after the last letter has landed it drops from above (ease-in .35s), squashes on impact (.08s), bounces once (.18s) and settles; a thin gradient ring ripples out at the
    impact (the ::before, transform / opacity only, out of the flow). The dot's own mask never clips (the ring and the drop leave the box). --dd = the drop's start. */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title) { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-mask:has(> .sh-dot) { overflow: visible; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep.fx-in.fx-done .sh-dot { animation: none; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-dot::before {
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-mask:has(> .sh-dot) { overflow: visible; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep.fx-in.fx-done .sh-dot { animation: none; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-dot::before {
     content: "";
     position: absolute;
     left: var(--ring-x, 50%);
@@ -6939,8 +6939,8 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
     opacity: 0;
     pointer-events: none;
 }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
-html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
+html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
 @keyframes ctcDotDrop {
     0%   { translate: 0 -120%; scale: 1 1; opacity: 0; animation-timing-function: ease-in; }
     4%   { opacity: 1; }
@@ -6952,7 +6952,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 }
 @keyframes ctcDotRing { from { scale: 0.5; opacity: 0.7; } to { scale: 2.6; opacity: 0; } }
 @keyframes ctcDotHop { 0%, 100% { translate: 0 0; } 40% { translate: 0 -18%; } }
-@media (prefers-reduced-motion: reduce) { :is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-char { transition: none; } :is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-dot, :is(#contact .section-heading, #services .section-heading, #steps .steps-title) .sh-dot::before { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-char { transition: none; } :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-dot, :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-dot::before { animation: none !important; } }
 
 /* ===== KAPCSOLAT scroll choreography "signal from the dot" (js/contact-footer.js): helper styles only - the rest state is the plain CSS above =====
    the lead text lines (.rv-*) rise from masks with the heading letters; the SVG overlay (.ctc-signal, pointer-events none) carries the signal line; .cf-sweep /
@@ -7238,10 +7238,13 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .why-panel.is-active::before { clip-path: circle(150% at 0 100%); transition-duration: 0.6s; }
 
 /* collapsed: number + a 3px inset top strip in the accent; up next = the next card's number and label at full opacity, the others at 55% */
-.why-panel__tab::before { content: ""; position: absolute; top: 10px; left: 16px; right: 16px; height: 3px; border-radius: 2px; background: var(--ac); }
+.why-panel__top { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+/* the card's icon under the number: round translucent tile (accent 12%), 20px Lucide icon in the accent; gone with the tab when the card opens */
+.why-panel__mini { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: color-mix(in srgb, var(--ac) 12%, transparent); color: var(--ac-n); }
+.why-panel__mini .icon { width: 20px; height: 20px; }
 .why-panel__num { color: var(--ac-n); font-weight: 600; }
-.why-panel__num, .why-panel__label { opacity: 0.55; transition: opacity 0.4s ease; }
-.why-panel.is-next .why-panel__num, .why-panel.is-next .why-panel__label { opacity: 1; }
+.why-panel__num, .why-panel__mini, .why-panel__label { opacity: 0.55; transition: opacity 0.4s ease; }
+.why-panel.is-next .why-panel__num, .why-panel.is-next .why-panel__mini, .why-panel.is-next .why-panel__label { opacity: 1; }
 
 /* open card: the body keeps its fixed-width box; the number + icon balance the top, the content sits centred in the lower 55% */
 .why-panel__body { transition: opacity 0.3s ease, visibility 0.3s ease; }
@@ -7278,7 +7281,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .why-panel.is-active .why-panel__big-fill { clip-path: inset(0); transition: clip-path 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s; }
 
 @media (min-width: 768px) {
-    .why-panel__body { display: grid; grid-template-rows: 45% 1fr; justify-content: start; align-items: center; padding: 0 36px; }
+    .why-panel__body { display: grid; grid-template-rows: 45% 1fr; justify-content: start; align-items: center; padding: 0 36px clamp(10px, 3.2svh, 32px); }
     .why-panel__content { grid-row: 2; align-self: center; }
 }
 
@@ -7320,8 +7323,19 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
     .why-panel__big-fill { clip-path: none; transition: none; }
     .why-panel__title .wk > span, .why-panel__text .wl > span { transform: none; opacity: 1; transition: none !important; }
     .why-panel__icon svg[data-draw] * { stroke-dashoffset: 0; transition: none !important; }
-    .why-panel__num, .why-panel__label, .why-progress u::after { transition: none; }
+    .why-panel__num, .why-panel__mini, .why-panel__label, .why-progress u::after { transition: none; }
 }
 @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
     .why-progress { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 12px; }
 }
+
+/* ===== ÉRTÉKEK refinements ===== */
+/* heading = the Szolgáltatások reveal (shared .fx-* rules above), compressed like Együttműködés: letters land by ~0.9s, the dot has dropped by ~1.25s */
+#why .section-heading { --stg: 0.009s; --dd: 0.5s; }
+#why .section-heading .sh-char { transition: translate 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.4s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s); }
+#why .section-heading .sh-dot { transition: none; }
+/* descriptions: one shared measure so all six set in 4 lines on desktop; no manual breaks, no splitting of e-mail-váltásra */
+.why-panel__text { max-width: var(--why-text-ch, 40ch); text-wrap: pretty; hyphens: none; }
+.why-panel:nth-child(5) .why-panel__text { --why-text-ch: 36ch; }      /* the shortest text (05) would set in 3 lines at the shared 40ch: its measure is 4ch narrower */
+.why-panel__text .nw { white-space: nowrap; }
+.why-panel__text .wl > span { white-space: nowrap; }

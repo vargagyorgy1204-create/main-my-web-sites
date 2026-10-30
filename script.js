@@ -874,7 +874,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         if (window.innerWidth < 768) { row.style.removeProperty('--why-label-fs'); return; }          /* stacked accordion: horizontal labels */
         row.style.setProperty('--why-label-fs', '20px');
         var tab = panels[0].querySelector('.why-panel__tab'), cs = getComputedStyle(tab);
-        var num = panels[0].querySelector('.why-panel__num').getBoundingClientRect().height;
+        var num = panels[0].querySelector('.why-panel__top').getBoundingClientRect().height;          /* number + the small icon tile */
         var avail = panels[0].getBoundingClientRect().height - parseFloat(cs.paddingTop) - num - 12 - parseFloat(cs.paddingBottom);
         var longest = 0;
         panels.forEach(function (p) { longest = Math.max(longest, p.querySelector('.why-panel__label').getBoundingClientRect().height); });
@@ -917,10 +917,12 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         var text = p.getAttribute('data-t');
         if (!text) { text = p.textContent.replace(/\s+/g, ' ').trim(); p.setAttribute('data-t', text); }
         p.textContent = '';
+        /* every word is unbreakable (a hyphenated word like e-mail-váltásra never splits), the breaks fall at the spaces between them */
         var words = text.split(' ').map(function (w, i) {
             var s = document.createElement('span');
-            s.textContent = (i ? ' ' : '') + w;
-            s.style.display = 'inline';
+            s.textContent = w;
+            s.style.whiteSpace = 'nowrap';
+            if (i) p.appendChild(document.createTextNode(' '));
             p.appendChild(s);
             return s;
         });
@@ -934,7 +936,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         lines.forEach(function (l, k) {
             var m = document.createElement('span'), s = document.createElement('span');
             m.className = 'wl';
-            s.textContent = l.join('').replace(/^ /, '');
+            s.textContent = l.join(' ');
             s.style.setProperty('--li', k);
             m.appendChild(s);
             p.appendChild(m);
@@ -981,6 +983,30 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     }
     if (phone.addEventListener) phone.addEventListener('change', phoneSetup); else phone.addListener(phoneSetup);
     phoneSetup();
+
+    /* heading: the Szolgáltatások letter-rise + dropping dot (shared .fx-* rules), started when the section top enters 85% of the viewport: it has landed before the pin begins */
+    (function () {
+        var section = document.getElementById('why'), h = section && section.querySelector('.section-heading');
+        if (!h || reduceWhy || !('IntersectionObserver' in window)) return;
+        var go = function () {
+            var chars = h._shChars || Array.prototype.slice.call(h.querySelectorAll('.sh-char'));
+            if (!chars.length) return;
+            chars.forEach(function (ch, i) { ch.style.setProperty('--ci', i); });
+            h.style.setProperty('--cn', chars.length);
+            h.classList.add('fx-prep');
+            var timer = 0, dot = h.querySelector('.sh-dot');
+            if (dot) dot.addEventListener('animationend', function (ev) { if (ev.animationName === 'ctcDotDrop' && h.classList.contains('fx-in')) h.classList.add('fx-done'); });
+            new IntersectionObserver(function (es) {
+                var e = es[es.length - 1], on = e.isIntersecting;
+                if (!on && !(e.boundingClientRect.top > 0)) return;
+                if (on === h.classList.contains('fx-in')) return;
+                if (!on) h.classList.remove('fx-done');
+                h.classList.add('fx-moving'); h.classList.toggle('fx-in', on);
+                clearTimeout(timer); timer = setTimeout(function () { h.classList.remove('fx-moving'); }, 2000);
+            }, { rootMargin: '0px 0px -15% 0px', threshold: 0 }).observe(section);
+        };
+        if (h.classList.contains('is-split')) go(); else h.addEventListener('vb:heading-split', go, { once: true });
+    })();
 
     segs.forEach(function (b, i) {
         b.addEventListener('click', function () {

@@ -76,8 +76,9 @@ The Rólam heading keeps its own tokens and is deliberately a different size.
 - Accents cycle per card: 01/04 violet (`--card-primary`), 02/05 magenta (`#C026A3`, own gradient), 03/06 teal (`--card-accent-cool`); each card sets `--ac / --ac-n / --ac-lt / --ac-sh / --panel-bg`.
 - Open card (all on `.is-active`, geometry untouched): background = clip-path `circle(0 → 150% at 0 100%)` 0.6s `cubic-bezier(.2,.7,.2,1)`; big outline number (Syne 800, `clamp(88px, 17svh, 170px)`, 2px white-35% stroke) fills bottom → top 0.8s (white → `--ac-lt`);
   icon strokes draw 0.6s (`pathLength` 1); title letters rise from masks (0.02s stagger); description rises line by line (0.08s); content centred in the lower 55% (grid rows 45% / 1fr).
-- Collapsed: number + 3px inset top strip in the accent; the next card ("up next") number + label at 100%, the others 55%. No hover effect.
-- Progress = charge: `--f` 0..1 per segment, scrubbed by the pin; step k sits at `--f` 0.5 of segment k (reached at rel = k × 70svh); glowing head (carried by a transform, no layout shift); segments are buttons (click = scroll to the step).
+- Collapsed: number + the card's icon in a 36px round tile (accent 12%, 20px icon in the accent; hidden with the tab when the card opens); the next card ("up next") number + label at 100%, the others 55%. No hover effect.
+- Progress = charge: `--f` 0..1 per segment, scrubbed by the pin; step k = head on the left edge of segment k (`--f` 0), right edge as step k+1 is reached; glowing head (carried by a transform, no layout shift); segments are buttons (click = scroll to the step).
+- Heading = the Szolgáltatások reveal (`#why .section-heading` in the shared `.fx-*` rules, `--stg` .009s / `--dd` .5s), triggered at the section top = 85% of the viewport. Descriptions: `max-width` 40ch (card 05: 36ch) so all six set in 4 lines on desktop; words are unbreakable, no `<br>`.
 - Phones (< 768px): stacked full cards, each plays its open state once when it enters the viewport; no tabs, no bar. Reduced motion: no fills / draws / clips, solid numbers, bar = static current state (>= 768px).
 
 ### Feature icon tile (one style)

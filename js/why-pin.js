@@ -32,13 +32,13 @@
     segs.forEach(function (s, k) { if (k === i) s.setAttribute('aria-current', 'step'); else s.removeAttribute('aria-current'); });
   }
 
-  /* progress = charge: segment k holds --f 0..1; the step k sits at half charge (step k is reached at rel = k * L), so the current segment is
-     filled up to the middle at rest, completes while scrolling on, passed segments are full, upcoming ones empty; a glowing head at the tip of the current one */
+  /* progress = charge: segment k holds --f 0..1 = how far the scroll has gone from step k (rel = k * L) to the next one: at a step the head sits exactly on the left edge
+     of its segment (f = 0), it reaches the right edge (f = 1) as the next step is reached and then starts the next segment; passed segments are full, upcoming ones empty */
   var fs = [], headK = -1;
   function charge(rel) {
-    var pos = rel / stepLen(), hk = Math.max(0, Math.min(N - 1, Math.floor(pos + 0.5)));
+    var pos = rel / stepLen(), hk = Math.max(0, Math.min(N - 1, Math.floor(pos + 1e-6)));
     segs.forEach(function (s, k) {
-      var f = Math.max(0, Math.min(1, pos - k + 0.5));
+      var f = Math.max(0, Math.min(1, pos - k));
       f = Math.round(f * 1000) / 1000;
       if (f !== fs[k]) { fs[k] = f; s.style.setProperty('--f', f); }
     });
