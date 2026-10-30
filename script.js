@@ -350,6 +350,14 @@ const closeServiceModals = (returnFocus = true) => {
 };
 
 // the dialog's two views: the full one (every plan / group, the block's title) or a single item (one plan card, or one group of the Extra dialog), opened from a list row
+// the plan icons draw their strokes when the dialog opens (style.css: pathLength 1 + data-draw)
+const prepDraw = (root) => root.querySelectorAll('svg').forEach((svg) => {
+    if (svg.hasAttribute('data-draw')) return;
+    svg.querySelectorAll('*').forEach((e) => e.setAttribute('pathLength', '1'));
+    svg.setAttribute('data-draw', '');
+});
+document.querySelectorAll('.service-modal .pricing-icon:not(.svm-icon)').forEach(prepDraw);
+
 const setServiceView = (modal, idx) => {
     const dlg = modal.querySelector('.service-modal');
     const h3 = dlg && dlg.querySelector('h3');
@@ -370,7 +378,7 @@ const setServiceView = (modal, idx) => {
     }
     item.classList.add('is-item');
     const planIcon = !groups.length && item.querySelector('.pricing-icon');
-    if (iconSlot && planIcon) iconSlot.innerHTML = planIcon.innerHTML;          // the plan's icon tile goes above the centred title
+    if (iconSlot && planIcon) { iconSlot.innerHTML = planIcon.innerHTML; prepDraw(iconSlot); }          // the plan's icon tile goes above the centred title
     dlg.setAttribute('data-view', 'single');
     dlg.setAttribute('data-item', String(idx));
     h3.textContent = (groups.length ? item.querySelector('.modal-group__title') : item.querySelector('h4')).textContent.trim();

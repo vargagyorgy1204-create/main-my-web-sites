@@ -913,14 +913,20 @@ html.has-cursor .service-modal-close:hover,
     flex: none;
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
     color: #fff;
-    background: var(--m-grad);
-    box-shadow: 0 8px 18px -8px var(--m-glow);
+    /* the Értékek tile: translucent, tinted with the dialog's accent, 1px inner ring, white 1.75px Lucide icon at 55% of the tile */
+    background: color-mix(in srgb, var(--m-accent) 34%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--m-accent-2) 42%, transparent);
 }
-.pricing-icon svg { width: 20px; height: 20px; }
+.pricing-icon svg { width: 55%; height: 55%; }
+/* draw-on-open (the Értékek icon draw): strokes are pathLength 1 (script.js sets data-draw); they draw when the dialog opens */
+.pricing-icon svg[data-draw] * { stroke-dasharray: 1 2; stroke-dashoffset: 1.02; }
+.service-modal-overlay.is-open .pricing-icon svg[data-draw] * { stroke-dashoffset: 0; animation: icDraw 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.35s backwards; }
+@keyframes icDraw { from { stroke-dashoffset: 1.02; } to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .service-modal-overlay.is-open .pricing-icon svg[data-draw] * { animation: none; } }
 .pricing-item h4 { margin: 0; color: #fff; font-size: 1.02rem; font-weight: 700; line-height: 1.25; }
 
 .pricing-badge {
@@ -1065,8 +1071,7 @@ body.service-modal-open { overflow: hidden; }
     .service-pricing-grid { --pg-gap: 12px; }
     .pricing-item { padding: 18px 20px; }
     .pricing-plan-head { margin-bottom: 11px; gap: 10px; }
-    .pricing-icon { width: 30px; height: 30px; border-radius: 9px; }
-    .pricing-icon svg { width: 17px; height: 17px; }
+    .pricing-icon { width: 30px; height: 30px; border-radius: 11px; }
     .pricing-item h4 { font-size: 0.98rem; }
     .pricing-subtitle { margin-bottom: 13px; font-size: 0.8rem; line-height: 1.45; }
     .pricing-features { gap: 8px; margin-bottom: 16px; }
@@ -1085,8 +1090,7 @@ body.service-modal-open { overflow: hidden; }
     .service-pricing-grid { --pg-gap: 10px; }
     .pricing-item { padding: 14px 16px; border-radius: 14px; }
     .pricing-plan-head { margin-bottom: 6px; gap: 9px; }
-    .pricing-icon { width: 26px; height: 26px; border-radius: 8px; }
-    .pricing-icon svg { width: 15px; height: 15px; }
+    .pricing-icon { width: 26px; height: 26px; border-radius: 9px; }
     .pricing-item h4 { font-size: 0.92rem; }
     .pricing-badge { padding: 2px 8px; font-size: 0.62rem; }
     .pricing-subtitle { margin-bottom: 7px; font-size: 0.75rem; line-height: 1.35; }
@@ -3061,11 +3065,16 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     background: var(--card-primary); -webkit-background-clip: text; background-clip: text;
     color: transparent; -webkit-text-fill-color: transparent;
 }
+/* the Értékek tile on a light card: translucent accent tint + 1px inner ring, the icon in the accent (violet / magenta / teal per row) */
+.ap-row { --ac: #6c63ff; --ac-n: #6c63ff; }
+.ap-row:nth-child(2) { --ac: #C026A3; --ac-n: #C026A3; }
+.ap-row:nth-child(3) { --ac: #1a8fa3; --ac-n: #137f93; }
 .ap-row__icon {
-    width: 44px; height: 44px; border-radius: 12px;
+    width: 44px; height: 44px; border-radius: 14px;
     display: inline-flex; align-items: center; justify-content: center;
-    background: var(--card-secondary); color: #fff;
+    background: color-mix(in srgb, var(--ac) 13%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ac) 30%, transparent); color: var(--ac-n);
 }
+.ap-row__icon .icon { width: 55%; height: 55%; }
 .ap-row__body h3 { margin: 0 0 4px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: #1a1a2e; }
 .ap-row__body p { margin: 0; color: #3d3d5c; font-size: .92rem; line-height: 1.65; }
 .ap-closing { margin-top: 4px; }
@@ -7089,8 +7098,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .service-modal[data-view="single"] .modal-group + .modal-group { margin-top: 0; }
 /* Webfejlesztés / Dizájn */
 .service-modal[data-view="single"]:not(.extra-modal) { max-width: 540px; }
-.service-modal[data-view="single"]:not(.extra-modal) .svm-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 13px; }
-.service-modal[data-view="single"]:not(.extra-modal) .svm-icon svg { width: 26px; height: 26px; }
+.service-modal[data-view="single"]:not(.extra-modal) .svm-icon { display: grid; width: 52px; height: 52px; margin: 0 auto 16px; border-radius: 14px; }
 .service-modal[data-view="single"]:not(.extra-modal) > .service-modal__scroll > .service-pricing-grid { grid-template-columns: minmax(0, 1fr); }
 .service-modal[data-view="single"]:not(.extra-modal) .pricing-item.is-item { position: static; overflow: visible; padding: 0; background: none; border: 0; box-shadow: none; border-radius: 0; animation: none; }
 .service-modal[data-view="single"]:not(.extra-modal) .pricing-plan-head { display: none; }

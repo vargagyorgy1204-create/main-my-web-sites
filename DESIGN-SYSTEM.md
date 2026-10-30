@@ -80,6 +80,10 @@ The Rólam heading keeps its own tokens and is deliberately a different size.
 - Progress = charge: `--f` 0..1 per segment, scrubbed by the pin; step k sits at `--f` 0.5 of segment k (reached at rel = k × 70svh); glowing head (carried by a transform, no layout shift); segments are buttons (click = scroll to the step).
 - Phones (< 768px): stacked full cards, each plays its open state once when it enters the viewport; no tabs, no bar. Reduced motion: no fills / draws / clips, solid numbers, bar = static current state (>= 768px).
 
+### Feature icon tile (one style)
+
+Lucide, stroke 1.75, white / accent icon at 55% of a 14px-radius tile with a translucent accent tint + 1px inner ring: Értékek (52px max, tint = white 16% on the card gradient), service dialogs `.pricing-icon` (40px, 52px in the single-item view; tint = `--m-accent` 34%; strokes draw 0.6s when the dialog opens), Hogyan dolgozom `.ap-row__icon` (44px, accent 13% on the light card; violet / magenta / teal per row, drawn by js/approach.js). Not part of it: UI arrows / close / chevrons, button arrow circles, process check marks, footer / menu social icons (Font Awesome), hero chips, list-tick discs.
+
 ## Rules
 
 1. **No per-section magic numbers.** A section may only use tokens (and `clamp()` of `vw` / `svh` expressed as a token). If a
