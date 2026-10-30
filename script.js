@@ -829,24 +829,33 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         .observe(document.body, { attributes: true, attributeFilter: ['class'] });
 })();
 
-// Why section – expanding cards (click / tap / Enter / Space; no hover)
+// Why section – expanding cards (click / tap / Enter / Space; no hover). Phones (< 768px): no accordion, a card plays its open state (.is-active) when it enters the viewport.
 (function () {
     var panels = Array.prototype.slice.call(document.querySelectorAll('.why-panel'));
     if (!panels.length) return;
+    var phone = window.matchMedia('(max-width: 767px)');
+    var reduceWhy = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var segs = Array.prototype.slice.call(document.querySelectorAll('.why-progress button'));
 
     /* One card open at a time. `--k` = 1 when the open card sits before this one: the geometry of the row (>= 768px, style.css)
        is pure CSS from the open index, so nothing in the layout moves. */
     function activate(panel) {
+        if (phone.matches) return;
         var s = panels.indexOf(panel);
         panels.forEach(function (p, i) {
             var on = p === panel;
             p.classList.toggle('is-active', on);
+            p.classList.toggle('is-next', i === s + 1);          /* "up next": the next collapsed card's number + label stay at full opacity */
             p.style.setProperty('--k', i > s ? 1 : 0);
             var tab = p.querySelector('.why-panel__tab');
             if (tab) tab.setAttribute('aria-expanded', on ? 'true' : 'false');
         });
+        if (!(API && API.pinned)) {                              /* not pinned (reduced motion, tablets, short windows): the bar shows the static current state; the pin scrubs it itself */
+            segs.forEach(function (b, k) { b.style.setProperty('--f', k <= s ? 1 : 0); b.classList.remove('is-head'); });
+        }
     }
 
+    var API;
     var defaultPanel = panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0];
     activate(defaultPanel);
 
@@ -871,7 +880,105 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     /* js/why-pin.js (>= 1024px, motion allowed) takes over `pinned` / `onSelect`: a click scrolls to the step of that card and the
        scroll position opens it. Everywhere else a click / tap opens the card directly (phones: tapping the open card closes it). */
-    var API = (window.VB = window.VB || {}).why = { panels: panels, activate: activate, pinned: false, onSelect: null };
+    API = (window.VB = window.VB || {}).why = { panels: panels, activate: activate, pinned: false, onSelect: null };
+
+    /* ---- the open-state pieces: title letters rise from masks, description rises line by line, icon strokes draw (pathLength 1) ---- */
+    panels.forEach(function (panel) {
+        var h = panel.querySelector('.why-panel__title');
+        if (!h || reduceWhy) return;
+        var text = h.textContent.trim(), n = 0;
+        h.setAttribute('aria-label', text);
+        h.textContent = '';
+        text.split(' ').forEach(function (w, wi) {
+            if (wi) h.appendChild(document.createTextNode(' '));
+            var word = document.createElement('span');
+            word.className = 'wm';
+            word.setAttribute('aria-hidden', 'true');
+            Array.from(w).forEach(function (ch) {
+                var m = document.createElement('span'), s = document.createElement('span');
+                m.className = 'wk';
+                s.textContent = ch;
+                s.style.setProperty('--ci', n++);
+                m.appendChild(s);
+                word.appendChild(m);
+            });
+            h.appendChild(word);
+        });
+    });
+    function splitLines(p) {
+        var text = p.getAttribute('data-t');
+        if (!text) { text = p.textContent.replace(/\s+/g, ' ').trim(); p.setAttribute('data-t', text); }
+        p.textContent = '';
+        var words = text.split(' ').map(function (w, i) {
+            var s = document.createElement('span');
+            s.textContent = (i ? ' ' : '') + w;
+            s.style.display = 'inline';
+            p.appendChild(s);
+            return s;
+        });
+        var lines = [], top = null;
+        words.forEach(function (s) {
+            var t = Math.round(s.getBoundingClientRect().top);
+            if (top === null || Math.abs(t - top) > 3) { lines.push([]); top = t; }
+            lines[lines.length - 1].push(s.textContent);
+        });
+        p.textContent = '';
+        lines.forEach(function (l, k) {
+            var m = document.createElement('span'), s = document.createElement('span');
+            m.className = 'wl';
+            s.textContent = l.join('').replace(/^ /, '');
+            s.style.setProperty('--li', k);
+            m.appendChild(s);
+            p.appendChild(m);
+            if (k < lines.length - 1) p.appendChild(document.createTextNode(' '));
+        });
+    }
+    function splitAll() {
+        if (reduceWhy) return;
+        panels.forEach(function (panel) { var p = panel.querySelector('.why-panel__text'); if (p) splitLines(p); });
+    }
+    function prepIcons() {
+        panels.forEach(function (panel) {
+            var svg = panel.querySelector('.why-panel__icon svg');
+            if (!svg || svg.hasAttribute('data-draw')) return;
+            Array.prototype.forEach.call(svg.querySelectorAll('*'), function (e) { e.setAttribute('pathLength', '1'); });
+            svg.setAttribute('data-draw', '');
+        });
+    }
+    prepIcons();
+    window.addEventListener('DOMContentLoaded', prepIcons);
+    window.addEventListener('load', prepIcons);
+    var splitRaf = 0, splitW = 0;
+    function queueSplit() {
+        var w = Math.round(panels[0].querySelector('.why-panel__content').getBoundingClientRect().width);
+        if (w === splitW) return;
+        splitW = w; cancelAnimationFrame(splitRaf); splitRaf = requestAnimationFrame(splitAll);
+    }
+    if (window.ResizeObserver) new ResizeObserver(queueSplit).observe(row); else window.addEventListener('resize', queueSplit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { splitW = 0; queueSplit(); });
+    queueSplit();
+
+    /* ---- phones: each card opens (once) when it comes into view; the reduced-motion version shows them all open ---- */
+    var seen = null;
+    function phoneSetup() {
+        if (seen) { seen.disconnect(); seen = null; }
+        if (!phone.matches) { activate(panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0]); return; }
+        panels.forEach(function (p) { p.classList.remove('is-next'); });
+        if (reduceWhy || !('IntersectionObserver' in window)) { panels.forEach(function (p) { p.classList.add('is-active'); }); return; }
+        panels.forEach(function (p) { p.classList.remove('is-active'); });
+        seen = new IntersectionObserver(function (es) {
+            es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-active'); seen.unobserve(e.target); } });
+        }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' });
+        panels.forEach(function (p) { seen.observe(p); });
+    }
+    if (phone.addEventListener) phone.addEventListener('change', phoneSetup); else phone.addListener(phoneSetup);
+    phoneSetup();
+
+    segs.forEach(function (b, i) {
+        b.addEventListener('click', function () {
+            if (API.pinned && API.onSelect) API.onSelect(i); else if (!phone.matches) activate(panels[i]);
+        });
+    });
 
     panels.forEach(function (panel, i) {
         var tab = panel.querySelector('.why-panel__tab');

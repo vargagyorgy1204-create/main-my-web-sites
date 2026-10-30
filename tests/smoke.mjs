@@ -569,17 +569,28 @@ async function whyPin(vp) {
   const sb = Math.min(Math.max(48, 0.09 * vp.h), 104);                    // --section-bottom: clamp(48px, 9svh, 104px)
   if (!pinnedWanted) {
     rec(tag, 'not pinned: bottom padding = --section-bottom', Math.abs(info.pb - sb) <= 2, `padding-bottom ${info.pb.toFixed(1)} want ${sb.toFixed(1)}`);
-    // unpinned: a tap opens a card directly (one at a time), tapping the open card closes it, Enter opens too
+    if (vp.w < 768) {                                                                   // phones: stacked full cards, each opens when it enters the viewport; no bar, no tabs
+      const states = [];
+      for (let i = 0; i < 6; i++) {
+        await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i]; VB.lenis.scrollTo(e.getBoundingClientRect().top + scrollY - 120, { immediate: true }); }, i); await frames(p, 6);
+        await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), i, 2000);
+        states.push(await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i]; return e.classList.contains('is-active'); }, i));
+      }
+      const ui = await p.evaluate(() => ({ bar: getComputedStyle(document.querySelector('.why-progress')).display, tab: getComputedStyle(document.querySelector('.why-panel__tab')).display, over: document.documentElement.scrollWidth > innerWidth }));
+      rec(tag, 'phones: every card opens in view, bar and tabs hidden, no horizontal overflow', states.every(Boolean) && ui.bar === 'none' && ui.tab === 'none' && !ui.over, `${states.join(',')} ${JSON.stringify(ui)}`);
+      rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
+      await ctx.close(); return;
+    }
+    // unpinned: a tap opens a card directly (one at a time), Enter opens too
     await p.evaluate(y => VB.lenis.scrollTo(y, { immediate: true }), info.top); await frames(p, 8);
     const openList = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map((e, i) => e.classList.contains('is-active') ? i + 1 : 0).filter(Boolean).join(','));
     const tapTab = async i => { await p.evaluate(i => document.querySelectorAll('.why-panel')[i].querySelector('.why-panel__tab').scrollIntoView({ block: 'center' }), i); await frames(p, 4); await p.tap(`.why-panel:nth-child(${i + 1}) .why-panel__tab`); await frames(p, 8); };
     await tapTab(2); const t1 = await openList();
     await tapTab(4); const t2 = await openList();
-    let t3 = '';
-    if (vp.w < 768) { await tapTab(4); t3 = await openList(); }                    // stacked accordion: tapping the open card closes it (the row layout of 768-1023px keeps one open)
+    const t3 = '';
     await p.evaluate(() => document.querySelectorAll('.why-panel')[3].querySelector('.why-panel__tab').focus({ preventScroll: true })); await p.keyboard.press('Enter'); await frames(p, 8); const t4 = await openList();
     const ex = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.querySelector('.why-panel__tab').getAttribute('aria-expanded') === String(e.classList.contains('is-active'))).every(Boolean));
-    rec(tag, 'tap opens a card (one at a time; phones: tapping the open card closes it), Enter opens', t1 === '3' && t2 === '5' && t3 === '' && t4 === '4' && ex, `${t1} | ${t2} | ${t3 || '-'} | ${t4} | aria in sync ${ex}`);
+    rec(tag, 'tap opens a card (one at a time), Enter opens', t1 === '3' && t2 === '5' && t3 === '' && t4 === '4' && ex, `${t1} | ${t2} | ${t3 || '-'} | ${t4} | aria in sync ${ex}`);
     rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
     await ctx.close(); return;
   }
@@ -699,12 +710,14 @@ async function touchTapWhy() {
   const ctx = await newCtx({ w: 390, h: 844 });
   const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'load' }); await p.evaluate(() => document.fonts.ready); await frames(p, 6);
   await scrollTo(p, (await topOf(p, '#why')) + 10);
-  await until(p, () => document.querySelectorAll('.why-panel').length === 6 && document.querySelector('.why-panel:nth-child(4) .why-panel__tab').getBoundingClientRect().height > 20, null, 3000); await frames(p, 8);
+  await until(p, () => document.querySelectorAll('.why-panel').length === 6 && document.querySelector('.why-panel:nth-child(4)').getBoundingClientRect().height > 100, null, 3000); await frames(p, 8);
+  // phones: stacked full cards, no accordion: a card plays its open state (.is-active) when it enters the viewport (and not before)
   const idx = 3;
-  await p.tap(`.why-panel:nth-child(${idx + 1}) .why-panel__tab`);
+  const before = await p.evaluate(i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), idx);
+  await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i]; VB.lenis.scrollTo(e.getBoundingClientRect().top + scrollY - 120, { immediate: true }); }, idx); await frames(p, 6);
   await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), idx, 2000);
   const open = await p.evaluate(i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), idx);
-  rec('touch 390x844', 'Értékek: tap opens a card', open, `${open}`);
+  rec('touch 390x844', 'Értékek: a card opens when it enters the viewport (not before)', open && !before, `before ${before}, in view ${open}`);
   await ctx.close();
 }
 

@@ -7214,3 +7214,106 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .st-count.on > span:last-child { color: transparent; -webkit-text-fill-color: transparent; }
 .st-count.on > span:last-child::after { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .st-count > span:last-child, .st-count > span:last-child::after, .st-reel > span { transition: none !important; } }
+
+/* ===== ÉRTÉKEK & GARANCIÁK — values that unfold (js/why-pin.js + the Why block of script.js) =====
+   Three brand accents cycle through the cards (violet, magenta, teal). The open card: a gradient that expands from the bottom-left corner (clip-path circle),
+   the big outline number that fills bottom -> top, the icon that draws its strokes, title letters / description lines that rise from masks. All of it is plain
+   CSS keyed on .is-active (the geometry of the cards is untouched: zero layout shift). The progress bar is a scrubbed charge (--f per segment, set by why-pin.js).
+   Phones (< 768px): no accordion, every card is a full card that plays its open state when it enters the viewport (script.js adds .is-active). */
+.why-panel--v { --ac: #6c63ff; --ac-n: #6c63ff; --ac-lt: #d6d2ff; --ac-sh: rgba(108, 99, 255, 0.28); --panel-bg: var(--card-primary); }
+.why-panel--m { --ac: #C026A3; --ac-n: #C026A3; --ac-lt: #f7b4ec; --ac-sh: rgba(192, 38, 163, 0.28); --panel-bg: linear-gradient(135deg, #7b1268 0%, #C026A3 58%, #e558c9 100%); }
+.why-panel--t { --ac: #1a8fa3; --ac-n: #137f93; --ac-lt: #a6ecf7; --ac-sh: rgba(26, 143, 163, 0.28); --panel-bg: var(--card-accent-cool); }
+.why-panel.is-active { box-shadow: 0 24px 50px var(--ac-sh); }
+
+/* background reveal: the gradient grows from the bottom-left corner (150% of the reference radius covers the opposite corner), collapses back on close */
+.why-panel::before { opacity: 1; clip-path: circle(0% at 0 100%); transition: clip-path 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.why-panel.is-active::before { clip-path: circle(150% at 0 100%); transition-duration: 0.6s; }
+
+/* collapsed: number + a 3px inset top strip in the accent; up next = the next card's number and label at full opacity, the others at 55% */
+.why-panel__tab::before { content: ""; position: absolute; top: 10px; left: 16px; right: 16px; height: 3px; border-radius: 2px; background: var(--ac); }
+.why-panel__num { color: var(--ac-n); font-weight: 600; }
+.why-panel__num, .why-panel__label { opacity: 0.55; transition: opacity 0.4s ease; }
+.why-panel.is-next .why-panel__num, .why-panel.is-next .why-panel__label { opacity: 1; }
+
+/* open card: the body keeps its fixed-width box; the number + icon balance the top, the content sits centred in the lower 55% */
+.why-panel__body { transition: opacity 0.3s ease, visibility 0.3s ease; }
+.why-panel.is-active .why-panel__body { transition-delay: 0s; }
+.why-panel__content, .why-panel.is-active .why-panel__content { transform: none; transition: none; }
+.why-panel__icon {
+    width: clamp(36px, 4.8svh, 52px); height: clamp(36px, 4.8svh, 52px); margin-bottom: clamp(10px, 1.8svh, 20px);
+    border-radius: 14px; background: rgb(255 255 255 / 0.16); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.26);
+}
+.why-panel__icon .icon { width: 55%; height: 55%; }
+.why-panel__icon svg[data-draw] * { stroke-dasharray: 1 2; stroke-dashoffset: 1.02; transition: stroke-dashoffset 0.25s ease; }
+.why-panel.is-active .why-panel__icon svg[data-draw] * { stroke-dashoffset: 0; transition: stroke-dashoffset 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s; }
+
+.why-panel__title .wm { display: inline-block; white-space: nowrap; }
+.why-panel__title .wk { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.why-panel__title .wk > span { display: inline-block; transform: translateY(115%); transition: transform 0.25s ease; }
+.why-panel.is-active .why-panel__title .wk > span { transform: none; transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.32s + var(--ci, 0) * 0.02s); }
+.why-panel__text .wl { display: block; overflow: hidden; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+.why-panel__text .wl > span { display: block; transform: translateY(110%); opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease; }
+.why-panel.is-active .why-panel__text .wl > span { transform: none; opacity: 1; transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.5s + var(--li, 0) * 0.08s), opacity 0.4s ease calc(0.5s + var(--li, 0) * 0.08s); }
+
+/* the big number: white 35% outline, filled bottom -> top (white -> accent light) when the card opens, 0.8s */
+.why-panel__big {
+    top: clamp(10px, 2svh, 22px); right: clamp(16px, 2vw, 28px);
+    font-size: clamp(88px, 17svh, 170px); letter-spacing: -0.02em;
+    color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 2px rgb(255 255 255 / 0.35);
+}
+.why-panel__big-fill {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, #fff 0%, var(--ac-lt) 100%); -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 0;
+    clip-path: inset(100% 0 0 0); transition: clip-path 0.25s ease;
+}
+.why-panel.is-active .why-panel__big-fill { clip-path: inset(0); transition: clip-path 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s; }
+
+@media (min-width: 768px) {
+    .why-panel__body { display: grid; grid-template-rows: 45% 1fr; justify-content: start; align-items: center; padding: 0 36px; }
+    .why-panel__content { grid-row: 2; align-self: center; }
+}
+
+/* progress = charge: 6 faint tracks, the current one fills with the brand gradient as the pin scrolls (--f 0..1 per segment), a glowing head at the tip */
+.why-progress button {
+    position: relative; display: flex; align-items: center; height: 18px; padding: 0; border: 0; background: none; cursor: pointer; font: inherit;
+}
+.why-progress button:focus-visible { outline: 2px solid #C026A3; outline-offset: 1px; border-radius: 4px; }
+.why-progress i { display: block; position: relative; width: 100%; height: 4px; overflow: visible; border-radius: 2px; background: rgba(17, 20, 40, 0.1); }
+.why-progress b {
+    position: absolute; inset: 0; border-radius: 2px; background: var(--gradient); transform: none; transition: none;
+    clip-path: inset(0 calc((1 - var(--f, 0)) * 100%) 0 0 round 2px);
+}
+/* the head rides on a zero-height track-wide carrier moved with transform (no layout shift) */
+.why-progress u { position: absolute; left: 0; top: 50%; width: 100%; height: 0; transform: translateX(calc(var(--f, 0) * 100%)); pointer-events: none; }
+.why-progress u::after {
+    content: ""; position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 0 2px #c850c0, 0 0 12px 4px rgba(200, 80, 192, 0.5); opacity: 0; transition: opacity 0.25s ease;
+}
+.why-progress button.is-head u::after { opacity: 1; }
+#why.is-pinned .why-progress { bottom: calc(var(--section-bottom) / 2 - 9px); }
+
+/* phones: stacked full cards, no accordion */
+@media (max-width: 767px) {
+    .why-panel__tab { display: none; }
+    .why-panel .why-panel__body { position: relative; inset: auto; display: block; grid-template-rows: none; padding: 26px 22px 28px; opacity: 1; visibility: visible; transition: none; }
+    .why-panel.is-active .why-panel__body { grid-template-rows: none; padding: 26px 22px 28px; }
+    .why-panel__content { min-width: 0; max-width: none; overflow: visible; }
+    .why-panel__icon { display: grid; width: 44px; height: 44px; margin-bottom: 14px; }
+    .why-panel__title { display: block; font-size: 26px; }
+    .why-panel__big { display: block; top: 10px; right: 16px; font-size: 72px; }
+    .why-panel__text { font-size: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .why-panel::before { clip-path: none; opacity: 0; transition: none; }
+    .why-panel.is-active::before { opacity: 1; }
+    .why-panel__big { -webkit-text-stroke: 0; }
+    .why-panel__big-fill { clip-path: none; transition: none; }
+    .why-panel__title .wk > span, .why-panel__text .wl > span { transform: none; opacity: 1; transition: none !important; }
+    .why-panel__icon svg[data-draw] * { stroke-dashoffset: 0; transition: none !important; }
+    .why-panel__num, .why-panel__label, .why-progress u::after { transition: none; }
+}
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+    .why-progress { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 12px; }
+}

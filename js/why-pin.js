@@ -17,7 +17,7 @@
 
   var ST = window.ScrollTrigger;
   var panels = W.panels, N = panels.length;
-  var segs = Array.prototype.slice.call(section.querySelectorAll('.why-progress i'));
+  var segs = Array.prototype.slice.call(section.querySelectorAll('.why-progress button'));
   var mq = window.matchMedia('(min-width: 1024px) and (min-height: 520px)');
   var st = null, cur = -1, snapT = 0;
 
@@ -29,10 +29,26 @@
     if (i === cur) return;
     cur = i;
     W.activate(panels[i]);
-    segs.forEach(function (s, k) { s.classList.toggle('is-on', k <= i); });
+    segs.forEach(function (s, k) { if (k === i) s.setAttribute('aria-current', 'step'); else s.removeAttribute('aria-current'); });
   }
 
-  function update(self) { setStep(indexAt(self.scroll() - self.start)); }
+  /* progress = charge: segment k holds --f 0..1; the step k sits at half charge (step k is reached at rel = k * L), so the current segment is
+     filled up to the middle at rest, completes while scrolling on, passed segments are full, upcoming ones empty; a glowing head at the tip of the current one */
+  var fs = [], headK = -1;
+  function charge(rel) {
+    var pos = rel / stepLen(), hk = Math.max(0, Math.min(N - 1, Math.floor(pos + 0.5)));
+    segs.forEach(function (s, k) {
+      var f = Math.max(0, Math.min(1, pos - k + 0.5));
+      f = Math.round(f * 1000) / 1000;
+      if (f !== fs[k]) { fs[k] = f; s.style.setProperty('--f', f); }
+    });
+    if (hk !== headK) {
+      if (headK >= 0) segs[headK].classList.remove('is-head');
+      headK = hk; segs[hk].classList.add('is-head');
+    }
+  }
+
+  function update(self) { var rel = self.scroll() - self.start; setStep(indexAt(rel)); charge(rel); }
 
   /* ---------------------------------------------------------------- settle on the nearest step */
   function snap() {
@@ -71,8 +87,8 @@
       trigger: section, start: 'top top', end: 'bottom bottom',
       onUpdate: function (self) { update(self); schedule(); },
       onRefresh: update,
-      onLeave: function () { setStep(N - 1); },
-      onLeaveBack: function () { setStep(0); }
+      onLeave: function () { setStep(N - 1); charge(run()); },
+      onLeaveBack: function () { setStep(0); charge(0); }
     });
     update(st);
   }
@@ -83,7 +99,8 @@
     section.classList.remove('is-pinned');
     W.pinned = false; W.onSelect = null;
     W.activate(panels[0]);
-    segs.forEach(function (s) { s.classList.remove('is-on'); });
+    segs.forEach(function (s) { s.removeAttribute('aria-current'); s.classList.remove('is-head'); });
+    fs = []; headK = -1;
     window.dispatchEvent(new Event('resize'));   /* script.js re-fits the (unpinned) section */
   }
   function sync() { if (mq.matches) enable(); else disable(); }
