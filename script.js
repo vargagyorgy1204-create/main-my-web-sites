@@ -858,13 +858,15 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
             var tab = p.querySelector('.why-panel__tab');
             if (tab) tab.setAttribute('aria-expanded', on ? 'true' : 'false');
         });
-        if (!(API && API.pinned)) {                              /* not pinned (reduced motion, tablets, short windows): passed numbers filled, the rest outlined; the pin scrubs --nf itself */
-            panels.forEach(function (p, k) { p.style.setProperty('--nf', k <= s ? 1 : 0); setLv(p, k < s ? 0.15 : k === s ? 1 : 0); });
+        if (!(API && API.pinned)) {                              /* not pinned (reduced motion, tablets, short windows): passed cards at their calm level; the pin scrubs --lv itself */
+            panels.forEach(function (p, k) { setLv(p, k < s ? passedLv : k === s ? 1 : 0); });
         }
     }
 
     /* the water level of a card (--lv 0..1); a dry card (0) is not rendered at all */
     function setLv(p, v) { p.style.setProperty('--lv', v); p.classList.toggle('is-dry', v === 0); }
+    /* the calm level of a passed card: its surface sits ~16px under the number's bottom edge (the mean water line is (1 - lv) * (H + 14px) - 21px from the card top) */
+    var passedLv = 0.15;
     var API;
     var defaultPanel = panels.filter(function (p) { return p.classList.contains('is-active'); })[0] || panels[0];
     activate(defaultPanel);
@@ -880,7 +882,16 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         var avail = panels[0].getBoundingClientRect().height - parseFloat(cs.paddingTop) - num - 12 - parseFloat(cs.paddingBottom);
         var longest = 0;
         panels.forEach(function (p) { longest = Math.max(longest, p.querySelector('.why-panel__label').getBoundingClientRect().height); });
+        var tab0 = panels[0].querySelector('.why-panel__tab'), num0 = panels[0].querySelector('.why-panel__num'), H0 = panels[0].offsetHeight;
+        if (H0 > 0) {
+            passedLv = Math.max(0.05, Math.min(0.9, 1 - (parseFloat(getComputedStyle(tab0).paddingTop) + num0.offsetHeight + 17 + 21) / (H0 + 14)));
+            panels.forEach(function (p) { if (p.classList.contains('is-passed') && !(API && API.pinned)) setLv(p, passedLv); });
+        }
         if (longest > 0) row.style.setProperty('--why-label-fs', Math.max(11, Math.min(20, 20 * avail / longest)).toFixed(2) + 'px');
+    }
+    if (window.ResizeObserver) {
+        var phRo = new ResizeObserver(function (es) { es.forEach(function (e) { e.target.style.setProperty('--ph', e.target.offsetHeight + 'px'); }); });
+        panels.forEach(function (p) { phRo.observe(p); });
     }
     var fitRaf = 0;
     function queueFit() { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fitLabels); }
@@ -890,7 +901,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     /* js/why-pin.js (>= 1024px, motion allowed) takes over `pinned` / `onSelect`: a click scrolls to the step of that card and the
        scroll position opens it. Everywhere else a click / tap opens the card directly (phones: tapping the open card closes it). */
-    API = (window.VB = window.VB || {}).why = { panels: panels, activate: activate, setLv: setLv, pinned: false, onSelect: null };
+    API = (window.VB = window.VB || {}).why = { panels: panels, activate: activate, setLv: setLv, passed: function () { return passedLv; }, pinned: false, onSelect: null };
 
     /* the waves only run while the section is on screen */
     var whySection = document.getElementById('why');

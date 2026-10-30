@@ -30,15 +30,13 @@
     W.activate(panels[i]);
   }
 
-  /* water as progress: a passed card has a calm low water level (--lv .15) and a filled number (--nf 1), the NEXT card's water rises with the scroll progress from the open step to its
+  /* water as progress: a passed card has a calm water level just under its number (W.passed()), the NEXT card's water rises with the scroll progress from the open step to its
      own step (scrubbed, drains on the way back), the open card is full (1), the rest are dry. The level reaches 100% exactly when the card opens (indexAt). */
-  var nf = [], lv = [];
+  var lv = [];
   function charge(rel) {
     var pos = Math.max(0, rel / stepLen()), open = indexAt(rel);
     panels.forEach(function (p, k) {
-      var n = k <= open ? 1 : 0;
-      if (n !== nf[k]) { nf[k] = n; p.style.setProperty('--nf', n); }
-      var f = k < open ? 0.15 : k === open ? 1 : k === open + 1 ? Math.min(1, pos - open) : 0;
+      var f = k < open ? W.passed() : k === open ? 1 : k === open + 1 ? Math.min(1, pos - open) : 0;
       f = Math.round(f * 1000) / 1000;
       if (f !== lv[k]) { lv[k] = f; W.setLv(p, f); }
     });
@@ -75,7 +73,7 @@
   function enable() {
     if (st) return;
     section.classList.add('is-pinned');
-    nf = []; lv = [];
+    lv = [];
     W.pinned = true;
     W.onSelect = goTo;
     section.style.removeProperty('--fit');       /* the pinned layout fills the viewport itself: no scale-to-fit */
@@ -96,7 +94,7 @@
     section.classList.remove('is-pinned');
     W.pinned = false; W.onSelect = null;
     W.activate(panels[0]);
-    nf = []; lv = [];
+    lv = [];
     window.dispatchEvent(new Event('resize'));   /* script.js re-fits the (unpinned) section */
   }
   function sync() { if (mq.matches) enable(); else disable(); }
