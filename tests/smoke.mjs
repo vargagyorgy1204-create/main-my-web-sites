@@ -576,8 +576,8 @@ async function whyPin(vp) {
         await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), i, 2000);
         states.push(await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i]; return e.classList.contains('is-active'); }, i));
       }
-      const ui = await p.evaluate(() => ({ bar: getComputedStyle(document.querySelector('.why-progress')).display, tab: getComputedStyle(document.querySelector('.why-panel__tab')).display, over: document.documentElement.scrollWidth > innerWidth }));
-      rec(tag, 'phones: every card opens in view, bar and tabs hidden, no horizontal overflow', states.every(Boolean) && ui.bar === 'none' && ui.tab === 'none' && !ui.over, `${states.join(',')} ${JSON.stringify(ui)}`);
+      const ui = await p.evaluate(() => ({ tab: getComputedStyle(document.querySelector('.why-panel__tab')).display, over: document.documentElement.scrollWidth > innerWidth }));
+      rec(tag, 'phones: every card opens in view, tabs hidden, no horizontal overflow', states.every(Boolean) && ui.tab === 'none' && !ui.over, `${states.join(',')} ${JSON.stringify(ui)}`);
       rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
       await ctx.close(); return;
     }

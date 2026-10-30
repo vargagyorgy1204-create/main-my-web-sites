@@ -6111,7 +6111,6 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 /* ===== ÉRTÉKEK & GARANCIÁK — bottom gap, then the pinned stage with scroll-driven cards (js/why-pin.js) =====
    Not pinned (< 1024px, short or reduced-motion windows): the usual stacked / fitted section, now with the common bottom gap. */
 #why { padding-bottom: var(--section-bottom) !important; }
-.why-progress { display: none; }
 
 /* pinned: tall block = 100svh stage + 6 x 70svh of scrolling; the sticky stage is exactly one viewport:
    top = --section-top, eyebrow, heading, --head-gap, the cards (fill the rest), --section-bottom */
@@ -6140,19 +6139,6 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 #why.is-pinned .why-head { flex: none; margin-bottom: var(--head-gap); }
 /* the cards take whatever is left under the heading (the heading, eyebrow and bottom gap never give way): low windows get shorter cards */
 #why.is-pinned .why-panels { flex: 1 1 0; height: auto; min-height: 240px; }
-/* progress: 6 thin segments in the bottom gap, the same language as the About story */
-#why.is-pinned .why-progress {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 6px;
-    position: absolute;
-    left: 0; right: 0;
-    bottom: calc(var(--section-bottom) / 2 - 1.5px);
-}
-.why-progress i { position: relative; height: 3px; border-radius: 2px; overflow: hidden; background: rgba(26, 26, 46, 0.12); }
-.why-progress b { position: absolute; inset: 0; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.why-progress i.is-on b { transform: scaleX(1); }
-
 /* ===== ÉRTÉKEK cards: zero layout shift =====
    The row (>= 768px) has a fixed geometry: every card is absolutely positioned at left: 0 and slid with transform: translateX() to the x
    it has in the current state; only its width changes (a size change does not move any start edge, and nothing else in the layout moves).
@@ -7238,13 +7224,23 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .why-panel.is-active::before { clip-path: circle(150% at 0 100%); transition-duration: 0.6s; }
 
 /* collapsed: number + a 3px inset top strip in the accent; up next = the next card's number and label at full opacity, the others at 55% */
-.why-panel__top { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-/* the card's icon under the number: round translucent tile (accent 12%), 20px Lucide icon in the accent; gone with the tab when the card opens */
-.why-panel__mini { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: color-mix(in srgb, var(--ac) 12%, transparent); color: var(--ac-n); }
-.why-panel__mini .icon { width: 20px; height: 20px; }
-.why-panel__num { color: var(--ac-n); font-weight: 600; }
-.why-panel__num, .why-panel__mini, .why-panel__label { opacity: 0.55; transition: opacity 0.4s ease; }
-.why-panel.is-next .why-panel__num, .why-panel.is-next .why-panel__mini, .why-panel.is-next .why-panel__label { opacity: 1; }
+/* collapsed number = progress: Syne 800 outline in the card's accent (centred at the top); the fill overlay (--nf 0..1, set by js/why-pin.js) rises from the bottom:
+   passed cards 1, the NEXT card = scroll progress to its step, the rest 0. The up-next label stays at full opacity, the other labels 55% */
+.why-panel__num {
+    position: relative; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 2.6vw, 40px); line-height: 1; letter-spacing: 0;
+    color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1.5px var(--ac-n);
+}
+.why-panel__num-fill {
+    position: absolute; inset: 0; background: var(--panel-bg); -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 0;
+    clip-path: inset(calc((1 - var(--nf, 0)) * 100%) 0 0 0); transition: clip-path 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+#why.is-pinned .why-panel__num-fill { transition: clip-path 0.12s linear; }          /* scrubbed by the scroll: only a hair of smoothing */
+/* hand-off: the small number lifts and grows as the tab fades out while the big number starts filling */
+.why-panel__num { transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.why-panel.is-active .why-panel__num { transform: translateY(-6px) scale(1.35); }
+.why-panel__label { opacity: 0.55; transition: opacity 0.4s ease; }
+.why-panel.is-next .why-panel__label { opacity: 1; }
 
 /* open card: the body keeps its fixed-width box; the number + icon balance the top, the content sits centred in the lower 55% */
 .why-panel__body { transition: opacity 0.3s ease, visibility 0.3s ease; }
@@ -7278,31 +7274,12 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
     color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 0;
     clip-path: inset(100% 0 0 0); transition: clip-path 0.25s ease;
 }
-.why-panel.is-active .why-panel__big-fill { clip-path: inset(0); transition: clip-path 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s; }
+.why-panel.is-active .why-panel__big-fill { clip-path: inset(0); transition: clip-path 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.05s; }
 
 @media (min-width: 768px) {
     .why-panel__body { display: grid; grid-template-rows: 45% 1fr; justify-content: start; align-items: center; padding: 0 36px clamp(10px, 3.2svh, 32px); }
     .why-panel__content { grid-row: 2; align-self: center; }
 }
-
-/* progress = charge: 6 faint tracks, the current one fills with the brand gradient as the pin scrolls (--f 0..1 per segment), a glowing head at the tip */
-.why-progress button {
-    position: relative; display: flex; align-items: center; height: 18px; padding: 0; border: 0; background: none; cursor: pointer; font: inherit;
-}
-.why-progress button:focus-visible { outline: 2px solid #C026A3; outline-offset: 1px; border-radius: 4px; }
-.why-progress i { display: block; position: relative; width: 100%; height: 4px; overflow: visible; border-radius: 2px; background: rgba(17, 20, 40, 0.1); }
-.why-progress b {
-    position: absolute; inset: 0; border-radius: 2px; background: var(--gradient); transform: none; transition: none;
-    clip-path: inset(0 calc((1 - var(--f, 0)) * 100%) 0 0 round 2px);
-}
-/* the head rides on a zero-height track-wide carrier moved with transform (no layout shift) */
-.why-progress u { position: absolute; left: 0; top: 50%; width: 100%; height: 0; transform: translateX(calc(var(--f, 0) * 100%)); pointer-events: none; }
-.why-progress u::after {
-    content: ""; position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%;
-    background: #fff; box-shadow: 0 0 0 2px #c850c0, 0 0 12px 4px rgba(200, 80, 192, 0.5); opacity: 0; transition: opacity 0.25s ease;
-}
-.why-progress button.is-head u::after { opacity: 1; }
-#why.is-pinned .why-progress { bottom: calc(var(--section-bottom) / 2 - 9px); }
 
 /* phones: stacked full cards, no accordion */
 @media (max-width: 767px) {
@@ -7323,10 +7300,8 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
     .why-panel__big-fill { clip-path: none; transition: none; }
     .why-panel__title .wk > span, .why-panel__text .wl > span { transform: none; opacity: 1; transition: none !important; }
     .why-panel__icon svg[data-draw] * { stroke-dashoffset: 0; transition: none !important; }
-    .why-panel__num, .why-panel__mini, .why-panel__label, .why-progress u::after { transition: none; }
-}
-@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
-    .why-progress { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 12px; }
+    .why-panel__label { transition: none; }
+    .why-panel__num-fill, .why-panel__num { transition: none !important; }
 }
 
 /* ===== ÉRTÉKEK refinements ===== */

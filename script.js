@@ -843,7 +843,6 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     if (!panels.length) return;
     var phone = window.matchMedia('(max-width: 767px)');
     var reduceWhy = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var segs = Array.prototype.slice.call(document.querySelectorAll('.why-progress button'));
 
     /* One card open at a time. `--k` = 1 when the open card sits before this one: the geometry of the row (>= 768px, style.css)
        is pure CSS from the open index, so nothing in the layout moves. */
@@ -858,8 +857,8 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
             var tab = p.querySelector('.why-panel__tab');
             if (tab) tab.setAttribute('aria-expanded', on ? 'true' : 'false');
         });
-        if (!(API && API.pinned)) {                              /* not pinned (reduced motion, tablets, short windows): the bar shows the static current state; the pin scrubs it itself */
-            segs.forEach(function (b, k) { b.style.setProperty('--f', k <= s ? 1 : 0); b.classList.remove('is-head'); });
+        if (!(API && API.pinned)) {                              /* not pinned (reduced motion, tablets, short windows): passed numbers filled, the rest outlined; the pin scrubs --nf itself */
+            panels.forEach(function (p, k) { p.style.setProperty('--nf', k <= s ? 1 : 0); });
         }
     }
 
@@ -874,7 +873,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         if (window.innerWidth < 768) { row.style.removeProperty('--why-label-fs'); return; }          /* stacked accordion: horizontal labels */
         row.style.setProperty('--why-label-fs', '20px');
         var tab = panels[0].querySelector('.why-panel__tab'), cs = getComputedStyle(tab);
-        var num = panels[0].querySelector('.why-panel__top').getBoundingClientRect().height;          /* number + the small icon tile */
+        var num = panels[0].querySelector('.why-panel__num').getBoundingClientRect().height;
         var avail = panels[0].getBoundingClientRect().height - parseFloat(cs.paddingTop) - num - 12 - parseFloat(cs.paddingBottom);
         var longest = 0;
         panels.forEach(function (p) { longest = Math.max(longest, p.querySelector('.why-panel__label').getBoundingClientRect().height); });
@@ -1007,12 +1006,6 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         };
         if (h.classList.contains('is-split')) go(); else h.addEventListener('vb:heading-split', go, { once: true });
     })();
-
-    segs.forEach(function (b, i) {
-        b.addEventListener('click', function () {
-            if (API.pinned && API.onSelect) API.onSelect(i); else if (!phone.matches) activate(panels[i]);
-        });
-    });
 
     panels.forEach(function (panel, i) {
         var tab = panel.querySelector('.why-panel__tab');

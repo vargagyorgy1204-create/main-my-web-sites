@@ -17,35 +17,29 @@
 
   var ST = window.ScrollTrigger;
   var panels = W.panels, N = panels.length;
-  var segs = Array.prototype.slice.call(section.querySelectorAll('.why-progress button'));
   var mq = window.matchMedia('(min-width: 1024px) and (min-height: 520px)');
   var st = null, cur = -1, snapT = 0;
 
   function stepLen() { return window.innerHeight * 0.7; }
-  function indexAt(rel) { return Math.max(0, Math.min(N - 1, Math.round(rel / stepLen()))); }
+  function indexAt(rel) { return Math.max(0, Math.min(N - 1, Math.floor(rel / stepLen() + 0.004))); }      /* a card opens when the scroll REACHES its step (the number of the next card has filled up by then) */
   function run() { return st ? st.end - st.start : 0; }
 
   function setStep(i) {
     if (i === cur) return;
     cur = i;
     W.activate(panels[i]);
-    segs.forEach(function (s, k) { if (k === i) s.setAttribute('aria-current', 'step'); else s.removeAttribute('aria-current'); });
   }
 
-  /* progress = charge: segment k holds --f 0..1 = how far the scroll has gone from step k (rel = k * L) to the next one: at a step the head sits exactly on the left edge
-     of its segment (f = 0), it reaches the right edge (f = 1) as the next step is reached and then starts the next segment; passed segments are full, upcoming ones empty */
-  var fs = [], headK = -1;
+  /* numbers as progress: a passed card's number is filled (--nf 1), the NEXT card's number fills from the bottom with the scroll progress from the open step to its own step
+     (liquid rising, scrubbed; drains on the way back), the rest stay outlined. The fill reaches 100% exactly when the card opens (indexAt). */
+  var nf = [];
   function charge(rel) {
-    var pos = rel / stepLen(), hk = Math.max(0, Math.min(N - 1, Math.floor(pos + 1e-6)));
-    segs.forEach(function (s, k) {
-      var f = Math.max(0, Math.min(1, pos - k));
+    var pos = Math.max(0, rel / stepLen()), open = indexAt(rel);
+    panels.forEach(function (p, k) {
+      var f = k <= open ? 1 : k === open + 1 ? Math.min(1, pos - open) : 0;
       f = Math.round(f * 1000) / 1000;
-      if (f !== fs[k]) { fs[k] = f; s.style.setProperty('--f', f); }
+      if (f !== nf[k]) { nf[k] = f; p.style.setProperty('--nf', f); }
     });
-    if (hk !== headK) {
-      if (headK >= 0) segs[headK].classList.remove('is-head');
-      headK = hk; segs[hk].classList.add('is-head');
-    }
   }
 
   function update(self) { var rel = self.scroll() - self.start; setStep(indexAt(rel)); charge(rel); }
@@ -79,6 +73,7 @@
   function enable() {
     if (st) return;
     section.classList.add('is-pinned');
+    nf = [];
     W.pinned = true;
     W.onSelect = goTo;
     section.style.removeProperty('--fit');       /* the pinned layout fills the viewport itself: no scale-to-fit */
@@ -99,8 +94,7 @@
     section.classList.remove('is-pinned');
     W.pinned = false; W.onSelect = null;
     W.activate(panels[0]);
-    segs.forEach(function (s) { s.removeAttribute('aria-current'); s.classList.remove('is-head'); });
-    fs = []; headK = -1;
+    nf = [];
     window.dispatchEvent(new Event('resize'));   /* script.js re-fits the (unpinned) section */
   }
   function sync() { if (mq.matches) enable(); else disable(); }
