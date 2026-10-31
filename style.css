@@ -7426,3 +7426,7 @@ section#skills { background: linear-gradient(180deg, rgb(23 12 38) calc(max(35%,
 #about .about-sign { color: rgb(255 255 255 / 0.85); }
 #about.is-pinned .about-sign { --sign-base: rgb(255 255 255 / 0.85); --sign-hi: #f0b6ec; color: transparent; }
 @media (prefers-reduced-motion: reduce) { #about.is-pinned .about-sign { background: none; color: rgb(255 255 255 / 0.85); -webkit-text-fill-color: currentColor; } }
+
+/* Rólam signature ~20% smaller (the width token x 0.8; phones keep a readable 88px minimum). Scoped to #about: myapproach.html keeps its size. */
+#about .about-bio-card { --sign-w: clamp(88px, 22.4vw, 112px); }
+#about.is-pinned .about-bio-card { --sign-w: clamp(104px, 8.8vw, 152px); }
