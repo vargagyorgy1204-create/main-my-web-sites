@@ -9,6 +9,7 @@
     --card-secondary:    #1a1f2e;
     --card-accent-warm:  linear-gradient(135deg, #7c1263 0%, #c850c0 100%);
     --card-accent-cool:  linear-gradient(135deg, #0e4d5c 0%, #1a8fa3 100%);
+    --why-grad:          linear-gradient(45deg, #4B1956 0%, #6c63ff 40%, #c850c0 100%);   /* Értékek: deep anchor violet bottom-left -> the --card-primary stops toward the top-right */
 }
 
 /* ===== DESIGN TOKENS — the single source of the proportional layout (documented in DESIGN-SYSTEM.md) =====
@@ -7223,13 +7224,11 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 @media (prefers-reduced-motion: reduce) { .st-count > span:last-child, .st-count > span:last-child::after, .st-reel > span { transition: none !important; } }
 
 /* ===== ÉRTÉKEK & GARANCIÁK — values that unfold (js/why-pin.js + the Why block of script.js) =====
-   Three brand accents cycle through the cards (violet, magenta, teal). The open card: a gradient that expands from the bottom-left corner (clip-path circle),
+   One brand palette for all six cards (--why-grad, no per-card accents). The open card: a gradient that expands from the bottom-left corner (clip-path circle),
    the big outline number that fills bottom -> top, the icon that draws its strokes, title letters / description lines that rise from masks. All of it is plain
    CSS keyed on .is-active (the geometry of the cards is untouched: zero layout shift). The progress bar is a scrubbed charge (--f per segment, set by why-pin.js).
    Phones (< 768px): no accordion, every card is a full card that plays its open state when it enters the viewport (script.js adds .is-active). */
-.why-panel--v { --ac: #6c63ff; --ac-n: #6c63ff; --ac-lt: #d6d2ff; --ac-sh: rgba(108, 99, 255, 0.28); --panel-bg: var(--card-primary); }
-.why-panel--m { --ac: #C026A3; --ac-n: #C026A3; --ac-lt: #f7b4ec; --ac-sh: rgba(192, 38, 163, 0.28); --panel-bg: linear-gradient(135deg, #7b1268 0%, #C026A3 58%, #e558c9 100%); }
-.why-panel--t { --ac: #1a8fa3; --ac-n: #137f93; --ac-lt: #a6ecf7; --ac-sh: rgba(26, 143, 163, 0.28); --panel-bg: var(--card-accent-cool); }
+.why-panel { --ac-lt: #e0d9ff; --ac-sh: rgba(75, 25, 86, 0.32); --panel-bg: var(--why-grad); }
 .why-panel.is-active { box-shadow: 0 24px 50px var(--ac-sh); }
 
 /* background reveal: the gradient grows from the bottom-left corner (150% of the reference radius covers the opposite corner), collapses back on close */
@@ -7335,7 +7334,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 }
 .why-panel.is-active .why-panel__water { opacity: 1; }          /* the filled card: fully opaque, so the open gradient fades in without any colour change */
 .why-panel.is-dry .why-panel__water { visibility: hidden; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s 0.3s; }
-.why-panel.is-passed .why-panel__water { opacity: 0.65; }
+.why-panel.is-passed .why-panel__water { opacity: 0.45; }
 .why-panel__wave {
     position: absolute; left: 0; right: 0; top: -14px; height: 14px;
     /* the crest strips carry the same gradient (sized to the card, taken from the card's top rows) plus a light veil: the surface is slightly lighter */
