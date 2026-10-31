@@ -7404,5 +7404,25 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 /* ===== Készségek -> Értékek: one long, eased blend (~1 viewport): the lower max(35%, 50svh) of Készségek shifts #10172a toward the Értékek violet-navy, the top --why-ramp-top of Értékek finishes it
    (smoothstep over the whole span, 10 stops per part: no linear band). Készségek keeps its flat #10172a above the blend; the two parts meet at the same colour. */
 :root { --why-ramp-top: clamp(200px, 38svh, 420px); }
-section#skills { background: linear-gradient(180deg, #10172a 0, rgb(16 23 42) calc(100% - max(35%, 50svh) * 1.0), rgb(16 23 42) calc(100% - max(35%, 50svh) * 0.9), rgb(16 23 42) calc(100% - max(35%, 50svh) * 0.8), rgb(17 22 43) calc(100% - max(35%, 50svh) * 0.7), rgb(17 22 44) calc(100% - max(35%, 50svh) * 0.6), rgb(17 21 44) calc(100% - max(35%, 50svh) * 0.5), rgb(18 21 45) calc(100% - max(35%, 50svh) * 0.4), rgb(18 20 46) calc(100% - max(35%, 50svh) * 0.3), rgb(19 20 47) calc(100% - max(35%, 50svh) * 0.2), rgb(20 19 48) calc(100% - max(35%, 50svh) * 0.1), rgb(20 18 49) 100%) !important; }
+section#skills { background: linear-gradient(180deg, rgb(23 12 38) calc(max(35%, 50svh) * 0.0), rgb(23 12 38) calc(max(35%, 50svh) * 0.1), rgb(22 13 38) calc(max(35%, 50svh) * 0.2), rgb(21 14 39) calc(max(35%, 50svh) * 0.3), rgb(21 16 39) calc(max(35%, 50svh) * 0.4), rgb(20 18 40) calc(max(35%, 50svh) * 0.5), rgb(18 19 41) calc(max(35%, 50svh) * 0.6), rgb(18 21 41) calc(max(35%, 50svh) * 0.7), rgb(17 22 42) calc(max(35%, 50svh) * 0.8), rgb(16 23 42) calc(max(35%, 50svh) * 0.9), rgb(16 23 42) calc(max(35%, 50svh) * 1.0), rgb(16 23 42) calc(100% - max(35%, 50svh) * 1.0), rgb(16 23 42) calc(100% - max(35%, 50svh) * 0.9), rgb(16 23 42) calc(100% - max(35%, 50svh) * 0.8), rgb(17 22 43) calc(100% - max(35%, 50svh) * 0.7), rgb(17 22 44) calc(100% - max(35%, 50svh) * 0.6), rgb(17 21 44) calc(100% - max(35%, 50svh) * 0.5), rgb(18 21 45) calc(100% - max(35%, 50svh) * 0.4), rgb(18 20 46) calc(100% - max(35%, 50svh) * 0.3), rgb(19 20 47) calc(100% - max(35%, 50svh) * 0.2), rgb(20 19 48) calc(100% - max(35%, 50svh) * 0.1), rgb(20 18 49) 100%) !important; }
 #why { background: linear-gradient(180deg, rgb(20 18 49) calc(var(--why-ramp-top) * 0.0), rgb(21 18 50) calc(var(--why-ramp-top) * 0.1), rgb(21 17 51) calc(var(--why-ramp-top) * 0.2), rgb(21 17 51) calc(var(--why-ramp-top) * 0.3), rgb(22 16 52) calc(var(--why-ramp-top) * 0.4), rgb(22 16 53) calc(var(--why-ramp-top) * 0.5), rgb(22 16 53) calc(var(--why-ramp-top) * 0.6), rgb(23 15 53) calc(var(--why-ramp-top) * 0.7), rgb(23 15 54) calc(var(--why-ramp-top) * 0.8), rgb(23 15 54) calc(var(--why-ramp-top) * 0.9), var(--why-bg) var(--why-ramp-top), var(--why-bg) calc(100% - var(--why-ramp)), #0f1629 100%); }
+
+/* ===== RÓLAM: dark section (data-theme="dark" drives the header, the cursor reads the dark background) =====
+   Section colour = --about-bg (deep ink violet based on #4B1956): scrubbed from the hero's light to #170c26 by about-story.js while the section rises into view (dark without JS / with reduced motion).
+   Rólam -> Készségek: the top max(35%, 50svh) of Készségek (the section#skills gradient above) eases #170c26 -> #10172a. Scoped to #about: myapproach.html reuses .about-bio-card / .btn-about / .about-sign light. */
+#about { background: var(--about-bg, #170c26) !important; }
+#about .abt { --abt-ink: rgb(255 255 255 / 0.8); --abt-design: #E36DD0; --abt-code: #3FC6E0; --abt-motion: #8F89FF; }
+#about .about-bio-card { background: rgb(255 255 255 / 0.05); border: 1px solid rgb(255 255 255 / 0.08); box-shadow: none; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+#about .abt-lead { color: #fff; }
+#about .abt-body { color: rgb(255 255 255 / 0.8); }
+#about .abt-chapters .abt-ch + .abt-ch { border-top-color: rgb(255 255 255 / 0.1); }
+#about.is-pinned .abt-progress i { background: rgb(255 255 255 / 0.15); }
+#about.is-pinned .abt-progress b { background: var(--card-primary); }
+/* the photo sits on the dark: a very soft vignette at the edges only (the face stays at its brightness) */
+#about .about-photo-overlay { background: radial-gradient(ellipse 78% 74% at 50% 46%, transparent 62%, rgb(14 8 28 / 0.32) 100%); }
+/* "Hogyan dolgozom": dark-background variant of the outline button (white outline + label, the brand-gradient fill on hover / focus) */
+#about .btn-about { border-color: #fff; color: #fff; }
+#about .btn-about:focus-visible { color: #fff; border-color: transparent; outline: 3px solid #E36DD0; outline-offset: 3px; }
+#about .about-sign { color: rgb(255 255 255 / 0.85); }
+#about.is-pinned .about-sign { --sign-base: rgb(255 255 255 / 0.85); --sign-hi: #f0b6ec; color: transparent; }
+@media (prefers-reduced-motion: reduce) { #about.is-pinned .about-sign { background: none; color: rgb(255 255 255 / 0.85); -webkit-text-fill-color: currentColor; } }

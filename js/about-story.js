@@ -18,8 +18,8 @@
   if (!section || !VB.gsap || !VB.hasST || !VB.hasSplit || VB.reduceMotion) return;
 
   var gsap = VB.gsap, ST = window.ScrollTrigger, Split = window.SplitText;
-  var INK = 'rgb(26, 26, 46)';
-  var COL = { design: 'rgb(192, 38, 163)', code: 'rgb(18, 130, 154)', motion: 'rgb(108, 99, 255)', result: 'rgb(200, 80, 192)' };
+  var INK = 'rgba(255, 255, 255, 0.8)';          /* dark section: the neutral heading word is white 80% */
+  var COL = { design: 'rgb(227, 109, 208)', code: 'rgb(63, 198, 224)', motion: 'rgb(143, 137, 255)', result: 'rgb(200, 80, 192)' };   /* the chapter colours, lightened for the dark section (>= 5.8:1 on it) */
   var GLYPHS = '#/{}<>01=_'.split('');
   var q = function (sel, root) { return (root || section).querySelector(sel); };
   var qa = function (sel, root) { return Array.prototype.slice.call((root || section).querySelectorAll(sel)); };
@@ -363,6 +363,8 @@
   function mount() {
     lastW = window.innerWidth; lastH = window.innerHeight;
     ctx = gsap.context(function () {
+      /* Hero (light) -> Rólam (dark): the section colour is scrubbed with the scroll while the section rises into view, finished when its top is at 30% of the viewport */
+      gsap.fromTo(section, { '--about-bg': '#fafafa' }, { '--about-bg': '#170c26', ease: 'power1.out', scrollTrigger: { trigger: section, start: 'top 100%', end: 'top 30%', scrub: true, invalidateOnRefresh: true } });
       if (window.innerWidth >= 900) buildStory(); else buildList();
     }, section);
   }
