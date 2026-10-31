@@ -190,5 +190,7 @@ One scroll choreography per entry, no layout animation (transform / opacity / st
 ## Készségek & Technológia (js/skills-fx.js)
 - Heading = the shared Szolgáltatások reveal (`#skills .section-heading` is in the `.fx-*` selector lists; `--stg` 0.012s, `--dd` 0.5s).
 - List build (per row, IntersectionObserver, reversible; `.sk-in` / `.sk-done`, `--rd` = 0.08s per row that enters together): divider `scaleX` 0.5s, number rises from its mask (0.5s), logo tile `scale .6 -> 1` (0.35s back-out), name letters from masks (stagger 0.015s), description lines from masks (0.07s per line). Transform / opacity only (CLS 0). Not run with reduced motion.
-- Row hover (`html.has-cursor`): odometer on the number (second copy, white), letter wave (-3px, 0.015s per letter), description white + `translateX(-6px)`; preview card: 3D tilt <= 6deg (`perspective(900px)`, eased in script.js), brand glow, logo float +-4px / 3s. `.skills-list` has `data-cursor="plain"` (ring + dot, no I-beam).
+- Row hover (`html.has-cursor`): odometer on the number (second copy, white), letter wave (-3px, 0.015s per letter), description white + `translateX(-6px)`; preview card: 3D tilt <= 6deg (`perspective(900px)`, eased in script.js), logo float +-4px / 3s. `.skills-list` has `data-cursor="plain"` (ring + dot, no I-beam).
 
+- Row 10 "Lenis": there is no official licensed mark (not in Simple Icons / Devicon), so the tile and the preview use the Lucide `mouse` icon (`icon--grad`) stroked with the brand gradient via the single `#vbCardGrad` def (`.vb-svg-defs`, stops = `--card-primary`); white on row hover. The list is the owner's general toolbox (Three.js stays although this site does not load it).
+- Lucide is pinned (`lucide@1.66.0`); AOS was removed (no `data-aos` anywhere).

@@ -7474,3 +7474,8 @@ html.has-cursor .skill-row:hover .skill-row__desc { transform: translateX(-6px);
 .skills-preview.is-visible .skills-preview__inner > * { animation: skFloat 3s ease-in-out infinite; }
 @keyframes skFloat { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
 @media (prefers-reduced-motion: reduce) { .skills-preview.is-visible .skills-preview__inner > * { animation: none; } .skills-preview__inner { transform: none; } }
+
+/* Lenis row: no official licensed mark exists, so the tile and the preview card use the Lucide "mouse" icon in the brand gradient (defined once in the .vb-svg-defs svg) */
+.vb-svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.skill-row__logo svg.icon--grad, .skills-preview__inner svg.icon--grad { stroke: url(#vbCardGrad); }
+html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff; }

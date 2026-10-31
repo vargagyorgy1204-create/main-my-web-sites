@@ -26,7 +26,7 @@
         "serviceType": "Web Design"
     }
     </script>
-    <link rel="stylesheet" href="style.css?v=cr26">
+    <link rel="stylesheet" href="style.css?v=cr27">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="/favicon.ico" sizes="any">
@@ -40,7 +40,7 @@
 
 <header class="nav nav--on-light" id="nav">
     <a class="nav__logo" href="index.html" aria-label="VarBro - vissza a főoldalra">
-        <img class="nav__logo-img nav__logo-img--dark" src="logowhite.png" alt="VarBro" width="44" height="44">
+        <img class="nav__logo-img nav__logo-img--dark" src="logowhite.png" alt="VarBro" width="44" height="44" fetchpriority="high" decoding="async">
         <img class="nav__logo-img nav__logo-img--light" src="logoblack.png" alt="" aria-hidden="true" width="44" height="44">
         <span class="nav__logo-fallback" aria-hidden="true">Vb</span>
     </a>
@@ -78,7 +78,7 @@
             <div class="contact-card__photo-wrap">
                 <picture>
                     <source type="image/webp" srcset="contact-640.webp 640w, contact-1000.webp 1000w" sizes="180px">
-                    <img src="contact-640.jpg" srcset="contact-640.jpg 640w, contact-1000.jpg 1000w" sizes="180px" width="640" height="640" decoding="async" alt="Varga György – VarBro webfejlesztő">
+                    <img src="contact-640.jpg" srcset="contact-640.jpg 640w, contact-1000.jpg 1000w" sizes="180px" width="640" height="640" decoding="async" alt="Varga György – VarBro webfejlesztő" fetchpriority="high">
                 </picture>
             </div>
             <div class="availability-status">
@@ -181,8 +181,8 @@
     </div>
 </div>
 
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="script.js?v=79"></script>
+<script src="https://unpkg.com/lucide@1.66.0/dist/umd/lucide.js"></script>
+<script src="script.js?v=80"></script>
 <script src="nav.js?v=6" defer></script>
 <script src="cursor.js?v=24" defer></script>
 <script src="js/footer.js?v=17" defer></script>

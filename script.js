@@ -1,12 +1,3 @@
-if (typeof AOS !== 'undefined') {
-    AOS.init({
-        duration: 700,
-        easing: 'ease-out-cubic',
-        once: true,
-        offset: 60
-    });
-}
-
 // Skill card click-to-flip animation
 const skillCards = document.querySelectorAll('.skill-card');
 if (skillCards.length > 0) {
