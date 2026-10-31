@@ -778,7 +778,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     /* real mouse input (html.has-cursor, set by cursor.js), not hover/pointer media queries: they are false on touch-screen laptops */
     var ok = { get matches() { return document.documentElement.classList.contains('has-cursor') && window.innerWidth > 900; } };
     var inner = preview.querySelector('.skills-preview__inner');
-    var mx = -1, my = -1, px = 0, py = 0, rot = 0, running = false, active = null, tick = false;
+    var mx = -1, my = -1, px = 0, py = 0, rot = 0, tiltX = 0, tiltY = 0, running = false, active = null, tick = false;
 
     function loop() {
         var dx = mx - px;
@@ -786,6 +786,11 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         py += (my - py) * 0.16;
         rot += ((Math.max(-12, Math.min(12, dx * 0.15))) - rot) * 0.12;
         preview.style.transform = 'translate3d(' + (px + 130).toFixed(1) + 'px,' + py.toFixed(1) + 'px,0) rotate(' + rot.toFixed(2) + 'deg)';
+        /* subtle 3D tilt toward the pointer (max 6deg, eased); the CSS transform adds perspective(900px) */
+        tiltX += ((Math.max(-1, Math.min(1, (my - py) / 80)) * -6) - tiltX) * 0.12;
+        tiltY += ((Math.max(-1, Math.min(1, (mx - (px + 130)) / 130)) * 6) - tiltY) * 0.12;
+        inner.style.setProperty('--rx', tiltX.toFixed(2) + 'deg');
+        inner.style.setProperty('--ry', tiltY.toFixed(2) + 'deg');
         if (active) requestAnimationFrame(loop);      /* stops as soon as the preview is hidden */
         else running = false;
     }

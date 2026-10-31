@@ -6910,21 +6910,21 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 
 /* ===== KAPCSOLAT + SZOLGÁLTATÁSOK headings ("ÜZENJEN.", "HÁROM TERÜLET, EGY KÉZBŐL."): staggered letter reveal (js/contact-footer.js sets --ci, .fx-prep, .fx-in, .fx-moving) =====
    the letters use the individual transform properties (translate / scale / opacity), the proximity hover keeps `transform` - no conflict; the masks clip only while moving */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-char {
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-char {
     transition: translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.5s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s);
 }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-mask { overflow: visible; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-moving .sh-mask { overflow: clip; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * var(--stg, 0.05s) + 0.2s); }          /* out: right -> left, after the dot has left */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * var(--stg, 0.05s)); }                                       /* in: left -> right */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-mask { overflow: visible; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-moving .sh-mask { overflow: clip; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * var(--stg, 0.05s) + 0.2s); }          /* out: right -> left, after the dot has left */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * var(--stg, 0.05s)); }                                       /* in: left -> right */
 /* the dot: after the last letter has landed it drops from above (ease-in .35s), squashes on impact (.08s), bounces once (.18s) and settles; a thin gradient ring ripples out at the
    impact (the ::before, transform / opacity only, out of the flow). The dot's own mask never clips (the ring and the drop leave the box). --dd = the drop's start. */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-mask:has(> .sh-dot) { overflow: visible; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep.fx-in.fx-done .sh-dot { animation: none; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-dot::before {
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-mask:has(> .sh-dot) { overflow: visible; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep.fx-in.fx-done .sh-dot { animation: none; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-dot::before {
     content: "";
     position: absolute;
     left: var(--ring-x, 50%);
@@ -6939,8 +6939,8 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
     opacity: 0;
     pointer-events: none;
 }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
-html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
+html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
 @keyframes ctcDotDrop {
     0%   { translate: 0 -120%; scale: 1 1; opacity: 0; animation-timing-function: ease-in; }
     4%   { opacity: 1; }
@@ -6952,7 +6952,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 }
 @keyframes ctcDotRing { from { scale: 0.5; opacity: 0.7; } to { scale: 2.6; opacity: 0; } }
 @keyframes ctcDotHop { 0%, 100% { translate: 0 0; } 40% { translate: 0 -18%; } }
-@media (prefers-reduced-motion: reduce) { :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-char { transition: none; } :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-dot, :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading) .sh-dot::before { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-char { transition: none; } :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-dot, :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-dot::before { animation: none !important; } }
 
 /* ===== KAPCSOLAT scroll choreography "signal from the dot" (js/contact-footer.js): helper styles only - the rest state is the plain CSS above =====
    the lead text lines (.rv-*) rise from masks with the heading letters; the SVG overlay (.ctc-signal, pointer-events none) carries the signal line; .cf-sweep /
@@ -7430,3 +7430,50 @@ section#skills { background: linear-gradient(180deg, rgb(23 12 38) calc(max(35%,
 /* Rólam signature ~20% smaller (the width token x 0.8; phones keep a readable 88px minimum). Scoped to #about: myapproach.html keeps its size. */
 #about .about-bio-card { --sign-w: clamp(88px, 22.4vw, 112px); }
 #about.is-pinned .about-bio-card { --sign-w: clamp(104px, 8.8vw, 152px); }
+
+/* ===== KÉSZSÉGEK & TECHNOLÓGIA polish (js/skills-fx.js; the preview card tilt / float live in script.js) ===== */
+/* heading = the Szolgáltatások reveal (shared .fx-* rules above), compressed like Értékek: the long line lands by ~1s */
+#skills .section-heading { --stg: 0.012s; --dd: 0.5s; }
+#skills .section-heading .sh-char { transition: translate 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.4s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s); }
+#skills .section-heading .sh-dot { transition: none; }
+
+/* number: a mask (odometer + build) with two copies; the second (white) rolls in on hover. Build uses `translate`, the odometer `transform`: they compose. */
+.skills-list.sk-prep .skill-row__num { display: inline-block; position: relative; overflow: clip; line-height: 1.5; }
+.sk-n { display: block; transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0s, transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.sk-n2 { position: absolute; left: 0; top: 0; color: #fff; transform: translateY(125%); }
+html.has-cursor .skill-row:hover .sk-n:not(.sk-n2) { transform: translateY(-125%); }
+html.has-cursor .skill-row:hover .sk-n2 { transform: translateY(0); }
+
+/* name: letters in masks; the hover wave runs once per hover (translateY -3px, 0.015s per letter) */
+.sk-w { display: inline-block; white-space: nowrap; }
+.sk-lm { display: inline-block; vertical-align: top; padding-block: 0.14em; margin-block: -0.14em; }
+.sk-lc { display: inline-block; transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) 0s; }
+html.has-cursor .skill-row:hover .sk-lc { animation: skWave 0.5s ease calc(var(--ci, 0) * 0.015s) 1 both; }
+@keyframes skWave { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-3px); } }
+
+/* description: one block per line, risen from its own mask; on hover it turns white and moves 6px toward the preview card */
+.sk-ln { display: block; padding-block: 0.12em; margin-block: -0.12em; }
+.sk-li { display: block; white-space: nowrap; transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) 0s, opacity 0.35s ease 0s; }
+.skill-row__desc { transition: color 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+html.has-cursor .skill-row:hover .skill-row__desc { transform: translateX(-6px); }
+
+/* the build: hidden until .sk-in (set per row by the script); the masks clip until .sk-done (the end of the build), so the hover wave is never cut */
+.skills-list.sk-prep .skill-row { border-top-color: transparent; }
+.skills-list.sk-prep .skill-row::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: rgb(255 255 255 / 0.1); transform: scaleX(0); transform-origin: left center; transition: transform 0.3s ease 0s; pointer-events: none; }
+.skills-list.sk-prep .skill-row:not(.sk-done) .sk-lm, .skills-list.sk-prep .skill-row:not(.sk-done) .sk-ln { overflow: clip; }
+.skills-list.sk-prep .sk-n { translate: 0 125%; }
+.skills-list.sk-prep .sk-lc { translate: 0 115%; }
+.skills-list.sk-prep .sk-li { translate: 0 115%; opacity: 0; }
+.skills-list.sk-prep .skill-row__logo { scale: 0.6; opacity: 0; transition: background 0.3s ease, scale 0.2s ease 0s, opacity 0.2s ease 0s; }
+.skills-list.sk-prep .skill-row.sk-in::after { transform: scaleX(1); transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd, 0s); }
+.skills-list.sk-prep .skill-row.sk-in .sk-n { translate: 0 0; transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--rd, 0s) + 0.25s), transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.skills-list.sk-prep .skill-row.sk-in .skill-row__logo { scale: 1; opacity: 1; transition: background 0.3s ease, scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--rd, 0s) + 0.3s), opacity 0.2s ease calc(var(--rd, 0s) + 0.3s); }
+.skills-list.sk-prep .skill-row.sk-in .sk-lc { translate: 0 0; transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--rd, 0s) + 0.35s + var(--ci, 0) * 0.015s); }
+.skills-list.sk-prep .skill-row.sk-in .sk-li { translate: 0 0; opacity: 1; transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--rd, 0s) + 0.5s + var(--li, 0) * 0.07s), opacity 0.35s ease calc(var(--rd, 0s) + 0.5s + var(--li, 0) * 0.07s); }
+
+/* the preview card: brand glow behind it, the logo floats while it is visible (the tilt is set per frame by script.js) */
+.skills-preview::before { background: radial-gradient(circle at 36% 38%, rgb(108 99 255 / 0.42) 0%, rgb(108 99 255 / 0) 62%), radial-gradient(circle at 68% 66%, rgb(200 80 192 / 0.4) 0%, rgb(200 80 192 / 0) 62%); }
+.skills-preview__inner { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); will-change: transform; }
+.skills-preview.is-visible .skills-preview__inner > * { animation: skFloat 3s ease-in-out infinite; }
+@keyframes skFloat { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .skills-preview.is-visible .skills-preview__inner > * { animation: none; } .skills-preview__inner { transform: none; } }
