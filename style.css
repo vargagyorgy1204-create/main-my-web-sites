@@ -9,7 +9,7 @@
     --card-secondary:    #1a1f2e;
     --card-accent-warm:  linear-gradient(135deg, #7c1263 0%, #c850c0 100%);
     --card-accent-cool:  linear-gradient(135deg, #0e4d5c 0%, #1a8fa3 100%);
-    --why-grad:          linear-gradient(45deg, #4B1956 0%, #6c63ff 40%, #c850c0 100%);   /* Értékek: deep anchor violet bottom-left -> the --card-primary stops toward the top-right */
+    --why-grad:          linear-gradient(45deg, #3F164C 0%, #5850D0 40%, #A0419F 100%);   /* Értékek: the anchor violet / --card-primary stops (#4B1956, #6c63ff, #c850c0) under a 22% overlay of rgb(18 12 40): deeper, same hues */
 }
 
 /* ===== DESIGN TOKENS — the single source of the proportional layout (documented in DESIGN-SYSTEM.md) =====
@@ -7390,7 +7390,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 #why .section-heading { --sh-color: #fff; }
 
 .why-panel { background: rgb(255 255 255 / 0.05); border-color: rgb(255 255 255 / 0.08); box-shadow: none; }
-.why-panel.is-active { border-color: transparent; box-shadow: 0 0 56px rgb(108 99 255 / 0.5), 0 0 120px rgb(200 80 192 / 0.28), 0 18px 60px -12px rgb(75 25 86 / 0.6); }
+.why-panel.is-active { border-color: transparent; box-shadow: 0 0 28px rgb(108 99 255 / 0.25), 0 0 60px rgb(200 80 192 / 0.14), 0 14px 40px -12px rgb(75 25 86 / 0.3); }
 .why-panel__tab:focus-visible { outline-color: #E36DD0; }          /* #E36DD0 on the dark card 5.8:1 (the magenta #C026A3 is 3.5:1) */
 .why-panel__num, .why-panel__label { color: #fff; }
 .why-panel__num, .why-panel__label { opacity: 0.7; }
@@ -7399,4 +7399,4 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .why-panel.is-passed .why-panel__water { opacity: 0.4; }
 /* the water glows on the dark: a brighter surface (crest strips + the veil below the crest) */
 .why-panel__wave { background-image: linear-gradient(rgb(255 255 255 / 0.36), rgb(255 255 255 / 0.36)), var(--panel-bg); }
-.why-panel__water::after { background: linear-gradient(180deg, rgb(255 255 255 / 0.34), rgb(255 255 255 / 0)); }
+.why-panel__water::after { background: linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0)); }
