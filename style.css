@@ -3959,8 +3959,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     will-change: transform, opacity;
 }
 .skills-preview.is-visible { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s; }
-/* the glow is a pre-rendered radial gradient instead of a 60px blurred shadow */
-.skills-preview::before { content: ""; position: absolute; inset: -46px; z-index: -1; border-radius: 50%; background: radial-gradient(circle, rgba(192, 38, 163, 0.34) 0%, rgba(192, 38, 163, 0) 66%); pointer-events: none; }
 .skills-preview__inner {
     display: grid;
     place-items: center;
@@ -7471,8 +7469,7 @@ html.has-cursor .skill-row:hover .skill-row__desc { transform: translateX(-6px);
 .skills-list.sk-prep .skill-row.sk-in .sk-lc { translate: 0 0; transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--rd, 0s) + 0.35s + var(--ci, 0) * 0.015s); }
 .skills-list.sk-prep .skill-row.sk-in .sk-li { translate: 0 0; opacity: 1; transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--rd, 0s) + 0.5s + var(--li, 0) * 0.07s), opacity 0.35s ease calc(var(--rd, 0s) + 0.5s + var(--li, 0) * 0.07s); }
 
-/* the preview card: brand glow behind it, the logo floats while it is visible (the tilt is set per frame by script.js) */
-.skills-preview::before { background: radial-gradient(circle at 36% 38%, rgb(108 99 255 / 0.42) 0%, rgb(108 99 255 / 0) 62%), radial-gradient(circle at 68% 66%, rgb(200 80 192 / 0.4) 0%, rgb(200 80 192 / 0) 62%); }
+/* the preview card: the logo floats while it is visible (the tilt is set per frame by script.js); no glow, only the drop shadow of the card */
 .skills-preview__inner { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); will-change: transform; }
 .skills-preview.is-visible .skills-preview__inner > * { animation: skFloat 3s ease-in-out infinite; }
 @keyframes skFloat { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
