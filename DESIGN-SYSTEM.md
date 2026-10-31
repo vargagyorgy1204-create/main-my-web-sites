@@ -73,6 +73,7 @@ The Rólam heading keeps its own tokens and is deliberately a different size.
 
 ### Értékek & Garanciák — "values that unfold" (motion, not layout tokens)
 
+- Dark section (`data-theme="dark"`): `--why-bg` #170f36 with `--why-ramp` (clamp(140px, 24svh, 260px)) ramps from / to #0f1629 at the top and bottom edge (no hard edge to Készségek / Együttműködés). Collapsed cards = glass (white 5%, 1px white 8% border); numbers / labels white (upcoming 70%, next + passed 100%), one copy only (no dark/white split); passed water 40%; open card = brand glow (box-shadow) instead of a light shadow; focus ring #E36DD0.
 - One brand palette for all six cards: token `--why-grad` (45deg, `#4B1956` bottom-left -> `#6c63ff` 40% -> `#c850c0`), used as `--panel-bg` (open card AND water); `--ac-lt` (big-number fill) and `--ac-sh` (open-card shadow) are set once on `.why-panel`.
 - Open card (all on `.is-active`, geometry untouched): background = clip-path `circle(0 → 150% at 0 100%)` 0.6s `cubic-bezier(.2,.7,.2,1)`; big outline number (Syne 800, `clamp(88px, 17svh, 170px)`, 2px white-35% stroke) fills bottom → top 0.8s (white → `--ac-lt`);
   icon strokes draw 0.6s (`pathLength` 1); title letters rise from masks (0.02s stagger); description rises line by line (0.08s); content centred in the lower 55% (grid rows 45% / 1fr).

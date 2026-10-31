@@ -7324,8 +7324,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 /* ===== ÉRTÉKEK: water fills the next card (js/why-pin.js sets --lv per card; script.js the static states / phones) =====
    --lv = the water level 0..1: passed cards sit at a calm 0.15, the NEXT card rises with the scroll progress to its step, the open card is at 1 (its gradient fades in over the
    water, which fills the width as the card widens). The water is a gradient block moved with transform; two masked sine strips (amplitude 6px) slide sideways by exactly one period
-   (CSS animation, compositor only; paused while the section is off-screen). The collapsed number + label exist twice (dark + white .why-panel__tab-w): clip-path insets bound to the same
-   --lv expression keep the white one under the surface and the dark one above it. Level expression: surface (mean) y = (1 - lv) * (H + 14px) - 21px. */
+   (CSS animation, compositor only; paused while the section is off-screen). The collapsed number + label are white on the dark section, so one copy serves above and under the water. Level expression: surface (mean) y = (1 - lv) * (H + 14px) - 21px. */
 .why-panel__water {
     position: absolute; inset: 0 0 -14px 0; z-index: 0; pointer-events: none; opacity: 0.94; will-change: transform;          /* 14px taller than the card: still covers the bottom at level 1 */
     background: var(--panel-bg);          /* the open card's own gradient on the same box: water -> open card has no colour change */
@@ -7352,27 +7351,10 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 @keyframes whyWaveB { from { -webkit-mask-position: -60px 0; mask-position: -60px 0; } to { -webkit-mask-position: 60px 0; mask-position: 60px 0; } }
 #why.is-off .why-panel__wave { animation-play-state: paused; }
 
-/* the white copy of the number + label (only the next card has it): it takes the layout of the tab, clipped to the part below the water line */
-.why-panel__tab-w { display: none; }
-.why-panel__tab-w .why-panel__num { color: #fff; }
-.why-panel__tab-w .why-panel__num, .why-panel.is-next .why-panel__tab-w .why-panel__num { opacity: 1; }
-.why-panel__tab-w .why-panel__label { color: #fff; }
-.why-panel__tab-w .why-panel__label, .why-panel.is-next .why-panel__tab-w .why-panel__label { opacity: 1; }
-@media (min-width: 768px) {
-    .why-panel__tab-w {
-        position: absolute; inset: 0 auto 0 0; width: var(--wc); z-index: 2; pointer-events: none;
-        flex-direction: column; justify-content: space-between; align-items: center; padding: 28px 0 32px; box-sizing: border-box;
-        transition: clip-path 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s ease;
-    }
-    .why-panel.is-next .why-panel__tab-w { display: flex; clip-path: inset(calc((1 - var(--lv, 0)) * (100% + 14px) - 21px) 0 0 0); }
-    .why-panel.is-active .why-panel__tab-w { opacity: 0; }
-    .why-panel.is-next .why-panel__tab { clip-path: inset(0 0 calc(var(--lv, 0) * 100% - (1 - var(--lv, 0)) * 14px + 21px) 0); transition: opacity 0.3s ease, clip-path 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
-}
-
 /* phones: the water fills the card once (1s) when it enters the view, then it opens */
 @media (max-width: 767px) { .why-panel__water { transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s; } }
 @media (prefers-reduced-motion: reduce) {
-    .why-panel__water, .why-panel__tab-w, .why-panel.is-next .why-panel__tab { transition: none !important; }
+    .why-panel__water { transition: none !important; }
     .why-panel__wave { animation: none !important; }
 }
 /* lighter surface below the crest, fading out when the card opens */
@@ -7398,3 +7380,23 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .why-panel.is-active .why-panel__title .wk > span { transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--ci, 0) * 0.02s); }
 .why-panel.is-active .why-panel__text .wl > span { transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.1s + var(--li, 0) * 0.08s), opacity 0.35s ease calc(0.1s + var(--li, 0) * 0.08s); }
 @media (prefers-reduced-motion: reduce) { .why-panels { transition: none; } .why-panel__big, .why-panel.is-active .why-panel__big { transition: none; } }
+
+/* ===== ÉRTÉKEK: dark section (data-theme="dark" on #why drives the header and the cursor) =====
+   --why-bg is a deep navy-violet; the section background ramps from / to the neighbours (Készségek #0f1629 above, Együttműködés #0f1629 below) over --why-ramp at its top and bottom
+   edge, so the page colour blends without a hard edge. Collapsed cards are dark glass, numbers / labels are white (one copy serves above and under the water), the open card glows in
+   the brand colours instead of casting a light shadow. */
+:root { --why-bg: #170f36; --why-ramp: clamp(140px, 24svh, 260px); }
+#why { background: linear-gradient(180deg, #0f1629 0, var(--why-bg) var(--why-ramp), var(--why-bg) calc(100% - var(--why-ramp)), #0f1629 100%); }
+#why .section-heading { --sh-color: #fff; }
+
+.why-panel { background: rgb(255 255 255 / 0.05); border-color: rgb(255 255 255 / 0.08); box-shadow: none; }
+.why-panel.is-active { border-color: transparent; box-shadow: 0 0 56px rgb(108 99 255 / 0.5), 0 0 120px rgb(200 80 192 / 0.28), 0 18px 60px -12px rgb(75 25 86 / 0.6); }
+.why-panel__tab:focus-visible { outline-color: #E36DD0; }          /* #E36DD0 on the dark card 5.8:1 (the magenta #C026A3 is 3.5:1) */
+.why-panel__num, .why-panel__label { color: #fff; }
+.why-panel__num, .why-panel__label { opacity: 0.7; }
+.why-panel.is-passed .why-panel__num, .why-panel.is-passed .why-panel__label,
+.why-panel.is-next .why-panel__num, .why-panel.is-next .why-panel__label { opacity: 1; }
+.why-panel.is-passed .why-panel__water { opacity: 0.4; }
+/* the water glows on the dark: a brighter surface (crest strips + the veil below the crest) */
+.why-panel__wave { background-image: linear-gradient(rgb(255 255 255 / 0.36), rgb(255 255 255 / 0.36)), var(--panel-bg); }
+.why-panel__water::after { background: linear-gradient(180deg, rgb(255 255 255 / 0.34), rgb(255 255 255 / 0)); }
