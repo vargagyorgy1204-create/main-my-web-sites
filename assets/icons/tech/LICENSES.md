@@ -9,7 +9,7 @@ The logos are only used to name the technologies VarBro works with. All logos ar
 | javascript.svg | Devicon 2.17.0 (`javascript-original`) | MIT | #F0DB4F / #323330 |
 | threejs.svg | Devicon 2.17.0 (`threejs-original`) | MIT | recoloured #FFFFFF (monochrome, for the dark tile) |
 | github.svg | Devicon 2.17.0 (`github-original`) | MIT | recoloured #FFFFFF (official monochrome, for the dark tile) |
-| vscode.svg | Devicon 2.17.0 (`vscode-original`) | MIT | official blues |
+| playwright.svg | Devicon 2.17.0 (`playwright-original`) | MIT | official colours (green / red / slate), unmodified |
 | gsap.svg | Simple Icons 16.35.0 (`gsap`) | CC0 1.0 | #0AE448 |
 | formspree.svg | Simple Icons 16.35.0 (`formspree`) | CC0 1.0 | #E5122E |
 | claude.svg | Simple Icons 16.35.0 (`claude`) | CC0 1.0 | #D97757 |
