@@ -4392,6 +4392,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 }
 
 .pf-hold { display: none; }
+.pf-stage { display: contents; }
 
 /* ---------- Shared bits ---------- */
 .pf-tag {
@@ -4518,7 +4519,12 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     radial-gradient(ellipse 70% 80% at 75% 40%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
     #12131c;
   transform-origin: 50% 0;
+  /* dark section: a hairline border + soft shadow separate the cards from the background */
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: 0 28px 60px -26px rgb(0 0 0 / 0.7), 0 10px 26px -14px rgb(0 0 0 / 0.55);
 }
+/* the dim of a covered card (brightness ~.6): a black layer whose opacity js/portfolio.js scrubs through --dim */
+.pf-case::after { content: ""; position: absolute; inset: 0; z-index: 5; background: #000; opacity: var(--dim, 0); pointer-events: none; }
 
 .pf-case__bgname {
   position: absolute;
@@ -4644,6 +4650,8 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   color: var(--pure-white);
   background: var(--card-primary);
   transform-origin: 50% 0;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: 0 28px 60px -26px rgb(0 0 0 / 0.7), 0 10px 26px -14px rgb(0 0 0 / 0.55);
 }
 
 /* Slowly drifting soft glow. */
@@ -4850,34 +4858,39 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   .pf-case__inner { padding: 16px var(--padx) 16px max(var(--padx), 84px); }
 }
 
-/* ---------- Stacking: sticky cards, dwell, hold ---------- */
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-  .pf-deck { gap: 0; }
-
-  .pf-case {
-    position: sticky;
-    inset-block-start: 16px;
-    block-size: calc(100svh - 32px);
-    /* the dwell: space after a settled card before the next one enters
-       (+16px because the settled card sits 16px below the viewport top) */
-    margin-block-end: calc(var(--dwell) + 16px);
-  }
-  .pf-case__inner { block-size: 100%; }
-
-  /* the window can never grow taller than the content row */
-  .pf-case__content { container-type: size; }
-  .pf-case .pf-win { max-inline-size: calc((100cqh - 36px) * 16 / 9); }
-
-  .pf-ig {
-    position: sticky;
-    inset-block-start: 16px;
-    block-size: 70svh;
-    min-block-size: 0;
-  }
-
-  /* the hold: the Instagram card stays stuck for this much scroll */
-  .pf-hold { display: block; block-size: var(--hold); }
+/* ---------- Stacking (>= 1024px, set by js/portfolio.js as .pf-section.is-stacked) ----------
+   The deck is a tall block (100svh + slides x --step + --hold); its stage is `position: sticky` (the same technique as Értékek / Együttműködés), the cards
+   are absolutely stacked inside it. One ScrollTrigger scrubs a timeline: each --step (70svh) of scrolling slides the next card up from below onto the previous
+   one, which scales to .94 and dims. A card sits --off lower than the one it covers (at most 3 edges show), so the stack edges stay visible. */
+.pf-section.is-stacked .pf-deck {
+  --off: clamp(10px, 2svh, 18px);
+  --step: 70svh;
+  --hold: 60svh;
+  display: block;
+  padding-inline: 0;
+  block-size: calc(100svh + var(--slides, 6) * var(--step) + var(--hold));
 }
+.pf-section.is-stacked .pf-stage {
+  position: sticky;
+  inset-block-start: 0;
+  block-size: 100svh;
+  overflow: clip;
+  display: block;
+}
+.pf-section.is-stacked .pf-case,
+.pf-section.is-stacked .pf-ig {
+  position: absolute;
+  inset-inline: 16px;
+  inset-block-start: calc(16px + var(--off) * var(--k, 0));
+  block-size: calc(100svh - 32px - var(--off) * 3);
+  min-block-size: 0;
+  margin: 0;
+}
+.pf-section.is-stacked .pf-case__inner { block-size: 100%; }
+/* the window can never grow taller than the content row */
+.pf-section.is-stacked .pf-case__content { container-type: size; }
+.pf-section.is-stacked .pf-case .pf-win { max-inline-size: calc((100cqh - 36px) * 16 / 9); }
+.pf-section.is-stacked .pf-hold { display: none; }
 
 /* ---------- Case-study dialog (one screen) ---------- */
 html.pf-lock,
@@ -6097,8 +6110,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     text-shadow: none;
     overflow-wrap: normal;
 }
-#skills .section-heading, #steps .section-heading, #services .section-heading, #contact .section-heading { --sh-color: #fff; }
-#portfolio .section-heading { --sh-color: var(--card-secondary); }
+#skills .section-heading, #steps .section-heading, #services .section-heading, #contact .section-heading, #portfolio .section-heading { --sh-color: #fff; }
 /* the pinned blocks are scaled by --fit: the heading is laid out at size / fit so it renders at exactly the common size */
 @media (min-width: 768px) and (min-height: 520px) {
     #why .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
@@ -6908,21 +6920,21 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 
 /* ===== KAPCSOLAT + SZOLGÁLTATÁSOK headings ("ÜZENJEN.", "HÁROM TERÜLET, EGY KÉZBŐL."): staggered letter reveal (js/contact-footer.js sets --ci, .fx-prep, .fx-in, .fx-moving) =====
    the letters use the individual transform properties (translate / scale / opacity), the proximity hover keeps `transform` - no conflict; the masks clip only while moving */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-char {
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading) .sh-char {
     transition: translate 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.5s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s);
 }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-mask { overflow: visible; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-moving .sh-mask { overflow: clip; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * var(--stg, 0.05s) + 0.2s); }          /* out: right -> left, after the dot has left */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * var(--stg, 0.05s)); }                                       /* in: left -> right */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading) .sh-mask { overflow: visible; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-moving .sh-mask { overflow: clip; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-prep .sh-char { translate: 0 110%; opacity: 0; --cd: calc((var(--cn) - 2 - var(--ci)) * var(--stg, 0.05s) + 0.2s); }          /* out: right -> left, after the dot has left */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-prep .sh-dot { translate: 0 0; scale: 0.4; opacity: 0; --cd: 0s; transition: scale 0.2s ease, opacity 0.2s ease; }            /* the dot shrinks and fades first (0.2s) */
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-prep.fx-in .sh-char { translate: 0 0; opacity: 1; --cd: calc(var(--ci) * var(--stg, 0.05s)); }                                       /* in: left -> right */
 /* the dot: after the last letter has landed it drops from above (ease-in .35s), squashes on impact (.08s), bounces once (.18s) and settles; a thin gradient ring ripples out at the
    impact (the ::before, transform / opacity only, out of the flow). The dot's own mask never clips (the ring and the drop leave the box). --dd = the drop's start. */
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-mask:has(> .sh-dot) { overflow: visible; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep.fx-in.fx-done .sh-dot { animation: none; }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-dot::before {
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading) { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.8s); }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading) .sh-mask:has(> .sh-dot) { overflow: visible; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-prep.fx-in .sh-dot { translate: 0 0; scale: 1; opacity: 1; transition: none; animation: ctcDotDrop 0.73s linear var(--dd) both; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-prep.fx-in.fx-done .sh-dot { animation: none; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading) .sh-dot::before {
     content: "";
     position: absolute;
     left: var(--ring-x, 50%);
@@ -6937,8 +6949,8 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
     opacity: 0;
     pointer-events: none;
 }
-:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
-html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
+:is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
+html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
 @keyframes ctcDotDrop {
     0%   { translate: 0 -120%; scale: 1 1; opacity: 0; animation-timing-function: ease-in; }
     4%   { opacity: 1; }
@@ -6950,7 +6962,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 }
 @keyframes ctcDotRing { from { scale: 0.5; opacity: 0.7; } to { scale: 2.6; opacity: 0; } }
 @keyframes ctcDotHop { 0%, 100% { translate: 0 0; } 40% { translate: 0 -18%; } }
-@media (prefers-reduced-motion: reduce) { :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-char { transition: none; } :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-dot, :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading) .sh-dot::before { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading) .sh-char { transition: none; } :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading) .sh-dot, :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading) .sh-dot::before { animation: none !important; } }
 
 /* ===== KAPCSOLAT scroll choreography "signal from the dot" (js/contact-footer.js): helper styles only - the rest state is the plain CSS above =====
    the lead text lines (.rv-*) rise from masks with the heading letters; the SVG overlay (.ctc-signal, pointer-events none) carries the signal line; .cf-sweep /
@@ -7479,3 +7491,24 @@ html.has-cursor .skill-row:hover .skill-row__desc { transform: translateX(-6px);
 .vb-svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 .skill-row__logo svg.icon--grad, .skills-preview__inner svg.icon--grad { stroke: url(#vbCardGrad); }
 html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff; }
+
+/* ===== Portfólió: dark section + stacking cards (experiment) =====
+   --pf-bg is its own deep violet (#120d24); the section ramps from the teal Szolgáltatások ends in (rgb 11 58 68, js/services.js) and back to the graphite Kapcsolat starts with (rgb 15 22 41) over
+   --pf-ramp at its top and bottom edge (smoothstep, 10 stops per side), so the page colour blends without a hard edge. The bottom padding is the ramp itself, so the blend is visible
+   under the last card. */
+:root { --pf-bg: #120d24; --pf-ramp: clamp(160px, 26svh, 300px); }
+#portfolio {
+  background: linear-gradient(180deg, rgb(11 58 68) calc(var(--pf-ramp) * 0.0), rgb(11 57 67) calc(var(--pf-ramp) * 0.1), rgb(12 53 65) calc(var(--pf-ramp) * 0.2), rgb(13 48 61) calc(var(--pf-ramp) * 0.3), rgb(13 42 57) calc(var(--pf-ramp) * 0.4), rgb(14 36 52) calc(var(--pf-ramp) * 0.5), rgb(16 29 47) calc(var(--pf-ramp) * 0.6), rgb(16 23 43) calc(var(--pf-ramp) * 0.7), rgb(17 18 39) calc(var(--pf-ramp) * 0.8), rgb(18 14 37) calc(var(--pf-ramp) * 0.9), var(--pf-bg) var(--pf-ramp), var(--pf-bg) calc(100% - var(--pf-ramp)), rgb(18 13 36) calc(100% - var(--pf-ramp) * 0.9), rgb(18 14 37) calc(100% - var(--pf-ramp) * 0.8), rgb(17 15 37) calc(100% - var(--pf-ramp) * 0.7), rgb(17 16 38) calc(100% - var(--pf-ramp) * 0.6), rgb(16 18 38) calc(100% - var(--pf-ramp) * 0.5), rgb(16 19 39) calc(100% - var(--pf-ramp) * 0.4), rgb(16 20 40) calc(100% - var(--pf-ramp) * 0.3), rgb(15 21 40) calc(100% - var(--pf-ramp) * 0.2), rgb(15 22 41) calc(100% - var(--pf-ramp) * 0.1), rgb(15 22 41) calc(100% - var(--pf-ramp) * 0.0));
+  padding-block-end: var(--pf-ramp);
+}
+#portfolio .pf__sub { color: rgb(255 255 255 / 0.62); }
+
+/* the video curtain + hover zoom on the browser window (real mouse only) */
+.pf-win__view img, .pf-win__video { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; }
+html.has-cursor .pf-case .pf-win:hover .pf-win__view img,
+html.has-cursor .pf-case .pf-win:hover .pf-win__video { transform: scale(1.03); }
+@media (prefers-reduced-motion: reduce) { .pf-win__view img, .pf-win__video { transition: none; transform: none !important; } }
+
+/* Portfólió -> Kapcsolat: the drifting glows are clipped at the top edge of Kapcsolat; a graphite veil (= the colour Portfólió ends in) fades them in over the first 60% of --pf-ramp,
+   so the two sections meet without an edge. Under the content (.ctc__head / .container are z-index 1, later in the tree). */
+#contact.ctc::before { content: ""; position: absolute; inset: 0 0 auto 0; height: calc(var(--pf-ramp) * 0.6); z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgb(15 22 41 / 1.000) calc(var(--pf-ramp) * 0.00), rgb(15 22 41 / 0.957) calc(var(--pf-ramp) * 0.07), rgb(15 22 41 / 0.844) calc(var(--pf-ramp) * 0.15), rgb(15 22 41 / 0.684) calc(var(--pf-ramp) * 0.22), rgb(15 22 41 / 0.500) calc(var(--pf-ramp) * 0.30), rgb(15 22 41 / 0.316) calc(var(--pf-ramp) * 0.38), rgb(15 22 41 / 0.156) calc(var(--pf-ramp) * 0.45), rgb(15 22 41 / 0.043) calc(var(--pf-ramp) * 0.53), rgb(15 22 41 / 0.000) calc(var(--pf-ramp) * 0.60)); }
