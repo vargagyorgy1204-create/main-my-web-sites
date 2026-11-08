@@ -90,6 +90,7 @@
     --pf-gap-col: clamp(24px, 3.3vw, 56px);                                /* text column <-> video column */
     --pf-gap-meta: clamp(14px, 2.4svh, 28px);                              /* meta row <-> text / video grid */
     --pf-meta-h: 36px;                                                     /* counter + tags row */
+    --pf-text-min: 300px;                                                  /* the text column never gets narrower (tags rows, 900-1100px wide windows) */
     --pf-bar-h: 36px;                                                      /* the browser window's top bar (dots strip) */
 }
 @media (max-width: 1023px) { :root { --footer-stamp-d: 76px; } }
@@ -4614,8 +4615,12 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   color: rgb(255 255 255 / 0.75);
 }
 
-.pf-case__chips { display: flex; flex-wrap: wrap; gap: var(--s1); list-style: none; padding: 0; margin: 0; }
+/* the tags: exactly 4, always 2 + 2 (js/portfolio.js renders two explicit rows, so the break never depends on the text length); each capsule keeps its natural width, rows are
+   left-aligned, ONE gap token (--s1) both between the capsules and between the rows */
+.pf-case__chips { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s1); }
+.pf-case__chiprow { display: flex; gap: var(--s1); list-style: none; padding: 0; margin: 0; }
 .pf-case__chips li {
+  white-space: nowrap;
   padding: 5px 13px;
   font-family: var(--font-ui);
   font-size: 13px;
@@ -4768,7 +4773,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 
   .pf-case__stage {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--pf-vcol, 64%);
+    grid-template-columns: minmax(0, 1fr) var(--pf-vcol, min(64%, calc(100% - var(--pf-text-min) - var(--pf-gap-col))));
     column-gap: var(--pf-gap-col);
     align-items: stretch;
     min-inline-size: 0;
@@ -4853,7 +4858,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   /* the inner is the size container (its content box = the card minus the padding): the video column is at most as wide as the height left under the meta row allows
      (36px = the browser bar, 16:9 below it), so meta row + window always fit the card */
   .pf-case__inner { block-size: 100%; container-type: size; }
-  .pf-case__stage { --pf-vcol: min(64%, calc((100cqh - var(--pf-meta-h) - var(--pf-gap-meta) - var(--pf-bar-h)) * 16 / 9)); }
+  .pf-case__stage { --pf-vcol: min(64%, calc(100% - var(--pf-text-min) - var(--pf-gap-col)), calc((100cqh - var(--pf-meta-h) - var(--pf-gap-meta) - var(--pf-bar-h)) * 16 / 9)); }
 
   .pf-ig {
     position: sticky;

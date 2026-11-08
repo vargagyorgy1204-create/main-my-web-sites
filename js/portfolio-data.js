@@ -32,7 +32,7 @@ window.PF_PROJECTS = [
     addressHref: '',
     task: 'Egy prémium ingatlanközvetítőnek olyan oldal kell, amely már az első képernyőn exkluzív élményt ad, és méltó módon mutatja be a válogatott ingatlanokat.',
     solution: 'Filmszerű, teljes képernyős képek, elegáns szerif tipográfia, részletes ingatlankártyák és visszafogott, prémium animációk.',
-    chips: ['Ingatlankártyák', 'Prémium tipográfia', 'Reszponzív'],
+    chips: ['Ingatlankártyák', 'Prémium tipográfia', 'Prémium animációk', 'Reszponzív'],
     caseStudy: {
       start: 'A luxusingatlanok vásárlói a hangulatra és a részletekre figyelnek – egy átlagos sablonoldal itt bizalmat rombol.',
       solution: 'Teljes képernyős hero, letisztult szerkezet, kiemelt számok és könnyen áttekinthető ingatlanlista, mindez sok levegővel és finom mozgással.',
@@ -56,7 +56,7 @@ window.PF_PROJECTS = [
     addressHref: '',
     task: 'Egy borbélyműhelynek olyan oldal kell, amely első pillantásra átadja a hely hangulatát, és pár kattintással időpontfoglaláshoz vezet.',
     solution: 'Sötét, karakteres dizájn, kiemelt foglalás gomb, galéria a munkákról és átlátható árlista – mobilra optimalizálva.',
-    chips: ['Időpontfoglalás', 'Galéria', 'Árlista'],
+    chips: ['Időpontfoglalás', 'Galéria', 'Árlista', 'Mobilra optimalizált'],
     caseStudy: {
       start: 'Egy borbélynál a vendég többnyire telefonról, pár másodperc alatt dönt – a hangulatnak és a foglalásnak azonnal látszania kell.',
       solution: 'Karakteres tipográfia, sötét prémium színvilág, minden képernyőről elérhető foglalás gomb, galéria, árlista és közösségi linkek.',
@@ -80,7 +80,7 @@ window.PF_PROJECTS = [
     addressHref: '',
     task: 'Egy több városban működő takarítócégnek olyan oldal kell, amely bizalmat épít, és egy helyen mutatja be a szolgáltatásokat és az irodákat.',
     solution: 'Barátságos, letisztult dizájn, irodák és elérhetőségek a fejlécben, szolgáltatáskártyák, vélemények és gyors kapcsolatfelvétel.',
-    chips: ['Több iroda', 'Vélemények', 'Gyors kapcsolat'],
+    chips: ['Több iroda', 'Vélemények', 'Szolgáltatáskártyák', 'Gyors kapcsolat'],
     caseStudy: {
       start: 'Takarítócéget az emberek a bizalom alapján választanak – a látogatónak éreznie kell, hogy megbízható, elérhető csapattal van dolga.',
       solution: 'Világos szerkezet, kiemelt ügyfélszolgálat gomb, irodánkénti elérhetőségek, szolgáltatások áttekinthető kártyákon és vélemények.',
@@ -104,7 +104,7 @@ window.PF_PROJECTS = [
     addressHref: '',
     task: 'Egy takarítási szolgáltatónak magánszemélyeket és cégeket is meg kell szólítania, mindkettőjüknek a saját ajánlatával.',
     solution: 'Otthon / Iroda váltó, szolgáltatások típusonként rendezve, áttekinthető árak és egyértelmű rendelés gomb.',
-    chips: ['Otthon / Iroda váltó', 'Szolgáltatáslista', 'Árak és rendelés'],
+    chips: ['Otthon / Iroda váltó', 'Szolgáltatáslista', 'Árak és rendelés', 'Típusonkénti rendezés'],
     caseStudy: {
       start: 'Egy családnak és egy irodának teljesen más takarításra van szüksége – egyetlen általános oldal egyiküket sem szólítja meg igazán.',
       solution: 'A fejlécben váltható Otthon / Iroda nézet, szolgáltatások típus szerint (felújítás utáni, nagytakarítás, ablaktisztítás stb.), világos, levegős dizájn.',
@@ -128,7 +128,7 @@ window.PF_PROJECTS = [
     addressHref: '',
     task: 'Egy ingatlanirodának olyan oldal kell, ahol a látogató azonnal keresni kezdhet az ingatlanok között.',
     solution: 'A hero-ba épített keresősáv, kiemelt ajánlatok, bizalmat építő számok és modern, naplementés hangulatú megjelenés.',
-    chips: ['Ingatlankereső', 'Kiemelt ajánlatok', 'Reszponzív'],
+    chips: ['Ingatlankereső', 'Kiemelt ajánlatok', 'Naplementés hangulat', 'Reszponzív'],
     caseStudy: {
       start: 'Aki ingatlanirodai oldalra érkezik, konkrét ingatlant keres – nem akar görgetni, hogy elkezdhesse.',
       solution: 'Keresés már az első képernyőn (típus, helyszín, ár), kiemelt prémium ajánlatok, tapasztalatot és eredményeket mutató számok.',
@@ -152,7 +152,7 @@ window.PF_PROJECTS = [
     addressHref: '',
     task: 'Egy edzőteremnek energikus oldal kell, amely motivál, és bemutatja az edzéslehetőségeket.',
     solution: 'Sötét alap arany kiemelésekkel, elegáns tipográfia, mozgó sávok és az edzéstípusok, edzők áttekinthető bemutatása.',
-    chips: ['Edzéstípusok', 'Edzők bemutatása', 'Reszponzív'],
+    chips: ['Edzéstípusok', 'Edzők bemutatása', 'Mozgó sávok', 'Reszponzív'],
     caseStudy: {
       start: 'Egy edzőterem weboldalának ugyanazt az energiát kell átadnia, mint maga a terem – egy unalmas oldal senkit nem motivál.',
       solution: 'Sötét alap arany akcentusokkal, erős tipográfia, mozgás és az edzéslehetőségek, edzők világos bemutatása.',

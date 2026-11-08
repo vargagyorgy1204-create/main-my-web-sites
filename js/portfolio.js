@@ -66,6 +66,15 @@
     '</button>';
   }
 
+  /* the tags: always two rows of two (explicit rows, so the break never depends on the text length); each capsule keeps its natural width */
+  function chipRows(chips) {
+    var rows = '';
+    for (var i = 0; i < chips.length; i += 2) {
+      rows += '<ul class="pf-case__chiprow">' + chips.slice(i, i + 2).map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>';
+    }
+    return rows;
+  }
+
   function caseHTML(p, i) {
     var num = (i < 9 ? '0' : '') + (i + 1) + ' / ' + (N < 10 ? '0' : '') + N;
     /* Row 1: the meta bar. Row 2: the "stage" — text column on the left,
@@ -86,7 +95,7 @@
               '<div class="pf-case__block"><h4 class="pf-case__label">A megoldás</h4><p>' + esc(p.solution) + '</p></div>' +
             '</div>' +
             '<div class="pf-case__bottom">' +
-              '<ul class="pf-case__chips">' + p.chips.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' +
+              '<div class="pf-case__chips">' + chipRows(p.chips) + '</div>' +
               '<button type="button" class="pf-btn pf-case__btn">Esettanulmány</button>' +
             '</div>' +
           '</div>' +
