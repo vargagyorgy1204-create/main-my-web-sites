@@ -3780,7 +3780,9 @@ html.has-cursor .contact-field input:not([type="checkbox"]):not([type="radio"]):
 .cursor-ring.is-view::before {
     width: 92px; height: 92px; margin: -46px 0 0 -46px;
     border-color: transparent;
+    border-width: 0;                      /* no border band: with the default background-origin (padding-box) a transparent 1.5px border made the gradient tile repeat in a thin ring at the rim */
     background: var(--card-primary);
+    background-origin: border-box;
     opacity: 0.94;
     box-shadow: 0 10px 34px rgba(108, 99, 255, 0.4);
 }
