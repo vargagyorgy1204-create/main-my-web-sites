@@ -90,6 +90,7 @@
     --pf-gap-col: clamp(24px, 3.3vw, 56px);                                /* text column <-> video column */
     --pf-gap-meta: clamp(14px, 2.4svh, 28px);                              /* meta row <-> text / video grid */
     --pf-meta-h: 36px;                                                     /* counter + tags row */
+    --pf-bar-h: 36px;                                                      /* the browser window's top bar (dots strip) */
 }
 @media (max-width: 1023px) { :root { --footer-stamp-d: 76px; } }
 @media (max-width: 767px) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
@@ -4446,7 +4447,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   display: flex;
   align-items: center;
   gap: 12px;
-  block-size: 36px;
+  block-size: var(--pf-bar-h);
   padding-inline: 14px;
   background: #1d1f2b;
 }
@@ -4792,8 +4793,10 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   .pf-case__name {
     font-size: clamp(26px, 2.7vw, 52px);
     line-height: 1.02;
-    /* optical: Syne's cap-top sits 0.195em below the line box (half-leading + ascent gap, measured), so the CAPITALS start exactly on the frame's top edge */
-    margin: -0.195em 0 0;
+    /* the CAPITALS' optical centre sits on the centre of the window's top bar (the dots): Syne 800 caps are 0.64em tall; at line-height 1.02 the cap centre is 0.493em below the
+       line box's top (font metrics 0.515em, minus 0.022em of measured rendering offset: pixel scan of the rendered caps at 41px and 52px). The box top is moved to
+       bar-height / 2 - 0.493em from the frame's top edge (em-based, so it holds at every size) */
+    margin: calc(var(--pf-bar-h) / 2 - 0.493em) 0 0;
   }
 
   .pf-case__block p { font-size: clamp(12.5px, 1.05vw, 16px); }
@@ -4801,7 +4804,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 
   .pf-case__btn {
     inline-size: auto;
-    align-self: flex-start;
+    align-self: center;                 /* centred in the text column, its bottom edge on the frame's bottom edge */
   }
 
   .pf-case__media { display: block; min-inline-size: 0; }
@@ -4850,7 +4853,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   /* the inner is the size container (its content box = the card minus the padding): the video column is at most as wide as the height left under the meta row allows
      (36px = the browser bar, 16:9 below it), so meta row + window always fit the card */
   .pf-case__inner { block-size: 100%; container-type: size; }
-  .pf-case__stage { --pf-vcol: min(64%, calc((100cqh - var(--pf-meta-h) - var(--pf-gap-meta) - 36px) * 16 / 9)); }
+  .pf-case__stage { --pf-vcol: min(64%, calc((100cqh - var(--pf-meta-h) - var(--pf-gap-meta) - var(--pf-bar-h)) * 16 / 9)); }
 
   .pf-ig {
     position: sticky;
@@ -4994,7 +4997,7 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
    (36px title bar + a 16:10 viewport). */
 .pf-slide .pf-win {
   margin: 0;
-  inline-size: min(100cqw, (100cqh - 36px) * 1.6);
+  inline-size: min(100cqw, (100cqh - var(--pf-bar-h)) * 1.6);
   /* a tight shadow: the track clips anything that spreads past its edges */
   box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--accent, #6c63ff) 55%, transparent);
 }
