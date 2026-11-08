@@ -295,10 +295,12 @@
         if (magnet && magRect) {
             var dx = (mx - (magRect.l + magRect.w / 2)) / (magRect.w / 2);
             var dy = (my - (magRect.t + magRect.h / 2)) / (magRect.h / 2);
-            dx = Math.max(-2, Math.min(2, dx));     /* safety only: a flick out of the element delivers one far-away pointermove before the pointerover that releases the magnet (max pull 16 x 12 px; over the element itself dx, dy stay within +-1 = the original 8 x 6 px) */
-            dy = Math.max(-2, Math.min(2, dy));
-            mOffX = dx * 8;
-            mOffY = dy * 6;
+            /* data-magnet-max="N": the pull is at most N px both ways (the portfolio dialog's icons: 6px); default 8 x 6 px */
+            var mm = parseFloat(magnet.getAttribute('data-magnet-max')) || 0, lim = mm ? 1 : 2;
+            dx = Math.max(-lim, Math.min(lim, dx));     /* safety only: a flick out of the element delivers one far-away pointermove before the pointerover that releases the magnet (max pull 16 x 12 px; over the element itself dx, dy stay within +-1 = the original 8 x 6 px) */
+            dy = Math.max(-lim, Math.min(lim, dy));
+            mOffX = dx * (mm || 8);
+            mOffY = dy * (mm || 6);
             magnet.style.translate = mOffX.toFixed(2) + 'px ' + mOffY.toFixed(2) + 'px';
         }
         kick();

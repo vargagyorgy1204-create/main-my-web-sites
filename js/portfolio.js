@@ -53,7 +53,7 @@
 
   function windowHTML(p) {
     var m = p.media;
-    return '<button type="button" class="pf-win" aria-label="' + esc(p.name) + ' — esettanulmány megnyitása">' +
+    return '<button type="button" class="pf-win" data-cursor="view" data-cursor-label="Megnézem" aria-label="' + esc(p.name) + ' — esettanulmány megnyitása">' +
       '<span class="pf-win__bar">' +
         '<span class="pf-win__dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
         (p.addressLabel ? addrHTML(p, false) : '') +

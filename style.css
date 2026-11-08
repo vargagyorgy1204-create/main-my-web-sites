@@ -7470,3 +7470,32 @@ html.has-cursor .skill-row:hover .skill-row__desc { transform: translateX(-6px);
 .vb-svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 .skill-row__logo svg.icon--grad, .skills-preview__inner svg.icon--grad { stroke: url(#vbCardGrad); }
 html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff; }
+
+/* ===== Portfólió case-study dialog: ringless controls (close X, gallery arrows) =====
+   Only the Lucide icon is visible (a little larger); the 56 x 56px hit area stays (negative margin: the layout keeps its old 44px footprint).
+   With a real mouse (html.has-cursor) the custom cursor becomes the 44px gradient circle locked on the button centre (data-cursor="circle", cursor.js) and the icon follows the
+   pointer by <= 6px (data-magnet-inner + data-magnet-max); touch / no cursor: just the icon + a short press feedback. Keyboard: a ring on :focus-visible only. */
+.pf-btn.pf-modal__close,
+.pf-btn.pf-gallery__nav {
+  inline-size: 56px;
+  block-size: 56px;
+  margin: -6px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  overflow: visible;
+  color: var(--pure-white);
+  transition: opacity 0.2s ease, scale 0.2s ease;
+}
+.pf-btn.pf-modal__close::before,
+.pf-btn.pf-gallery__nav::before { display: none; }
+.pf-btn.pf-modal__close:hover:not(:disabled),
+.pf-btn.pf-gallery__nav:hover:not(:disabled) { color: var(--pure-white); border-color: transparent; }
+.pf-btn.pf-modal__close:focus-visible,
+.pf-btn.pf-gallery__nav:focus-visible { outline: 2px solid rgb(255 255 255 / 0.9); outline-offset: -6px; }
+.pf-btn.pf-modal__close:active:not(:disabled),
+.pf-btn.pf-gallery__nav:active:not(:disabled) { opacity: 0.65; scale: 0.92; }
+.pf-ctl { display: grid; place-items: center; transition: translate 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+.pf-modal__close .icon,
+.pf-gallery__nav .icon { inline-size: 28px; block-size: 28px; }
+@media (prefers-reduced-motion: reduce) { .pf-btn.pf-modal__close, .pf-btn.pf-gallery__nav, .pf-ctl { transition: none; } }
