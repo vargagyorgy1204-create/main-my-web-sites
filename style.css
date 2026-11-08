@@ -4801,7 +4801,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     /* the CAPITALS' optical centre sits on the centre of the window's top bar (the dots): Syne 800 caps are 0.64em tall; at line-height 1.02 the cap centre is 0.493em below the
        line box's top (font metrics 0.515em, minus 0.022em of measured rendering offset: pixel scan of the rendered caps at 41px and 52px). The box top is moved to
        bar-height / 2 - 0.493em from the frame's top edge (em-based, so it holds at every size) */
-    margin: calc(var(--pf-bar-h) / 2 - 0.493em) 0 0;
+    margin: calc(var(--pf-bar-h) / 2 - 0.493em + var(--pf-cap-nudge, 0px)) 0 0;
   }
 
   .pf-case__block p { font-size: clamp(12.5px, 1.05vw, 16px); }
@@ -4814,9 +4814,18 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 
   .pf-case__media { display: block; min-inline-size: 0; }
   .pf-case .pf-win { margin: 0; inline-size: 100%; }
+  /* the frame is at least 16:9 below its bar, but grows to the height of the stage when the text column is taller (900-1100px wide windows, where the text column is narrow):
+     the video / screenshot is object-fit: cover inside it, so it is cropped at the sides, never distorted. Where the 16:9 frame is the taller one (>= 1100px) nothing changes. */
+  .pf-case__media { block-size: 100%; }
+  .pf-case .pf-win { display: flex; flex-direction: column; block-size: 100%; }
+  .pf-case .pf-win__view { flex: 1 1 auto; }
 
   .pf-ig { border-radius: 32px; }
 }
+
+/* 900-1099px wide windows: the title is 26-30px here and the glyph rows snap to whole pixels, which left the capitals up to 1.6px above the dot line; 0.8px puts them within 1px
+   (>= 1100px is untouched) */
+@media (min-width: 900px) and (max-width: 1099px) { .pf-case { --pf-cap-nudge: 0.8px; } }
 
 /* ---------- Compact tiers: SHORT desktop windows ----------
    Width alone decides the layout (>= 900px = desktop + stacking). A short
