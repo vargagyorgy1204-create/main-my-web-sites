@@ -85,10 +85,15 @@
     --section-heading-lh: 1.12;
     --about-heading-size: clamp(30px, 8.2vw, 42px);                        /* Rólam, list layout */
     --about-heading-size-pinned: clamp(30px, min(4.6vw, 6.6svh), 64px);    /* Rólam, pinned story (>= 900px) */
+    /* Portfólió project cards: ONE spacing logic (see DESIGN-SYSTEM.md) */
+    --pf-card-pad: clamp(20px, 4vw, 64px);                                 /* the card's padding, equal on all four sides */
+    --pf-gap-col: clamp(24px, 3.3vw, 56px);                                /* text column <-> video column */
+    --pf-gap-meta: clamp(14px, 2.4svh, 28px);                              /* meta row <-> text / video grid */
+    --pf-meta-h: 36px;                                                     /* counter + tags row */
 }
 @media (max-width: 1023px) { :root { --footer-stamp-d: 76px; } }
 @media (max-width: 767px) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
-@media (min-width: 900px) { :root { --section-heading-lh: 1.06; } }
+@media (min-width: 900px) { :root { --section-heading-lh: 1.06; --pf-card-pad: clamp(52px, 4vw, 64px); } }   /* >= 900px: the pad also clears the fixed logo (meta row top >= 16 + 52) */
 @media (min-width: 768px) { :root { --btn-fs: clamp(13px, 1.45svh, 15px); --btn-pad-y: clamp(10px, 1.6svh, 15px); --btn-px: clamp(24px, 3.4svh, 34px); } }
 @media (min-width: 1024px) { :root { --cf-photo-d: clamp(150px, 19svh, 176px); } }
 @media (min-width: 1024px) { :root { --cf-fs: 13.5px; --cf-h: clamp(39.6px, 5.04svh, 43.2px); --cf-label-scale: 0.78; --cf-label-top: 4.5px; } }
@@ -4544,7 +4549,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   display: flex;
   flex-direction: column;
   gap: var(--s2);
-  padding: var(--s3);
+  padding: var(--pf-card-pad);
   box-sizing: border-box;
 }
 
@@ -4739,38 +4744,31 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 }
 @media (max-height: 599px) { .pf-ig__qr { display: none; } }
 
-/* ---------- Desktop: meta bar + two-column stage ----------
-   Row 1 (36px): "01 / 06" + chips. Row 2: the stage — text column left
-   (~36%), browser window right (~64%). The window is the height
-   reference: the stage is as tall as the window, and the text column
-   stretches to it, so name/window share a top edge and button/window a
-   bottom edge. Text uses the same left edge as the meta bar. */
+/* ---------- Desktop: meta row + two-column stage (ONE spacing logic) ----------
+   The card has ONE padding (--pf-card-pad) on all four sides. Inside it: the meta row (counter + tags, --pf-meta-h), --pf-gap-meta, then the stage: text column | video
+   column, --pf-gap-col apart. The video column is --pf-vcol wide (64% of the stage; in the stacking layout also capped so the whole block fits the card height) and the
+   browser window fills it keeping its 16:9 ratio, so the video's right edge sits on the padding exactly like the text's left edge. The text column is as tall as the window:
+   the title starts at the frame's top edge, the button ends at its bottom edge, and the blocks / chips spread evenly in between (space-between = equal gaps). The whole
+   block (meta row + stage) is centred vertically in the card, so any spare height is split equally above and below. */
 @media (min-width: 900px) {
   .pf-case {
     --u: clamp(5px, 0.9svh, 8px);
-    --padx: 48px;
     border-radius: 32px;
   }
 
   .pf-case__inner {
-    display: grid;
-    grid-template-rows: 36px minmax(0, 1fr);
-    row-gap: var(--s3);
-    /* top meta row 32px from the card top; the left padding also clears the fixed nav logo */
-    padding: var(--s4) var(--padx) var(--s4) max(var(--padx), 84px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--pf-gap-meta);
   }
 
-  .pf-case__content {
-    display: grid;
-    align-content: center;
-    min-block-size: 0;
-    min-inline-size: 0;
-  }
+  .pf-case__content { display: block; min-inline-size: 0; }
 
   .pf-case__stage {
     display: grid;
-    grid-template-columns: minmax(0, 36fr) minmax(0, 64fr);
-    column-gap: var(--s5);
+    grid-template-columns: minmax(0, 1fr) var(--pf-vcol, 64%);
+    column-gap: var(--pf-gap-col);
     align-items: stretch;
     min-inline-size: 0;
   }
@@ -4784,20 +4782,18 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   }
   .pf-case__top,
   .pf-case__mid,
-  .pf-case__bottom { display: flex; flex-direction: column; min-inline-size: 0; }
-  .pf-case__mid    { gap: var(--s3); }
-  .pf-case__bottom { gap: var(--s3); }
+  .pf-case__bottom { display: contents; }
 
   .pf-case__meta, .pf-case__name, .pf-case__media, .pf-case__block, .pf-case__chips, .pf-case__btn { order: 0; }
 
-  .pf-case__meta { flex-wrap: nowrap; min-block-size: 0; block-size: 36px; gap: var(--s1); }
+  .pf-case__meta { flex: none; flex-wrap: nowrap; min-block-size: 0; block-size: var(--pf-meta-h); gap: var(--s1); }
   .pf-case__num { margin-inline-end: var(--s1); }
 
   .pf-case__name {
     font-size: clamp(26px, 2.7vw, 52px);
     line-height: 1.02;
-    /* optical: pulls the cap-height up to the window's top edge */
-    margin: -0.03em 0 0;
+    /* optical: Syne's cap-top sits 0.195em below the line box (half-leading + ascent gap, measured), so the CAPITALS start exactly on the frame's top edge */
+    margin: -0.195em 0 0;
   }
 
   .pf-case__block p { font-size: clamp(12.5px, 1.05vw, 16px); }
@@ -4808,30 +4804,21 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     align-self: flex-start;
   }
 
-  .pf-case__media { display: flex; align-items: flex-start; }
-  .pf-case .pf-win { margin-inline: auto 0; }
+  .pf-case__media { display: block; min-inline-size: 0; }
+  .pf-case .pf-win { margin: 0; inline-size: 100%; }
 
   .pf-ig { border-radius: 32px; }
-}
-
-@media (min-width: 900px) and (max-width: 1279px) {
-  .pf-case { --padx: 32px; }
 }
 
 /* ---------- Compact tiers: SHORT desktop windows ----------
    Width alone decides the layout (>= 900px = desktop + stacking). A short
    window (e.g. a non-fullscreen browser, ~1097x480) only shrinks or hides
-   things — the alignment grid itself never changes. */
+   things - the alignment grid itself never changes. */
 @media (min-width: 900px) and (max-height: 699px) {
   .pf-case {
     --u: clamp(3.5px, 0.85svh, 6px);
-    --padx: 32px;
+    --pf-meta-h: 28px;
   }
-  .pf-case__inner {
-    grid-template-rows: 28px minmax(0, 1fr);
-    padding: 24px var(--padx) 24px max(var(--padx), 84px);
-  }
-  .pf-case__meta { block-size: 28px; }
   .pf-case__name { font-size: clamp(24px, calc(3.2svh + 1vw), 40px); }
   .pf-case__block p { font-size: 13px; line-height: 1.45; }
   .pf-case__chips li { padding: 3px 10px; font-size: 11.5px; }
@@ -4841,13 +4828,11 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   /* the three feature chips stay in the case-study dialog */
   .pf-case__chips { display: none; }
   .pf-case__text { gap: var(--s1); }
-  .pf-case__mid, .pf-case__bottom { gap: var(--s2); }
 }
 
 @media (min-width: 900px) and (max-height: 439px) {
   /* keep "A feladat" + the button */
   .pf-case__mid .pf-case__block:nth-child(2) { display: none; }
-  .pf-case__inner { padding: 16px var(--padx) 16px max(var(--padx), 84px); }
 }
 
 /* ---------- Stacking: sticky cards, dwell, hold ---------- */
@@ -4862,11 +4847,10 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
        (+16px because the settled card sits 16px below the viewport top) */
     margin-block-end: calc(var(--dwell) + 16px);
   }
-  .pf-case__inner { block-size: 100%; }
-
-  /* the window can never grow taller than the content row */
-  .pf-case__content { container-type: size; }
-  .pf-case .pf-win { max-inline-size: calc((100cqh - 36px) * 16 / 9); }
+  /* the inner is the size container (its content box = the card minus the padding): the video column is at most as wide as the height left under the meta row allows
+     (36px = the browser bar, 16:9 below it), so meta row + window always fit the card */
+  .pf-case__inner { block-size: 100%; container-type: size; }
+  .pf-case__stage { --pf-vcol: min(64%, calc((100cqh - var(--pf-meta-h) - var(--pf-gap-meta) - 36px) * 16 / 9)); }
 
   .pf-ig {
     position: sticky;

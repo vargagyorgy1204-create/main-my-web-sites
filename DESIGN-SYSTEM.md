@@ -195,3 +195,13 @@ One scroll choreography per entry, no layout animation (transform / opacity / st
 - Row 10 "Lenis": there is no official licensed mark (not in Simple Icons / Devicon), so the tile and the preview use the Lucide `mouse` icon (`icon--grad`) stroked with the brand gradient via the single `#vbCardGrad` def (`.vb-svg-defs`, stops = `--card-primary`); white on row hover. The list is the owner's general toolbox (Three.js stays although this site does not load it).
 - Lucide is pinned (`lucide@1.66.0`); AOS was removed (no `data-aos` anywhere).
 - Portfólió head (heading "Portfólió." + lead): no eyebrow, like Együttműködés the shared `.section-heading` sits on the tight anchor (`--section-top`); the heading uses the shared `.fx-*` reveal + dropping dot, the lead the shared `.rv-*` line reveal (`.pf__sub` is in the `:is(.ctc-sub, .svt-sub, .pf__sub)` rules); the trigger logic is the same as js/services.js, in js/portfolio.js.
+
+## Portfólió project cards: one spacing logic (style.css, PORTFOLIO block; the Instagram card is not part of it)
+| Token | Formula | Use |
+|---|---|---|
+| `--pf-card-pad` | `clamp(20px, 4vw, 64px)`; >= 900px `clamp(52px, 4vw, 64px)` (the meta row also clears the fixed logo) | the card padding, equal on all four sides (and the only padding of the card) |
+| `--pf-gap-col` | `clamp(24px, 3.3vw, 56px)` | text column <-> video column |
+| `--pf-gap-meta` | `clamp(14px, 2.4svh, 28px)` | meta row (counter + tags) <-> text / video grid |
+| `--pf-meta-h` | 36px (28px under 700px height) | height of the meta row |
+- Desktop (>= 900px): meta row on top, then a grid `text | video` (`--pf-vcol` = 64% of the stage; in the stacking layout also `min(64%, (100cqh - meta - gap - 36px) x 16/9)`, the `.pf-case__inner` is the size container), the browser window fills its column (16:9 below the 36px bar), so the video right edge = the padding = the text left edge. The text column is as tall as the window: title at the top edge, button at the bottom edge, blocks / chips spread evenly between (`justify-content: space-between`). The whole block (meta + grid) is centred vertically in the card (equal space above and below). The title has `margin-top: -0.195em` (Syne cap-top offset, measured) so the capitals start on the frame top.
+- Mobile (< 900px): one column in the same padding: meta row, title, video, text, tags, button.
