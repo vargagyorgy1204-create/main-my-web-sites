@@ -4928,7 +4928,8 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
   padding: 14px 32px 14px;
   box-sizing: border-box;
 }
-.pf-modal__titles { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-inline-size: 0; }
+/* the title box is sized / offset by js/portfolio.js (layoutHead): its centre = the screenshot window's centre, never under the close button; the text is centred in it */
+.pf-modal__titles { flex: none; min-inline-size: 0; text-align: center; }
 
 .pf-modal__title {
   font-family: var(--font-display);

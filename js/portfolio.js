@@ -457,8 +457,9 @@
     var scrim   = modal.querySelector('.pf-modal__scrim');
     var track   = document.getElementById('pf-track');
     var titleEl = document.getElementById('pf-modal-title');
-    var catEl   = document.getElementById('pf-modal-cat');
-    var typeEl  = document.getElementById('pf-modal-type');
+    var titlesEl = modal.querySelector('.pf-modal__titles');
+    var headEl  = modal.querySelector('.pf-modal__head');
+    var storyEl = modal.querySelector('.pf-modal__story');
     var closeB  = document.getElementById('pf-close');
     var prevB   = document.getElementById('pf-prev');
     var nextB   = document.getElementById('pf-next');
@@ -575,8 +576,6 @@
       var p = data[i];
       modal.style.setProperty('--accent', p.accent);
       titleEl.textContent = p.name;
-      catEl.textContent = p.category;
-      typeEl.textContent = typeLabel(p);
       stStart.textContent = p.caseStudy.start;
       stSol.textContent = p.caseStudy.solution;
       stRes.textContent = p.caseStudy.result;
@@ -615,6 +614,36 @@
       );
     }
 
+    /* --- header + arrow centring ---
+       The title is centred on the screenshot window (the frame), the arrows on the gaps beside it: "<" between the panel's inner left edge and the frame, ">" between the frame
+       and the text column. Positions come from layout (offsetLeft chains, so the Flip / entrance transforms never matter), are set as inline margin / translate and re-done on resize. */
+    function relX(el) { var x = 0; while (el && el !== panel) { x += el.offsetLeft; el = el.offsetParent; } return x; }
+    function layoutHead() {
+      if (modal.hidden) return;
+      var win = track.querySelector('.pf-win');
+      if (!win) return;
+      var fw = win.offsetWidth, tl = relX(track), cx = tl + track.offsetWidth / 2;
+      var fl = cx - fw / 2, fr = cx + fw / 2;
+      /* title: a box centred on cx, as wide as the room between the head padding and the close button allows (never under the X); the text is centred in it */
+      var hs = getComputedStyle(headEl), padL = parseFloat(hs.paddingLeft) || 0;
+      var xl = relX(closeB) + 6;                                     /* the visible 44px button: the 56px hit area has a -6px margin */
+      var half = Math.min(cx - padL, xl - 16 - cx);                   /* 16 = the head gap: the box never pushes the X */
+      titlesEl.style.width = Math.max(80, 2 * half) + 'px';
+      titlesEl.style.marginInlineStart = (cx - Math.max(40, half) - padL) + 'px';
+      /* a single long word (phones: "Kitakarítunk") that is wider than the room beside the X cannot wrap: its size shrinks just enough to fit */
+      titleEl.style.fontSize = '';
+      if (titleEl.scrollWidth > titlesEl.clientWidth + 0.5) titleEl.style.fontSize = (parseFloat(getComputedStyle(titleEl).fontSize) * titlesEl.clientWidth / titleEl.scrollWidth * 0.97).toFixed(2) + 'px';
+      /* arrows (two-column dialog only: they are hidden below 1024px) */
+      [[prevB, 0, fl], [nextB, fr, relX(storyEl)]].forEach(function (a) {
+        var b = a[0];
+        b.style.translate = '';
+        if (!b.offsetWidth) return;
+        var want = (a[1] + a[2]) / 2, have = relX(b) + b.offsetWidth / 2;
+        b.style.translate = (want - have).toFixed(2) + 'px 0';
+      });
+    }
+    window.addEventListener('resize', layoutHead);
+
     /* --- open --- */
     function open(i, from) {
       if (isOpen || busy) return;
@@ -624,6 +653,7 @@
       modal.hidden = false;
 
       if (!fancy) {
+        layoutHead();
         void modal.offsetWidth;                       /* commit the fade-in start state */
         modal.classList.add('is-open');
         closeB.focus({ preventScroll: true });
@@ -636,6 +666,7 @@
       pinPanelTo(from.getBoundingClientRect());
       var state = Flip.getState(panel, { props: 'borderRadius' });
       releasePanel();
+      layoutHead();
       Flip.from(state, {
         duration: 0.7, ease: 'power3.inOut', scale: false, props: 'borderRadius',
         onComplete: function () { busy = false; }
