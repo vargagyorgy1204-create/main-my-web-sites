@@ -194,3 +194,4 @@ One scroll choreography per entry, no layout animation (transform / opacity / st
 
 - Row 10 "Lenis": there is no official licensed mark (not in Simple Icons / Devicon), so the tile and the preview use the Lucide `mouse` icon (`icon--grad`) stroked with the brand gradient via the single `#vbCardGrad` def (`.vb-svg-defs`, stops = `--card-primary`); white on row hover. The list is the owner's general toolbox (Three.js stays although this site does not load it).
 - Lucide is pinned (`lucide@1.66.0`); AOS was removed (no `data-aos` anywhere).
+- Portfólió head (heading "Portfólió." + lead): no eyebrow, like Együttműködés the shared `.section-heading` sits on the tight anchor (`--section-top`); the heading uses the shared `.fx-*` reveal + dropping dot, the lead the shared `.rv-*` line reveal (`.pf__sub` is in the `:is(.ctc-sub, .svt-sub, .pf__sub)` rules); the trigger logic is the same as js/services.js, in js/portfolio.js.

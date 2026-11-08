@@ -377,7 +377,7 @@ async function layoutChecks(vp) {
     const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */); await p2.close(); return r;
   })();
   const all = eb.concat(eb2);
-  rec(tag, 'seven section eyebrows on index (Együttműködés has none: its head is the large .steps-title) + one on myapproach exist', eb.length === 7 && eb2.length === 1, `${eb.length}+${eb2.length}`);
+  rec(tag, 'six section eyebrows on index (Együttműködés and Portfólió have none) + one on myapproach exist', eb.length === 6 && eb2.length === 1, `${eb.length}+${eb2.length}`);
   rec(tag, 'all eyebrows share font / size / weight / spacing / uppercase', new Set(all).size === 1 && /uppercase/.test(all[0]), [...new Set(all)].join(' || '));
   const ebTxt = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => e.textContent.trim()));
   rec(tag, 'eyebrow labels are written in normal case', ebTxt.every(t => t !== t.toUpperCase() || t.length < 2), ebTxt.join(' / '));
@@ -450,7 +450,7 @@ async function titleSystem(vp) {
     ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .why-panels', true, '#why .why-panels'],
     ['steps', 'index', '#steps', '#steps .steps-title', null, '#steps .process', true, '#steps .process'],   // Együttműködés: no eyebrow / section heading - its head is one large line (.steps-title), documented exception
     ['services', 'index', '#services', '.svt-eyebrow', '#services .section-heading', '.svt-row', true, '.svt-row'],
-    ['portfolio', 'index', '#portfolio', '.pf__eyebrow', '#portfolio .section-heading', '.pf__sub', true, null],
+    ['portfolio', 'index', '#portfolio', '#portfolio .section-heading', '#portfolio .section-heading', '.pf__sub', true, null],   // Portfólió: no eyebrow, the heading sits on the anchor
     ['contact', 'index', '#contact', '.ctc-eyebrow', '#contact .section-heading', '.contact-grid', true, '.contact-grid'],
     ['myapproach', 'myapproach', '.ap', '.ap-eyebrow', null, '.ap-grid', true],
   ];
@@ -491,7 +491,7 @@ async function titleSystem(vp) {
   // tight anchor (.section--tight): --section-top = hdr + clamp(8px, 1.6svh, 20px); gutter 96px (>= 1024px) / 20px, content spans gutter -> gutter
   const expTopT = r0.hdr + Math.min(20, Math.max(8, 0.016 * vp.h));
   const expLeftT = vp.w >= 1024 ? 96 : 20;
-  rec(tag, 'eyebrow typography identical in all sections (Együttműködés has none: its head is the large .steps-title)', new Set(rows.filter(r => r.name !== 'steps').map(r => r.typo)).size === 1, [...new Set(rows.filter(r => r.name !== 'steps').map(r => r.typo))].join(' || '));
+  rec(tag, 'eyebrow typography identical in all sections (Együttműködés and Portfólió have none: the heading sits on the anchor)', new Set(rows.filter(r => !['steps', 'portfolio'].includes(r.name)).map(r => r.typo)).size === 1, [...new Set(rows.filter(r => !['steps', 'portfolio'].includes(r.name)).map(r => r.typo))].join(' || '));
   // Rólam is the one exception to the anchor system: its eyebrow lives inside the white text card (typography is still checked above)
   const anchored = rows.filter(r => r.name !== 'about');
   const wide = anchored.filter(r => !r.tight), tight = anchored.filter(r => r.tight);
