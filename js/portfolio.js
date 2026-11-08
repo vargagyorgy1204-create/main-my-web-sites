@@ -9,12 +9,8 @@
    registers the GSAP plugins and exposes window.VB. The header flips to its
    light-on-dark look through nav.js: the deck carries data-theme="dark".
 
-   Stacking (>= 1024px wide, >= 520px tall, motion allowed): the deck is a tall
-   block with a sticky stage (like Értékek, NO ScrollTrigger pin); one scrubbed
-   timeline slides each next card up from below onto the previous one, which
-   scales to .94 and dims. Every 70svh of scrolling = one card, a short Lenis
-   settle snaps to the nearest card. Below that (or with reduced motion) the
-   cards stay a normal vertical list. Everything degrades:
+   Stacking = CSS position: sticky + a scrubbed scale/darken on the covered
+   card. There is NO ScrollTrigger pin in this section. Everything degrades:
    no GSAP -> static blocks; no Flip -> the dialog fades in instead.
    ========================================================================== */
 (function () {
@@ -57,7 +53,7 @@
 
   function windowHTML(p) {
     var m = p.media;
-    return '<button type="button" class="pf-win" data-cursor="view" data-cursor-label="Megnézem" aria-label="' + esc(p.name) + ' — esettanulmány megnyitása">' +
+    return '<button type="button" class="pf-win" aria-label="' + esc(p.name) + ' — esettanulmány megnyitása">' +
       '<span class="pf-win__bar">' +
         '<span class="pf-win__dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
         (p.addressLabel ? addrHTML(p, false) : '') +
@@ -65,7 +61,7 @@
       '<span class="pf-win__view">' +
         '<img src="' + esc(m.hero960) + '" srcset="' + esc(m.hero960) + ' 960w, ' + esc(m.hero) + ' 1440w" ' +
           'sizes="(max-width: 899px) 100vw, 60vw" width="960" height="600" alt="" loading="lazy" decoding="async">' +
-        '<video class="pf-win__video" data-src="' + esc(m.loop) + '" muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>' +
+        '<video class="pf-win__video" data-src="' + esc(m.loop) + '" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>' +
       '</span>' +
     '</button>';
   }
@@ -120,10 +116,13 @@
             '<span class="hbtn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span></a></div>' +
         '</div>' +
       '</div>' +
-    '</article>';
+    '</article>' +
+    /* Empty space after the Instagram card: the card stays stuck while the
+       reader scrolls through it (the hold). Zero height outside stacking. */
+    '<div class="pf-hold" aria-hidden="true"></div>';
   }
 
-  deck.innerHTML = '<div class="pf-stage">' + data.map(caseHTML).join('') + igHTML() + '</div>';
+  deck.innerHTML = data.map(caseHTML).join('') + igHTML();
 
   var cases = Array.prototype.slice.call(deck.querySelectorAll('.pf-case'));
   var igCard = document.getElementById('pf-ig');
@@ -132,13 +131,12 @@
   if (window.VB && VB.bindHbtn) igCard.querySelectorAll('.hbtn').forEach(VB.bindHbtn);
 
   /* -------------------------------------------------------------- videos
-     One video at a time: the "active" card is the one on top of the stack
-     (stacking) or the most visible one (flow layout); every other video is
-     paused. Never in reduced-motion. preload="metadata", and the src is
-     attached lazily, within a viewport of the card. */
-  var stackOn = false, stackIdx = 0;
+     One video at a time: the "active" card is the one on top of the deck
+     (stacking) or the most visible one (flow layout). Never in
+     reduced-motion. The src is attached lazily, within a viewport of the
+     card. */
+  var stackOn = false;
   var activeIdx = -1;
-  var plays = [];                           /* the entrance of each card (cases, then the Instagram card), filled by setupReveals */
 
   var vids = cases.map(function (c) {
     var win = c.querySelector('.pf-win');
@@ -173,23 +171,17 @@
     tick = 0;
     if (reduce) return;
     var vh = window.innerHeight, best = -1, bestFrac = 0.5;
-    if (stackOn) {
-      var d = deck.getBoundingClientRect();
-      if (d.top < vh * 1.5 && d.bottom > -vh * 0.5) {
-        ensureSrc(vids[Math.min(stackIdx, N - 1)]);
-        if (vids[stackIdx + 1]) ensureSrc(vids[stackIdx + 1]);
-      }
-      setActive(d.top < vh * 0.7 && d.bottom > vh * 0.3 ? stackIdx : -1);
-      stackReveal(d);
-      return;
-    }
     cases.forEach(function (c, i) {
       var r = c.getBoundingClientRect();
       /* lazy source: only once the card is within ~1 viewport */
       if (r.top < vh * 1.2 && r.bottom > -vh * 0.2) ensureSrc(vids[i]);
-      var vis = Math.min(r.bottom, vh) - Math.max(r.top, 0);
-      var frac = vis / Math.min(r.height, vh);
-      if (frac >= bestFrac) { bestFrac = frac; best = i; }
+      if (stackOn) {
+        if (r.top <= vh * 0.5 && r.bottom > vh * 0.3) best = i;
+      } else {
+        var vis = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+        var frac = vis / Math.min(r.height, vh);
+        if (frac >= bestFrac) { bestFrac = frac; best = i; }
+      }
     });
     setActive(best);
   }
@@ -228,80 +220,39 @@
     resetOnScrollAway(igBtn, function () { qx(0); qy(0); });
   }
 
-  /* -------------------------------------------------------- stacking */
-  /* the card whose entrance has started (a card becomes active when its slide is 60% done); only the active card plays its video */
-  function stackReveal(d) {
-    if (!stackOn) return;
-    d = d || deck.getBoundingClientRect();
-    if (d.top > window.innerHeight * 0.55) return;          /* the stage has not come into view yet: card 1 keeps its entrance for then */
-    for (var i = 0; i <= stackIdx; i++) if (plays[i]) plays[i]();
-  }
-
+  /* -------------------------------------------------------- stacking + parallax */
   if (hasGsap) {
     var mm = gsap.matchMedia();
-    mm.add('(min-width: 1024px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)', function () {
-      var all = cases.concat([igCard]);
-      var M = all.length - 1;                                 /* slides: card 2..last come up from below */
-      var T = M + 60 / 70;                                    /* + the hold: the last card stays 60svh after it has landed (CSS --hold), in 70svh slides */
-      stackOn = true; stackIdx = 0;
-      section.classList.add('is-stacked');
-      deck.style.setProperty('--slides', M);
-      all.forEach(function (card, i) { card.style.setProperty('--k', Math.min(i, 3)); card.inert = i !== 0; });
+    mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', function () {
+      stackOn = true;
+      scheduleActive();
 
-      function idxAt(p) { return Math.max(0, Math.min(M, Math.floor(p * T + 0.4))); }
-      function setIdx(a) {
-        if (a === stackIdx) return;
-        stackIdx = a;
-        all.forEach(function (c, i) { c.inert = i !== a; });
-        scheduleActive();
-      }
-
-      var tl = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-          trigger: deck, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true,
-          onUpdate: function (self) { setIdx(idxAt(self.progress)); stackReveal(); schedule(); },
-          onRefresh: function (self) { setIdx(idxAt(self.progress)); }
-        }
-      });
+      var all = cases.concat(igCard ? [igCard] : []);
       all.forEach(function (card, i) {
-        if (i > 0) {
-          /* the next card slides up from below and lands on the previous one, which scales back and dims (brightness ~.6) */
-          tl.fromTo(card, { y: function () { return window.innerHeight; } }, { y: 0, duration: 1, ease: 'power1.inOut' }, i - 1);
-          tl.fromTo(all[i - 1], { scale: 1, '--dim': 0 }, { scale: 0.94, '--dim': 0.4, duration: 1, ease: 'power1.inOut' }, i - 1);
+        var next = all[i + 1];
+        if (next) {
+          /* covered card: scales down and darkens while the next one slides over it */
+          gsap.fromTo(card,
+            { scale: 1, filter: 'brightness(1)' },
+            {
+              scale: 0.92, filter: 'brightness(0.55)', ease: 'none', transformOrigin: '50% 0%',
+              scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 16px', scrub: true }
+            });
         }
         var bg = card.querySelector('.pf-case__bgname span');
-        if (bg) tl.fromTo(bg, { xPercent: 8 }, { xPercent: -8, duration: 2 }, Math.max(0, i - 1));
+        if (bg) {
+          gsap.fromTo(bg, { xPercent: 8 }, {
+            xPercent: -8, ease: 'none',
+            scrollTrigger: {
+              trigger: card, start: 'top bottom',
+              endTrigger: next || deck, end: next ? 'top 16px' : 'bottom bottom',
+              scrub: true
+            }
+          });
+        }
       });
-      tl.to({}, { duration: T - M }, M);                       /* the hold */
-      var st = tl.scrollTrigger, snapT = 0;
 
-      /* after the scroll stops, a short Lenis scrollTo settles on the nearest card (ScrollTrigger's own snap fights Lenis) */
-      function snap() {
-        var lenis = VB.lenis;
-        if (!lenis || document.documentElement.classList.contains('pf-lock')) return;
-        if (lenis.isScrolling) { schedule(); return; }
-        var rel = lenis.scroll - st.start, L = window.innerHeight * 0.7, run = st.end - st.start;
-        if (rel <= 1 || rel >= run - 1) return;
-        var pts = [];
-        for (var k = 0; k <= M; k++) pts.push(k * L);
-        pts.push(run);                                        /* the end of the hold also shows the last card */
-        var best = pts.reduce(function (a, b) { return Math.abs(b - rel) < Math.abs(a - rel) ? b : a; });
-        if (Math.abs(best - rel) <= 2) return;
-        lenis.scrollTo(st.start + best, { duration: 0.45, easing: function (t) { return 1 - Math.pow(1 - t, 2); } });
-      }
-      function schedule() { clearTimeout(snapT); snapT = setTimeout(snap, 160); }
-
-      scheduleActive();
-      return function () {
-        clearTimeout(snapT);
-        stackOn = false; stackIdx = 0;
-        section.classList.remove('is-stacked');
-        deck.style.removeProperty('--slides');
-        all.forEach(function (c) { c.style.removeProperty('--k'); c.inert = false; });
-        plays.forEach(function (p) { if (p) p(); });          /* nothing may stay hidden in the plain list */
-        scheduleActive();
-      };
+      return function () { stackOn = false; scheduleActive(); };
     });
   }
 
@@ -313,7 +264,7 @@
   function setupReveals() {
     var plain = reduce;                       /* opacity-only reveals */
 
-    cases.forEach(function (c, ci) {
+    cases.forEach(function (c) {
       var r = {
         meta:  c.querySelector('.pf-case__meta'),
         name:  c.querySelector('.pf-case__name'),
@@ -321,7 +272,6 @@
         chips: Array.prototype.slice.call(c.querySelectorAll('.pf-case__chips li')),
         btn:   c.querySelector('.pf-case__btn'),
         win:   c.querySelector('.pf-win'),
-        view:  c.querySelector('.pf-win__view'),
         lines: []
       };
       var textBits = [r.name].concat(r.paras);
@@ -347,7 +297,7 @@
         gsap.set(r.fade, { y: 14, opacity: 0 });
         gsap.set(r.chips, { scale: 0.8, opacity: 0 });
         gsap.set(r.btn, { y: 14, opacity: 0 });
-        gsap.set(r.view, { clipPath: 'inset(0 0 100% 0)' });          /* the video is revealed by a curtain */
+        gsap.set(r.win, { y: 40, rotationX: 6, opacity: 0, transformPerspective: 1200, transformOrigin: '50% 100%' });
       }
 
       var done = false;
@@ -367,18 +317,18 @@
           }, 0.05)
           .to(r.chips, { scale: 1, opacity: 1, duration: 0.45, stagger: 0.05, ease: 'back.out(1.7)' }, 0.35)
           .to(r.btn, { y: 0, opacity: 1, duration: 0.5 }, 0.5)
-          .to(r.view, { clipPath: 'inset(0 0 0% 0)', duration: 0.7, ease: 'power2.inOut',
-                        onComplete: function () { gsap.set(r.view, { clearProps: 'clipPath' }); } }, 0.1);
+          .to(r.win, { y: 0, rotationX: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+                       onComplete: function () { gsap.set(r.win, { clearProps: 'transform' }); } }, 0.1);
       }
-      plays[ci] = play;
 
       ScrollTrigger.create({
         trigger: c, once: true,
-        /* flow layout: when the card is well into view (stacking: the timeline in the stacking block starts the entrance) */
-        start: 'top 85%',
-        onEnter: function () { if (!stackOn) play(); },
+        /* stacking: when the card has (almost) settled at the top;
+           flow layout: when it is well into view */
+        start: function () { return stackOn ? 'top 18%' : 'top 85%'; },
+        onEnter: play,
         /* a reload restored below the card lands past the start — still reveal */
-        onLeave: function () { if (!stackOn) play(); }
+        onLeave: play
       });
     });
 
@@ -403,12 +353,10 @@
           : { y: 0, opacity: 1, duration: 0.8, ease: EASE, stagger: 0.09,
               onComplete: function () { gsap.set(parts, { clearProps: 'transform' }); } });
       }
-      plays[N] = playIg;
       ScrollTrigger.create({
         trigger: igCard, once: true,
-        start: 'top 85%',
-        onEnter: function () { if (!stackOn) playIg(); },
-        onLeave: function () { if (!stackOn) playIg(); }
+        start: function () { return stackOn ? 'top 30%' : 'top 85%'; },
+        onEnter: playIg, onLeave: playIg
       });
     })();
 
@@ -419,34 +367,12 @@
     var headDone = false;
     var words = null;
 
-    /* the heading: the shared reveal (the .fx-* rules in style.css: letters rise from their masks, the accent dot drops with a ripple; the letters belong to
-       js/heading-fx.js). Same logic as js/skills-fx.js; not run with reduced motion (plain fade there). */
-    function headingFx(h) {
-      var go = function () {
-        var chars = h._shChars || Array.prototype.slice.call(h.querySelectorAll('.sh-char'));
-        if (!chars.length) return;
-        chars.forEach(function (ch, i) { ch.style.setProperty('--ci', i); });
-        h.style.setProperty('--cn', chars.length);
-        h.classList.add('fx-prep');
-        var timer = 0, dot = h.querySelector('.sh-dot');
-        if (dot) dot.addEventListener('animationend', function (ev) { if (ev.animationName === 'ctcDotDrop' && h.classList.contains('fx-in')) h.classList.add('fx-done'); });
-        new IntersectionObserver(function (es) {
-          var e = es[es.length - 1], on = e.isIntersecting;
-          if (!on && !(e.boundingClientRect.top > 0)) return;
-          if (on === h.classList.contains('fx-in')) return;
-          if (!on) h.classList.remove('fx-done');
-          h.classList.add('fx-moving'); h.classList.toggle('fx-in', on);
-          clearTimeout(timer); timer = setTimeout(function () { h.classList.remove('fx-moving'); }, 2000);
-        }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }).observe(h);
-      };
-      if (h.classList.contains('is-split')) go(); else h.addEventListener('vb:heading-split', go, { once: true });
-    }
-
     function setupHead() {
       if (hasSplit && !reduce) {
-        words = [];
+        /* the heading's letters belong to js/heading-fx.js (no second split): the whole heading rises */
+        words = [title];
+        gsap.set(words, { y: 40, opacity: 0 });
         gsap.set([eyebrow, sub], { y: 24, opacity: 0 });
-        headingFx(title);
       } else {
         words = [title];
         gsap.set([eyebrow, title, sub], { opacity: 0 });
@@ -456,7 +382,7 @@
         headDone = true;
         var t = reduce ? { opacity: 1, duration: 0.5 } : { y: 0, opacity: 1, duration: 0.8, ease: EASE };
         gsap.to([eyebrow, sub], Object.assign({ stagger: 0.1 }, t));
-        if (words.length) gsap.to(words, Object.assign({ stagger: 0.06 }, t));
+        gsap.to(words, Object.assign({ stagger: 0.06 }, t));
       }
       ScrollTrigger.create({
         trigger: section.querySelector('.pf__head'), start: 'top 82%', once: true,
