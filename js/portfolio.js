@@ -105,25 +105,50 @@
     '</article>';
   }
 
-  var IG_URL = 'https://www.instagram.com/webdeveloper_varbro';
+  /* ------------------------------------------------- the Instagram card (last card)
+     Content: js/instagram-data.js (window.IG_DATA). Same card / grid / meta row as the project cards (.pf-case); the right column is a CSS phone mockup whose
+     profile grid scrolls slowly in a loop (see "phone" below). */
+  var IG = window.IG_DATA || null;
   function igHTML() {
-    return '<article class="pf-ig" id="pf-ig">' +
-      '<div class="pf-ig__inner">' +
-        '<span class="pf-ig__float"><svg class="pf-ig__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">' +
-          '<rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle>' +
-          '<circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg></span>' +
-        '<p class="pf-ig__kicker">Ez csak egy kis ízelítő</p>' +
-        '<h3 class="pf-ig__title">Még több munka az Instagramon</h3>' +
-        '<p class="pf-ig__handle">@webdeveloper_varbro</p>' +
-        '<div class="pf-ig__cta">' +
-          '<figure class="pf-ig__qr"><img src="instaqr.png" width="132" height="132" alt="Instagram QR kód" loading="lazy" decoding="async">' +
-            '<figcaption>Olvassa be a kódot</figcaption></figure>' +
-          /* the same pill component as the closing CTA rows (.cta-row__btn > .hbtn--primary) */
-          '<div class="cta-row__btn cta-row__btn--no-arrow pf-ig__btnwrap"><a class="hbtn hbtn--primary" href="' + IG_URL + '" target="_blank" rel="noopener noreferrer">' +
-            '<span class="hbtn__glow" aria-hidden="true"></span><span class="hbtn__fill" aria-hidden="true"></span><span class="hbtn__rip" aria-hidden="true"></span>' +
-            '<span class="hbtn__text"><span class="hbtn__roll" data-text="Megnézem az Instagramon">Megnézem az Instagramon</span></span>' +
-            '<span class="hbtn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span></a></div>' +
+    if (!IG || !IG.posts || !IG.posts.length) return '';
+    var posts = IG.posts.slice(0, IG.posts.length - (IG.posts.length % 3 || 0) || IG.posts.length);
+    function img(src, i) {
+      var two = IG.retina ? src.replace(/(\.[a-z0-9]+)$/i, '@2x$1') : '';
+      return '<img src="' + esc(src) + '"' + (two ? ' srcset="' + esc(src) + ' 360w, ' + esc(two) + ' 720w" sizes="120px"' : '') + ' width="360" height="360" alt="" loading="lazy" decoding="async">';
+    }
+    var set = '<span class="pf-phone__set">' + posts.map(img).join('') + '</span>';
+    var url = esc(IG.profileUrl);
+    return '<article class="pf-case pf-ig" id="pf-ig" style="--accent:#c850c0">' +
+      '<div class="pf-case__bgname" aria-hidden="true"><span>Instagram</span></div>' +
+      '<div class="pf-case__inner">' +
+        '<div class="pf-case__meta">' +
+          '<span class="pf-case__num">07</span>' +
+          '<span class="pf-tag">Instagram</span>' +
         '</div>' +
+        '<div class="pf-case__content"><div class="pf-case__stage">' +
+          '<div class="pf-case__text">' +
+            '<div class="pf-case__top"><h3 class="pf-case__name">@' + esc(IG.handle) + '</h3></div>' +
+            '<div class="pf-case__mid"><div class="pf-case__block"><p>Az Instagramon megosztom az új projekteket, a munkafolyamat részleteit és a VarBro kreatív anyagait.</p></div></div>' +
+            '<div class="pf-ig__bottom">' +
+              '<a class="pf-btn pf-case__btn" href="' + url + '" target="_blank" rel="noopener">Megnyitom az Instagramon</a>' +
+              (IG.qr ? '<figure class="pf-ig__qr"><img src="' + esc(IG.qr) + '" width="104" height="104" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
+                '<figcaption>Vagy olvassa be a kódot a telefonjával.</figcaption></figure>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="pf-case__media"><div class="pf-phone-slot">' +
+            '<a class="pf-phone" href="' + url + '" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Megnézem" aria-label="Instagram-profil megnyitása: @' + esc(IG.handle) + '">' +
+              '<span class="pf-phone__body" aria-hidden="true"><span class="pf-phone__island"></span><span class="pf-phone__screen">' +
+                '<span class="pf-phone__top">' + esc(IG.handle) + '</span>' +
+                '<span class="pf-phone__head">' +
+                  '<img class="pf-phone__avatar" src="' + esc(IG.avatar) + '" width="160" height="160" alt="" decoding="async">' +
+                  '<span class="pf-phone__id"><b>' + esc(IG.name) + '</b>' + (IG.bio || []).map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('') + '</span>' +
+                '</span>' +
+                '<span class="pf-phone__follow">Követés</span>' +
+                '<span class="pf-phone__view"><span class="pf-phone__track">' + set + set + '</span></span>' +
+              '</span></span>' +
+            '</a>' +
+          '</div></div>' +
+        '</div></div>' +
       '</div>' +
     '</article>' +
     /* Empty space after the Instagram card: the card stays stuck while the
@@ -133,11 +158,8 @@
 
   deck.innerHTML = data.map(caseHTML).join('') + igHTML();
 
-  var cases = Array.prototype.slice.call(deck.querySelectorAll('.pf-case'));
+  var cases = Array.prototype.slice.call(deck.querySelectorAll('.pf-case:not(.pf-ig)'));
   var igCard = document.getElementById('pf-ig');
-  var igBtn  = igCard.querySelector('.pf-ig__btnwrap');          /* the wrapper takes the magnetic pull (the pill keeps its own hover / press transforms) */
-  /* the liquid fill origin + ripple of script.js for the pill that was just rendered */
-  if (window.VB && VB.bindHbtn) igCard.querySelectorAll('.hbtn').forEach(VB.bindHbtn);
 
   /* -------------------------------------------------------------- videos
      One video at a time: the "active" card is the one on top of the deck
@@ -199,34 +221,6 @@
     window.addEventListener('scroll', scheduleActive, { passive: true });
     window.addEventListener('resize', scheduleActive);
     updateActive();
-  }
-
-  /* ------------------------------------------------------ magnetic button */
-  if (hasGsap && !reduce) {
-    var qx = gsap.quickTo(igBtn, 'x', { duration: 0.4, ease: 'power3.out' });
-    var qy = gsap.quickTo(igBtn, 'y', { duration: 0.4, ease: 'power3.out' });
-    igBtn.addEventListener('pointermove', function (e) {
-      if (e.pointerType === 'touch') return;     /* real pointer input, not a media query (touch-screen laptops) */
-      var r = igBtn.getBoundingClientRect();
-      var dx = e.clientX - (r.left + r.width / 2);
-      var dy = e.clientY - (r.top + r.height / 2);
-      var d = Math.sqrt(dx * dx + dy * dy) || 1;
-      var m = Math.min(8, d);                       /* max 8px pull */
-      qx(dx / d * m); qy(dy / d * m);
-    });
-    igBtn.addEventListener('pointerleave', function () { qx(0); qy(0); });
-  /* Lenis / wheel scrolling moves content under a stationary mouse without pointer events: re-test on scroll */
-  function resetOnScrollAway(el, reset) {
-    var lx = -1, ly = -1, tk = false;
-    document.addEventListener('pointermove', function (e) { lx = e.clientX; ly = e.clientY; }, { passive: true });
-    document.documentElement.addEventListener('pointerleave', reset);
-    window.addEventListener('blur', reset);
-    window.addEventListener('scroll', function () {
-      if (tk || lx < 0) return; tk = true;
-      requestAnimationFrame(function () { tk = false; var u = document.elementFromPoint(lx, ly); if (!u || !el.contains(u)) reset(); });
-    }, { passive: true });
-  }
-    resetOnScrollAway(igBtn, function () { qx(0); qy(0); });
   }
 
   /* -------------------------------------------------------- stacking + parallax */
@@ -342,15 +336,9 @@
     });
 
     /* Instagram card: its content plays once when the card settles. */
-    (function () {
-      var parts = [
-        igCard.querySelector('.pf-ig__float'),
-        igCard.querySelector('.pf-ig__kicker'),
-        igCard.querySelector('.pf-ig__title'),
-        igCard.querySelector('.pf-ig__handle'),
-        igCard.querySelector('.pf-ig__qr'),
-        igBtn
-      ];
+    if (igCard) (function () {
+      var parts = ['.pf-case__meta', '.pf-case__name', '.pf-case__block', '.pf-ig__bottom', '.pf-phone-slot']
+        .map(function (s) { return igCard.querySelector(s); }).filter(Boolean);
       if (plain) gsap.set(parts, { opacity: 0 });
       else gsap.set(parts, { y: 28, opacity: 0 });
       var done = false;
@@ -445,6 +433,48 @@
       }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' }).observe(word);
     };
     if (word.classList.contains('is-split')) go(); else word.addEventListener('vb:heading-split', go, { once: true });
+  })();
+
+  /* --------------------------------------------------- Instagram card: title fit + phone
+     The handle is one long word: it shrinks (never wraps) until it fits its column. The phone's profile grid scrolls up slowly and loops seamlessly (the grid is rendered
+     twice; one set height = one loop). It pauses on hover (real mouse), runs only while the card is in view and stays static with reduced motion / without GSAP. */
+  if (igCard) (function () {
+    var nameEl = igCard.querySelector('.pf-case__name');
+    function fit() {
+      nameEl.style.fontSize = '';
+      var w = nameEl.clientWidth;
+      if (w && nameEl.scrollWidth > w + 0.5) nameEl.style.fontSize = (parseFloat(getComputedStyle(nameEl).fontSize) * w / nameEl.scrollWidth * 0.985).toFixed(2) + 'px';
+    }
+    var ft = 0;
+    window.addEventListener('resize', function () { clearTimeout(ft); ft = setTimeout(fit, 80); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit); else fit();
+
+    var av = igCard.querySelector('.pf-phone__avatar');
+    if (av && IG.avatarFallback) av.addEventListener('error', function () { av.src = IG.avatarFallback; }, { once: true });
+
+    var phone = igCard.querySelector('.pf-phone'), view = igCard.querySelector('.pf-phone__view'), track = igCard.querySelector('.pf-phone__track');
+    if (!phone || !track || reduce || !hasGsap) return;
+    var tween = null, hover = false, visible = false, rt = 0;
+    function sync() { if (tween) tween.paused(hover || !visible || document.hidden); }
+    function build() {
+      var sets = track.querySelectorAll('.pf-phone__set');
+      for (var k = sets.length - 1; k > 1; k--) sets[k].remove();                 /* back to the two rendered sets */
+      if (tween) { tween.kill(); tween = null; }
+      gsap.set(track, { y: 0 });
+      var setH = track.querySelector('.pf-phone__set').getBoundingClientRect().height, vh = view.clientHeight;
+      if (!setH || !vh) return;
+      for (var n = 2; n * setH < vh + setH && n < 8; n++) track.appendChild(sets[0].cloneNode(true));   /* a short set: repeat it until the view is always covered */
+      tween = gsap.to(track, { y: -setH, duration: 36, ease: 'none', repeat: -1 });
+      sync();
+    }
+    phone.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { hover = true; sync(); } });
+    phone.addEventListener('pointerleave', function () { hover = false; sync(); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[es.length - 1].isIntersecting; sync(); }).observe(igCard);
+    else visible = true;
+    document.addEventListener('visibilitychange', sync);
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build); else build();
+    VB.instagram = { tween: function () { return tween; } };
   })();
 
   /* ----------------------------------------------------------- dialog */

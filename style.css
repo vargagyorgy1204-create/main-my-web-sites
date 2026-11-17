@@ -4643,115 +4643,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 }
 .pf-case__btn:active { scale: 0.98; }
 
-/* ---------- Instagram card ---------- */
-.pf-ig {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: 24px;
-  min-block-size: 420px;
-  padding: 40px 24px;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  color: var(--pure-white);
-  background: var(--card-primary);
-  transform-origin: 50% 0;
-}
-
-/* Slowly drifting soft glow. */
-.pf-ig::before,
-.pf-ig::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inline-size: 70%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.55;
-  pointer-events: none;
-}
-.pf-ig::before {
-  inset-block-start: -25%;
-  inset-inline-start: -10%;
-  background: radial-gradient(circle, rgb(255 255 255 / 0.55), transparent 65%);
-  animation: pfGlowA 16s ease-in-out infinite alternate;
-}
-.pf-ig::after {
-  inset-block-end: -35%;
-  inset-inline-end: -10%;
-  background: radial-gradient(circle, #4B1956, transparent 65%);
-  animation: pfGlowB 20s ease-in-out infinite alternate;
-}
-@keyframes pfGlowA { to { transform: translate(30%, 22%) scale(1.15); } }
-@keyframes pfGlowB { to { transform: translate(-28%, -20%) scale(1.2); } }
-
-.pf-ig__inner { display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6svh, 14px); max-inline-size: 1100px; }
-
-/* The wrapper floats (6px travel); the svg inside is free for the entrance tween. */
-.pf-ig__float { display: block; animation: pfFloat 5s ease-in-out infinite alternate; }
-@keyframes pfFloat { from { transform: translateY(-3px); } to { transform: translateY(3px); } }
-.pf-ig__glyph { display: block; inline-size: 56px; block-size: 56px; color: rgb(255 255 255 / 0.9); }
-
-.pf-ig__kicker {
-  font-family: var(--font-body);
-  font-size: clamp(14px, 1.2vw, 17px);
-  color: rgb(255 255 255 / 0.7);
-}
-
-.pf-ig__title {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(32px, min(4.6vw, 7.2svh), 76px);
-  line-height: 1.05;
-  text-wrap: balance;
-  color: var(--pure-white);
-}
-
-.pf-ig__handle {
-  font-family: var(--font-accent);
-  font-weight: 500;
-  font-size: clamp(15px, 1.4vw, 20px);
-  letter-spacing: 0.5px;
-  color: rgb(255 255 255 / 0.9);
-}
-
-.pf-ig__btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-
-/* QR tile + button row */
-.pf-ig__cta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 24px 48px;                          /* QR block <-> pill: ~48px, both vertically centred; wraps (button under the QR) on phones */
-  margin-block-start: 8px;
-}
-.pf-ig__qr {
-  margin: 0;
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  font-family: var(--font-accent);
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  color: rgb(255 255 255 / 0.85);
-}
-.pf-ig__qr img {
-  display: block;
-  inline-size: 132px;
-  block-size: 132px;
-  padding: 8px;
-  box-sizing: border-box;
-  object-fit: contain;
-  background: #111;
-  border: 1px solid rgb(255 255 255 / 0.16);
-  border-radius: 20px;
-}
-@media (max-height: 599px) { .pf-ig__qr { display: none; } }
-
 /* ---------- Desktop: meta row + two-column stage (ONE spacing logic) ----------
    The card has ONE padding (--pf-card-pad) on all four sides. Inside it: the meta row (counter + tags, --pf-meta-h), --pf-gap-meta, then the stage: text column | video
    column, --pf-gap-col apart. The video column is --pf-vcol wide (64% of the stage; in the stacking layout also capped so the whole block fits the card height) and the
@@ -4821,8 +4712,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   .pf-case__media { block-size: 100%; }
   .pf-case .pf-win { display: flex; flex-direction: column; block-size: 100%; }
   .pf-case .pf-win__view { flex: 1 1 auto; }
-
-  .pf-ig { border-radius: 32px; }
 }
 
 /* 900-1099px wide windows: the title is 26-30px here and the glyph rows snap to whole pixels, which left the capitals up to 1.6px above the dot line; 0.8px puts them within 1px
@@ -4870,13 +4759,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
      (36px = the browser bar, 16:9 below it), so meta row + window always fit the card */
   .pf-case__inner { block-size: 100%; container-type: size; }
   .pf-case__stage { --pf-vcol: min(64%, calc(100% - var(--pf-text-min) - var(--pf-gap-col)), calc((100cqh - var(--pf-meta-h) - var(--pf-gap-meta) - var(--pf-bar-h)) * 16 / 9)); }
-
-  .pf-ig {
-    position: sticky;
-    inset-block-start: 16px;
-    block-size: 70svh;
-    min-block-size: 0;
-  }
 
   /* the hold: the Instagram card stays stuck for this much scroll */
   .pf-hold { display: block; block-size: var(--hold); }
@@ -5129,14 +5011,9 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pf-ig::before, .pf-ig::after, .pf-ig__float { animation: none; }
   .pf-win__video { display: none; }
 }
 
-@media (max-width: 899px) {
-  /* "Instagramon" (Syne, wide) must fit the card on 360px phones */
-  .pf-ig__title { font-size: clamp(20px, calc((100vw - 88px) / 11), 40px); }
-}
 /* ===== /PORTFOLIO ===== */
 
 /* ===== LENIS (index.html only; classes are added by the library) ===== */
@@ -7511,3 +7388,58 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pf-modal__close .icon,
 .pf-gallery__nav .icon { inline-size: 28px; block-size: 28px; }
 @media (prefers-reduced-motion: reduce) { .pf-btn.pf-modal__close, .pf-btn.pf-gallery__nav, .pf-ctl { transition: none; } }
+
+/* ===== Portfólió: Instagram card (last card, js/instagram-data.js) =====
+   Same card, padding tokens, meta row and text | visual grid as the project cards (it is a .pf-case); the visual is a CSS phone mockup whose profile grid scrolls in a loop
+   (js/portfolio.js). The phone's height = the height of a video window (16:9 slot + the bar), so it carries the same visual weight and always fits the card. */
+.pf-ig .pf-case__name { white-space: nowrap; }
+.pf-ig .pf-case__btn { text-decoration: none; }
+.pf-ig__bottom { display: contents; }
+.pf-ig__qr { display: none; }
+.pf-phone-slot { display: flex; justify-content: center; inline-size: 100%; }
+.pf-phone {
+  display: block;
+  position: relative;
+  container-type: inline-size;
+  inline-size: min(72%, 250px);
+  aspect-ratio: 9 / 19;
+  color: var(--pure-white);
+  text-decoration: none;
+  font-family: var(--font-ui);
+}
+.pf-phone__body {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 2.6cqw;
+  border-radius: 15cqw;
+  background: linear-gradient(145deg, #2b2d3d, #10111a);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  box-shadow: 0 40px 80px -30px color-mix(in srgb, var(--accent, #c850c0) 45%, transparent), 0 20px 40px -20px rgb(0 0 0 / 0.5);
+}
+.pf-phone__island { position: absolute; z-index: 3; inset-block-start: 4.6cqw; inset-inline-start: 50%; translate: -50% 0; inline-size: 26cqw; block-size: 6.2cqw; border-radius: 99px; background: #04040a; }
+.pf-phone__screen { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; border-radius: 12.6cqw; background: #0d0e15; padding: 13cqw 4.5cqw 0; }
+.pf-phone__top { display: block; text-align: center; font-size: 4.4cqw; font-weight: 600; letter-spacing: 0.01em; }
+.pf-phone__head { display: flex; align-items: center; gap: 4cqw; margin-block: 4cqw 3.4cqw; }
+.pf-phone__avatar { flex: none; inline-size: 19cqw; block-size: 19cqw; padding: 0.7cqw; border-radius: 50%; object-fit: cover; background: var(--card-primary); }
+.pf-phone__id { display: flex; flex-direction: column; gap: 0.5cqw; min-inline-size: 0; }
+.pf-phone__id b { font-size: 4.8cqw; font-weight: 600; }
+.pf-phone__id span { font-size: 3.5cqw; line-height: 1.35; color: rgb(255 255 255 / 0.7); }
+.pf-phone__follow { display: block; margin-block-end: 3.4cqw; padding-block: 2cqw; border-radius: 2.2cqw; text-align: center; font-size: 4cqw; font-weight: 600; background: var(--card-primary); }
+.pf-phone__view { display: block; flex: 1 1 auto; min-block-size: 0; margin-inline: -4.5cqw; overflow: hidden; border-block-start: 1px solid rgb(255 255 255 / 0.1); }
+.pf-phone__track { display: flex; flex-direction: column; will-change: transform; }
+.pf-phone__set { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5cqw; padding-block-end: 0.5cqw; }
+.pf-phone__set img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover; background: #151622; }
+
+@media (min-width: 900px) {
+  .pf-ig .pf-case__media { display: flex; align-items: center; }
+  /* the slot is a 16:9 box + the bar = exactly a video window: it takes its width from the same column (so the same tokens / height caps apply) and stretches with the stage */
+  .pf-phone-slot { position: relative; box-sizing: content-box; padding-block-start: var(--pf-bar-h); aspect-ratio: 16 / 9; min-block-size: calc(100% - var(--pf-bar-h)); }
+  .pf-phone { position: absolute; inset-block: 0; inset-inline-start: 50%; translate: -50% 0; inline-size: auto; block-size: 100%; }
+  .pf-ig__bottom { display: flex; flex-direction: column; align-items: center; gap: var(--s2); }
+  .pf-ig__qr { margin: 0; display: grid; justify-items: center; gap: var(--s1); }
+  .pf-ig__qr img { display: block; inline-size: 104px; block-size: 104px; padding: 6px; box-sizing: content-box; border-radius: 14px; background: #0b0c13; border: 1px solid rgb(255 255 255 / 0.14); }
+  .pf-ig__qr figcaption { max-inline-size: 22ch; text-align: center; font-family: var(--font-ui); font-size: 11.5px; line-height: 1.4; color: rgb(255 255 255 / 0.62); }
+}
+@media (min-width: 900px) and (max-height: 619px) { .pf-ig__qr { display: none; } }
+@media (prefers-reduced-motion: reduce) { .pf-phone__track { will-change: auto; } }
