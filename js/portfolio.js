@@ -121,7 +121,7 @@
     var n = posts.length;
     function fl(i, cls) { return '<span class="pf-float ' + cls + '" aria-hidden="true"><img src="' + esc(posts[i % n]) + '" width="360" height="360" alt="" loading="lazy" decoding="async"></span>'; }
     var layers = '<span class="pf-phone__layer" style="--z:-4px"></span><span class="pf-phone__layer" style="--z:-8px"></span><span class="pf-phone__layer" style="--z:-12px"></span><span class="pf-phone__layer" style="--z:-16px"></span>';
-    return '<article class="pf-case pf-ig" id="pf-ig" style="--accent:#c850c0">' +
+    return '<article class="pf-case pf-ig" id="pf-ig" data-theme="light" style="--accent:#c850c0">' +
       '<div class="pf-case__bgname" aria-hidden="true"><span>Instagram</span></div>' +
       '<div class="pf-case__inner"><div class="pf-ig__panel">' +
         '<div class="pf-ig__copy">' +
