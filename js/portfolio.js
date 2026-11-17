@@ -105,9 +105,9 @@
     '</article>';
   }
 
-  /* ------------------------------------------------- the Instagram card (last card)
-     Content: js/instagram-data.js (window.IG_DATA). Same card / grid / meta row as the project cards (.pf-case); the right column is a CSS phone mockup whose
-     profile grid scrolls slowly in a loop (see "phone" below). */
+  /* ------------------------------------------------- the Instagram card (the finale)
+     Content: js/instagram-data.js (window.IG_DATA). A glass outer card (same size / radius / position as the project cards) with an inner gradient card: the copy on the
+     left, a 3D phone mockup on the right (profile grid scrolling in a loop, 3 floating posts, mouse tilt: see "Instagram card" below). */
   var IG = window.IG_DATA || null;
   function igHTML() {
     if (!IG || !IG.posts || !IG.posts.length) return '';
@@ -118,38 +118,37 @@
     }
     var set = '<span class="pf-phone__set">' + posts.map(img).join('') + '</span>';
     var url = esc(IG.profileUrl);
+    var n = posts.length;
+    function fl(i, cls) { return '<span class="pf-float ' + cls + '" aria-hidden="true"><img src="' + esc(posts[i % n]) + '" width="360" height="360" alt="" loading="lazy" decoding="async"></span>'; }
+    var layers = '<span class="pf-phone__layer" style="--z:-4px"></span><span class="pf-phone__layer" style="--z:-8px"></span><span class="pf-phone__layer" style="--z:-12px"></span><span class="pf-phone__layer" style="--z:-16px"></span>';
     return '<article class="pf-case pf-ig" id="pf-ig" style="--accent:#c850c0">' +
       '<div class="pf-case__bgname" aria-hidden="true"><span>Instagram</span></div>' +
-      '<div class="pf-case__inner">' +
-        '<div class="pf-case__meta">' +
-          '<span class="pf-case__num">07</span>' +
-          '<span class="pf-tag">Instagram</span>' +
+      '<div class="pf-case__inner"><div class="pf-ig__panel">' +
+        '<div class="pf-ig__copy">' +
+          '<div class="pf-case__meta"><span class="pf-tag">Instagram</span></div>' +
+          '<h3 class="pf-case__name">@' + esc(IG.handle) + '</h3>' +
+          '<div class="pf-case__block"><p>Az Instagramon megosztom az új projekteket, a munkafolyamat részleteit és a VarBro kreatív anyagait.</p></div>' +
+          '<a class="pf-btn pf-case__btn" href="' + url + '" target="_blank" rel="noopener">Megnyitom az Instagramon</a>' +
+          (IG.qr ? '<figure class="pf-ig__qr"><img src="' + esc(IG.qr) + '" width="96" height="96" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
+            '<figcaption>Vagy olvassa be a kódot a telefonjával.</figcaption></figure>' : '') +
         '</div>' +
-        '<div class="pf-case__content"><div class="pf-case__stage">' +
-          '<div class="pf-case__text">' +
-            '<div class="pf-case__top"><h3 class="pf-case__name">@' + esc(IG.handle) + '</h3></div>' +
-            '<div class="pf-case__mid"><div class="pf-case__block"><p>Az Instagramon megosztom az új projekteket, a munkafolyamat részleteit és a VarBro kreatív anyagait.</p></div></div>' +
-            '<div class="pf-ig__bottom">' +
-              '<a class="pf-btn pf-case__btn" href="' + url + '" target="_blank" rel="noopener">Megnyitom az Instagramon</a>' +
-              (IG.qr ? '<figure class="pf-ig__qr"><img src="' + esc(IG.qr) + '" width="104" height="104" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
-                '<figcaption>Vagy olvassa be a kódot a telefonjával.</figcaption></figure>' : '') +
-            '</div>' +
-          '</div>' +
-          '<div class="pf-case__media"><div class="pf-phone-slot">' +
-            '<a class="pf-phone" href="' + url + '" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Megnézem" aria-label="Instagram-profil megnyitása: @' + esc(IG.handle) + '">' +
-              '<span class="pf-phone__body" aria-hidden="true"><span class="pf-phone__island"></span><span class="pf-phone__screen">' +
-                '<span class="pf-phone__top">' + esc(IG.handle) + '</span>' +
-                '<span class="pf-phone__head">' +
-                  '<img class="pf-phone__avatar" src="' + esc(IG.avatar) + '" width="160" height="160" alt="" decoding="async">' +
-                  '<span class="pf-phone__id"><b>' + esc(IG.name) + '</b>' + (IG.bio || []).map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('') + '</span>' +
-                '</span>' +
-                '<span class="pf-phone__follow">Követés</span>' +
-                '<span class="pf-phone__view"><span class="pf-phone__track">' + set + set + '</span></span>' +
-              '</span></span>' +
-            '</a>' +
-          '</div></div>' +
+        '<div class="pf-case__media pf-ig__stage"><div class="pf-phone-wrap">' +
+          '<span class="pf-phone__shadow" aria-hidden="true"></span>' +
+          fl(1, 'pf-float--a') + fl(5, 'pf-float--b') + fl(9, 'pf-float--c') +
+          '<a class="pf-phone" href="' + url + '" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Megnézem" aria-label="Instagram-profil megnyitása: @' + esc(IG.handle) + '">' +
+            layers +
+            '<span class="pf-phone__face" aria-hidden="true"><span class="pf-phone__body"><span class="pf-phone__island"></span><span class="pf-phone__screen">' +
+              '<span class="pf-phone__top">' + esc(IG.handle) + '</span>' +
+              '<span class="pf-phone__head">' +
+                '<img class="pf-phone__avatar" src="' + esc(IG.avatar) + '" width="160" height="160" alt="" decoding="async">' +
+                '<span class="pf-phone__id"><b>' + esc(IG.name) + '</b>' + (IG.bio || []).map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('') + '</span>' +
+              '</span>' +
+              '<span class="pf-phone__follow">Követés</span>' +
+              '<span class="pf-phone__view"><span class="pf-phone__track">' + set + set + '</span></span>' +
+            '</span></span></span>' +
+          '</a>' +
         '</div></div>' +
-      '</div>' +
+      '</div></div>' +
     '</article>' +
     /* Empty space after the Instagram card: the card stays stuck while the
        reader scrolls through it (the hold). Zero height outside stacking. */
@@ -337,7 +336,7 @@
 
     /* Instagram card: its content plays once when the card settles. */
     if (igCard) (function () {
-      var parts = ['.pf-case__meta', '.pf-case__name', '.pf-case__block', '.pf-ig__bottom', '.pf-phone-slot']
+      var parts = ['.pf-case__meta', '.pf-case__name', '.pf-case__block', '.pf-case__btn', '.pf-ig__qr', '.pf-phone-wrap']
         .map(function (s) { return igCard.querySelector(s); }).filter(Boolean);
       if (plain) gsap.set(parts, { opacity: 0 });
       else gsap.set(parts, { y: 28, opacity: 0 });
@@ -453,7 +452,28 @@
     if (av && IG.avatarFallback) av.addEventListener('error', function () { av.src = IG.avatarFallback; }, { once: true });
 
     var phone = igCard.querySelector('.pf-phone'), view = igCard.querySelector('.pf-phone__view'), track = igCard.querySelector('.pf-phone__track');
-    if (!phone || !track || reduce || !hasGsap) return;
+    if (!phone || !track || reduce) return;
+    /* everything below the card does is paused while it is off-screen: the floating posts (CSS loops, .is-paused) and the tilt / loop below */
+    var inView = false;
+    function setPaused() { igCard.classList.toggle('is-paused', !inView || document.hidden); }
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { inView = es[es.length - 1].isIntersecting; setPaused(); }).observe(igCard); else inView = true;
+    document.addEventListener('visibilitychange', setPaused);
+    setPaused();
+    /* mouse tilt (real mouse only): the phone eases toward the pointer, +-6deg around its resting 3D pose; returns on leave */
+    if (hasGsap) {
+      var tilt = { x: 0, y: 0 };
+      function applyTilt() { phone.style.setProperty('--tx', tilt.x.toFixed(2) + 'deg'); phone.style.setProperty('--ty', tilt.y.toFixed(2) + 'deg'); }
+      var qtx = gsap.quickTo(tilt, 'x', { duration: 0.7, ease: 'power3.out', onUpdate: applyTilt });
+      var qty = gsap.quickTo(tilt, 'y', { duration: 0.7, ease: 'power3.out', onUpdate: applyTilt });
+      igCard.addEventListener('pointermove', function (e) {
+        if (e.pointerType !== 'mouse' || !document.documentElement.classList.contains('has-cursor') || !inView) return;
+        var r = igCard.getBoundingClientRect();
+        qty(Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2))) * 6);
+        qtx(Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2))) * -6);
+      });
+      igCard.addEventListener('pointerleave', function () { qtx(0); qty(0); });
+    }
+    if (!hasGsap) return;
     var tween = null, hover = false, visible = false, rt = 0;
     function sync() { if (tween) tween.paused(hover || !visible || document.hidden); }
     function build() {
