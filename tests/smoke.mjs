@@ -332,17 +332,17 @@ async function layoutChecks(vp) {
     edges[k] = await p.evaluate(s => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; }, sel);
   }
   // the wide corridor (hero, Rólam) and the tight corridor (.section--tight: Készségek, Értékek, Együttműködés, Szolgáltatások, Portfólió head, Kapcsolat)
-  const TIGHT = ['skills', 'why', 'steps', 'services', 'contact', 'portfolioHead'];
-  const wideLefts = ['hero', 'about'].map(k => edges[k]).filter(Boolean).map(e => e[0]);
+  const TIGHT = ['hero', 'skills', 'why', 'steps', 'services', 'contact', 'portfolioHead'];   // the hero joined the tight corridor with the "living text" redesign
+  const wideLefts = ['about'].map(k => edges[k]).filter(Boolean).map(e => e[0]);
   const tightLefts = TIGHT.map(k => edges[k]).filter(Boolean).map(e => e[0]);
   const gutterMin = hdr.logo[2] + 32 - 1;   // wide: logo right edge + 32px air
   const L = wideLefts[0], LT = tightLefts[0];
-  rec(tag, 'hero and Rólam share one (wide) left content line, 32px clear of the logo', wideLefts.every(x => Math.abs(x - L) <= 1) && L >= gutterMin, JSON.stringify({ hero: edges.hero, about: edges.about }));
-  rec(tag, 'the six tight sections share one left content line, >= 20px clear of the logo', tightLefts.every(x => Math.abs(x - LT) <= 1) && LT >= hdr.logo[2] + 20 - 1, JSON.stringify(TIGHT.map(k => [k, edges[k] && edges[k][0]])));
-  const wideRights = ['hero', 'about'].map(k => edges[k]).filter(Boolean).map(e => e[1]);
+  rec(tag, 'Rólam keeps the wide left content line, 32px clear of the logo', wideLefts.every(x => Math.abs(x - L) <= 1) && L >= gutterMin, JSON.stringify({ hero: edges.hero, about: edges.about }));
+  rec(tag, 'the tight sections (hero included) share one left content line, >= 20px clear of the logo', tightLefts.every(x => Math.abs(x - LT) <= 1) && LT >= hdr.logo[2] + 20 - 1, JSON.stringify(TIGHT.map(k => [k, edges[k] && edges[k][0]])));
+  const wideRights = ['about'].map(k => edges[k]).filter(Boolean).map(e => e[1]);
   const tightRights = TIGHT.filter(k => k !== 'portfolioHead').map(k => edges[k]).filter(Boolean).map(e => e[1]);
   const RW = Math.max(...wideRights), RT = Math.max(...tightRights);
-  rec(tag, 'hero / Rólam right lines inside the corridor and clear of the burger', wideRights.every(x => x <= RW + 1) && RW <= hdr.burger[0] - 32 + 1, `max right ${RW}, burger left ${Math.round(hdr.burger[0])}`);
+  rec(tag, 'Rólam right line inside the corridor and clear of the burger', wideRights.every(x => x <= RW + 1) && RW <= hdr.burger[0] - 32 + 1, `max right ${RW}, burger left ${Math.round(hdr.burger[0])}`);
   rec(tag, 'the tight sections share one symmetric right line, >= 20px clear of the burger', tightRights.every(x => Math.abs(x - RT) <= 1) && RT <= hdr.burger[0] - 20 + 1 && Math.abs((hdr.vw - RT) - LT) <= 16, `right ${tightRights.join(',')} (burger left ${Math.round(hdr.burger[0])}, left line ${LT})`);
 
   // 2) the logo / burger never intersect text or cards while scrolling the page (portfolio cards and footer excepted)
@@ -495,15 +495,15 @@ async function titleSystem(vp) {
   // Rólam is the one exception to the anchor system: its eyebrow lives inside the white text card (typography is still checked above)
   const anchored = rows.filter(r => r.name !== 'about');
   const wide = anchored.filter(r => !r.tight), tight = anchored.filter(r => r.tight);
-  rec(tag, 'the six tight sections are marked .section--tight (hero / Hogyan dolgozom are not)', tight.length === 6 && wide.length === 2 && tight.every(r => ['skills', 'why', 'steps', 'services', 'portfolio', 'contact'].includes(r.name)), tight.map(r => r.name).join(','));
+  rec(tag, 'the seven tight sections (hero included) are marked .section--tight (Hogyan dolgozom is not)', tight.length === 7 && wide.length === 1 && tight.every(r => ['hero', 'skills', 'why', 'steps', 'services', 'portfolio', 'contact'].includes(r.name)), tight.map(r => r.name).join(','));
   const badTop = wide.filter(r => Math.abs(r.top - expTop) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
-  rec(tag, `wide anchor: eyebrow top = section top + ${Math.round(expTop)}px (hero, Hogyan dolgozom)`, badTop.length === 0, badTop.join(' '));
+  rec(tag, `wide anchor: eyebrow top = section top + ${Math.round(expTop)}px (Hogyan dolgozom)`, badTop.length === 0, badTop.join(' '));
   const badLeft = wide.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
   rec(tag, `wide anchor: eyebrow left = ${Math.round(expLeft)}px`, badLeft.length === 0, badLeft.join(' '));
   const badTopT = tight.filter(r => Math.abs(r.top - expTopT) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
-  rec(tag, `tight anchor: eyebrow top = section top + ${expTopT.toFixed(1)}px in all six sections`, badTopT.length === 0, badTopT.join(' '));
+  rec(tag, `tight anchor: eyebrow top = section top + ${expTopT.toFixed(1)}px in all seven sections`, badTopT.length === 0, badTopT.join(' '));
   const badLeftT = tight.filter(r => Math.abs(r.left - expLeftT) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
-  rec(tag, `tight anchor: eyebrow left = ${expLeftT}px in all six sections`, badLeftT.length === 0, badLeftT.join(' '));
+  rec(tag, `tight anchor: eyebrow left = ${expLeftT}px in all seven sections`, badLeftT.length === 0, badLeftT.join(' '));
   const badRightT = tight.filter(r => r.firstRight != null && Math.abs(r.firstRight - expLeftT) > 2).map(r => `${r.name}:${Math.round(r.firstRight)}`);
   rec(tag, `tight anchor: content right edge = ${expLeftT}px from the window edge (symmetric) in the sections that have a full-width block`, badRightT.length === 0, badRightT.join(' ') || tight.filter(r => r.firstRight != null).map(r => `${r.name}:${Math.round(r.firstRight)}`).join(' '));
   const hr = rows.filter(r => r.headTypo && !['hero'].includes(r.name));

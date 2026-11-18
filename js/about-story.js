@@ -364,7 +364,7 @@
     lastW = window.innerWidth; lastH = window.innerHeight;
     ctx = gsap.context(function () {
       /* Hero (light) -> Rólam (dark): the section colour is scrubbed with the scroll while the section rises into view, finished when its top is at 30% of the viewport */
-      gsap.fromTo(section, { '--about-bg': '#fafafa' }, { '--about-bg': '#170c26', ease: 'power1.out', scrollTrigger: { trigger: section, start: 'top 100%', end: 'top 30%', scrub: true, invalidateOnRefresh: true } });
+      gsap.fromTo(section, { '--about-bg': '#170c26' }, { '--about-bg': '#170c26', ease: 'power1.out', scrollTrigger: { trigger: section, start: 'top 100%', end: 'top 30%', scrub: true, invalidateOnRefresh: true } });
       if (window.innerWidth >= 900) buildStory(); else buildList();
     }, section);
   }
