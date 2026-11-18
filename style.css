@@ -7529,3 +7529,31 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 /* Portfólió -> Kapcsolat: the drifting glows of Kapcsolat are clipped at its top edge; a graphite veil (the colour Portfólió ends in) fades them in over the first 70% of --pf-ramp, so the two
    sections meet without an edge (under the content: .ctc__head / .container are z-index 1, later in the tree) */
 #contact.ctc::before { content: ""; position: absolute; inset: 0 0 auto 0; height: calc(var(--pf-ramp) * 0.7); z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgb(15 22 41 / 1.000) calc(var(--pf-ramp) * 0.00), rgb(15 22 41 / 0.957) calc(var(--pf-ramp) * 0.09), rgb(15 22 41 / 0.844) calc(var(--pf-ramp) * 0.17), rgb(15 22 41 / 0.684) calc(var(--pf-ramp) * 0.26), rgb(15 22 41 / 0.500) calc(var(--pf-ramp) * 0.35), rgb(15 22 41 / 0.316) calc(var(--pf-ramp) * 0.44), rgb(15 22 41 / 0.156) calc(var(--pf-ramp) * 0.52), rgb(15 22 41 / 0.043) calc(var(--pf-ramp) * 0.61), rgb(15 22 41 / 0.000) calc(var(--pf-ramp) * 0.70)); }
+
+/* ===== Header blur (< 1024px): a REAL progressive blur: 5 stacked layers (js/nav.js builds .nav__blur), each with its own backdrop-filter and gradient mask on the SAME element ===== */
+.nav__blur { display: none; }
+@media (max-width: 1023px) {
+    .nav::before { display: none; }                      /* replaced by the layers below (one layer + one mask = a hard edge on some Android Chrome builds) */
+    .nav { --nb-tint: rgb(14 16 32 / 0.05); }
+    .nav--on-light { --nb-tint: rgb(255 255 255 / 0.08); }
+    .nav__blur { display: block; position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+    .nav__bl {
+        position: absolute;
+        inset: 0 0 auto 0;
+        background: var(--nb-tint);
+        -webkit-backdrop-filter: blur(var(--nb-b));
+        backdrop-filter: blur(var(--nb-b));
+        -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 100%);
+        mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .nav__bl--1 { height: 94px; --nb-b: 1px; }
+    .nav__bl--2 { height: 78px; --nb-b: 2px; }
+    .nav__bl--3 { height: 62px; --nb-b: 4px; }
+    .nav__bl--4 { height: 46px; --nb-b: 7px; }
+    .nav__bl--5 { height: 30px; --nb-b: 12px; }
+    .nav--scrolled .nav__bl { opacity: 1; }
+    .nav--menu-open .nav__bl { opacity: 0 !important; }
+}
+@media (prefers-reduced-motion: reduce) { .nav__bl { transition: none; } }

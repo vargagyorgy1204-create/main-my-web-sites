@@ -30,6 +30,18 @@
         });
     })();
 
+    /* ---------- Progressive blur under the header (< 1024px; CSS: .nav__bl) ----------
+       Five stacked layers, each with its OWN backdrop-filter and its OWN gradient mask (blur grows 1 -> 12px, layer heights shrink 94 -> 30px): the strongest blur sits at the very
+       top and fades to nothing at the bottom edge. Chrome ignores a mask on a parent of a backdrop-filter element and a parent with opacity < 1 kills the backdrop, so the wrapper has
+       neither; even where a mask is ignored, the staggered layer heights still give a stepped, soft fade instead of one hard edge. */
+    (function buildBlur() {
+        var wrap = document.createElement('span');
+        wrap.className = 'nav__blur';
+        wrap.setAttribute('aria-hidden', 'true');
+        for (var i = 1; i <= 5; i++) { var l = document.createElement('span'); l.className = 'nav__bl nav__bl--' + i; wrap.appendChild(l); }
+        nav.insertBefore(wrap, nav.firstChild);
+    })();
+
     /* ---------- Theme flip: logo + burger follow the section under the header ---------- */
     var themed = Array.prototype.slice.call(document.querySelectorAll('[data-theme]'));
     var ticking = false;
