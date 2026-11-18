@@ -243,8 +243,8 @@
   }
   document.addEventListener('visibilitychange', function () { if (document.hidden) { video.pause(); if (tl) tl.pause(); } else if (visible) { if (tl) tl.resume(); if (scene === 3) { var p = video.play(); if (p && p.catch) p.catch(function () {}); } } });
 
-  /* ------------------------------------------------ placement: the free area right of / below the left column, measured from the real rects */
-  var CLH = 48, CLV = 56;                                           /* clearance to the text: 48px (the tilt makes the near edge recede, vertical growth ~8px) */
+  /* ------------------------------------------------ placement: compact, bottom-right (mobile: below the buttons if it fits) */
+  var CL = 50;                                                      /* layout clearance; the tilt makes the near edge recede, so the visual clearance is >= 40px */
   var mode = 'off';
   function textRect(el) { var r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); }
   function obstacles(hr) {
@@ -260,36 +260,25 @@
   var BAR = 34;
   function place() {
     var hr = hero.getBoundingClientRect(), inner = hero.querySelector('.hero-inner').getBoundingClientRect();
-    var obs = obstacles(hr), R = inner.right - hr.left, Lft = inner.left - hr.left;
-    var yMin = 96, yMax = Math.min(hr.height, window.innerHeight - hr.top) - 40;
-    var desktop = window.innerWidth >= 900;
+    var obs = obstacles(hr), Lft = inner.left - hr.left;
+    var st = hero.querySelector('.hero-status').getBoundingClientRect();
     var res = null;
-    if (desktop) {
-      var title = hero.querySelector('.hero-title').getBoundingClientRect(), ctas = hero.querySelector('.hero-ctas .cta-row__btn') || hero.querySelector('.hero-ctas');
-      var mid = ((title.top - hr.top) + (ctas.getBoundingClientRect().bottom - hr.top)) / 2;
-      var wmax = Math.min(760, 0.42 * window.innerWidth);
-      for (var W = wmax; W >= 360 && !res; W -= 6) {
-        var H = BAR + W * 0.625, left = R - W;
-        var cuts = [];
-        obs.forEach(function (o) { if (o.r + CLH > left && o.l - CLH < left + W) cuts.push([o.t - CLV - H, o.b + CLV]); });   /* forbidden range for the window's top */
-        var segs = [[yMin, yMax - H]];
-        cuts.forEach(function (c) {
-          var nx = [];
-          segs.forEach(function (s) { if (c[1] <= s[0] || c[0] >= s[1]) { nx.push(s); return; } if (c[0] > s[0]) nx.push([s[0], c[0]]); if (c[1] < s[1]) nx.push([c[1], s[1]]); });
-          segs = nx;
-        });
-        segs = segs.filter(function (s) { return s[1] >= s[0]; });
-        if (segs.length) {
-          var want = mid - H / 2, best = null, bd = 1e9;
-          segs.forEach(function (s) { var y = Math.min(s[1], Math.max(s[0], want)); var d = Math.abs(y - want); if (d < bd) { bd = d; best = y; } });
-          res = { left: left, top: best, W: W, H: H };
-        }
+    if (window.innerWidth >= 900) {
+      /* anchored bottom-right: right edge = the header burger's right edge, bottom = the status line's bottom (>= 32px above the hero bottom);
+         width clamp(300px, 26vw, 480px), scaled down (min 260px) only if it would come within 40px of the headline / subheading / buttons / status line */
+      var burger = document.getElementById('burger');
+      var rEdge = burger ? burger.getBoundingClientRect().right - hr.left : inner.right - hr.left;
+      var bottom = Math.min(st.bottom - hr.top, hr.height - 32) - 20;      /* -20: the tilt + float push the visual bottom edge a few px lower than the layout box (visual gap stays >= 32px) */
+      for (var W = Math.min(480, Math.max(300, 0.26 * window.innerWidth)); W >= 260 && !res; W -= 4) {
+        var H = BAR + W * 0.625, left = rEdge - W, top = bottom - H;
+        var hit = obs.some(function (o) { return o.r + CL > left && o.l - CL < left + W && o.b + CL > top && o.t - CL < top + H; });
+        if (!hit) res = { left: left, top: top, W: W, H: H };
       }
     } else {
-      var below = Math.max.apply(null, obs.filter(function (o) { return o.b < (hero.querySelector('.hero-status').getBoundingClientRect().top - hr.top) - 1; }).map(function (o) { return o.b; }));
-      var stTop = hero.querySelector('.hero-status').getBoundingClientRect().top - hr.top;
-      var W2 = inner.width, H2 = BAR + W2 * 0.625, top = below + 24;
-      if (top + H2 <= stTop - 24) res = { left: Lft, top: top, W: W2, H: H2 };
+      var stTop = st.top - hr.top;
+      var below = Math.max.apply(null, obs.filter(function (o) { return o.b < stTop - 1; }).map(function (o) { return o.b; }));
+      var W2 = inner.width, H2 = BAR + W2 * 0.625, top2 = below + 24;
+      if (top2 + H2 <= stTop - 24) res = { left: Lft, top: top2, W: W2, H: H2 };
     }
     return res;
   }
