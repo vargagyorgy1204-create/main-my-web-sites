@@ -4775,8 +4775,9 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 }
 
 /* ---------- Case-study dialog (one screen) ---------- */
-html.pf-lock,
-html.pf-lock body { overflow: hidden; }
+/* scroll lock: ONLY the root is overflow:hidden (a body with overflow:hidden becomes its own scroll container and re-anchors every position:sticky card: the pinned card behind the
+   dialog jumped up). The vanishing scrollbar's width is compensated (--pf-sbw, measured on open) so the layout width stays the same. */
+html.pf-lock { overflow: hidden; }
 html.pf-lock body { padding-right: var(--pf-sbw, 0px); }
 html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
 
