@@ -7501,7 +7501,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-ig { --pf-qr-ink: #ffffff; }                    /* one colour for the label, the arrow and the corner brackets */
   .pf-ig__qr { display: block; position: relative; margin: 0; color: var(--pf-qr-ink); --qr-up: 120px; --qr-sw: 3; }
   .pf-qr__box { position: relative; display: block; inline-size: var(--pf-qrbox); block-size: var(--pf-qrbox); }
-  .pf-qr__box img { position: absolute; inset: 13px; inline-size: var(--pf-qr); block-size: var(--pf-qr); box-sizing: border-box; padding: 13.5%; border-radius: 14px; background: #fff; object-fit: contain; }
+  .pf-qr__box img { position: absolute; inset: 13px; inline-size: var(--pf-qr); block-size: var(--pf-qr); box-sizing: border-box; padding: 7%; border-radius: 14px; background: #fff; object-fit: contain; }
   .pf-qr__frame { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
   /* label + arrow INSIDE the card, to the right of the QR frame (they hang to the right of the centred QR): label around the upper third, the arrow curls from it to the frame's right side */
   .pf-qr__label { position: absolute; z-index: 2; inset-inline-start: calc(100% + 54px); inset-block-start: calc(var(--pf-qrbox) * 0.06); white-space: nowrap; font-family: 'Caveat', 'Segoe Script', cursive; font-weight: 600; font-size: 25px; line-height: 1; color: var(--pf-qr-ink); rotate: -4deg; transform-origin: 0 100%; }
