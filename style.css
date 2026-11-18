@@ -3188,12 +3188,13 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     align-items: flex-start;
 }
 
-.hero-eyebrow {                       /* look = .section-eyebrow (light on dark via [data-theme="dark"]); only the entrance animation lives here */
+#hero .hero-eyebrow {                       /* look = .section-eyebrow (light on dark via [data-theme="dark"]); only the entrance animation lives here */
+    margin-bottom: var(--eyebrow-head-gap);
     animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0s both;
 }
 
-/* the block (headline, lead, buttons) sits optically a little above the centre of the space under the label */
-.hero-title { position: relative; margin: auto 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(34px, min(8.2vw, 10.8svh), 150px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
+/* the block (headline, lead, buttons) hangs directly under the label (label -> headline = --eyebrow-head-gap, as in the other sections); the status line stays at the bottom */
+.hero-title { position: relative; margin: 0 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(34px, min(8.2vw, 10.8svh), 150px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
 .hero-headline {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
