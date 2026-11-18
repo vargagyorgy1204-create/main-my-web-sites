@@ -239,7 +239,14 @@
             { scale: 1, filter: 'brightness(1)' },
             {
               scale: pushed ? 0.96 : 0.92, filter: pushed ? 'brightness(0.75)' : 'brightness(0.55)', ease: 'none', transformOrigin: '50% 0%',
-              scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 16px', scrub: true }
+              scrollTrigger: {
+                trigger: next, start: 'top bottom', end: 'top 16px', scrub: true,
+                /* a card that is FULLY covered by the next one (end of its covered tween) is hidden, so older cards never peek out under card 06 while the Instagram card pushes it;
+                   restored as soon as the scroll goes back before that point (progress < 1). Not for 06 itself (it is pushed, not covered). */
+                onLeave: pushed ? null : function () { card.style.visibility = 'hidden'; },
+                onEnterBack: pushed ? null : function () { card.style.visibility = ''; },
+                onRefresh: pushed ? null : function (self) { card.style.visibility = self.progress === 1 ? 'hidden' : ''; }
+              }
             });
         }
         var bg = card.querySelector('.pf-case__bgname span');
@@ -259,7 +266,7 @@
       var phoneWrap = igCard && igCard.querySelector('.pf-phone-wrap');
       if (phoneWrap) gsap.fromTo(phoneWrap, { y: 30 }, { y: 0, ease: 'none', scrollTrigger: { trigger: igCard, start: 'top bottom', end: 'top 16px', scrub: true } });
 
-      return function () { stackOn = false; scheduleActive(); };
+      return function () { stackOn = false; all.forEach(function (c) { c.style.visibility = ''; }); scheduleActive(); };
     });
   }
 
