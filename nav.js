@@ -54,7 +54,8 @@
         var theme = null;
         for (var i = 0; i < themed.length; i++) {
             var r = themed[i].getBoundingClientRect();
-            if (r.top <= y && r.bottom > y) theme = themed[i].getAttribute('data-theme');
+            /* a hidden element (a fully covered Portfólió stack card keeps its pinned box) is not under the header */
+            if (r.top <= y && r.bottom > y && getComputedStyle(themed[i]).visibility !== 'hidden') theme = themed[i].getAttribute('data-theme');
         }
         if (theme === null) theme = themed[themed.length - 1].getBoundingClientRect().bottom <= y
             ? themed[themed.length - 1].getAttribute('data-theme')

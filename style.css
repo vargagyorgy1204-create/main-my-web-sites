@@ -4367,12 +4367,10 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 .pf-btn:focus-visible { outline: 3px solid var(--pure-white); outline-offset: 3px; }
 
 
-/* Portfólió -> Kapcsolat: the light section ends in a long, eased smoothstep blend (10 stops) into the graphite Kapcsolat starts with (rgb 15 22 41); the blend is the section's bottom
-   padding (--pf-ramp), so the last card ends where it begins and the bottom gap is exactly the normal section end */
-:root { --pf-ramp: clamp(120px, 22svh, 240px); }
+/* Portfólió ends on its light background (normal section bottom padding); Kapcsolat starts directly with its own dark background (no blend) */
 #portfolio {
-  padding-block: clamp(80px, 12vh, 140px) var(--pf-ramp);
-  background: linear-gradient(180deg, var(--card-secondary-light) 0, var(--card-secondary-light) calc(100% - var(--pf-ramp)), rgb(240 237 244) calc(100% - var(--pf-ramp) * 0.9), rgb(222 220 228) calc(100% - var(--pf-ramp) * 0.8), rgb(196 195 205) calc(100% - var(--pf-ramp) * 0.7), rgb(165 165 176) calc(100% - var(--pf-ramp) * 0.6), rgb(130 132 146) calc(100% - var(--pf-ramp) * 0.5), rgb(96 100 115) calc(100% - var(--pf-ramp) * 0.4), rgb(65 70 86) calc(100% - var(--pf-ramp) * 0.3), rgb(39 45 63) calc(100% - var(--pf-ramp) * 0.2), rgb(21 28 47) calc(100% - var(--pf-ramp) * 0.1), rgb(15 22 41) calc(100% - var(--pf-ramp) * 0.0));
+  padding-block: clamp(80px, 12vh, 140px) var(--section-bottom);
+  background: var(--card-secondary-light);
 }
 
 .pf__inner {
@@ -7489,7 +7487,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 @media (prefers-reduced-motion: reduce) { .pf-phone__track { will-change: auto; } }
 
 @media (min-width: 900px) {
-  .pf-ig { --pf-ig-r: 24px; --pf-ig-clear: 36px; --pf-ig-ov: 50px; }      /* clear = phone <-> card edge (>= 24px to the header / neighbours); ov = how far the phone overflows the panel */
+  .pf-ig { --pf-ig-r: 24px; --pf-ig-clear: 24px; --pf-ig-ov: 50px; }      /* clear = phone <-> card edge (>= 24px to the header / neighbours); ov = how far the phone overflows the panel */
   .pf-ig .pf-case__inner { display: flex; align-items: center; padding-block: 0; }
   .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
   .pf-ig__copy { order: 2; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s3); min-inline-size: 0; }
@@ -7500,15 +7498,11 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-ig__qr figcaption { max-inline-size: 22ch; font-family: var(--font-ui); font-size: 12px; line-height: 1.4; color: rgb(255 255 255 / 0.85); }
   /* the stage is a size container (it stretches to the panel height): the phone is as tall as the panel + 0.9 insets (it overflows by ~0.45 inset on both sides) and at most 62% of the column wide */
   .pf-ig__stage { order: 1; position: relative; align-self: stretch; container-type: inline-size; }
-  .pf-phone-wrap { position: absolute; inset-inline-start: 50%; inset-block-start: 50%; translate: -50% -50%; margin: 0; inline-size: auto; block-size: min(calc(100svh - 32px - var(--pf-ig-clear) * 2), calc(100cqw * 0.62 * 19 / 9)); }
+  .pf-phone-wrap { position: absolute; inset-inline-start: 0; inset-block-start: 50%; translate: 0 -50%; margin: 0; inline-size: auto; block-size: min(calc(100svh - 32px - var(--pf-ig-clear) * 2), calc(100cqw * 0.69 * 19 / 9)); }
   .pf-phone { transform: rotateY(calc(18deg + var(--ty, 0deg))) rotateX(calc(6deg + var(--tx, 0deg))) rotateZ(-2deg); }
   /* upper-right: between the phone and the copy, fully outside the phone body (never over the profile header); lower-left: at the phone's lower-left */
 }
 @media (max-width: 899px) { .pf-ig { --pf-ig-card-w: 100%; --pf-ig-inset: 12px; --pf-ig-pad: 20px; --pf-ig-r: 18px; } }
-
-/* Portfólió -> Kapcsolat: the drifting glows of Kapcsolat are clipped at its top edge; a graphite veil (the colour Portfólió ends in) fades them in over the first 70% of --pf-ramp, so the two
-   sections meet without an edge (under the content: .ctc__head / .container are z-index 1, later in the tree) */
-#contact.ctc::before { content: ""; position: absolute; inset: 0 0 auto 0; height: calc(var(--pf-ramp) * 0.7); z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgb(15 22 41 / 1.000) calc(var(--pf-ramp) * 0.00), rgb(15 22 41 / 0.957) calc(var(--pf-ramp) * 0.09), rgb(15 22 41 / 0.844) calc(var(--pf-ramp) * 0.17), rgb(15 22 41 / 0.684) calc(var(--pf-ramp) * 0.26), rgb(15 22 41 / 0.500) calc(var(--pf-ramp) * 0.35), rgb(15 22 41 / 0.316) calc(var(--pf-ramp) * 0.44), rgb(15 22 41 / 0.156) calc(var(--pf-ramp) * 0.52), rgb(15 22 41 / 0.043) calc(var(--pf-ramp) * 0.61), rgb(15 22 41 / 0.000) calc(var(--pf-ramp) * 0.70)); }
 
 /* ===== Header blur (< 1024px): a REAL progressive blur: 5 stacked layers (js/nav.js builds .nav__blur), each with its own backdrop-filter and gradient mask on the SAME element ===== */
 .nav__blur { display: none; }

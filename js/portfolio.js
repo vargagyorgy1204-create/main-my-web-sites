@@ -79,7 +79,7 @@
     var num = (i < 9 ? '0' : '') + (i + 1) + ' / ' + (N < 10 ? '0' : '') + N;
     /* Row 1: the meta bar. Row 2: the "stage" — text column on the left,
        browser window on the right; the window is the height reference. */
-    return '<article class="pf-case" data-index="' + i + '" data-slug="' + esc(p.slug) + '" style="--accent:' + esc(p.accent) + '">' +
+    return '<article class="pf-case" data-theme="dark" data-index="' + i + '" data-slug="' + esc(p.slug) + '" style="--accent:' + esc(p.accent) + '">' +
       '<div class="pf-case__bgname" aria-hidden="true"><span>' + esc(p.name) + '</span></div>' +
       '<div class="pf-case__inner">' +
         '<div class="pf-case__meta">' +
@@ -477,9 +477,7 @@
     window.addEventListener('resize', function () { clearTimeout(ft); ft = setTimeout(fit, 80); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit); else fit();
 
-    var themeMq = window.matchMedia('(min-width: 1024px)');
-    function setTheme() { igCard.setAttribute('data-theme', themeMq.matches ? 'light' : 'dark'); }
-    setTheme(); if (themeMq.addEventListener) themeMq.addEventListener('change', setTheme);
+    igCard.setAttribute('data-theme', 'light');       /* the slot is light at every width: the header turns dark over it */
 
     var av = igCard.querySelector('.pf-phone__avatar');
     if (av && IG.avatarFallback) av.addEventListener('error', function () { av.src = IG.avatarFallback; }, { once: true });
