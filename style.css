@@ -7436,7 +7436,8 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pf-ig__copy { display: contents; }
 .pf-ig .pf-case__name { white-space: nowrap; margin: 0; max-inline-size: 100%; }
 .pf-ig .pf-case__block p { color: rgb(255 255 255 / 0.9); }
-.pf-ig__btnwrap { align-self: flex-start; }
+.pf-ig__btnwrap { align-self: center; }
+.pf-ig .pf-case__name, .pf-ig .pf-case__block { text-align: center; }
 .pf-ig__qr { display: none; }
 
 /* ---------- the 3D phone ---------- */
@@ -7491,12 +7492,17 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-ig .pf-case__inner { display: flex; align-items: center; padding-block: 0; }
   .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
   /* the text group is centred in its 2/3 column (left-aligned inside) */
-  .pf-ig__copy { order: 2; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s3); min-inline-size: 0; inline-size: fit-content; max-inline-size: 100%; justify-self: center; }
-  .pf-ig .pf-case__block { max-inline-size: 34ch; }
+  .pf-ig__copy { order: 2; display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--s3); min-inline-size: 0; inline-size: fit-content; max-inline-size: 100%; justify-self: center; }
+  .pf-ig .pf-case__block { max-inline-size: 36ch; }
   .pf-ig .pf-case__name { font-size: clamp(26px, 2.7vw, 52px); }
-  .pf-ig__qr { margin: 0; display: flex; align-items: center; gap: var(--s2); }
-  .pf-ig__qr img { flex: none; display: block; inline-size: 96px; block-size: 96px; border-radius: 14px; background: #fff; object-fit: cover; }
-  .pf-ig__qr figcaption { max-inline-size: 22ch; font-family: var(--font-ui); font-size: 12px; line-height: 1.4; color: rgb(255 255 255 / 0.85); }
+  /* QR block: the white tile (120px, scannable) inside a hand-drawn bracket frame; the handwritten label + curly arrow sit above-right of it */
+  .pf-ig__qr { display: block; position: relative; margin: 56px 0 0; color: #fff; }
+  .pf-qr__box { position: relative; display: block; inline-size: 152px; block-size: 152px; }
+  .pf-qr__box img { position: absolute; inset: 16px; inline-size: 120px; block-size: 120px; border-radius: 14px; background: #fff; object-fit: cover; }
+  .pf-qr__frame { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+  .pf-qr__c, .pf-qr__a { stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .pf-qr__label { position: absolute; inset-inline-start: calc(100% - 6px); inset-block-start: -58px; white-space: nowrap; font-family: 'Caveat', 'Segoe Script', cursive; font-weight: 600; font-size: 25px; line-height: 1; color: #fff; rotate: -4deg; transform-origin: 0 100%; }
+  .pf-qr__arrow { position: absolute; inline-size: 56px; block-size: 52px; inset-inline-start: calc(100% - 66px); inset-block-start: -50px; overflow: visible; }
   /* the stage is a size container (it stretches to the panel height): the phone is as tall as the panel + 0.9 insets (it overflows by ~0.45 inset on both sides) and at most 62% of the column wide */
   .pf-ig__stage { order: 1; position: relative; align-self: stretch; container-type: inline-size; }
   .pf-phone-wrap { position: absolute; inset-inline-start: 0; inset-block-start: 50%; translate: 0 -50%; margin: 0; inline-size: auto; block-size: min(calc(100svh - 32px - var(--pf-ig-clear) * 2), calc(100cqw * 0.9 * 19 / 9)); }
@@ -7545,3 +7551,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-ig__btnwrap { align-self: stretch; order: 6; }
   .pf-ig__btnwrap .hbtn { inline-size: 100%; }
 }
+
+/* the handwriting font of the Instagram QR label (self-hosted, Caveat 600, latin + latin-ext) */
+@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }

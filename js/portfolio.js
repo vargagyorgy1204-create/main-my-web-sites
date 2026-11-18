@@ -123,15 +123,30 @@
     return '<article class="pf-case pf-ig" id="pf-ig" data-theme="light" style="--accent:#c850c0">' +
       '<div class="pf-case__inner"><div class="pf-ig__panel">' +
         '<div class="pf-ig__copy">' +
+          (IG.qr ? '<figure class="pf-ig__qr">' +
+            '<span class="pf-qr__box">' +
+              /* hand-drawn corner brackets (slightly irregular strokes, round caps); pathLength=1 so the draw-on can use dashoffset 1 -> 0 */
+              '<svg class="pf-qr__frame" viewBox="0 0 152 152" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+                '<path class="pf-qr__c" pathLength="1" d="M4 40 C3 30 4.5 18 6 11 C7.5 5.5 12 4 18 4.5 C26 5 33 3.5 41 4"/>' +
+                '<path class="pf-qr__c" pathLength="1" d="M111 3.5 C119 4.5 127 3 134 5 C140 6.5 147.5 8 148 15 C148.5 22 147 31 148.5 40"/>' +
+                '<path class="pf-qr__c" pathLength="1" d="M148 112 C147 120 149 128 147 135 C145.5 142 141 148 134 147.5 C126 147 119 148.5 111 148"/>' +
+                '<path class="pf-qr__c" pathLength="1" d="M41 148.5 C33 147.5 26 149 18.5 147.5 C11 146 5 144 4.5 137 C4 129 5.5 121 4 112"/>' +
+              '</g></svg>' +
+              '<img src="' + esc(IG.qr) + '" srcset="' + esc(IG.qr) + ' 192w, ' + esc(IG.qr.replace(/(\.[a-z0-9]+)$/i, '@2x$1')) + ' 384w" sizes="120px" width="120" height="120" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
+            '</span>' +
+            '<span class="pf-qr__label" aria-hidden="true">Olvassa be!</span>' +
+            '<svg class="pf-qr__arrow" viewBox="0 0 56 52" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path class="pf-qr__a" pathLength="1" d="M50 5 C38 -1 24 4 27 13 C30 22 44 18 38 28 C33 36 20 36 9 42"/>' +
+              '<path class="pf-qr__a" pathLength="1" d="M8 42 L18.5 41 M8 42 L12.5 32.5"/>' +
+            '</g></svg>' +
+          '</figure>' : '') +
           '<h3 class="pf-case__name">@' + esc(IG.handle) + '</h3>' +
-          '<div class="pf-case__block"><p>Itt látja elsőként az új projekteket és a munka részleteit.</p></div>' +
+          '<div class="pf-case__block"><p>Új projektek, dizájnötletek,<br>kreatív megoldások és a folyamat részletei.</p></div>' +
           /* the same pill component as the "KAPCSOLAT" button (.cta-row__btn > .hbtn--primary) */
           '<div class="cta-row__btn cta-row__btn--no-arrow pf-ig__btnwrap"><a class="hbtn hbtn--primary" href="' + url + '" target="_blank" rel="noopener">' +
             '<span class="hbtn__glow" aria-hidden="true"></span><span class="hbtn__fill" aria-hidden="true"></span><span class="hbtn__rip" aria-hidden="true"></span>' +
             '<span class="hbtn__text"><span class="hbtn__roll" data-text="INSTAGRAM">INSTAGRAM</span></span>' +
             '<span class="hbtn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span></a></div>' +
-          (IG.qr ? '<figure class="pf-ig__qr"><img src="' + esc(IG.qr) + '" srcset="' + esc(IG.qr) + ' 192w, ' + esc(IG.qr.replace(/(\.[a-z0-9]+)$/i, '@2x$1')) + ' 384w" sizes="96px" width="96" height="96" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
-            '<figcaption>Vagy olvassa be a kódot a telefonjával.</figcaption></figure>' : '') +
         '</div>' +
         '<div class="pf-case__media pf-ig__stage"><div class="pf-phone-wrap">' +
           '<span class="pf-phone__shadow" aria-hidden="true"></span>' +
@@ -269,6 +284,19 @@
       var phoneWrap = igCard && igCard.querySelector('.pf-phone-wrap');
       if (phoneWrap) gsap.fromTo(phoneWrap, { y: 30 }, { y: 0, ease: 'none', scrollTrigger: { trigger: igCard, start: 'top bottom', end: 'top 16px', scrub: true } });
 
+      /* the hand-drawn QR frame draws itself with the scroll (scrubbed): corners -> label writes in -> arrow; complete when the card is pinned, reverses when scrolling back */
+      var qrBox = igCard && igCard.querySelector('.pf-ig__qr');
+      if (qrBox && igCard.querySelectorAll('.pf-qr__c').length) {
+        var pinTop = function () { return 'top ' + (parseFloat(getComputedStyle(igCard).top) || 16) + 'px'; };
+        /* explicit start state (staggered / later tweens of a timeline do not render their from-values before they start) */
+        gsap.set(qrBox.querySelectorAll('.pf-qr__c, .pf-qr__a'), { strokeDashoffset: 1 });
+        gsap.set(qrBox.querySelector('.pf-qr__label'), { clipPath: 'inset(-10% 100% -10% 0)' });
+        var dtl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: igCard, start: 'top 88%', end: pinTop, scrub: true, invalidateOnRefresh: true } });
+        dtl.fromTo(qrBox.querySelectorAll('.pf-qr__c'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1, stagger: 0.25 }, 0)
+           .fromTo(qrBox.querySelector('.pf-qr__label'), { clipPath: 'inset(-10% 100% -10% 0)' }, { clipPath: 'inset(-10% -4% -10% 0)', duration: 0.9 }, 1.1)
+           .fromTo(qrBox.querySelectorAll('.pf-qr__a'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7, stagger: 0.4 }, 2.0);
+      }
+
       return function () { stackOn = false; all.forEach(function (c) { c.style.visibility = ''; }); scheduleActive(); };
     });
   }
@@ -351,7 +379,7 @@
 
     /* Instagram card: its content plays once when the card settles. */
     if (igCard) (function () {
-      var parts = ['.pf-case__name', '.pf-case__block', '.pf-ig__btnwrap', '.pf-ig__qr', '.pf-phone-wrap']
+      var parts = ['.pf-case__name', '.pf-case__block', '.pf-ig__btnwrap', '.pf-phone-wrap']
         .map(function (s) { return igCard.querySelector(s); }).filter(Boolean);
       if (plain) gsap.set(parts, { opacity: 0 });
       else gsap.set(parts, { y: 28, opacity: 0 });
