@@ -3196,18 +3196,21 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 /* the block (headline, lead, buttons) hangs directly under the label (label -> headline = --eyebrow-head-gap, as in the other sections); the status line stays at the bottom */
 .hero-title { position: relative; margin: 0 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(34px, min(8.2vw, 10.8svh), 150px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
 .hero-headline {
-    font-family: 'Syne Var', 'Syne', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-weight: 800;
     font-size: 1em;
     line-height: 1.04;
-    color: #fff;
+    --hl-base: #d6d6e2;               /* a touch under pure white so the shimmer (#fff band, +19%) can brighten it */
+    color: var(--hl-base);
     margin: 0;
     letter-spacing: -0.02em;
-    -webkit-text-fill-color: #fff;
+    -webkit-text-fill-color: var(--hl-base);
     cursor: default;
+    position: relative;
+    z-index: 1;
 }
 .hero-vh { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.hero-line { display: block; }
+.hero-line { display: block; position: relative; }
 .hero-line__in { display: block; white-space: nowrap; animation: heroLineUp 1s cubic-bezier(0.16, 1, 0.3, 1) backwards; }      /* backwards: no composited layer is kept after the intro */
 .hero-line:nth-of-type(2) .hero-line__in { animation-delay: 0.12s; }
 .hero-line:nth-of-type(3) .hero-line__in { animation-delay: 0.24s; }
@@ -3229,14 +3232,22 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 }
 /* the living word waits for the web fonts (a font swap would shift it; hidden boxes are not counted as layout shift) */
 html.hero-wait .hero-live, html.hero-wait .hero-headline, html.hero-wait .hero-sub, html.hero-wait .hero-ctas { visibility: hidden; }
-/* calm vertical roll (js/hero-fx.js): NO clipping box / filter / will-change on the word (any of them makes a composited layer that shows as a hard-edged rectangle over the WebGL background); the letters carry the gradient themselves (offset by their x so it flows across the whole word) */
-.hero-live__w { position: absolute; inset: 0 auto 0 0; white-space: pre; --wc: #6366f1; --wt: #a5a7fb; }
+/* contextual word entrances (js/hero-fx.js): NO clipping box / filter / will-change on the word (a composited layer shows as a hard-edged rectangle over the WebGL background); solid colour + a thin lighter outline, no gradient */
+.hero-live__w { position: absolute; inset: 0 auto 0 0; white-space: pre; --wc: #6366f1; --wt: #a5a7fb; --gl: 0; }
 .hero-live__w[data-wi="1"] { --wc: #9b3fd8; --wt: #cf94f0; }
 .hero-live__w[data-wi="2"] { --wc: #C026A3; --wt: #e68bd3; }
-.hero-live__w[data-wi="3"] { --wc: #1a8fa3; --wt: #73d7e8; }      /* the light end of --card-accent-cool (#0e4d5c -> #1a8fa3) */
-/* ROOT CAUSE of the old dark box: the global h1 text-shadow (line 356) on transparent-fill letters, cut off by the roll's clip box. The word carries no shadow and no gradient. */
+.hero-live__w[data-wi="3"] { --wc: #22c3d6; --wt: #a6eef6; }      /* brighter teal (the --card-accent-cool family) */
+/* the global h1 text-shadow (line 356) must not reach these letters (it painted a dark halo box); only the "életre kelt" glow below is allowed */
 .hero-live__txt, .hero-live__w, .hero-live__l { text-shadow: none; }
+.hero-live__in { display: inline-block; white-space: pre; }
 .hero-live__l { display: inline-block; color: var(--wc); -webkit-text-fill-color: var(--wc); -webkit-text-stroke: var(--hero-sw, 1.5px) var(--wt); paint-order: stroke fill; }
+.hero-live__w[data-wi="3"] .hero-live__l { text-shadow: 0 0 calc(var(--gl) * 20px) rgb(34 195 214 / calc(var(--gl) * 0.95)); }   /* neon flash 0 -> strong -> soft steady glow */
+/* "tervez": a design-tool selection frame (thin line, 4 square handles) + a small pointer that drags the word into place */
+.hero-live__fr { position: absolute; inset: 0 auto auto 0; overflow: visible; pointer-events: none; }
+.hero-live__fr path { fill: none; stroke: var(--wc); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.hero-live__h { position: absolute; inline-size: 7px; block-size: 7px; margin: -3.5px 0 0 -3.5px; background: #fff; border: 1.5px solid var(--wc); box-sizing: border-box; pointer-events: none; }
+.hero-live__ar { position: absolute; inline-size: 28px; block-size: 28px; color: #fff; pointer-events: none; }
+.hero-live__ar svg { inline-size: 100%; block-size: 100%; fill: #fff; stroke: var(--wc); stroke-width: 1.75; }
 html.hero-static .hero-live { display: inline; }
 html.hero-static .hero-live__size { display: none; }
 html.hero-static .hero-live__txt { position: static; }
@@ -3282,8 +3293,6 @@ html.hero-static .hero-live__txt { position: static; }
 .hero-status__dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #34d27b; animation: heroPing 2s ease-out infinite; }
 @keyframes heroPing { from { transform: scale(1); opacity: 0.7; } to { transform: scale(3.2); opacity: 0; } }
 
-/* magnetic letters (js/hero-fx.js, html.has-cursor only): "Kreatív" / "Webfejlesztő," are split into letters; each box keeps its rest width (set in js), so a weight change never moves the line */
-.hero-ch { display: inline-block; text-align: center; font-weight: var(--w, 800); }
 @media (max-width: 899px) {
     .hero-live { --hero-sw: 1px; }
     .hero-title { font-size: min(clamp(28px, 10.4vw, 64px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* same three lines, smaller */
@@ -3295,6 +3304,25 @@ html.hero-static .hero-live__txt { position: static; }
     .hero-eyebrow, .hero-sub, .hero-ctas, .hero-status, .hero-line__in { animation: none; }
     .hero-css i, .hero-status__dot::after { animation: none; }
 }
+
+/* idle shimmer + outline hover reveal on "Kreatív Webfejlesztő," (js/hero-fx.js adds .hero-line__fx inside the two lines; absolute copies, no layout impact) */
+.hero-line__in { position: relative; z-index: 1; }
+.hero-line__fx, .hero-line__fxb { position: absolute; left: 0; top: 0; display: block; white-space: nowrap; pointer-events: none; }
+.hero-line__fx { z-index: 2; }
+.hero-line__fxb { z-index: 0; }
+.hero-line__fx > span, .hero-line__fxb > span { position: absolute; left: 0; top: 0; display: block; white-space: nowrap; text-shadow: none; color: transparent; -webkit-text-fill-color: transparent; }
+/* the h1's soft dark halo (global h1 text-shadow) moves from the base letters to this underlay once the effects are armed (.has-fx), so the base letters can switch to a text-clipped gradient on hover without a shadow box */
+.fx-halo { text-shadow: 0 12px 34px rgb(0 0 0 / 0.38) !important; opacity: 0; }
+.hero-line.has-fx .fx-halo { opacity: 1; }
+.hero-line.has-fx .hero-line__in { text-shadow: none; }
+.fx-sh { background-image: linear-gradient(112deg, transparent 0 40%, rgb(255 255 255 / 1) 50%, transparent 60% 100%); background-size: 300% 100%; background-repeat: no-repeat; background-position: 80% 0; -webkit-background-clip: text; background-clip: text; animation: heroShimmer 8s linear 2s infinite; }
+.hero-line:nth-of-type(3) .fx-sh { animation-delay: 2.2s; }
+@keyframes heroShimmer { 0% { background-position: 80% 0; animation-timing-function: ease-in-out; } 17.5% { background-position: 20% 0; } 100% { background-position: 20% 0; } }
+.fx-ol { -webkit-text-stroke: 1.5px #fff; -webkit-mask-image: radial-gradient(circle var(--hr, 0px) at var(--hx, -999px) var(--hy, -999px), #000 0, #000 55%, transparent 100%); mask-image: radial-gradient(circle var(--hr, 0px) at var(--hx, -999px) var(--hy, -999px), #000 0, #000 55%, transparent 100%); }
+/* hover: the white base letters fade out only under the circle (a radial gradient clipped to the text, not a mask: a mask would cut off the halo/accents at the box) */
+.hero-line.is-hov .hero-line__in { -webkit-text-fill-color: transparent; background-image: radial-gradient(circle var(--hr, 0px) at var(--hx, -999px) var(--hy, -999px), transparent 0, transparent 55%, var(--hl-base) 100%); -webkit-background-clip: text; background-clip: text; }
+.hero-glow { position: absolute; left: 0; top: 0; inline-size: 280px; block-size: 280px; margin: -140px 0 0 -140px; border-radius: 50%; background: radial-gradient(closest-side, rgb(155 63 216 / 0.32), rgb(155 63 216 / 0.12) 55%, transparent 100%); opacity: 0; pointer-events: none; z-index: 0; }
+@media (prefers-reduced-motion: reduce) { .hero-line__fx, .hero-line__fxb, .hero-glow { display: none; } }
 
 /* Hero CTA pair: .hbtn (primary = rotating glow ring, ghost = outline), shared liquid fill */
 @property --a {
@@ -7428,9 +7456,6 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @media (min-width: 900px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
-
-/* Hero headline: the variable Syne (wght 400-800, latin + latin-ext, self-hosted) for the magnetic-letters weight change; the rest of the site keeps the Google Syne 700/800 */
-@font-face { font-family: 'Syne Var'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(assets/fonts/syne-var-latin-ext.woff2) format('woff2'); }
 
 /* ═══ Hero living window (EXPERIMENT; js/hero-window.js builds the markup; delete this block + the script tag + js/hero-window.js + the font file to remove it) ═══
    A floating, tilted browser window on the right side of the hero; its scene follows the living word (event "hero:word" from js/hero-fx.js). Absolutely positioned: it reserves no flow space (CLS 0). */
