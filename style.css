@@ -3153,7 +3153,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
         radial-gradient(60% 70% at 55% 95%, rgb(192 38 163 / 0.34), transparent 70%),
         #0f0b1c;
 }
-.hero-gl { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
+.hero-gl { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%); }
 .hero-bg.is-gl .hero-gl { opacity: 1; }
 .hero-css { position: absolute; inset: 0; display: none; }
 .hero-bg.is-css .hero-css { display: block; }
@@ -3173,7 +3173,8 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 200px 200px;
 }
-.hero-bg::after { content: ""; position: absolute; inset: auto 0 0 0; block-size: clamp(140px, 28svh, 300px); background: linear-gradient(180deg, rgb(23 12 38 / 0), #170c26); }
+/* the last ~25% of the hero blends into Rólam's colour (#170c26 = --about-bg): the shader canvas is masked out over it and an eased gradient (smoothstep-like stops, no visible edge) lands exactly on the section colour */
+.hero-bg::after { content: ""; position: absolute; inset: auto 0 -1px 0; block-size: calc(25% + 1px); background: linear-gradient(180deg, rgb(23 12 38 / 0) 0%, rgb(23 12 38 / 0.04) 12%, rgb(23 12 38 / 0.16) 28%, rgb(23 12 38 / 0.38) 46%, rgb(23 12 38 / 0.64) 64%, rgb(23 12 38 / 0.86) 80%, rgb(23 12 38 / 0.97) 92%, #170c26 100%); }
 
 .hero-inner {
     position: relative;
@@ -3192,7 +3193,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 }
 
 /* the block (headline, lead, buttons) sits optically a little above the centre of the space under the label */
-.hero-title { position: relative; margin: auto 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(34px, min(5.3vw, 11svh), 108px), calc((100vw - 2 * var(--content-gutter)) / 16.6)); }          /* one line each: line 1 is ~16.2em wide in Syne 800 */
+.hero-title { position: relative; margin: auto 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(34px, min(8.2vw, 10.8svh), 150px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
 .hero-headline {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
@@ -3208,6 +3209,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 .hero-line { display: block; }
 .hero-line__in { display: block; white-space: nowrap; animation: heroLineUp 1s cubic-bezier(0.16, 1, 0.3, 1) backwards; }      /* backwards: no composited layer is kept after the intro */
 .hero-line:nth-of-type(2) .hero-line__in { animation-delay: 0.12s; }
+.hero-line:nth-of-type(3) .hero-line__in { animation-delay: 0.24s; }
 /* the line reveals from below with a clip-path (no overflow:hidden: a clipping box over the WebGL canvas made a visible lighter band in software GL) */
 @keyframes heroLineUp { from { transform: translateY(45%); clip-path: inset(0 0 100% 0); } to { transform: translateY(0); clip-path: inset(0 0 -25% 0); } }
 @keyframes heroFadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
@@ -3226,8 +3228,13 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     background-clip: text;
 }
 /* the living word waits for the web fonts (a font swap would shift it; hidden boxes are not counted as layout shift) */
-html.hero-wait .hero-live { visibility: hidden; }
-html.hero-static .hero-live { display: inline; }
+html.hero-wait .hero-live, html.hero-wait .hero-headline, html.hero-wait .hero-sub, html.hero-wait .hero-ctas { visibility: hidden; }
+/* calm vertical roll (js/hero-fx.js): the word box is clipped (clip-path, no overflow:hidden), the letters carry the gradient themselves (offset by their x so it flows across the whole word) */
+.hero-live { clip-path: inset(-0.14em -0.12em -0.22em -0.12em); }
+.hero-live__txt.is-roll { background: none; }
+.hero-live__w { position: absolute; inset: 0 auto 0 0; white-space: pre; }
+.hero-live__l { display: inline-block; color: transparent; -webkit-text-fill-color: transparent; background-image: linear-gradient(90deg, #7f7fff 0%, #b765f2 55%, #ee5fcf 100%); background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; }
+html.hero-static .hero-live { display: inline; clip-path: none; }
 html.hero-static .hero-live__size { display: none; }
 html.hero-static .hero-live__txt { position: static; background-size: 100% 100%; }
 
@@ -3236,7 +3243,8 @@ html.hero-static .hero-live__txt { position: static; background-size: 100% 100%;
     color: rgb(255 255 255 / 0.68);
     line-height: 1.65;
     margin: 0 0 clamp(16px, 3.3svh, 36px) 0;
-    max-width: 46ch;
+    max-width: 52ch;
+    text-wrap: balance;
     font-family: 'Montserrat', sans-serif;
     animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
 }
@@ -3272,7 +3280,7 @@ html.hero-static .hero-live__txt { position: static; background-size: 100% 100%;
 @keyframes heroPing { from { transform: scale(1); opacity: 0.7; } to { transform: scale(3.2); opacity: 0; } }
 
 @media (max-width: 899px) {
-    .hero-title { font-size: min(clamp(28px, 9.4vw, 64px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* the longest word "webfejlesztő," is ~10.3em */
+    .hero-title { font-size: min(clamp(28px, 10.4vw, 64px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* same three lines, smaller */
     .hero-line__in { white-space: normal; }
     .hero-ctas { margin-bottom: 0; }
     .hero-status { margin-top: 28px; }
