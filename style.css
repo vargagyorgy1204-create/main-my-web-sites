@@ -4764,8 +4764,10 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   .pf-case__stage { --pf-vcol: min(64%, calc(100% - var(--pf-text-min) - var(--pf-gap-col)), calc((100cqh - var(--pf-meta-h) - var(--pf-gap-meta) - var(--pf-bar-h)) * 16 / 9)); }
 
   /* the hold: the Instagram card stays stuck for this much scroll */
-  .pf-hold { display: none; }                         /* the Instagram card is the finale: the section ends right after it (no hold) */
+  /* the finale: the Instagram card pins like the others and slides over card 06; the hold (~45svh) is extra height of the DECK after it, so the card is pinned (and on screen, covering
+     the viewport) for the whole hold - the hold is never visible as empty space. The card has no dwell margin: when the hold is used up it scrolls away into the blend to Kapcsolat. */
   .pf-case.pf-ig { margin-block-end: 0; }
+  .pf-hold { display: block; block-size: 45svh; }
 }
 
 /* ---------- Case-study dialog (one screen) ---------- */
