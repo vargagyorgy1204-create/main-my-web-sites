@@ -7505,7 +7505,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-qr__frame { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
   /* label + arrow INSIDE the card, to the right of the QR frame (they hang to the right of the centred QR): label around the upper third, the arrow curls from it to the frame's right side */
   .pf-qr__label { position: absolute; z-index: 2; inset-inline-start: calc(100% + 54px); inset-block-start: calc(var(--pf-qrbox) * 0.06); white-space: nowrap; font-family: 'Caveat', 'Segoe Script', cursive; font-weight: 600; font-size: 25px; line-height: 1; color: var(--pf-qr-ink); rotate: -4deg; transform-origin: 0 100%; }
-  .pf-qr__arrow { position: absolute; z-index: 2; color: var(--pf-qr-ink); inline-size: 56px; block-size: 50px; inset-inline-start: calc(100% + 4px); inset-block-start: calc(var(--pf-qrbox) * 0.14); overflow: visible; }
+  .pf-qr__arrow { position: absolute; z-index: 2; color: var(--pf-qr-ink); inline-size: 170px; block-size: 64px; inset-inline-start: calc(100% + 4px); inset-block-start: calc(var(--pf-qrbox) * 0.17); overflow: visible; }
   .pf-qr__frame g { stroke-width: calc(3 * 152 / (var(--pf-qr-n) + 26)); }
   .pf-qr__arrow g { stroke-width: 3; }
   /* the stage is a size container (it stretches to the panel height): the phone is as tall as the panel + 0.9 insets (it overflows by ~0.45 inset on both sides) and at most 62% of the column wide */
