@@ -240,3 +240,13 @@ One scroll choreography per entry, no layout animation (transform / opacity / st
 - Headline: 2 lines (Syne 800; font-size = min(clamp(34px, min(5.3vw, 11svh), 108px), (100vw - 2 x gutter) / 16.6)); the h1 keeps the full sentence in `.hero-vh`, the animated lines are aria-hidden. The living word (`.hero-live`: width reserved by the longest word, text absolutely placed, gradient text) scrambles every ~2.4s; hidden until the web fonts are in (`html.hero-wait`); reduced motion shows "tervez, kódol, épít". Lines drift apart and fade on scroll-out (ScrollTrigger, scrubbed).
 - Removed: the Tech stack card + badge, the ticker strip, the old WEB DEVELOPER outline headline. Hero bottom fades into Rólam (#170c26); about-story.js now starts its `--about-bg` scrub from #170c26.
 - tests/smoke.mjs: the hero joined the tight sections (7 tight, Rólam / Hogyan dolgozom the only wide anchors).
+
+## Hero variant C "spotlight" (experiment, `?hero=c`)
+Shown only with `?hero=c` (`html.hero-c`, set by an inline script in `<head>`; variant A "living text" stays the default). Isolated in `#hero-c` (index.html), `js/hero-c.js` and the "Hero variant C" block at the end of `style.css`; delete those three to remove it. Same tight anchor as variant A (label, gutter, top offset).
+| Token / value | Desktop | Mobile (<900px) |
+|---|---|---|
+| `--hc-r` flashlight radius | 220px | 140px |
+| `--hc-k` / `--hc-sk` | entrance 0→1 / scroll-out 1→0 (js) | same |
+| `--hc-x/--hc-y` | light centre, section-relative (GSAP quickTo 0.35s) | wanders (~8s loop) |
+| headline size | min(clamp(34px, 15.5svh, 190px), (100vw − 2·gutter)/6.9) | min(clamp(30px, 14svh, 120px), (100vw − 2·gutter)/6.9) |
+Headline: Syne 800, outline 1.5px rgb(255 255 255 / .55); the filled copy (brand gradient) is masked by the same radial mask, offset by `--hc-ox/--hc-oy`. Reduced motion: `html.hc-static` (no light, fully filled headline). Content stays hidden (`html.hc-wait`) until the fonts are loaded → CLS 0.
