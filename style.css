@@ -7217,7 +7217,8 @@ section#skills { background: linear-gradient(180deg, rgb(23 12 38) calc(max(35%,
 /* ===== RÓLAM: dark section (data-theme="dark" drives the header, the cursor reads the dark background) =====
    Section colour = --about-bg (deep ink violet based on #4B1956): scrubbed from the hero's light to #170c26 by about-story.js while the section rises into view (dark without JS / with reduced motion).
    Rólam -> Készségek: the top max(35%, 50svh) of Készségek (the section#skills gradient above) eases #170c26 -> #10172a. Scoped to #about: myapproach.html reuses .about-bio-card / .btn-about / .about-sign light. */
-#about { position: relative; z-index: 1; background: linear-gradient(180deg, transparent 0, transparent var(--hero-ext-px, 50svh), var(--about-bg, #170c26) var(--hero-ext-px, 50svh)) !important; }
+#about { background: var(--about-bg, #170c26) !important; }      /* solid Rólam colour; the hero's background extension (above it, below the content) fades out over it, see js/hero-bg-pin.js */
+#about > .about-pin { position: relative; z-index: 1; }     /* the content sits above the hero's stacking context (hero-bg extension); #about itself stays unpositioned so its background paints below it */
 #about .abt { --abt-ink: rgb(255 255 255 / 0.8); --abt-design: #E36DD0; --abt-code: #3FC6E0; --abt-motion: #8F89FF; }
 #about .about-bio-card { background: rgb(255 255 255 / 0.05); border: 1px solid rgb(255 255 255 / 0.08); box-shadow: none; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 #about .abt-lead { color: #fff; }

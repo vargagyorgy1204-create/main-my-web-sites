@@ -105,9 +105,11 @@
   hero.addEventListener('pointerleave', function () { clearTimeout(idleT); actT = 0; });
 
   var visible = true, raf = 0, last = 0, t0 = performance.now(), started = false;
+  var faded = false;                                                /* js/hero-bg-pin.js: the background has faded out completely (Rólam pinned) */
+  document.addEventListener('hero:bgfade', function (e) { faded = !!(e.detail && e.detail.faded); if (!faded) run(); });
   function frame(now) {
     raf = 0;
-    if (!visible || document.hidden) return;
+    if (!visible || document.hidden || faded) return;
     raf = requestAnimationFrame(frame);
     if (now - last < 33) return;                                /* ~30fps cap */
     last = now;
@@ -121,9 +123,10 @@
     gl.uniform1f(uT, (now - t0) / 1000);
     gl.uniform2f(uM, mx, my); gl.uniform2f(uP, px, py); gl.uniform1f(uA, act);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+    window.__heroGlFrames = (window.__heroGlFrames || 0) + 1;
     if (!started) { started = true; bg.classList.add('is-gl'); }
   }
-  function run() { if (!raf && visible && !document.hidden) raf = requestAnimationFrame(frame); }
+  function run() { if (!raf && visible && !document.hidden && !faded) raf = requestAnimationFrame(frame); }
   if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[es.length - 1].isIntersecting; if (visible) run(); }).observe(bg);
   document.addEventListener('visibilitychange', run);
   canvas.addEventListener('webglcontextlost', function (e) { e.preventDefault(); bg.classList.remove('is-gl'); fallback(); cancelAnimationFrame(raf); });
