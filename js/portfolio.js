@@ -127,17 +127,17 @@
             '<span class="pf-qr__box">' +
               /* hand-drawn corner brackets (slightly irregular strokes, round caps); pathLength=1 so the draw-on can use dashoffset 1 -> 0 */
               '<svg class="pf-qr__frame" viewBox="0 0 152 152" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
-                '<path class="pf-qr__c" pathLength="1" d="M4 40 C3 30 4.5 18 6 11 C7.5 5.5 12 4 18 4.5 C26 5 33 3.5 41 4"/>' +
-                '<path class="pf-qr__c" pathLength="1" d="M111 3.5 C119 4.5 127 3 134 5 C140 6.5 147.5 8 148 15 C148.5 22 147 31 148.5 40"/>' +
-                '<path class="pf-qr__c" pathLength="1" d="M148 112 C147 120 149 128 147 135 C145.5 142 141 148 134 147.5 C126 147 119 148.5 111 148"/>' +
-                '<path class="pf-qr__c" pathLength="1" d="M41 148.5 C33 147.5 26 149 18.5 147.5 C11 146 5 144 4.5 137 C4 129 5.5 121 4 112"/>' +
+                '<path class="pf-qr__c" d="M4 40 C3 30 4.5 18 6 11 C7.5 5.5 12 4 18 4.5 C26 5 33 3.5 41 4"/>' +
+                '<path class="pf-qr__c" d="M111 3.5 C119 4.5 127 3 134 5 C140 6.5 147.5 8 148 15 C148.5 22 147 31 148.5 40"/>' +
+                '<path class="pf-qr__c" d="M148 112 C147 120 149 128 147 135 C145.5 142 141 148 134 147.5 C126 147 119 148.5 111 148"/>' +
+                '<path class="pf-qr__c" d="M41 148.5 C33 147.5 26 149 18.5 147.5 C11 146 5 144 4.5 137 C4 129 5.5 121 4 112"/>' +
               '</g></svg>' +
               '<img src="' + esc(IG.qr) + '" srcset="' + esc(IG.qr) + ' 192w, ' + esc(IG.qr.replace(/(\.[a-z0-9]+)$/i, '@2x$1')) + ' 384w" sizes="120px" width="120" height="120" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
             '</span>' +
             '<span class="pf-qr__label" aria-hidden="true">Olvassa be!</span>' +
-            '<svg class="pf-qr__arrow" viewBox="0 0 56 52" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
-              '<path class="pf-qr__a" pathLength="1" d="M50 5 C38 -1 24 4 27 13 C30 22 44 18 38 28 C33 36 20 36 9 42"/>' +
-              '<path class="pf-qr__a" pathLength="1" d="M8 42 L18.5 41 M8 42 L12.5 32.5"/>' +
+            '<svg class="pf-qr__arrow" viewBox="0 0 50 100" preserveAspectRatio="xMidYMin meet" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path class="pf-qr__a pf-qr__shaft" d="M44 4 C30 1 18 9 24 22 C30 35 44 30 40 46 C36 62 18 64 13 90"/>' +
+              '<path class="pf-qr__a pf-qr__head" d="M3 77 L13 92 L24 79"/>' +
             '</g></svg>' +
           '</figure>' : '') +
           '<h3 class="pf-case__name">@' + esc(IG.handle) + '</h3>' +
@@ -288,13 +288,16 @@
       var qrBox = igCard && igCard.querySelector('.pf-ig__qr');
       if (qrBox && igCard.querySelectorAll('.pf-qr__c').length) {
         var pinTop = function () { return 'top ' + (parseFloat(getComputedStyle(igCard).top) || 16) + 'px'; };
-        /* explicit start state (staggered / later tweens of a timeline do not render their from-values before they start) */
-        gsap.set(qrBox.querySelectorAll('.pf-qr__c, .pf-qr__a'), { strokeDashoffset: 1 });
-        gsap.set(qrBox.querySelector('.pf-qr__label'), { clipPath: 'inset(-10% 100% -10% 0)' });
+        /* every stroke: dasharray = its real length, dashoffset = length -> 0 (smooth, partial strokes while scrubbing) */
+        var prep = function (list) { return Array.prototype.map.call(list, function (el) { var L = el.getTotalLength(); gsap.set(el, { strokeDasharray: L, strokeDashoffset: L, opacity: 0 }); return el;       /* opacity 0: a round cap would leave a dot at the start of a fully hidden dash */ }); };
+        var corners = prep(qrBox.querySelectorAll('.pf-qr__c')), shaft = prep(qrBox.querySelectorAll('.pf-qr__shaft')), head = prep(qrBox.querySelectorAll('.pf-qr__head'));
+        var label = qrBox.querySelector('.pf-qr__label');
+        gsap.set(label, { clipPath: 'inset(-10% 100% -10% 0)' });
         var dtl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: igCard, start: 'top 88%', end: pinTop, scrub: true, invalidateOnRefresh: true } });
-        dtl.fromTo(qrBox.querySelectorAll('.pf-qr__c'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1, stagger: 0.25 }, 0)
-           .fromTo(qrBox.querySelector('.pf-qr__label'), { clipPath: 'inset(-10% 100% -10% 0)' }, { clipPath: 'inset(-10% -4% -10% 0)', duration: 0.9 }, 1.1)
-           .fromTo(qrBox.querySelectorAll('.pf-qr__a'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7, stagger: 0.4 }, 2.0);
+        corners.forEach(function (el, i) { dtl.set(el, { opacity: 1 }, i * 0.25).to(el, { strokeDashoffset: 0, duration: 1 }, i * 0.25); });
+        dtl.to(label, { clipPath: 'inset(-10% -4% -10% 0)', duration: 0.9 }, 1.1)
+           .set(shaft, { opacity: 1 }, 2.0).to(shaft, { strokeDashoffset: 0, duration: 0.8 }, 2.0)
+           .set(head, { opacity: 1 }, 2.8).to(head, { strokeDashoffset: 0, duration: 0.3 }, 2.8);
       }
 
       return function () { stackOn = false; all.forEach(function (c) { c.style.visibility = ''; }); scheduleActive(); };
@@ -494,9 +497,17 @@
       /* the QR block is hidden only when the copy would not fit the card (viewport minus 2 x 24px) */
       igCard.classList.remove('pf-ig--noqr');
       var room = window.innerHeight - 48;
-      if (copy.scrollHeight + padY > room) igCard.classList.add('pf-ig--noqr');
-      var h = Math.max(wrap.offsetHeight - 2 * ov, copy.scrollHeight + padY);
+      var copyH = copy.offsetHeight;                       /* the QR label / arrow are absolutely positioned: they do not count */
+      if (copyH + padY > room) igCard.classList.add('pf-ig--noqr');
+      var h = Math.max(wrap.offsetHeight - 2 * ov, (igCard.classList.contains('pf-ig--noqr') ? copy.offsetHeight : copyH) + padY);
       panel.style.setProperty('--pf-ig-panel-h', Math.round(h) + 'px');
+      /* the label + arrow above the card: how far the QR top is below the card top (the arrow is scaled uniformly to span it; its stroke is compensated) */
+      var qrEl = igCard.querySelector('.pf-ig__qr');
+      if (qrEl && qrEl.offsetParent) {
+        var up = Math.max(60, Math.round(qrEl.getBoundingClientRect().top - panel.getBoundingClientRect().top));
+        qrEl.style.setProperty('--qr-up', up + 'px');
+        qrEl.style.setProperty('--qr-sw', (2.5 * 100 / (up + 4)).toFixed(2));
+      }
       /* the slot is only as tall as the phone (+ 32px for its 3D overshoot) and pins vertically centred */
       igCard.style.setProperty('--pf-ig-slot-h', Math.round(Math.max(wrap.offsetHeight + 32, h + 2 * 16)) + 'px');
     }
