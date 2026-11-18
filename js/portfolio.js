@@ -135,9 +135,9 @@
               '<img src="' + esc(IG.qr) + '" srcset="' + esc(IG.qr) + ' 192w, ' + esc(IG.qr.replace(/(\.[a-z0-9]+)$/i, '@2x$1')) + ' 384w" sizes="120px" width="120" height="120" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
             '</span>' +
             '<span class="pf-qr__label" aria-hidden="true">Olvassa be!</span>' +
-            '<svg class="pf-qr__arrow" viewBox="0 0 50 100" preserveAspectRatio="xMidYMin meet" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
-              '<path class="pf-qr__a pf-qr__shaft" d="M44 4 C30 1 18 9 24 22 C30 35 44 30 40 46 C36 62 18 64 13 90"/>' +
-              '<path class="pf-qr__a pf-qr__head" d="M3 77 L13 92 L24 79"/>' +
+            '<svg class="pf-qr__arrow" viewBox="0 0 56 50" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path class="pf-qr__a pf-qr__shaft" d="M52 6 C42 3 30 8 34 17 C38 26 48 22 40 32 C34 39 22 40 10 37"/>' +
+              '<path class="pf-qr__a pf-qr__head" d="M20 28 L8 37 L21 45"/>' +
             '</g></svg>' +
           '</figure>' : '') +
           '<h3 class="pf-case__name">@' + esc(IG.handle) + '</h3>' +
@@ -502,13 +502,6 @@
       if (copyH + padY > room) igCard.classList.add('pf-ig--noqr');
       var h = Math.max(wrap.offsetHeight - 2 * ov, (igCard.classList.contains('pf-ig--noqr') ? copy.offsetHeight : copyH) + padY);
       panel.style.setProperty('--pf-ig-panel-h', Math.round(h) + 'px');
-      /* the label + arrow above the card: how far the QR top is below the card top (the arrow is scaled uniformly to span it; its stroke is compensated) */
-      var qrEl = igCard.querySelector('.pf-ig__qr');
-      if (qrEl && qrEl.offsetParent) {
-        var up = Math.max(60, Math.round(qrEl.getBoundingClientRect().top - panel.getBoundingClientRect().top));
-        qrEl.style.setProperty('--qr-up', up + 'px');
-        qrEl.style.setProperty('--qr-sw', (3 * 100 / (up + 4)).toFixed(2));
-      }
       /* the slot is only as tall as the phone (+ 32px for its 3D overshoot) and pins vertically centred */
       igCard.style.setProperty('--pf-ig-slot-h', Math.round(Math.max(wrap.offsetHeight + 32, h + 2 * 16)) + 'px');
     }
