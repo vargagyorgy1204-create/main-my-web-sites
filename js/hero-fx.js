@@ -18,13 +18,27 @@
   if (time) {
     var fmt;
     try { fmt = new Intl.DateTimeFormat('hu-HU', { timeZone: 'Europe/Budapest', hour: '2-digit', minute: '2-digit', hour12: false }); } catch (e) { fmt = null; }
+    var cells = null, first = true;
+    var buildTime = function () {                                    /* HH : MM - tabular mono digits, the colon blinks (CSS), a changed digit flips */
+      time.textContent = ''; cells = [];
+      ['dg', 'dg', 'cl', 'dg', 'dg'].forEach(function (c) { var sp = document.createElement('span'); sp.className = c; if (c === 'cl') sp.textContent = ':'; time.appendChild(sp); cells.push(sp); });
+    };
+    var flip = function (cell, ch) {                                 /* 3D flip, 0.4s: the old digit folds away, the new one folds in */
+      if (reduce || !VB.gsap) { cell.textContent = ch; return; }
+      VB.gsap.to(cell, { rotationX: -90, transformPerspective: 220, duration: 0.2, ease: 'power1.in', overwrite: true, onComplete: function () { cell.textContent = ch; VB.gsap.fromTo(cell, { rotationX: 90 }, { rotationX: 0, transformPerspective: 220, duration: 0.2, ease: 'power1.out', onComplete: function () { VB.gsap.set(cell, { clearProps: 'transform' }); } }); } });
+    };
     var tick = function () {
       var d = new Date();
-      time.textContent = fmt ? fmt.format(d) : ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+      var str = fmt ? fmt.format(d) : ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+      if (!cells) buildTime();
+      [0, 1, 3, 4].forEach(function (k) { var ch = str.charAt(k); if (cells[k].textContent !== ch) { if (first) cells[k].textContent = ch; else flip(cells[k], ch); } });
+      first = false;
       time.setAttribute('datetime', d.toISOString());
+      time.setAttribute('aria-label', str);
       setTimeout(tick, 60000 - (d.getSeconds() * 1000 + d.getMilliseconds()) + 50);          /* aligned to the next full minute */
     };
     tick();
+    time.__tick = tick;                                              /* test hook */
   }
 
   /* ------------------------------------------------ the living word */
@@ -93,31 +107,67 @@
             .to(ar, { x: -12, duration: 0.6, ease: 'power3.out' }, 0.85)
             .to(ar, { opacity: 0, duration: 0.3 }, 1.5);
         },
-        function (w, tl, inn, ls) {                                  /* kódol: code-symbol scramble, width reserved */
+        function (w, tl, inn, ls) {                                  /* kódol: code-symbol scramble, width reserved + a blinking caret and a </> badge */
           var n = ls.length, fin = [], i;
           for (i = 0; i < n; i++) { fin.push(ls[i].textContent); }
           for (i = 0; i < n; i++) { var bw = ls[i].getBoundingClientRect().width; ls[i].style.width = bw + 'px'; ls[i].style.textAlign = 'center'; }
-          gsap.set(ls, { opacity: 0 });
+          var H = w.offsetHeight, lastR = ls[n - 1].offsetLeft + ls[n - 1].offsetWidth, lastC = ls[n - 1].offsetLeft + ls[n - 1].offsetWidth / 2;
+          var caret = document.createElement('span'); caret.className = 'hero-live__caret';
+          caret.style.left = (lastR + 4) + 'px'; caret.style.top = Math.round(H * 0.2) + 'px'; caret.style.height = Math.round(H * 0.62) + 'px';
+          var badge = document.createElement('span'); badge.className = 'hero-live__badge'; badge.textContent = '</>';
+          w.appendChild(caret); w.appendChild(badge);
+          badge.style.left = Math.round(lastC - badge.offsetWidth / 2) + 'px'; badge.style.top = Math.round(H * 0.12 - 21) + 'px';
+          gsap.set(ls, { opacity: 0 }); gsap.set(caret, { visibility: 'hidden' }); gsap.set(badge, { scale: 0, opacity: 0 });
           var st = { p: 0 };
           tl.set(ls, { opacity: 1 }, 0).to(st, { p: 1, duration: 0.6, ease: 'none', onUpdate: function () {
             for (var j = 0; j < n; j++) {
               var lock = 0.18 + 0.82 * (n > 1 ? j / (n - 1) : 0);
               ls[j].textContent = st.p >= lock ? fin[j] : SYMS.charAt(Math.floor(st.p * 14 + j * 3) % SYMS.length);
             }
-          }, onComplete: function () { for (var j = 0; j < n; j++) { ls[j].textContent = fin[j]; ls[j].style.width = ''; ls[j].style.textAlign = ''; } } }, 0);
+          }, onComplete: function () { for (var j = 0; j < n; j++) { ls[j].textContent = fin[j]; ls[j].style.width = ''; ls[j].style.textAlign = ''; } } }, 0)
+            .set(caret, { visibility: 'visible' }, 0.6)
+            .fromTo(badge, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2.2)' }, 0.55)
+            .to(badge, { opacity: 0, duration: 0.3 }, 1.8);
         },
-        function (w, tl, inn, ls) {                                  /* épít: blocks lock together */
+        function (w, tl, inn, ls) {                                  /* épít: blocks lock together + a dimension line with the measured width */
           gsap.set(ls, { yPercent: function (i) { return i % 2 === 0 ? 60 : -60; }, opacity: 0, force3D: false });
+          var W = w.offsetWidth, H = w.offsetHeight, cx = W / 2, y = H + 6, gap = 27;
+          var dim = document.createElementNS(NS, 'svg'); dim.setAttribute('class', 'hero-live__dim'); dim.setAttribute('width', W); dim.setAttribute('height', H + 14); dim.setAttribute('viewBox', '0 0 ' + W + ' ' + (H + 14));
+          dim.style.left = '0px'; dim.style.top = '0px';
+          var pl = document.createElementNS(NS, 'path'), pr = document.createElementNS(NS, 'path');
+          pl.setAttribute('d', 'M' + (cx - gap) + ' ' + y + 'H1M6 ' + (y - 3.5) + 'L1 ' + y + 'L6 ' + (y + 3.5)); pr.setAttribute('d', 'M' + (cx + gap) + ' ' + y + 'H' + (W - 1) + 'M' + (W - 6) + ' ' + (y - 3.5) + 'L' + (W - 1) + ' ' + y + 'L' + (W - 6) + ' ' + (y + 3.5));
+          pl.setAttribute('pathLength', '1'); pr.setAttribute('pathLength', '1');
+          dim.appendChild(pl); dim.appendChild(pr); w.appendChild(dim);
+          var lab = document.createElement('span'); lab.className = 'hero-live__dl'; lab.style.left = cx + 'px'; lab.style.top = y + 'px'; lab.textContent = '0 px'; w.appendChild(lab);
+          gsap.set([pl, pr], { strokeDashoffset: 1 }); gsap.set(lab, { opacity: 0 });
+          var cnt = { v: 0 };
           tl.to(ls, { yPercent: 0, duration: 0.6, ease: 'back.out(1.6)', stagger: 0.06, force3D: false }, 0)
-            .to(ls, { opacity: 1, duration: 0.2, stagger: 0.06 }, 0);
+            .to(ls, { opacity: 1, duration: 0.2, stagger: 0.06 }, 0)
+            .to([pl, pr], { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out' }, 0.55)           /* from the centre outward */
+            .to(lab, { opacity: 1, duration: 0.2 }, 0.55)
+            .to(cnt, { v: Math.round(W), duration: 0.5, ease: 'power2.out', onUpdate: function () { lab.textContent = Math.round(cnt.v) + ' px'; } }, 0.55);
         },
-        function (w, tl, inn, ls) {                                  /* életre kelt: elastic pop + neon flash, then a soft glow */
+        function (w, tl, inn, ls) {                                  /* életre kelt: elastic pop + neon flash, then a soft glow + three twinkling sparkles */
           gsap.set(ls, { scale: 0.4, opacity: 0, transformOrigin: '50% 70%', force3D: false });
+          var W = w.offsetWidth, H = w.offsetHeight;
+          var sp = [[W + 6, H * 0.1, 16], [W - 12, H * 0.9, 10], [W * 0.46, -7, 10]].map(function (c) {
+            var e = document.createElement('span'); e.className = 'hero-live__sp'; e.style.left = Math.round(c[0]) + 'px'; e.style.top = Math.round(c[1]) + 'px'; e.style.inlineSize = c[2] + 'px'; e.style.blockSize = c[2] + 'px';
+            e.innerHTML = '<i data-lucide="sparkle"></i>'; w.appendChild(e); return e;
+          });
+          if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } }
+          gsap.set(sp, { scale: 0, opacity: 0 });
           var g = { v: 0 }, setg = function () { w.style.setProperty('--gl', g.v.toFixed(3)); };
           tl.to(ls, { scale: 1, duration: 1.1, ease: 'elastic.out(1, 0.45)', stagger: 0.04, force3D: false }, 0)
             .to(ls, { opacity: 1, duration: 0.15, stagger: 0.04 }, 0)
             .to(g, { v: 1, duration: 0.15, ease: 'power2.out', onUpdate: setg }, 0.1)
             .to(g, { v: 0.3, duration: 0.4, ease: 'power2.out', onUpdate: setg }, 0.25);
+          sp.forEach(function (e, k) {                                /* each sparkle twinkles twice during the hold */
+            var t = 0.3 + k * 0.2;
+            tl.fromTo(e, { scale: 0, rotation: -40, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.35, ease: 'back.out(2)' }, t)
+              .to(e, { scale: 0.25, opacity: 0.2, rotation: 50, duration: 0.45, ease: 'sine.inOut' }, t + 0.5)
+              .to(e, { scale: 1, opacity: 1, rotation: 90, duration: 0.4, ease: 'back.out(2)' }, t + 1.45)
+              .to(e, { scale: 0, opacity: 0, rotation: 140, duration: 0.4, ease: 'power2.in' }, t + 2.0);
+          });
         }
       ];
       var next = function () {
@@ -156,10 +206,10 @@
     hl.forEach(function (ln) {
       var t = ln.querySelector('.hero-line__in').textContent;
       var fx = document.createElement('span'); fx.className = 'hero-line__fx'; fx.setAttribute('aria-hidden', 'true');
-      fx.innerHTML = '<span class="fx-sh">' + t + '</span><span class="fx-ol">' + t + '</span>';
+      fx.innerHTML = '<span class="fx-sh" data-t="' + t + '"></span><span class="fx-ol" data-t="' + t + '"></span>';           /* the copies' text is generated content (::before): never an LCP candidate */
       ln.appendChild(fx);
       var fb = document.createElement('span'); fb.className = 'hero-line__fxb'; fb.setAttribute('aria-hidden', 'true');
-      fb.innerHTML = '<span class="fx-halo">' + t + '</span>';
+      fb.innerHTML = '<span class="fx-halo" data-t="' + t + '"></span>';
       ln.insertBefore(fb, ln.firstChild);
     });
     var armed = false;                                               /* the halo underlay takes over from the base letters' own shadow once the intro is done */

@@ -3248,6 +3248,15 @@ html.hero-wait .hero-live, html.hero-wait .hero-headline, html.hero-wait .hero-s
 .hero-live__h { position: absolute; inline-size: 7px; block-size: 7px; margin: -3.5px 0 0 -3.5px; background: #fff; border: 1.5px solid var(--wc); box-sizing: border-box; pointer-events: none; }
 .hero-live__ar { position: absolute; inline-size: 28px; block-size: 28px; color: #fff; pointer-events: none; }
 .hero-live__ar svg { inline-size: 100%; block-size: 100%; fill: #fff; stroke: var(--wc); stroke-width: 1.75; }
+/* kódol: a blinking caret + a tiny </> badge · épít: a dimension line with a measured width · életre kelt: 4-point sparkles */
+.hero-live__caret { position: absolute; inline-size: 3px; background: var(--wc); border-radius: 1px; pointer-events: none; animation: heroBlink 1s steps(1) infinite; }
+@keyframes heroBlink { 50% { opacity: 0; } }
+.hero-live__badge { position: absolute; padding: 2px 6px; font: 600 11px/1 'JetBrains Mono', ui-monospace, Consolas, monospace; color: #fff; border: 1px solid var(--wt); border-radius: 5px; background: rgb(155 63 216 / 0.3); white-space: nowrap; pointer-events: none; transform-origin: 50% 100%; }
+.hero-live__dim { position: absolute; overflow: visible; pointer-events: none; }
+.hero-live__dim path { fill: none; stroke: var(--wt); stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.hero-live__dl { position: absolute; transform: translate(-50%, -50%); font: 500 10px/1 'JetBrains Mono', ui-monospace, Consolas, monospace; letter-spacing: 0; color: var(--wt); white-space: nowrap; pointer-events: none; }
+.hero-live__sp { position: absolute; inline-size: 16px; block-size: 16px; color: #fff; pointer-events: none; }
+.hero-live__sp svg { inline-size: 100%; block-size: 100%; fill: currentColor; stroke: currentColor; stroke-width: 1.25; }
 html.hero-static .hero-live { display: inline; }
 html.hero-static .hero-live__size { display: none; }
 html.hero-static .hero-live__txt { position: static; }
@@ -3275,6 +3284,10 @@ html.hero-static .hero-live__txt { position: static; }
 }
 #hero .text-link { --tl-color: #fff; }
 .hero-title ~ .hero-ctas { margin-bottom: auto; padding-bottom: clamp(8px, 3svh, 40px); }
+@media (min-width: 900px) {          /* the buttons row sits exactly midway between the subheading's bottom and the status line's top */
+    .hero-sub { margin-bottom: 0; }
+    .hero-title ~ .hero-ctas { margin: auto 0; padding-block: clamp(12px, 2.4svh, 28px); }
+}
 
 /* status line: bottom-left, on the same left line as the label */
 .hero-status {
@@ -3288,10 +3301,14 @@ html.hero-static .hero-live__txt { position: static; }
     color: rgb(255 255 255 / 0.72);
     animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
 }
-.hero-status time { font-variant-numeric: tabular-nums; }
-.hero-status__dot { position: relative; flex: none; inline-size: 8px; block-size: 8px; border-radius: 50%; background: #34d27b; }
-.hero-status__dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #34d27b; animation: heroPing 2s ease-out infinite; }
-@keyframes heroPing { from { transform: scale(1); opacity: 0.7; } to { transform: scale(3.2); opacity: 0; } }
+.hero-status__dot { position: relative; flex: none; inline-size: 8px; block-size: 8px; border-radius: 50%; background: #2dd4bf; }
+.hero-status__dot::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1.5px solid #2dd4bf; animation: heroPing 2s ease-out infinite; }
+@keyframes heroPing { from { transform: scale(1); opacity: 0.85; } to { transform: scale(3.4); opacity: 0; } }
+/* time: a small glass pill, tabular monospace digits, the colon blinks every second, a changed digit flips (js/hero-fx.js) */
+.hero-time { display: inline-flex; align-items: center; padding: 3px 10px; border: 1px solid rgb(255 255 255 / 0.2); border-radius: 999px; background: rgb(255 255 255 / 0.07); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace; font-variant-numeric: tabular-nums; font-size: 12px; letter-spacing: 0; color: rgb(255 255 255 / 0.92); }
+.hero-time .dg, .hero-time .cl { display: inline-block; inline-size: 1ch; text-align: center; }
+.hero-time .cl { animation: heroColon 1s steps(1) infinite; }
+@keyframes heroColon { 50% { opacity: 0.25; } }
 
 @media (max-width: 899px) {
     .hero-live { --hero-sw: 1px; }
@@ -3302,22 +3319,23 @@ html.hero-static .hero-live__txt { position: static; }
 }
 @media (prefers-reduced-motion: reduce) {
     .hero-eyebrow, .hero-sub, .hero-ctas, .hero-status, .hero-line__in { animation: none; }
-    .hero-css i, .hero-status__dot::after { animation: none; }
+    .hero-css i, .hero-status__dot::after, .hero-time .cl { animation: none; }
 }
 
 /* idle shimmer + outline hover reveal on "Kreatív Webfejlesztő," (js/hero-fx.js adds .hero-line__fx inside the two lines; absolute copies, no layout impact) */
 .hero-line__in { position: relative; z-index: 1; }
+.hero-line__fx > span::before, .hero-line__fxb > span::before { content: attr(data-t); }
 .hero-line__fx, .hero-line__fxb { position: absolute; left: 0; top: 0; display: block; white-space: nowrap; pointer-events: none; }
 .hero-line__fx { z-index: 2; }
 .hero-line__fxb { z-index: 0; }
 .hero-line__fx > span, .hero-line__fxb > span { position: absolute; left: 0; top: 0; display: block; white-space: nowrap; text-shadow: none; color: transparent; -webkit-text-fill-color: transparent; }
 /* the h1's soft dark halo (global h1 text-shadow) moves from the base letters to this underlay once the effects are armed (.has-fx), so the base letters can switch to a text-clipped gradient on hover without a shadow box */
-.fx-halo { text-shadow: 0 12px 34px rgb(0 0 0 / 0.38) !important; opacity: 0; }
+.fx-halo { text-shadow: 0 12px 34px rgb(0 0 0 / 0.38) !important; opacity: 0.01; }
 .hero-line.has-fx .fx-halo { opacity: 1; }
 .hero-line.has-fx .hero-line__in { text-shadow: none; }
-.fx-sh { background-image: linear-gradient(112deg, transparent 0 40%, rgb(255 255 255 / 1) 50%, transparent 60% 100%); background-size: 300% 100%; background-repeat: no-repeat; background-position: 80% 0; -webkit-background-clip: text; background-clip: text; animation: heroShimmer 8s linear 2s infinite; }
+.fx-sh { background-image: linear-gradient(112deg, transparent 0, transparent 47.6%, rgb(196 181 253 / 0.6) 48.5%, #fff 50%, rgb(196 181 253 / 0.6) 51.5%, transparent 52.4%, transparent 100%); background-size: 300% 100%; background-repeat: no-repeat; background-position: 80% 0; -webkit-background-clip: text; background-clip: text; animation: heroShimmer 7s linear 2s infinite; }
 .hero-line:nth-of-type(3) .fx-sh { animation-delay: 2.2s; }
-@keyframes heroShimmer { 0% { background-position: 80% 0; animation-timing-function: ease-in-out; } 17.5% { background-position: 20% 0; } 100% { background-position: 20% 0; } }
+@keyframes heroShimmer { 0% { background-position: 80% 0; animation-timing-function: ease-in-out; } 22.86% { background-position: 20% 0; } 100% { background-position: 20% 0; } }
 .fx-ol { -webkit-text-stroke: 1.5px #fff; -webkit-mask-image: radial-gradient(circle var(--hr, 0px) at var(--hx, -999px) var(--hy, -999px), #000 0, #000 55%, transparent 100%); mask-image: radial-gradient(circle var(--hr, 0px) at var(--hx, -999px) var(--hy, -999px), #000 0, #000 55%, transparent 100%); }
 /* hover: the white base letters fade out only under the circle (a radial gradient clipped to the text, not a mask: a mask would cut off the halo/accents at the box) */
 .hero-line.is-hov .hero-line__in { -webkit-text-fill-color: transparent; background-image: radial-gradient(circle var(--hr, 0px) at var(--hx, -999px) var(--hy, -999px), transparent 0, transparent 55%, var(--hl-base) 100%); -webkit-background-clip: text; background-clip: text; }
@@ -7457,14 +7475,15 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @media (min-width: 900px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
 
-/* ═══ Hero living window (EXPERIMENT; js/hero-window.js builds the markup; delete this block + the script tag + js/hero-window.js + the font file to remove it) ═══
-   A floating, tilted browser window on the right side of the hero; its scene follows the living word (event "hero:word" from js/hero-fx.js). Absolutely positioned: it reserves no flow space (CLS 0). */
+/* ═══ Hero living window (EXPERIMENT; js/hero-window.js builds the markup; delete this block + the script tag + js/hero-window.js + the mono font to remove it) ═══
+   A floating, tilted browser window (decoration only: an abstract brand-coloured mini website made of CSS shapes) in the hero's bottom-right corner; its scene follows the living word
+   (event "hero:word" from js/hero-fx.js). Absolutely positioned: it reserves no flow space (CLS 0). */
 @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/jetbrains-mono-400-latin-ext.woff2) format('woff2'); }
 .hw {
     --hw-c: 99 102 241;                /* glow colour (r g b), tweened to the living word's colour (js) */
     --hw-sw: 3;                        /* wireframe stroke width in viewBox units (1.5px on screen, js) */
-    position: absolute; z-index: 1; left: 0; top: 0; inline-size: 400px;
-    visibility: hidden; opacity: 0;    /* js reveals it after load, once it has found a free area */
+    position: absolute; z-index: 1; left: 0; top: 0; inline-size: 300px;
+    visibility: hidden; opacity: 0;    /* js reveals it after load */
     pointer-events: none;
 }
 .hw.is-on { visibility: visible; pointer-events: auto; }
@@ -7474,25 +7493,18 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__glow { position: absolute; inset: 14% -8% -20% -8%; border-radius: 50%; background: radial-gradient(closest-side, rgb(var(--hw-c) / 0.5), rgb(var(--hw-c) / 0.18) 55%, transparent 100%); pointer-events: none; }
 .hw__win {
     position: relative; display: block; overflow: hidden; border-radius: 14px;
-    border: 1px solid rgb(255 255 255 / 0.16);                       /* the 1px light border */
+    border: 1px solid rgb(255 255 255 / 0.16);
     background: #0b0c12; color: inherit; text-decoration: none; cursor: pointer;
     box-shadow: 0 40px 80px -30px rgb(var(--hw-c) / 0.5), 0 20px 40px -20px rgb(0 0 0 / 0.55);
 }
 .hw__win::after { content: ""; position: absolute; inset: 0; z-index: 6; pointer-events: none; border-radius: inherit; background: linear-gradient(118deg, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0.03) 30%, transparent 46%); }   /* glass reflection */
 .hw__win:focus-visible { outline: 3px solid rgb(var(--hw-c)); outline-offset: 4px; }
-.hw__bar { position: relative; z-index: 5; display: flex; align-items: center; gap: 12px; block-size: 34px; padding-inline: 14px; background: #1d1f2b; }
-.hw__dots { display: flex; gap: 7px; flex: none; }
-.hw__dots i { display: block; inline-size: 10px; block-size: 10px; border-radius: 999px; }
+.hw__bar { position: relative; z-index: 5; display: flex; align-items: center; block-size: 30px; padding-inline: 12px; background: #1d1f2b; }
+.hw__dots { display: flex; gap: 6px; flex: none; }
+.hw__dots i { display: block; inline-size: 9px; block-size: 9px; border-radius: 999px; }
 .hw__dots i:nth-child(1) { background: #ff5f57; }
 .hw__dots i:nth-child(2) { background: #febc2e; }
 .hw__dots i:nth-child(3) { background: #28c840; }
-.hw__addr { margin-inline: auto; min-inline-size: 0; max-inline-size: 56%; padding: 4px 12px; display: flex; align-items: center; gap: 6px; border-radius: 999px; background: rgb(255 255 255 / 0.06); font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 12px; line-height: 1.2; color: rgb(255 255 255 / 0.62); }
-.hw__addr .hw__lock { flex: none; inline-size: 12px; block-size: 12px; }
-.hw__url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hw__live { position: absolute; inset-inline-end: 12px; top: 50%; translate: 0 -50%; display: flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; background: rgb(26 143 163 / 0.18); color: #73d7e8; font: 600 10px/1 'Inter', 'Segoe UI', sans-serif; letter-spacing: 0.1em; opacity: 0; visibility: hidden; }
-.hw__live i { position: relative; inline-size: 7px; block-size: 7px; border-radius: 50%; background: #1a8fa3; }
-.hw__live i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #1a8fa3; animation: hwPing 1.8s ease-out infinite; }
-@keyframes hwPing { from { transform: scale(1); opacity: 0.7; } to { transform: scale(3); opacity: 0; } }
 .hw__view { display: block; position: relative; aspect-ratio: 16 / 10; container-type: inline-size; background: #12101f; overflow: hidden; }
 .hw__grid { position: absolute; inset: 0; background-image: linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px); background-size: 6.25cqw 6.25cqw; }
 .hw__s { position: absolute; inset: 0; visibility: hidden; opacity: 0; }
@@ -7511,12 +7523,21 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__pre .k-p { color: rgb(255 255 255 / 0.5); } .hw__pre .k-t { color: #9b3fd8; } .hw__pre .k-a { color: #6366f1; } .hw__pre .k-s { color: #C026A3; }
 .hw__caret { display: inline-block; inline-size: 0.12em; block-size: 1.15em; margin-inline-start: 1px; vertical-align: text-bottom; background: rgb(255 255 255 / 0.85); animation: hwBlink 1s steps(1) infinite; }
 @keyframes hwBlink { 50% { opacity: 0; } }
-/* build: tiles of the real screenshot */
-.hw__blk { position: absolute; overflow: hidden; opacity: 0; }
-.hw__blk canvas, .hw__full, .hw__video { position: absolute; display: block; object-fit: cover; object-position: top center; }
-.hw__blk canvas { inset: 0; inline-size: 100%; block-size: 100%; }
-.hw__full, .hw__video { inset: 0; inline-size: 100%; block-size: 100%; }
-.hw__video { opacity: 0; }
-.hw__sweep { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.26) 50%, transparent 62%); transform: translateX(-130%); }
-/* compact (mobile) / reduced motion */
-@media (prefers-reduced-motion: reduce) { .hw__live i::after, .hw__caret { animation: none; } }
+/* abstract mini website (épít / életre kelt): every block sits where the wireframe drew it */
+.ab { position: absolute; }
+.ab, .ab span { position: absolute; display: block; }
+.ab-head { background: #2c2a55; }
+.ab-hero { background: linear-gradient(135deg, #6366f1, #9b3fd8); border-radius: 1.4cqw; }
+.ab-chart { background: linear-gradient(160deg, #0e8fa3, #22c3d6); border-radius: 1.4cqw; overflow: hidden; }
+.ab-cards { overflow: hidden; }
+.ab-card { position: absolute; top: 0; bottom: 0; background: #1b1930; border-radius: 1.2cqw; overflow: hidden; }
+.ab-card::before { content: ""; position: absolute; inset: 0 0 auto 0; block-size: 12%; background: var(--cc); }
+.ab-bar { background: rgb(255 255 255 / 0.85); border-radius: 0.6cqw; }
+.ab-soft { background: rgb(255 255 255 / 0.22); border-radius: 0.6cqw; }
+.ab-btn { background: #C026A3; border-radius: 999px; box-shadow: 0 0 0 0 rgb(192 38 163 / 0.5); }
+.ab-tgt { background: rgb(255 255 255 / 0.25); border-radius: 999px; }
+.ab-tgk { background: #fff; border-radius: 50%; }
+.ab-ripple { position: absolute; border: 2px solid rgb(255 255 255 / 0.8); border-radius: 50%; opacity: 0; pointer-events: none; }
+.ab-cur { position: absolute; z-index: 3; inline-size: 4.2cqw; block-size: 4.2cqw; opacity: 0; pointer-events: none; }
+.ab-cur svg { inline-size: 100%; block-size: 100%; fill: #fff; stroke: #12101f; stroke-width: 1.5; }
+@media (prefers-reduced-motion: reduce) { .hw__caret { animation: none; } }

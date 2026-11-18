@@ -1,8 +1,8 @@
-/* hero-window.js — the hero's "living window" (EXPERIMENT).
-   A floating, tilted browser window on the right of the hero tells the same story as the living word: idea -> code -> build -> alive.
-   SINGLE SOURCE OF TRUTH = the word roll in js/hero-fx.js: it dispatches document "hero:word" ({index, word}) at the start of every enter tween;
-   this module has NO timer of its own. Scenes: 0 tervez (wireframe draws in) · 1 kódol (code is typed) · 2 épít (screenshot tiles drop onto the wireframe) · 3 életre kelt (loop video + LIVE).
-   One project per cycle (js/portfolio-data.js order). Everything is built here; the markup lives only in this file. Delete the file, its script tag, the CSS block and the mono font to remove it. */
+/* hero-window.js — the hero's "living window" (EXPERIMENT, decoration only: an abstract brand-coloured mini website made of CSS shapes, no project content).
+   A floating, tilted browser window in the bottom-right corner tells the same story as the living word: idea -> code -> build -> alive.
+   SINGLE SOURCE OF TRUTH = the word roll in js/hero-fx.js: it dispatches document "hero:word" ({index, word}) at the start of every enter tween; this module has NO timer of its own.
+   Scenes: 0 tervez (wireframe draws in) · 1 kódol (code is typed) · 2 épít (brand-coloured blocks drop onto the wireframe) · 3 életre kelt (the site comes alive: button pulse, chart grows, toggle, cards slide, a fake cursor clicks).
+   Everything is built here after window 'load' (idle). Delete this file, its script tag, the CSS block and the mono font to remove it. */
 (function () {
   'use strict';
 
@@ -21,14 +21,6 @@
   function boot() {
   booted = true; document.removeEventListener('hero:word', bootListener);
 
-  /* ------------------------------------------------ projects */
-  var P = (window.PF_PROJECTS || []).map(function (p) {
-    var m = p.media || {};
-    return { slug: p.slug, label: String(p.url || '').replace(/\/+$/, '').split('/').pop() || p.slug, hero: m.hero, hero960: m.hero960, loop: m.loop };
-  });
-  if (!P.length) P = [{ slug: 'aurum', label: 'aurumbirtok', hero: 'assets/portfolio/hero-aurum.jpg', hero960: 'assets/portfolio/hero-aurum-960.jpg', loop: 'assets/portfolio/loop-aurum.webm' }];
-  var proj = 0;
-
   /* ------------------------------------------------ markup (built here) */
   var WIRE = [                                                      /* [path, penStart, penEnd] in a 1000 x 625 box, top -> bottom */
     ['M28 56H972', [28, 56], [972, 56]],
@@ -42,7 +34,6 @@
     ['M352 424h296v170H352z', [352, 424], [648, 594]], ['M376 548H524', [376, 548], [524, 548]], ['M376 572H474', [376, 572], [474, 572]],
     ['M676 424h296v170H676z', [676, 424], [972, 594]], ['M700 548H848', [700, 548], [848, 548]], ['M700 572H798', [700, 572], [798, 572]]
   ];
-  var TILES = [[0, 0, 100, 9.6], [0, 9.6, 100, 56.96], [0, 66.56, 33.334, 33.44], [33.334, 66.56, 33.333, 33.44], [66.667, 66.56, 33.333, 33.44]];   /* header, hero, 3 cards (%, a partition of the view) */
   var SNIPPET = [
     [['p', '<'], ['t', 'section'], ['x', ' '], ['a', 'class'], ['p', '='], ['s', '"hero"'], ['p', '>']],
     [['x', '  '], ['p', '<'], ['t', 'h1'], ['p', '>'], ['x', 'Az Ön vállalkozása'], ['p', '</'], ['t', 'h1'], ['p', '>']],
@@ -50,38 +41,67 @@
     [['x', '  '], ['p', '<'], ['t', 'a'], ['x', ' '], ['a', 'class'], ['p', '='], ['s', '"btn"'], ['x', ' '], ['a', 'href'], ['p', '='], ['s', '"#kapcsolat"'], ['p', '>'], ['x', 'Ajánlatot kérek'], ['p', '</'], ['t', 'a'], ['p', '>']],
     [['p', '</'], ['t', 'section'], ['p', '>']]
   ];
-  var NS = 'http://www.w3.org/2000/svg';
+
+  /* the abstract site: boxes in the 1000 x 625 box; children are given in the parent's own units */
+  function box(cls, x, y, w, h, parent, pw, ph) {                    /* absolute element, % of the parent (the view by default) */
+    var e = document.createElement('span');
+    e.className = cls;
+    var PW = pw || 1000, PH = ph || 625;
+    e.style.left = (x / PW * 100) + '%'; e.style.top = (y / PH * 100) + '%'; e.style.width = (w / PW * 100) + '%'; e.style.height = (h / PH * 100) + '%';
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  var abEl = document.createElement('span');                       /* the build layer */
+  abEl.className = 'hw__s hw__s--build';
+  var blocks = [];
+  var head = box('ab ab-head', 0, 0, 1000, 56); blocks.push(head);
+  box('ab-bar', 28, 14, 56, 30, head, 1000, 56).style.background = '#6366f1';
+  [640, 752].forEach(function (x) { box('ab-soft', x, 22, 80, 12, head, 1000, 56); });
+  var tgt = box('ab-tgt', 864, 17, 64, 22, head, 1000, 56);
+  var tgk = box('ab-tgk', 4, 3, 16, 16, tgt, 64, 22);
+  var hero_ = box('ab ab-hero', 28, 76, 944, 320); blocks.push(hero_);
+  box('ab-bar', 48, 94, 464, 16, hero_, 944, 320); box('ab-bar', 48, 132, 354, 16, hero_, 944, 320).style.opacity = '0.65'; box('ab-soft', 48, 176, 284, 10, hero_, 944, 320);
+  var btn = box('ab-btn', 48, 220, 170, 44, hero_, 944, 320);
+  var chart = box('ab ab-chart', 640, 110, 290, 250); blocks.push(chart);
+  var BAR_T = [0.55, 0.38, 0.7, 0.46, 0.82];
+  var bars = BAR_T.map(function (t, i) { var b = box('ab-bar', 22 + i * 52, 0, 34, 100, chart, 290, 250); b.style.top = 'auto'; b.style.bottom = '8%'; b.style.height = '35%'; return b; });
+  var cardsBox = box('ab ab-cards', 28, 424, 944, 170); blocks.push(cardsBox);
+  var CC = ['#9b3fd8', '#C026A3', '#22c3d6', '#6366f1'], cards = [];
+  for (var ci = 0; ci < 4; ci++) {
+    var cd = box('ab-card', ci * 324, 0, 296, 170, cardsBox, 944, 170); cd.style.setProperty('--cc', CC[ci]);
+    box('ab-bar', 24, 70, 148, 12, cd, 296, 170); box('ab-soft', 24, 98, 98, 10, cd, 296, 170); box('ab-soft', 24, 124, 120, 10, cd, 296, 170);
+    cards.push(cd);
+  }
+  var ripple = document.createElement('span'); ripple.className = 'ab-ripple';
+  ripple.style.left = ((28 + 48 + 85) / 10) + '%'; ripple.style.top = ((76 + 220 + 22) / 6.25) + '%'; ripple.style.width = '8cqw'; ripple.style.height = '8cqw'; ripple.style.margin = '-4cqw 0 0 -4cqw';
+  var cur = document.createElement('span'); cur.className = 'ab-cur'; cur.innerHTML = '<i data-lucide="mouse-pointer-2"></i>';
+  blocks.forEach(function (b) { abEl.appendChild(b); }); abEl.appendChild(ripple); abEl.appendChild(cur);
+
   var w = document.createElement('div');
   w.className = 'hw';
-  var tilesHTML = TILES.map(function (t) { return '<span class="hw__blk" style="left:' + t[0] + '%;top:' + t[1] + '%;width:' + t[2] + '%;height:' + t[3] + '%"><canvas></canvas></span>'; }).join('');
   w.innerHTML =
     '<div class="hw__float"><div class="hw__tilt"><span class="hw__glow"></span>' +
     '<a class="hw__win" href="#portfolio" data-cursor="view" data-cursor-label="Megnézem" aria-label="Portfólió megtekintése">' +
-      '<span class="hw__bar"><span class="hw__dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
-      '<span class="hw__addr" aria-hidden="true"><i data-lucide="lock" class="icon icon--sm hw__lock"></i><span class="hw__url">varbro.pro</span></span>' +
-      '<span class="hw__live" aria-hidden="true"><i></i>LIVE</span></span>' +
+      '<span class="hw__bar"><span class="hw__dots" aria-hidden="true"><i></i><i></i><i></i></span></span>' +
       '<span class="hw__view" aria-hidden="true"><span class="hw__grid"></span>' +
         '<span class="hw__s hw__s--wire"><svg class="hw__svg" viewBox="0 0 1000 625" preserveAspectRatio="none">' + WIRE.map(function (e) { return '<path d="' + e[0] + '" pathLength="1"/>'; }).join('') + '<circle class="hw__pen" r="7" cx="0" cy="0"/></svg></span>' +
         '<span class="hw__s hw__s--code"><span class="hw__tabs"><span class="hw__tab is-on">index.html</span><span class="hw__tab">style.css</span></span>' +
           '<span class="hw__code"><span class="hw__ln">' + SNIPPET.map(function (l, i) { return '<span>' + (i + 1) + '</span>'; }).join('') + '</span><pre class="hw__pre"></pre></span></span>' +
-        '<span class="hw__s hw__s--build">' + tilesHTML + '</span>' +
-        '<span class="hw__s hw__s--live"><canvas class="hw__full"></canvas><video class="hw__video" muted loop playsinline preload="none" tabindex="-1"></video></span>' +
-        '<span class="hw__sweep"></span>' +
       '</span>' +
     '</a></div></div>';
+  w.querySelector('.hw__view').appendChild(abEl);
   hero.appendChild(w);
+  var icons = function () { if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } } };
+  icons(); setTimeout(icons, 600);                                  /* in case the CDN script was not ready yet */
 
   var $ = function (s) { return w.querySelector(s); };
-  var float = $('.hw__float'), tilt = $('.hw__tilt'), view = $('.hw__view'), url = $('.hw__url'), live = $('.hw__live');
-  var L = { wire: $('.hw__s--wire'), code: $('.hw__s--code'), build: $('.hw__s--build'), live: $('.hw__s--live') };
+  var float = $('.hw__float'), tilt = $('.hw__tilt'), view = $('.hw__view');
+  var L = { wire: $('.hw__s--wire'), code: $('.hw__s--code'), build: abEl };
   var paths = [].slice.call(w.querySelectorAll('.hw__svg path')), pen = $('.hw__pen');
-  var blks = [].slice.call(w.querySelectorAll('.hw__blk')), blkCv = blks.map(function (b) { return b.querySelector('canvas'); });
-  var full = $('.hw__full'), video = $('.hw__video'), sweep = $('.hw__sweep'), pre = $('.hw__pre'), lns = [].slice.call(w.querySelectorAll('.hw__ln span'));
-  if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } }
-  setTimeout(function () { if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } } }, 600);   /* in case the CDN script was not ready yet */
+  var pre = $('.hw__pre'), lns = [].slice.call(w.querySelectorAll('.hw__ln span'));
 
   /* ------------------------------------------------ code: tokens + rAF typing */
-  var toks = [], cost = [];                                         /* flat list of characters: {el, ch} */
+  var toks = [];                                                    /* flat list of characters: {el, ch} */
   SNIPPET.forEach(function (line, li) {
     var lead = true;
     line.forEach(function (t) {
@@ -109,11 +129,7 @@
     shown = n;
   }
   var typing = null;
-  function typeStart() {
-    typeStop(); paintTyped(0);
-    typing = { acc: -250 };                                         /* a short beat before the first key */
-    gsap.ticker.add(typeTick);
-  }
+  function typeStart() { typeStop(); paintTyped(0); typing = { acc: -250 }; gsap.ticker.add(typeTick); }
   function typeStop() { if (typing) { gsap.ticker.remove(typeTick); typing = null; } }
   function typeTick(time, dt) {
     if (!typing || !visible) return;
@@ -122,35 +138,6 @@
     while (n < toks.length && (c < cost || toks[n].free)) { if (!toks[n].free) c++; n++; }
     if (n !== shown) paintTyped(n);
     if (n >= toks.length) typeStop();
-  }
-
-  /* ------------------------------------------------ project assets: screenshot per cycle, ONE reused video */
-  /* the screenshots are drawn into <canvas> tiles from an off-DOM Image: canvases and detached images are never LCP candidates, so the window can never become the page's LCP element */
-  var dpr = Math.min(2, window.devicePixelRatio || 1);
-  var shot = new Image(), shotSrc = '';
-  function shotURL(p) { return (view.clientWidth * dpr > 900 ? p.hero : p.hero960) || p.hero; }
-  function paintShots() {
-    if (!shot.complete || !shot.naturalWidth) return;
-    var iw = shot.naturalWidth, ih = shot.naturalHeight;
-    blkCv.forEach(function (c, i) {
-      var t = TILES[i], cw = Math.max(1, Math.round(c.parentNode.clientWidth * dpr)), ch = Math.max(1, Math.round(c.parentNode.clientHeight * dpr));
-      if (c.width !== cw) c.width = cw; if (c.height !== ch) c.height = ch;
-      c.getContext('2d').drawImage(shot, iw * t[0] / 100, ih * t[1] / 100, iw * t[2] / 100, ih * t[3] / 100, 0, 0, cw, ch);
-    });
-    var fw = Math.max(1, Math.round(view.clientWidth * dpr)), fh = Math.max(1, Math.round(view.clientHeight * dpr));
-    if (full.width !== fw) full.width = fw; if (full.height !== fh) full.height = fh;
-    full.getContext('2d').drawImage(shot, 0, 0, fw, fh);
-  }
-  shot.onload = paintShots;
-  function loadProject() {                                          /* called at the start of a cycle: fetch only now */
-    var p = P[proj];
-    var u = shotURL(p);
-    if (u !== shotSrc) { shotSrc = u; shot.src = u; }
-    if (!reduce && p.loop && video.getAttribute('data-src') !== p.loop) {
-      video.setAttribute('data-src', p.loop);
-      video.style.opacity = 0;
-      video.preload = 'auto'; video.src = p.loop; video.load();
-    }
   }
 
   /* ------------------------------------------------ colour of the glow follows the word */
@@ -171,10 +158,10 @@
     });
   }
   function wireReset(drawn) { gsap.set(paths, { strokeDashoffset: drawn ? 0 : 1 }); gsap.set(pen, { opacity: 0 }); }
-  function liveOff() {
-    gsap.to(live, { autoAlpha: 0, duration: 0.3, overwrite: true });
-    gsap.to(video, { opacity: 0, duration: 0.35, overwrite: true, onComplete: function () { if (scene !== 3) video.pause(); } });
-    if (url.textContent !== 'varbro.pro') gsap.to(url, { opacity: 0, duration: 0.2, onComplete: function () { url.textContent = 'varbro.pro'; gsap.to(url, { opacity: 1, duration: 0.3 }); } });
+  function siteReset() {                                            /* the finished site at rest (before it comes alive) */
+    gsap.set(blocks, { opacity: 1, y: 0 });
+    gsap.set(bars, { height: '35%' }); gsap.set(tgk, { x: 0 }); gsap.set(tgt, { backgroundColor: 'rgba(255,255,255,0.25)' });
+    gsap.set(cards, { xPercent: 0 }); gsap.set(btn, { scale: 1, boxShadow: '0 0 0 0 rgba(192,38,163,0)' }); gsap.set(cur, { opacity: 0 }); gsap.set(ripple, { opacity: 0, scale: 0.2 });
   }
   function sceneWire() {
     wireReset(false); layers('wire');
@@ -190,36 +177,38 @@
   }
   function sceneCode() { layers('code'); typeStart(); }
   function sceneBuild() {
-    wireReset(true);
-    gsap.set(blks, { opacity: 0, y: -24 });
-    gsap.set(L.build, { autoAlpha: 1 });
-    gsap.set(L.wire, { autoAlpha: 1 });
-    gsap.to([L.code, L.live], { autoAlpha: 0, duration: 0.35, overwrite: true });
-    gsap.set(sweep, { opacity: 0, xPercent: 0, x: 0 });
+    wireReset(true); siteReset();
+    gsap.set(blocks, { opacity: 0, y: -24 });
+    gsap.set(L.wire, { autoAlpha: 1 }); gsap.set(L.build, { autoAlpha: 1 });
+    gsap.to(L.code, { autoAlpha: 0, duration: 0.35, overwrite: true });
     tl = gsap.timeline({ delay: 0.3 });
-    tl.to(blks, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.2)', stagger: 0.12 }, 0);
-    tl.fromTo(sweep, { opacity: 1, xPercent: -130 }, { xPercent: 130, duration: 0.8, ease: 'power2.inOut' }, '>-0.1');
-    tl.set(sweep, { opacity: 0 });
+    tl.to(blocks, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.2)', stagger: 0.12 }, 0)
+      .to(L.wire, { autoAlpha: 0, duration: 0.4 }, '>-0.05');                 /* the blocks cover the wireframe: its lines fade out once they have landed */
   }
-  function sceneLive() {
+  function sceneAlive() {
     if (tl) { tl.progress(1); }
-    gsap.set(L.live, { autoAlpha: 1 });
-    gsap.set(L.wire, { autoAlpha: 0 }); gsap.set(L.build, { autoAlpha: 0 }); gsap.set(L.code, { autoAlpha: 0 });   /* the screenshot is pixel-identical to the finished tiles: no pop */
-    gsap.to(live, { autoAlpha: 1, duration: 0.4, overwrite: true });
-    var lab = P[proj].label;
-    gsap.to(url, { opacity: 0, duration: 0.2, onComplete: function () { url.textContent = lab; gsap.to(url, { opacity: 1, duration: 0.3 }); } });
-    var fadeIn = function () { gsap.to(video, { opacity: 1, duration: 0.6, ease: 'power1.inOut', overwrite: true }); };
-    video.currentTime = 0;
-    video.addEventListener('playing', function once() { video.removeEventListener('playing', once); if (scene === 3) fadeIn(); });
-    var pr = video.play(); if (pr && pr.catch) pr.catch(function () { /* autoplay blocked: the screenshot stays */ });
+    siteReset();
+    gsap.set(L.build, { autoAlpha: 1 }); gsap.set(L.wire, { autoAlpha: 0 }); gsap.set(L.code, { autoAlpha: 0 });
+    var vw = view.clientWidth;
+    gsap.set(cur, { left: ((28 + 48 + 108) / 10) + '%', top: ((76 + 220 + 30) / 6.25) + '%', x: vw * 0.2, y: vw * 0.16, opacity: 0, scale: 1 });
+    tl = gsap.timeline({ delay: 0.15 });
+    tl.to(bars, { height: function (i) { return (BAR_T[i] * 100 + 22) + '%'; }, duration: 0.7, ease: 'power3.out', stagger: 0.08 }, 0)
+      .to(tgk, { x: vw * 0.04, duration: 0.35, ease: 'power2.inOut' }, 0.35)
+      .to(tgt, { backgroundColor: '#2dd4bf', duration: 0.35 }, 0.35)
+      .to(btn, { scale: 1.07, boxShadow: '0 0 0 8px rgba(192,38,163,0.25)', duration: 0.3, ease: 'sine.inOut', yoyo: true, repeat: 3 }, 0.25)
+      .to(cards, { xPercent: -109.46, duration: 0.8, ease: 'power2.inOut' }, 0.7)
+      .to(cur, { opacity: 1, duration: 0.2 }, 1.0)
+      .to(cur, { x: 0, y: 0, duration: 0.55, ease: 'power3.out' }, 1.0)
+      .to(cur, { scale: 0.82, duration: 0.1, yoyo: true, repeat: 1 }, 1.6)
+      .fromTo(ripple, { opacity: 0.8, scale: 0.2 }, { opacity: 0, scale: 2.6, duration: 0.65, ease: 'power2.out' }, 1.62)
+      .to(cur, { opacity: 0, duration: 0.3 }, 2.2);
   }
   function go(i) {
     if (tl) { tl.kill(); tl = null; }
     typeStop();
-    var prev = scene; scene = i;
+    scene = i;
     tintTo(i);
-    if (prev === 3 && i !== 3) liveOff();
-    if (i === 0) sceneWire(); else if (i === 1) sceneCode(); else if (i === 2) sceneBuild(); else sceneLive();
+    if (i === 0) sceneWire(); else if (i === 1) sceneCode(); else if (i === 2) sceneBuild(); else sceneAlive();
   }
 
   /* ------------------------------------------------ the sync: one listener, no timer */
@@ -228,20 +217,18 @@
     var i = e.detail && e.detail.index;
     if (typeof i !== 'number') return;
     last = i;
-    if (i === 0) { proj = (proj + 1) % P.length; loadProject(); }   /* a new cycle: the next project */
     if (!ready || !visible || document.hidden || reduce) return;
     go(i);
-    log.push({ word: i, scene: scene, proj: P[proj].slug, t: Math.round(performance.now()) });
+    log.push({ word: i, scene: scene, t: Math.round(performance.now()) });
   });
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (es) {
       var v = es[es.length - 1].isIntersecting;
       if (v === visible) return; visible = v;
       if (tl) tl.paused(!v);
-      if (!v) video.pause(); else if (scene === 3) { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
     }, { threshold: 0.05 }).observe(hero);
   }
-  document.addEventListener('visibilitychange', function () { if (document.hidden) { video.pause(); if (tl) tl.pause(); } else if (visible) { if (tl) tl.resume(); if (scene === 3) { var p = video.play(); if (p && p.catch) p.catch(function () {}); } } });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { if (tl) tl.pause(); } else if (visible && tl) tl.resume(); });
 
   /* ------------------------------------------------ placement: compact, bottom-right (mobile: below the buttons if it fits) */
   var CL = 50;                                                      /* layout clearance; the tilt makes the near edge recede, so the visual clearance is >= 40px */
@@ -254,10 +241,10 @@
     [].forEach.call(hero.querySelectorAll('.hero-line'), function (ln) { add(textRect(ln.querySelector('.hero-line__in')), gsap.getProperty(ln, 'y') || 0); });
     var s = hero.querySelector('.hero-sub'); if (s) add(textRect(s));
     [].forEach.call(hero.querySelectorAll('.hero-ctas .cta-row__btn, .hero-ctas .text-link'), function (b) { add(b.getBoundingClientRect()); });
-    var st = hero.querySelector('.hero-status'); if (st) add(textRect(st));
+    var st = hero.querySelector('.hero-status'); if (st) add(st.getBoundingClientRect());
     return out;
   }
-  var BAR = 34;
+  var BAR = 30;
   function place() {
     var hr = hero.getBoundingClientRect(), inner = hero.querySelector('.hero-inner').getBoundingClientRect();
     var obs = obstacles(hr), Lft = inner.left - hr.left;
@@ -265,11 +252,11 @@
     var res = null;
     if (window.innerWidth >= 900) {
       /* anchored bottom-right: right edge = the header burger's right edge, bottom = the status line's bottom (>= 32px above the hero bottom);
-         width clamp(300px, 26vw, 480px), scaled down (min 260px) only if it would come within 40px of the headline / subheading / buttons / status line */
+         width clamp(260px, 21vw, 390px), scaled down (min 220px) only if it would come within 40px of the headline / subheading / buttons / status line */
       var burger = document.getElementById('burger');
       var rEdge = burger ? burger.getBoundingClientRect().right - hr.left : inner.right - hr.left;
       var bottom = Math.min(st.bottom - hr.top, hr.height - 32) - 20;      /* -20: the tilt + float push the visual bottom edge a few px lower than the layout box (visual gap stays >= 32px) */
-      for (var W = Math.min(480, Math.max(300, 0.26 * window.innerWidth)); W >= 260 && !res; W -= 4) {
+      for (var W = Math.min(390, Math.max(260, 0.21 * window.innerWidth)); W >= 220 && !res; W -= 4) {
         var H = BAR + W * 0.625, left = rEdge - W, top = bottom - H;
         var hit = obs.some(function (o) { return o.r + CL > left && o.l - CL < left + W && o.b + CL > top && o.t - CL < top + H; });
         if (!hit) res = { left: left, top: top, W: W, H: H };
@@ -288,7 +275,6 @@
     if (!fit) { mode = 'off'; w.classList.remove('is-on'); gsap.set(w, { opacity: 0 }); return false; }
     w.style.left = Math.round(fit.left) + 'px'; w.style.top = Math.round(fit.top) + 'px'; w.style.width = Math.round(fit.W) + 'px';
     var sw = 1.5 * 1000 / view.clientWidth; w.style.setProperty('--hw-sw', sw.toFixed(2));
-    paintShots();
     mode = window.innerWidth >= 900 ? 'desktop' : 'mobile';
     var rest = restTilt();
     gsap.set(tilt, { rotationY: rest.y, rotationX: rest.x, rotationZ: rest.z });
@@ -307,29 +293,25 @@
   }, { passive: true });
   hero.addEventListener('pointerleave', function () { if (mode === 'desktop') { var rest = restTilt(); qy(rest.y); qx(rest.x); } });
 
-  /* ------------------------------------------------ entrance: after load, after the headline lines; never before LCP */
+  /* ------------------------------------------------ entrance: after load, after the headline lines */
   var rt = 0;
   window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { var was = mode !== 'off'; layout(); if (mode !== 'off') { if (!was) { w.classList.add('is-on'); gsap.to(w, { opacity: 1, duration: 0.4 }); } else gsap.set(w, { opacity: 1 }); } }, 150); });
-  function start() {
-    var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-    fontsReady.then(function () {
-      var wait = Math.max(0.35, (1700 - performance.now()) / 1000);                      /* ~0.3s after the last headline line */
-      gsap.delayedCall(wait, function () {
-        if (!layout()) return;
-        loadProject();
-        w.classList.add('is-on');
-        ready = true;
-        if (reduce) {                                                                  /* static window: the finished Aurum Birtok screenshot */
-          layers('live', true); gsap.set(w, { opacity: 1 }); return;
-        }
-        gsap.fromTo(w, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' });
-        gsap.fromTo(float, { y: -6 }, { y: 6, duration: 3.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-        go(last || 0);                                                                  /* the first scene follows the word shown now */
-        if (last) log.push({ word: last, scene: scene, proj: P[proj].slug, t: Math.round(performance.now()), init: true });
-      });
+  var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  fontsReady.then(function () {
+    var wait = Math.max(0.35, (1700 - performance.now()) / 1000);                      /* ~0.3s after the last headline line */
+    gsap.delayedCall(wait, function () {
+      if (!layout()) return;
+      w.classList.add('is-on');
+      ready = true;
+      if (reduce) {                                                                  /* static window: the finished "épít" state */
+        wireReset(true); siteReset(); layers('build', true); gsap.set(L.wire, { autoAlpha: 1 }); gsap.set(w, { opacity: 1 }); return;
+      }
+      gsap.fromTo(w, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' });
+      gsap.fromTo(float, { y: -6 }, { y: 6, duration: 3.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+      go(last || 0);                                                                  /* the first scene follows the word shown now */
+      if (last) log.push({ word: last, scene: scene, t: Math.round(performance.now()), init: true });
     });
-  }
-  start();
+  });
   }
   var run = function () { if (window.requestIdleCallback) window.requestIdleCallback(boot, { timeout: 800 }); else setTimeout(boot, 60); };
   if (document.readyState === 'complete') run(); else window.addEventListener('load', run);
