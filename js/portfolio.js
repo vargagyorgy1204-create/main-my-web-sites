@@ -154,7 +154,8 @@
     '<div class="pf-hold" aria-hidden="true"></div>';
   }
 
-  deck.innerHTML = data.map(caseHTML).join('') + igHTML();
+  /* card 06 sits in its own wrapper (.pf-last): its pin ends with the wrapper, so when the Instagram card arrives 06 is released and both move up together (the card pushes 06 out) */
+  deck.innerHTML = data.map(function (p, i) { return i === N - 1 ? '<div class="pf-last">' + caseHTML(p, i) + '</div>' : caseHTML(p, i); }).join('') + igHTML();
 
   var cases = Array.prototype.slice.call(deck.querySelectorAll('.pf-case:not(.pf-ig)'));
   var igCard = document.getElementById('pf-ig');
@@ -232,11 +233,12 @@
       all.forEach(function (card, i) {
         var next = all[i + 1];
         if (next) {
-          /* covered card: scales down and darkens while the next one slides over it */
+          /* covered card: scales down and darkens while the next one slides over it; card 06 is not covered but PUSHED out by the Instagram card (lighter values) */
+          var pushed = next === igCard;
           gsap.fromTo(card,
             { scale: 1, filter: 'brightness(1)' },
             {
-              scale: 0.92, filter: 'brightness(0.55)', ease: 'none', transformOrigin: '50% 0%',
+              scale: pushed ? 0.96 : 0.92, filter: pushed ? 'brightness(0.75)' : 'brightness(0.55)', ease: 'none', transformOrigin: '50% 0%',
               scrollTrigger: { trigger: next, start: 'top bottom', end: 'top 16px', scrub: true }
             });
         }
@@ -252,6 +254,10 @@
           });
         }
       });
+
+      /* the phone rises ~30px relative to its card while the card arrives (parallax), then settles */
+      var phoneWrap = igCard && igCard.querySelector('.pf-phone-wrap');
+      if (phoneWrap) gsap.fromTo(phoneWrap, { y: 30 }, { y: 0, ease: 'none', scrollTrigger: { trigger: igCard, start: 'top bottom', end: 'top 16px', scrub: true } });
 
       return function () { stackOn = false; scheduleActive(); };
     });
@@ -443,12 +449,18 @@
     var deskMq = window.matchMedia('(min-width: 900px)');
     function sizePanel() {
       panel.style.removeProperty('--pf-ig-panel-h');
-      igCard.style.removeProperty('--pf-ig-panel-h');
+      igCard.style.removeProperty('--pf-ig-slot-h');
       if (!deskMq.matches) return;
       var ps = getComputedStyle(panel), padY = (parseFloat(ps.paddingTop) || 0) + (parseFloat(ps.paddingBottom) || 0);
       var ov = parseFloat(getComputedStyle(igCard).getPropertyValue('--pf-ig-ov')) || 50;
+      /* the QR block is hidden only when the copy would not fit the card (viewport minus 2 x 24px) */
+      igCard.classList.remove('pf-ig--noqr');
+      var room = window.innerHeight - 48;
+      if (copy.scrollHeight + padY > room) igCard.classList.add('pf-ig--noqr');
       var h = Math.max(wrap.offsetHeight - 2 * ov, copy.scrollHeight + padY);
       panel.style.setProperty('--pf-ig-panel-h', Math.round(h) + 'px');
+      /* the slot is only as tall as the phone (+ 32px for its 3D overshoot) and pins vertically centred */
+      igCard.style.setProperty('--pf-ig-slot-h', Math.round(Math.max(wrap.offsetHeight + 32, h + 2 * 16)) + 'px');
     }
     function fit() {
       sizePanel();
