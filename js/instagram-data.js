@@ -15,8 +15,8 @@
    qr                   the QR code of profileUrl (white modules, quiet zone included)
    ========================================================================== */
 window.IG_DATA = {
-  handle: 'webdeveloper_varbro',
-  profileUrl: 'https://www.instagram.com/webdeveloper_varbro/',
+  handle: 'webdev_varbro',
+  profileUrl: 'https://www.instagram.com/webdev_varbro/',
   name: 'Varga György',
   bio: ['Weboldalak kisvállalkozásoknak', 'Dizájn, kód és mozgás', 'varbro.pro'],
   avatar: 'assets/instagram/avatar.webp',

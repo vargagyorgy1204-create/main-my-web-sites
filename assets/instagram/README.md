@@ -10,5 +10,5 @@ The card is rendered from `js/instagram-data.js` (`window.IG_DATA`); layout code
 
 ## Other files
 - `avatar.webp` – profile picture (160 px, square). Currently a crop of the site photo; replace it any time. If the file is missing the site photo `contact-640.webp` is used.
-- `qr.webp` / `qr@2x.webp` – the Instagram QR (crop of `instaQR.jpg`, 192 / 384px); decodes to the profile URL.
+- `qr.webp` / `qr@2x.webp` – the Instagram QR of @webdev_varbro (crop of the code matrix only, from `newINSTAqr.jpg`, 256 / 512px). It decodes to `https://www.instagram.com/webdev_varbro?utm_source=qr&avpt=...`. Replace both files if the profile changes.
 - Bio / name / handle / profile URL: same data file.
