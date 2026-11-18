@@ -7553,11 +7553,11 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
         opacity: 0;
         transition: opacity 0.3s ease;
     }
-    .nav__bl--1 { height: 94px; --nb-b: 1px; }
-    .nav__bl--2 { height: 78px; --nb-b: 2px; }
-    .nav__bl--3 { height: 62px; --nb-b: 4px; }
-    .nav__bl--4 { height: 46px; --nb-b: 7px; }
-    .nav__bl--5 { height: 30px; --nb-b: 12px; }
+    .nav__bl--1 { height: 130px; --nb-b: 1px; }
+    .nav__bl--2 { height: 108px; --nb-b: 2px; }
+    .nav__bl--3 { height: 86px; --nb-b: 4px; }
+    .nav__bl--4 { height: 64px; --nb-b: 7px; }
+    .nav__bl--5 { height: 42px; --nb-b: 12px; }
     .nav--scrolled .nav__bl { opacity: 1; }
     .nav--menu-open .nav__bl { opacity: 0 !important; }
 }

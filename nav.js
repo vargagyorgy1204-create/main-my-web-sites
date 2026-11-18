@@ -31,7 +31,7 @@
     })();
 
     /* ---------- Progressive blur under the header (< 1024px; CSS: .nav__bl) ----------
-       Five stacked layers, each with its OWN backdrop-filter and its OWN gradient mask (blur grows 1 -> 12px, layer heights shrink 94 -> 30px): the strongest blur sits at the very
+       Five stacked layers, each with its OWN backdrop-filter and its OWN gradient mask (blur grows 1 -> 12px, layer heights shrink 130 -> 42px): the strongest blur sits at the very
        top and fades to nothing at the bottom edge. Chrome ignores a mask on a parent of a backdrop-filter element and a parent with opacity < 1 kills the backdrop, so the wrapper has
        neither; even where a mask is ignored, the staggered layer heights still give a stepped, soft fade instead of one hard edge. */
     (function buildBlur() {
