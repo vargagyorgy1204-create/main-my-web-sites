@@ -7492,7 +7492,10 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-ig .pf-case__inner { display: flex; align-items: center; padding-block: 0; }
   .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
   /* the text group is centred in its 2/3 column (left-aligned inside) */
-  .pf-ig__copy { order: 2; display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--s2); min-inline-size: 0; inline-size: fit-content; max-inline-size: 100%; justify-self: center; }
+  .pf-ig__copy { order: 2; display: flex; flex-direction: column; align-items: center; text-align: center; --pf-cg: var(--s2); gap: var(--pf-cg); min-inline-size: 0; inline-size: fit-content; max-inline-size: 100%; justify-self: center;
+    /* centre the VISIBLE group: the frame's top stroke sits a few px inside its box, so the copy is pulled up by that inset (top gap = bottom gap) */
+    margin-block-start: calc(var(--pf-qrbox) * -0.0217 + 1.5px); }
+  .pf-ig__btnwrap { margin-block-start: calc(var(--pf-cg) * 0.5); }              /* description -> button = 1.5 x the title -> description gap */
   .pf-ig .pf-case__block { max-inline-size: 36ch; }
   .pf-ig .pf-case__name { font-size: clamp(26px, 2.7vw, 52px); }
   /* QR block: the white tile (--pf-qr, scannable) inside a hand-drawn bracket frame, at the top of the stack. The label + curly arrow sit ABOVE the card (dark ink on the light Portfolio
@@ -7560,4 +7563,4 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 /* the handwriting font of the Instagram QR label (self-hosted, Caveat 600, latin + latin-ext) */
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@media (min-width: 900px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { gap: var(--s1); } }
+@media (min-width: 900px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
