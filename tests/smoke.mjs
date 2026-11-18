@@ -368,18 +368,18 @@ async function layoutChecks(vp) {
   rec(tag, 'logo/burger never overlap text or cards', hits.length === 0, hits.slice(0, 4).join(' ; '));
 
   // 3) eyebrows: identical typography everywhere
-  const eb = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow:not(#hero-c *)')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */);
+  const eb = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */);
   const eb2 = await (async () => {
     const p2 = await ctx.newPage(); await p2.goto(`${BASE}/myapproach.html`, { waitUntil: 'load' });
     /* its entrance animates the letter-spacing: wait until it reaches the common value */
     const want = (eb[0] || '').split('|')[3];
     await until(p2, w => { const e = document.querySelector('.section-eyebrow'); return !!e && getComputedStyle(e).letterSpacing === w; }, want, 4000);
-    const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow:not(#hero-c *)')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */); await p2.close(); return r;
+    const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */); await p2.close(); return r;
   })();
   const all = eb.concat(eb2);
   rec(tag, 'six section eyebrows on index (Együttműködés and Portfólió have none) + one on myapproach exist', eb.length === 6 && eb2.length === 1, `${eb.length}+${eb2.length}`);
   rec(tag, 'all eyebrows share font / size / weight / spacing / uppercase', new Set(all).size === 1 && /uppercase/.test(all[0]), [...new Set(all)].join(' || '));
-  const ebTxt = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow:not(#hero-c *)')].map(e => e.textContent.trim()));
+  const ebTxt = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => e.textContent.trim()));
   rec(tag, 'eyebrow labels are written in normal case', ebTxt.every(t => t !== t.toUpperCase() || t.length < 2), ebTxt.join(' / '));
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
   await ctx.close();
