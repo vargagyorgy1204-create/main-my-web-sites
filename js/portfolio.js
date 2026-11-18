@@ -122,7 +122,6 @@
     function fl(i, cls) { return '<span class="pf-float ' + cls + '" aria-hidden="true"><img src="' + esc(posts[i % n]) + '" width="360" height="360" alt="" loading="lazy" decoding="async"></span>'; }
     var layers = '<span class="pf-phone__layer" style="--z:-4px"></span><span class="pf-phone__layer" style="--z:-8px"></span><span class="pf-phone__layer" style="--z:-12px"></span><span class="pf-phone__layer" style="--z:-16px"></span>';
     return '<article class="pf-case pf-ig" id="pf-ig" data-theme="light" style="--accent:#c850c0">' +
-      '<div class="pf-case__bgname" aria-hidden="true"><span>Instagram</span></div>' +
       '<div class="pf-case__inner"><div class="pf-ig__panel">' +
         '<div class="pf-ig__copy">' +
           '<div class="pf-case__meta"><span class="pf-tag">Instagram</span></div>' +
@@ -134,7 +133,7 @@
         '</div>' +
         '<div class="pf-case__media pf-ig__stage"><div class="pf-phone-wrap">' +
           '<span class="pf-phone__shadow" aria-hidden="true"></span>' +
-          fl(1, 'pf-float--a') + fl(5, 'pf-float--b') + fl(9, 'pf-float--c') +
+          fl(1, 'pf-float--a') + fl(5, 'pf-float--b') +
           '<a class="pf-phone" href="' + url + '" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Megnézem" aria-label="Instagram-profil megnyitása: @' + esc(IG.handle) + '">' +
             layers +
             '<span class="pf-phone__face" aria-hidden="true"><span class="pf-phone__body"><span class="pf-phone__island"></span><span class="pf-phone__screen">' +
@@ -439,7 +438,20 @@
      twice; one set height = one loop). It pauses on hover (real mouse), runs only while the card is in view and stays static with reduced motion / without GSAP. */
   if (igCard) (function () {
     var nameEl = igCard.querySelector('.pf-case__name');
+    /* desktop: the panel is shorter than the phone, so the phone overflows it by --pf-ig-ov at the top and bottom (but never less tall than its own copy) */
+    var panel = igCard.querySelector('.pf-ig__panel'), copy = igCard.querySelector('.pf-ig__copy'), wrap = igCard.querySelector('.pf-phone-wrap');
+    var deskMq = window.matchMedia('(min-width: 900px)');
+    function sizePanel() {
+      panel.style.removeProperty('--pf-ig-panel-h');
+      igCard.style.removeProperty('--pf-ig-panel-h');
+      if (!deskMq.matches) return;
+      var ps = getComputedStyle(panel), padY = (parseFloat(ps.paddingTop) || 0) + (parseFloat(ps.paddingBottom) || 0);
+      var ov = parseFloat(getComputedStyle(igCard).getPropertyValue('--pf-ig-ov')) || 50;
+      var h = Math.max(wrap.offsetHeight - 2 * ov, copy.scrollHeight + padY);
+      panel.style.setProperty('--pf-ig-panel-h', Math.round(h) + 'px');
+    }
     function fit() {
+      sizePanel();
       nameEl.style.fontSize = '';
       var w = nameEl.clientWidth;
       if (w && nameEl.scrollWidth > w + 0.5) nameEl.style.fontSize = (parseFloat(getComputedStyle(nameEl).fontSize) * w / nameEl.scrollWidth * 0.985).toFixed(2) + 'px';
@@ -447,6 +459,10 @@
     var ft = 0;
     window.addEventListener('resize', function () { clearTimeout(ft); ft = setTimeout(fit, 80); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit); else fit();
+
+    var themeMq = window.matchMedia('(min-width: 1024px)');
+    function setTheme() { igCard.setAttribute('data-theme', themeMq.matches ? 'light' : 'dark'); }
+    setTheme(); if (themeMq.addEventListener) themeMq.addEventListener('change', setTheme);
 
     var av = igCard.querySelector('.pf-phone__avatar');
     if (av && IG.avatarFallback) av.addEventListener('error', function () { av.src = IG.avatarFallback; }, { once: true });
