@@ -44,10 +44,10 @@
       var gsap = VB.gsap;
       var words = ['tervez', 'kódol', 'épít', 'életre kelt'];
       var cur = 0, busy = false, built = false;
-      var GRAD = 'linear-gradient(90deg, #7f7fff 0%, #b765f2 55%, #ee5fcf 100%)';
-      var makeWord = function (word) {
+      var makeWord = function (word, idx) {                          /* each word has its own solid colour + outline (CSS, [data-wi]) */
         var w = document.createElement('span');
         w.className = 'hero-live__w';
+        w.setAttribute('data-wi', idx);
         w.setAttribute('aria-hidden', 'true');
         for (var i = 0; i < word.length; i++) {
           var l = document.createElement('span');
@@ -57,26 +57,19 @@
         }
         return w;
       };
-      var paint = function (w) {                                   /* gradient flows across the whole word: each letter shows its own slice */
-        var W = w.offsetWidth || 1, ls = w.children;
-        for (var i = 0; i < ls.length; i++) { ls[i].style.backgroundSize = W + 'px 100%'; ls[i].style.backgroundPosition = (-ls[i].offsetLeft) + 'px 0'; }
-      };
       var build = function () {
         if (built) return; built = true;
-        var w = makeWord(words[0]);
+        var w = makeWord(words[0], 0);
         txt.textContent = '';
-        txt.classList.add('is-roll');
         txt.appendChild(w);
-        paint(w);
       };
       var next = function () {
         if (!busy && !document.hidden && built) {
           busy = true;
           var old = txt.querySelector('.hero-live__w');
           cur = (cur + 1) % words.length;
-          var nw = makeWord(words[cur]);
+          var nw = makeWord(words[cur], cur);
           txt.appendChild(nw);
-          paint(nw);
           var ls = nw.children;
           gsap.set(ls, { yPercent: 70, opacity: 0, scale: 0.94, transformOrigin: '50% 100%', force3D: false });
           gsap.to(old, { yPercent: -70, opacity: 0, duration: 0.7, ease: 'power3.inOut', force3D: false, onComplete: function () { if (old.parentNode) old.parentNode.removeChild(old); } });
@@ -87,8 +80,42 @@
       };
       var start = function () { build(); gsap.delayedCall(3.5 + 0.9, next); };
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); else start();
-      window.addEventListener('resize', function () { var w = txt.querySelector('.hero-live__w:last-child'); if (w && !busy) paint(w); });
     }
+  }
+
+  /* ------------------------------------------------ magnetic letters: "Kreatív" / "Webfejlesztő," (html.has-cursor only, no reduced motion)
+     Each letter reacts to its distance from the pointer (radius ~180px): lifts up to -8px and eases its weight 800 -> 500 (variable Syne), GSAP quickTo ~0.35s.
+     Every letter box keeps its measured rest width (inline-block, text centred), so the weight change never moves the line. */
+  var chars = hero.querySelectorAll('.hero-ch');
+  if (chars.length && !reduce && VB.gsap) {
+    var gs = VB.gsap, R = 180, LIFT = 8, W0 = 800, W1 = 500;
+    var items = [].map.call(chars, function (el) {
+      var st = { w: W0 };
+      return { el: el, st: st,
+        qy: gs.quickTo(el, 'y', { duration: 0.35, ease: 'power3' }),
+        qw: gs.quickTo(st, 'w', { duration: 0.35, ease: 'power3', onUpdate: function () { el.style.setProperty('--w', st.w.toFixed(1)); } }) };
+    });
+    var lock = function () {                                       /* fix every letter box to its rest width (at weight 800) */
+      items.forEach(function (it) { it.el.style.width = ''; });
+      var ws = items.map(function (it) { return it.el.getBoundingClientRect().width; });
+      items.forEach(function (it, i) { it.el.style.width = ws[i] + 'px'; });
+    };
+    var armed = false;
+    var arm = function () { if (armed) return; armed = true; lock(); };
+    var relock = function () { if (armed) { items.forEach(function (it) { it.el.style.setProperty('--w', W0); }); lock(); } };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(arm, 50); }); else arm();
+    var rt = 0; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(relock, 150); });
+    var rest = function () { items.forEach(function (it) { it.qy(0); it.qw(W0); }); };
+    hero.addEventListener('pointermove', function (e) {
+      if (e.pointerType !== 'mouse' || !root.classList.contains('has-cursor') || !armed) return;
+      items.forEach(function (it) {
+        var b = it.el.getBoundingClientRect();
+        var d = Math.hypot(e.clientX - (b.left + b.width / 2), e.clientY - (b.top + b.height / 2));
+        var f = Math.max(0, 1 - d / R); f = f * f * (3 - 2 * f);   /* smoothstep falloff */
+        it.qy(-LIFT * f); it.qw(W0 - (W0 - W1) * f);
+      });
+    }, { passive: true });
+    hero.addEventListener('pointerleave', rest);
   }
 
   /* ------------------------------------------------ scroll out: the lines drift apart + fade */

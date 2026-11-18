@@ -3196,7 +3196,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 /* the block (headline, lead, buttons) hangs directly under the label (label -> headline = --eyebrow-head-gap, as in the other sections); the status line stays at the bottom */
 .hero-title { position: relative; margin: 0 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(34px, min(8.2vw, 10.8svh), 150px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
 .hero-headline {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Syne Var', 'Syne', sans-serif;
     font-weight: 800;
     font-size: 1em;
     line-height: 1.04;
@@ -3222,26 +3222,27 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     position: absolute;
     inset: 0 auto 0 0;
     white-space: pre;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    background: linear-gradient(90deg, #7f7fff 0%, #b765f2 55%, #ee5fcf 100%) no-repeat 0 0 / 11em 100%;        /* the brand blue -> violet -> pink, lifted so it reads on the dark flow */
-    -webkit-background-clip: text;
-    background-clip: text;
+    color: #6366f1;
+    -webkit-text-fill-color: #6366f1;
+    -webkit-text-stroke: var(--hero-sw, 1.5px) #a5a7fb;       /* solid brand colour + a lighter tint of it as a thin outline (no gradient, no shadow, no box) */
+    paint-order: stroke fill;
 }
 /* the living word waits for the web fonts (a font swap would shift it; hidden boxes are not counted as layout shift) */
 html.hero-wait .hero-live, html.hero-wait .hero-headline, html.hero-wait .hero-sub, html.hero-wait .hero-ctas { visibility: hidden; }
 /* calm vertical roll (js/hero-fx.js): NO clipping box / filter / will-change on the word (any of them makes a composited layer that shows as a hard-edged rectangle over the WebGL background); the letters carry the gradient themselves (offset by their x so it flows across the whole word) */
-.hero-live__txt.is-roll { background: none; }
-.hero-live__w { position: absolute; inset: 0 auto 0 0; white-space: pre; }
-/* ROOT CAUSE of the dark box: the global h1 text-shadow (0 12px 34px rgb(0 0 0 / .38), line 356) is inherited by the transparent-fill gradient letters; the blurred shadow of a transparent glyph is painted as a dark halo that the roll's clip box / the letters' own layers cut off with hard edges. The word carries no shadow. */
+.hero-live__w { position: absolute; inset: 0 auto 0 0; white-space: pre; --wc: #6366f1; --wt: #a5a7fb; }
+.hero-live__w[data-wi="1"] { --wc: #9b3fd8; --wt: #cf94f0; }
+.hero-live__w[data-wi="2"] { --wc: #C026A3; --wt: #e68bd3; }
+.hero-live__w[data-wi="3"] { --wc: #1a8fa3; --wt: #73d7e8; }      /* the light end of --card-accent-cool (#0e4d5c -> #1a8fa3) */
+/* ROOT CAUSE of the old dark box: the global h1 text-shadow (line 356) on transparent-fill letters, cut off by the roll's clip box. The word carries no shadow and no gradient. */
 .hero-live__txt, .hero-live__w, .hero-live__l { text-shadow: none; }
-.hero-live__l { display: inline-block; color: transparent; -webkit-text-fill-color: transparent; background-image: linear-gradient(90deg, #7f7fff 0%, #b765f2 55%, #ee5fcf 100%); background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; }
+.hero-live__l { display: inline-block; color: var(--wc); -webkit-text-fill-color: var(--wc); -webkit-text-stroke: var(--hero-sw, 1.5px) var(--wt); paint-order: stroke fill; }
 html.hero-static .hero-live { display: inline; }
 html.hero-static .hero-live__size { display: none; }
-html.hero-static .hero-live__txt { position: static; background-size: 100% 100%; }
+html.hero-static .hero-live__txt { position: static; }
 
 .hero-sub {
-    font-size: clamp(14px, min(1.5vw, 2.1svh), 20px);
+    font-size: clamp(15.4px, min(1.65vw, 2.31svh), 22px);
     color: rgb(255 255 255 / 0.68);
     line-height: 1.65;
     margin: 0 0 clamp(16px, 3.3svh, 36px) 0;
@@ -3281,7 +3282,10 @@ html.hero-static .hero-live__txt { position: static; background-size: 100% 100%;
 .hero-status__dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #34d27b; animation: heroPing 2s ease-out infinite; }
 @keyframes heroPing { from { transform: scale(1); opacity: 0.7; } to { transform: scale(3.2); opacity: 0; } }
 
+/* magnetic letters (js/hero-fx.js, html.has-cursor only): "Kreatív" / "Webfejlesztő," are split into letters; each box keeps its rest width (set in js), so a weight change never moves the line */
+.hero-ch { display: inline-block; text-align: center; font-weight: var(--w, 800); }
 @media (max-width: 899px) {
+    .hero-live { --hero-sw: 1px; }
     .hero-title { font-size: min(clamp(28px, 10.4vw, 64px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* same three lines, smaller */
     .hero-line__in { white-space: normal; }
     .hero-ctas { margin-bottom: 0; }
@@ -7424,3 +7428,6 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @media (min-width: 900px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
+
+/* Hero headline: the variable Syne (wght 400-800, latin + latin-ext, self-hosted) for the magnetic-letters weight change; the rest of the site keeps the Google Syne 700/800 */
+@font-face { font-family: 'Syne Var'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(assets/fonts/syne-var-latin-ext.woff2) format('woff2'); }
