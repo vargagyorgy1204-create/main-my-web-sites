@@ -110,17 +110,15 @@
             .to(ar, { x: -12, duration: 0.6, ease: 'power3.out' }, 0.85)
             .to(ar, { opacity: 0, duration: 0.3 }, 1.5);
         },
-        function (w, tl, inn, ls) {                                  /* kódol: code-symbol scramble, width reserved + a blinking caret and a </> badge */
+        function (w, tl, inn, ls) {                                  /* kódol: code-symbol scramble, width reserved; the word is then wrapped as code: < word /> */
           var n = ls.length, fin = [], i;
           for (i = 0; i < n; i++) { fin.push(ls[i].textContent); }
           for (i = 0; i < n; i++) { var bw = ls[i].getBoundingClientRect().width; ls[i].style.width = bw + 'px'; ls[i].style.textAlign = 'center'; }
-          var H = w.offsetHeight, lastR = ls[n - 1].offsetLeft + ls[n - 1].offsetWidth, lastC = ls[n - 1].offsetLeft + ls[n - 1].offsetWidth / 2;
-          var caret = document.createElement('span'); caret.className = 'hero-live__caret';
-          caret.style.left = (lastR + 4) + 'px'; caret.style.top = Math.round(H * 0.2) + 'px'; caret.style.height = Math.round(H * 0.62) + 'px';
-          var badge = document.createElement('span'); badge.className = 'hero-live__badge'; badge.textContent = '</>';
-          w.appendChild(caret); w.appendChild(badge);
-          badge.style.left = Math.round(lastC - badge.offsetWidth / 2) + 'px'; badge.style.top = Math.round(H * 0.12 - 21) + 'px';
-          gsap.set(ls, { opacity: 0 }); gsap.set(caret, { visibility: 'hidden' }); gsap.set(badge, { scale: 0, opacity: 0 });
+          var lt = document.createElement('span'), rt = document.createElement('span');             /* absolutely placed beside the word: no layout width, never touches another line */
+          lt.className = 'hero-live__code'; rt.className = 'hero-live__code'; lt.textContent = '<'; rt.textContent = '/>';
+          lt.style.right = '100%'; lt.style.marginRight = '0.18em'; rt.style.left = '100%'; rt.style.marginLeft = '0.18em';
+          w.appendChild(lt); w.appendChild(rt);
+          gsap.set(ls, { opacity: 0 }); gsap.set([lt, rt], { opacity: 0 });
           var st = { p: 0 };
           tl.set(ls, { opacity: 1 }, 0).to(st, { p: 1, duration: 0.6, ease: 'none', onUpdate: function () {
             for (var j = 0; j < n; j++) {
@@ -128,27 +126,28 @@
               ls[j].textContent = st.p >= lock ? fin[j] : SYMS.charAt(Math.floor(st.p * 14 + j * 3) % SYMS.length);
             }
           }, onComplete: function () { for (var j = 0; j < n; j++) { ls[j].textContent = fin[j]; ls[j].style.width = ''; ls[j].style.textAlign = ''; } } }, 0)
-            .set(caret, { visibility: 'visible' }, 0.6)
-            .fromTo(badge, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2.2)' }, 0.55)
-            .to(badge, { opacity: 0, duration: 0.3 }, 1.8);
+            .fromTo(lt, { x: -12, opacity: 0 }, { x: 0, opacity: 0.6, duration: 0.4, ease: 'power2.out' }, 0.6)
+            .fromTo(rt, { x: 12, opacity: 0 }, { x: 0, opacity: 0.6, duration: 0.4, ease: 'power2.out' }, 0.6);
         },
-        function (w, tl, inn, ls) {                                  /* épít: blocks lock together + a dimension line with the measured width */
+        function (w, tl, inn, ls) {                                  /* épít: letters lock together; four brand blocks fall to the right of the word and stack into a stair */
           gsap.set(ls, { yPercent: function (i) { return i % 2 === 0 ? 60 : -60; }, opacity: 0, force3D: false });
-          var W = w.offsetWidth, H = w.offsetHeight, cx = W / 2, y = H + 6, gap = 27;
-          var dim = document.createElementNS(NS, 'svg'); dim.setAttribute('class', 'hero-live__dim'); dim.setAttribute('width', W); dim.setAttribute('height', H + 14); dim.setAttribute('viewBox', '0 0 ' + W + ' ' + (H + 14));
-          dim.style.left = '0px'; dim.style.top = '0px';
-          var pl = document.createElementNS(NS, 'path'), pr = document.createElementNS(NS, 'path');
-          pl.setAttribute('d', 'M' + (cx - gap) + ' ' + y + 'H1M6 ' + (y - 3.5) + 'L1 ' + y + 'L6 ' + (y + 3.5)); pr.setAttribute('d', 'M' + (cx + gap) + ' ' + y + 'H' + (W - 1) + 'M' + (W - 6) + ' ' + (y - 3.5) + 'L' + (W - 1) + ' ' + y + 'L' + (W - 6) + ' ' + (y + 3.5));
-          pl.setAttribute('pathLength', '1'); pr.setAttribute('pathLength', '1');
-          dim.appendChild(pl); dim.appendChild(pr); w.appendChild(dim);
-          var lab = document.createElement('span'); lab.className = 'hero-live__dl'; lab.style.left = cx + 'px'; lab.style.top = y + 'px'; lab.textContent = '0 px'; w.appendChild(lab);
-          gsap.set([pl, pr], { strokeDashoffset: 1 }); gsap.set(lab, { opacity: 0 });
-          var cnt = { v: 0 };
+          var W = w.offsetWidth, H = w.offsetHeight, fpx = parseFloat(getComputedStyle(w).fontSize) || 72;
+          var sz = Math.round(fpx * 0.22), gp = 3, x0 = W + Math.round(fpx * 0.2), base = H * 0.83;
+          var CELLS = [[0, 0, '#6366f1'], [1, 0, '#9b3fd8'], [0, 1, '#C026A3'], [2, 0, '#22c3d6']];
+          var blks = CELLS.map(function (c) {
+            var e = document.createElement('span'); e.className = 'hero-live__blk';
+            e.style.width = sz + 'px'; e.style.height = sz + 'px'; e.style.left = (x0 + c[0] * (sz + gp)) + 'px'; e.style.top = Math.round(base - (c[1] + 1) * sz - c[1] * gp) + 'px'; e.style.background = c[2];
+            w.appendChild(e); return e;
+          });
+          gsap.set(blks, { opacity: 0, transformOrigin: '50% 100%' });
           tl.to(ls, { yPercent: 0, duration: 0.6, ease: 'back.out(1.6)', stagger: 0.06, force3D: false }, 0)
-            .to(ls, { opacity: 1, duration: 0.2, stagger: 0.06 }, 0)
-            .to([pl, pr], { strokeDashoffset: 0, duration: 0.5, ease: 'power2.out' }, 0.55)           /* from the centre outward */
-            .to(lab, { opacity: 1, duration: 0.2 }, 0.55)
-            .to(cnt, { v: Math.round(W), duration: 0.5, ease: 'power2.out', onUpdate: function () { lab.textContent = Math.round(cnt.v) + ' px'; } }, 0.55);
+            .to(ls, { opacity: 1, duration: 0.2, stagger: 0.06 }, 0);
+          blks.forEach(function (e, k) {                             /* gravity drop (ease-in), a tiny squash on landing */
+            var t = 0.25 + k * 0.12;
+            tl.fromTo(e, { y: -40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.in' }, t)
+              .to(e, { scaleY: 0.68, scaleX: 1.12, duration: 0.07, ease: 'power1.out' }, t + 0.3)
+              .to(e, { scaleY: 1, scaleX: 1, duration: 0.22, ease: 'back.out(2.5)' }, t + 0.37);
+          });
         },
         function (w, tl, inn, ls) {                                  /* életre kelt: elastic pop + neon flash, then a soft glow + three twinkling sparkles */
           gsap.set(ls, { scale: 0.4, opacity: 0, transformOrigin: '50% 70%', force3D: false });

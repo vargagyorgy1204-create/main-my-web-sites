@@ -22,7 +22,7 @@
   var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   var FRAG = [
     'precision mediump float;',
-    'uniform vec2 uR;uniform float uT;uniform vec2 uM;uniform vec2 uP;uniform float uA;',
+    'uniform vec2 uR;uniform float uT;uniform vec2 uM;uniform vec2 uP;uniform float uA;uniform float uE;',
     'vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}',
     'vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}',
     'vec3 permute(vec3 x){return mod289(((x*34.)+1.)*x);}',
@@ -37,7 +37,7 @@
     ' m*=1.79284291400159-.85373472095314*(a0*a0+h*h);',
     ' vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.*dot(m,g);}',
     'void main(){',
-    ' vec2 uv=gl_FragCoord.xy/uR;float asp=uR.x/uR.y;vec2 q=(uv-.5)*vec2(asp,1.);',
+    ' vec2 uv=gl_FragCoord.xy/uR;uv.y=uv.y*(1.+uE)-uE;float asp=uR.x/uR.y*(1.+uE);vec2 q=(uv-.5)*vec2(asp,1.);',
     ' float t=uT*.06;',
     ' vec2 w=vec2(snoise(q*1.1+vec2(t,t*.7)),snoise(q*1.1+vec2(-t*.8,t+5.2)));',
     ' vec2 pq=q+w*.34;',
@@ -82,7 +82,7 @@
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);   /* one oversized triangle covers the screen */
   var loc = gl.getAttribLocation(prog, 'p');
   gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  var uR = gl.getUniformLocation(prog, 'uR'), uT = gl.getUniformLocation(prog, 'uT'), uM = gl.getUniformLocation(prog, 'uM'), uP = gl.getUniformLocation(prog, 'uP'), uA = gl.getUniformLocation(prog, 'uA');
+  var uR = gl.getUniformLocation(prog, 'uR'), uT = gl.getUniformLocation(prog, 'uT'), uM = gl.getUniformLocation(prog, 'uM'), uE = gl.getUniformLocation(prog, 'uE'), uP = gl.getUniformLocation(prog, 'uP'), uA = gl.getUniformLocation(prog, 'uA');
 
   var scale = window.innerWidth < 900 ? 0.3 : 0.45;             /* reduced resolution: the gradient is soft, the browser scales it up */
   function resize() {
@@ -117,13 +117,14 @@
     act += (actT - act) * k;
     resize();
     gl.uniform2f(uR, canvas.width, canvas.height);
+    gl.uniform1f(uE, Math.max(0, (canvas.clientHeight - hero.clientHeight) / Math.max(1, hero.clientHeight)));      /* extension below the hero, as a fraction of the hero height */
     gl.uniform1f(uT, (now - t0) / 1000);
     gl.uniform2f(uM, mx, my); gl.uniform2f(uP, px, py); gl.uniform1f(uA, act);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     if (!started) { started = true; bg.classList.add('is-gl'); }
   }
   function run() { if (!raf && visible && !document.hidden) raf = requestAnimationFrame(frame); }
-  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[es.length - 1].isIntersecting; if (visible) run(); }).observe(hero);
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visible = es[es.length - 1].isIntersecting; if (visible) run(); }).observe(bg);
   document.addEventListener('visibilitychange', run);
   canvas.addEventListener('webglcontextlost', function (e) { e.preventDefault(); bg.classList.remove('is-gl'); fallback(); cancelAnimationFrame(raf); });
 

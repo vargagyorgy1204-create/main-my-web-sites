@@ -265,3 +265,8 @@ Built by `js/hero-window.js` (markup, scenes), CSS block "Hero living window" at
 - Buttons: PROJEKT INDÍTÁSA + PORTFÓLIÓ in one nowrap row, gap 20px; ≤380px the primary button scales (padding 15/5px, gap 6px, font −1px, tracking 0.2px) so both fit at 360px.
 - Living window on phones: a decorative "peek" in the free space between the buttons and the status line, width min(82vw, fits the space), left = 100vw − 0.85·W (15% past the right edge, cropped by the hero), vertically centred, tilt rotateY −12 / rotateZ −3, float ±4px, no pointer tilt; hidden if the free space is < 200px.
 - `.hero-comma`: the comma after "Webfejlesztő" is a real comma, `--card-primary` gradient (the section headings' dot colour), 0.85em, margin-left −0.04em; the shimmer / hover copies carry the same markup.
+
+## Hero → Rólam blend, kódol / épít props (update)
+- The live hero background continues below the hero: `.hero-bg` is `--hero-ext` (50svh) taller; the shader maps the hero part to its original coordinates (`uE`), the extension continues the noise. `#hero` is `overflow-x: clip; overflow-y: visible`. The fade (`.hero-bg::after`) starts ~68svh into the hero and ends at the bottom of the extension on #170c26 with smoothstep-like stops. `#about` is `position: relative; z-index: 1` and its background is transparent for the first 50svh, solid `--about-bg` below. The shader's observer watches `.hero-bg`.
+- Living window: right edge = the Rólam card's right edge (`#about .about-bio-card`).
+- kódol: the word is wrapped as code (`<` before, `/>` after, JetBrains Mono 0.45em, word colour at 60%, absolutely placed, slide in 12px / 0.4s). épít: four 0.22em brand-coloured blocks fall to the right of the word into a stair (gravity ease, squash on landing, stagger 0.12s).

@@ -3127,9 +3127,11 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 
 /* ── Hero: "living text" (dark; the tight anchor like the other labelled sections) ───────────── */
 #hero {
+    --hero-ext: 50svh;                 /* the live background continues this far below the hero into Rólam (eased fade to #170c26) */
     position: relative;
     isolation: isolate;
-    overflow: hidden;
+    overflow-x: clip;
+    overflow-y: visible;
     background: #0f0b1c;
     color: #fff;
     min-height: 100vh;
@@ -3143,7 +3145,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 /* background: a static CSS gradient is always there (also the fallback); the WebGL canvas fades in over it once it runs (js/hero-gl.js) */
 .hero-bg {
     position: absolute;
-    inset: 0;
+    inset: 0 0 calc(-1 * var(--hero-ext)) 0;
     z-index: -1;
     pointer-events: none;
     overflow: hidden;
@@ -3153,7 +3155,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
         radial-gradient(60% 70% at 55% 95%, rgb(192 38 163 / 0.34), transparent 70%),
         #0f0b1c;
 }
-.hero-gl { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%); }
+.hero-gl { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
 .hero-bg.is-gl .hero-gl { opacity: 1; }
 .hero-css { position: absolute; inset: 0; display: none; }
 .hero-bg.is-css .hero-css { display: block; }
@@ -3173,8 +3175,9 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 200px 200px;
 }
-/* the last ~25% of the hero blends into Rólam's colour (#170c26 = --about-bg): the shader canvas is masked out over it and an eased gradient (smoothstep-like stops, no visible edge) lands exactly on the section colour */
-.hero-bg::after { content: ""; position: absolute; inset: auto 0 -1px 0; block-size: calc(25% + 1px); background: linear-gradient(180deg, rgb(23 12 38 / 0) 0%, rgb(23 12 38 / 0.04) 12%, rgb(23 12 38 / 0.16) 28%, rgb(23 12 38 / 0.38) 46%, rgb(23 12 38 / 0.64) 64%, rgb(23 12 38 / 0.86) 80%, rgb(23 12 38 / 0.97) 92%, #170c26 100%); }
+/* the long fade into Rólam: starts ~68svh into the hero and ends at the bottom of the extension (--hero-ext below the hero) exactly on Rólam's colour #170c26 (= --about-bg);
+   smoothstep-like stops, so there is no visible edge at any scroll position. #about is transparent in that zone (see below), so the colours really blend. */
+.hero-bg::after { content: ""; position: absolute; inset: auto 0 0 0; block-size: calc(var(--hero-ext) + 32svh); background: linear-gradient(180deg, rgb(23 12 38 / 0) 0%, rgb(23 12 38 / 0.028) 10%, rgb(23 12 38 / 0.104) 20%, rgb(23 12 38 / 0.216) 30%, rgb(23 12 38 / 0.352) 40%, rgb(23 12 38 / 0.5) 50%, rgb(23 12 38 / 0.648) 60%, rgb(23 12 38 / 0.784) 70%, rgb(23 12 38 / 0.896) 80%, rgb(23 12 38 / 0.972) 90%, #170c26 100%); }
 
 .hero-inner {
     position: relative;
@@ -3248,13 +3251,9 @@ html.hero-wait .hero-live, html.hero-wait .hero-headline, html.hero-wait .hero-s
 .hero-live__h { position: absolute; inline-size: 7px; block-size: 7px; margin: -3.5px 0 0 -3.5px; background: #fff; border: 1.5px solid var(--wc); box-sizing: border-box; pointer-events: none; }
 .hero-live__ar { position: absolute; inline-size: 28px; block-size: 28px; color: #fff; pointer-events: none; }
 .hero-live__ar svg { inline-size: 100%; block-size: 100%; fill: #fff; stroke: var(--wc); stroke-width: 1.75; }
-/* kódol: a blinking caret + a tiny </> badge · épít: a dimension line with a measured width · életre kelt: 4-point sparkles */
-.hero-live__caret { position: absolute; inline-size: 3px; background: var(--wc); border-radius: 1px; pointer-events: none; animation: heroBlink 1s steps(1) infinite; }
-@keyframes heroBlink { 50% { opacity: 0; } }
-.hero-live__badge { position: absolute; padding: 2px 6px; font: 600 11px/1 'JetBrains Mono', ui-monospace, Consolas, monospace; color: #fff; border: 1px solid var(--wt); border-radius: 5px; background: rgb(155 63 216 / 0.3); white-space: nowrap; pointer-events: none; transform-origin: 50% 100%; }
-.hero-live__dim { position: absolute; overflow: visible; pointer-events: none; }
-.hero-live__dim path { fill: none; stroke: var(--wt); stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
-.hero-live__dl { position: absolute; transform: translate(-50%, -50%); font: 500 10px/1 'JetBrains Mono', ui-monospace, Consolas, monospace; letter-spacing: 0; color: var(--wt); white-space: nowrap; pointer-events: none; }
+/* kódol: the word is wrapped as code ( < word /> ) · épít: four brand-coloured blocks fall to the right of the word and stack into a stair · életre kelt: 4-point sparkles */
+.hero-live__code { position: absolute; top: 56%; font: 500 0.45em/1 'JetBrains Mono', ui-monospace, Consolas, monospace; color: var(--wc); white-space: pre; pointer-events: none; transform: translateY(-50%); text-shadow: none; opacity: 0.6; }
+.hero-live__blk { position: absolute; border-radius: 0.04em; pointer-events: none; transform-origin: 50% 100%; }
 .hero-live__sp { position: absolute; inline-size: 16px; block-size: 16px; color: #fff; pointer-events: none; }
 .hero-live__sp svg { inline-size: 100%; block-size: 100%; fill: currentColor; stroke: currentColor; stroke-width: 1.25; }
 html.hero-static .hero-live { display: inline; }
@@ -7218,7 +7217,7 @@ section#skills { background: linear-gradient(180deg, rgb(23 12 38) calc(max(35%,
 /* ===== RÓLAM: dark section (data-theme="dark" drives the header, the cursor reads the dark background) =====
    Section colour = --about-bg (deep ink violet based on #4B1956): scrubbed from the hero's light to #170c26 by about-story.js while the section rises into view (dark without JS / with reduced motion).
    Rólam -> Készségek: the top max(35%, 50svh) of Készségek (the section#skills gradient above) eases #170c26 -> #10172a. Scoped to #about: myapproach.html reuses .about-bio-card / .btn-about / .about-sign light. */
-#about { background: var(--about-bg, #170c26) !important; }
+#about { position: relative; z-index: 1; background: linear-gradient(180deg, transparent 0, transparent var(--hero-ext-px, 50svh), var(--about-bg, #170c26) var(--hero-ext-px, 50svh)) !important; }
 #about .abt { --abt-ink: rgb(255 255 255 / 0.8); --abt-design: #E36DD0; --abt-code: #3FC6E0; --abt-motion: #8F89FF; }
 #about .about-bio-card { background: rgb(255 255 255 / 0.05); border: 1px solid rgb(255 255 255 / 0.08); box-shadow: none; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 #about .abt-lead { color: #fff; }

@@ -251,10 +251,10 @@
     var st = hero.querySelector('.hero-status').getBoundingClientRect();
     var res = null;
     if (window.innerWidth >= 900) {
-      /* anchored bottom-right: right edge = the header burger's right edge, bottom = the status line's bottom (>= 32px above the hero bottom);
+      /* anchored bottom-right: right edge = the content container's right edge (the Rólam card), bottom = the status line's bottom (>= 32px above the hero bottom);
          width clamp(260px, 21vw, 390px), scaled down (min 220px) only if it would come within 40px of the headline / subheading / buttons / status line */
-      var burger = document.getElementById('burger');
-      var rEdge = burger ? burger.getBoundingClientRect().right - hr.left : inner.right - hr.left;
+      var card = document.querySelector('#about .about-bio-card') || document.querySelector('#about .about-premium-grid');      /* the Rólam card: the content container's right edge */
+      var rEdge = card ? card.getBoundingClientRect().right - hr.left : inner.right - hr.left;
       var bottom = Math.min(st.bottom - hr.top, hr.height - 32) - 20;      /* -20: the tilt + float push the visual bottom edge a few px lower than the layout box (visual gap stays >= 32px) */
       for (var W = Math.min(390, Math.max(260, 0.21 * window.innerWidth)); W >= 220 && !res; W -= 4) {
         var H = BAR + W * 0.625, left = rEdge - W, top = bottom - H;
