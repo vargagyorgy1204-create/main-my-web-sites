@@ -262,10 +262,15 @@
         if (!hit) res = { left: left, top: top, W: W, H: H };
       }
     } else {
-      var stTop = st.top - hr.top;
-      var below = Math.max.apply(null, obs.filter(function (o) { return o.b < stTop - 1; }).map(function (o) { return o.b; }));
-      var W2 = inner.width, H2 = BAR + W2 * 0.625, top2 = below + 24;
-      if (top2 + H2 <= stTop - 24) res = { left: Lft, top: top2, W: W2, H: H2 };
+      /* mobile: a decorative "peek" in the free space between the buttons and the status line: ~82vw wide, right-aligned so ~15% of it goes past the screen edge
+         (the hero crops it), vertically centred; hidden when the free space is < 200px (e.g. 360x640) */
+      var stTop = st.top - hr.top, cb = 0;
+      [].forEach.call(hero.querySelectorAll('.hero-ctas .cta-row__btn, .hero-ctas .text-link'), function (b) { cb = Math.max(cb, b.getBoundingClientRect().bottom - hr.top); });
+      var free = stTop - cb;
+      if (free >= 200) {
+        var W2 = Math.min(0.82 * window.innerWidth, (free - 16 - BAR) / 0.625), H2 = BAR + W2 * 0.625;
+        res = { left: window.innerWidth - 0.85 * W2, top: cb + (free - H2) / 2, W: W2, H: H2 };
+      }
     }
     return res;
   }
@@ -280,7 +285,7 @@
     gsap.set(tilt, { rotationY: rest.y, rotationX: rest.x, rotationZ: rest.z });
     return true;
   }
-  function restTilt() { return window.innerWidth >= 900 ? { y: -14, x: 6, z: 1 } : { y: -8, x: 3, z: 0.5 }; }
+  function restTilt() { return window.innerWidth >= 900 ? { y: -14, x: 6, z: 1 } : { y: -12, x: 0, z: -3 }; }
 
   /* ------------------------------------------------ tilt with the pointer (html.has-cursor), idle float */
   var qy = gsap.quickTo(tilt, 'rotationY', { duration: 0.6, ease: 'power3' }), qx = gsap.quickTo(tilt, 'rotationX', { duration: 0.6, ease: 'power3' });
@@ -307,7 +312,8 @@
         wireReset(true); siteReset(); layers('build', true); gsap.set(L.wire, { autoAlpha: 1 }); gsap.set(w, { opacity: 1 }); return;
       }
       gsap.fromTo(w, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' });
-      gsap.fromTo(float, { y: -6 }, { y: 6, duration: 3.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+      var fa = window.innerWidth >= 900 ? 6 : 4;                                          /* a gentle float (smaller on phones) */
+      gsap.fromTo(float, { y: -fa }, { y: fa, duration: 3.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
       go(last || 0);                                                                  /* the first scene follows the word shown now */
       if (last) log.push({ word: last, scene: scene, t: Math.round(performance.now()), init: true });
     });

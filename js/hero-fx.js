@@ -46,7 +46,10 @@
   if (txt) {
     root.classList.add('hero-wait');
     var go = function () { root.classList.remove('hero-wait'); };
-    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(go); setTimeout(go, 2500); } else go();
+    if (document.fonts && document.fonts.load && document.fonts.ready) {            /* wait for the headline faces themselves (fonts.ready alone can resolve before they were requested) */
+      Promise.all([document.fonts.load('800 40px Syne'), document.fonts.load('500 16px Montserrat'), document.fonts.load('400 16px Montserrat')]).then(function () { return document.fonts.ready; }).then(go, go);
+      setTimeout(go, 3000);
+    } else go();
   }
   if (txt) {
     if (reduce) {
@@ -204,12 +207,12 @@
   var hl = [].slice.call(hero.querySelectorAll('.hero-line')).slice(0, 2);
   if (!reduce && hl.length === 2) {
     hl.forEach(function (ln) {
-      var t = ln.querySelector('.hero-line__in').textContent;
+      var t = ln.querySelector('.hero-line__in').innerHTML;                  /* with the comma markup, so the copies line up exactly */
       var fx = document.createElement('span'); fx.className = 'hero-line__fx'; fx.setAttribute('aria-hidden', 'true');
-      fx.innerHTML = '<span class="fx-sh" data-t="' + t + '"></span><span class="fx-ol" data-t="' + t + '"></span>';           /* the copies' text is generated content (::before): never an LCP candidate */
+      fx.innerHTML = '<span class="fx-sh">' + t + '</span><span class="fx-ol">' + t + '</span>';
       ln.appendChild(fx);
       var fb = document.createElement('span'); fb.className = 'hero-line__fxb'; fb.setAttribute('aria-hidden', 'true');
-      fb.innerHTML = '<span class="fx-halo" data-t="' + t + '"></span>';
+      fb.innerHTML = '<span class="fx-halo">' + t + '</span>';
       ln.insertBefore(fb, ln.firstChild);
     });
     var armed = false;                                               /* the halo underlay takes over from the base letters' own shadow once the intro is done */

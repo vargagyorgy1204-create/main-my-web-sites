@@ -3314,8 +3314,15 @@ html.hero-static .hero-live__txt { position: static; }
     .hero-live { --hero-sw: 1px; }
     .hero-title { font-size: min(clamp(28px, 10.4vw, 64px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* same three lines, smaller */
     .hero-line__in { white-space: normal; }
-    .hero-ctas { margin-bottom: 0; }
+    .hero-ctas { margin-bottom: 0; flex-wrap: nowrap; align-items: center; gap: 20px; }          /* PROJEKT INDÍTÁSA + PORTFÓLIÓ in one row, never wrapped */
+    .hero-ctas .cta-row__btn { flex: 0 1 auto; min-width: 0; }
+    #hero .hero-ctas { column-gap: 20px; }
     .hero-status { margin-top: 28px; }
+}
+@media (max-width: 380px) {          /* narrow phones: the primary button scales down (padding, gap, tracking) so both controls still fit one row */
+    .hero-ctas .cta-row__btn .hbtn { padding: 0 5px 0 15px; gap: 6px; font-size: calc(var(--btn-fs) - 1px); letter-spacing: 0.2px; }
+    .hero-ctas .cta-row__btn .hbtn__icon { width: calc(var(--btn-h) - 14px); height: calc(var(--btn-h) - 14px); }
+    .hero-ctas .text-link { gap: 6px; letter-spacing: 0.2px; }
 }
 @media (prefers-reduced-motion: reduce) {
     .hero-eyebrow, .hero-sub, .hero-ctas, .hero-status, .hero-line__in { animation: none; }
@@ -3324,7 +3331,9 @@ html.hero-static .hero-live__txt { position: static; }
 
 /* idle shimmer + outline hover reveal on "Kreatív Webfejlesztő," (js/hero-fx.js adds .hero-line__fx inside the two lines; absolute copies, no layout impact) */
 .hero-line__in { position: relative; z-index: 1; }
-.hero-line__fx > span::before, .hero-line__fxb > span::before { content: attr(data-t); }
+/* the comma after "Webfejlesztő": a real comma, styled as a brand accent like the section headings' dots (--card-primary), 85% size, tucked 0.04em closer */
+.hero-comma { display: inline-block; font-size: 0.85em; margin-left: -0.04em; color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; text-shadow: none; }
+.hero-line__fx .hero-comma, .hero-line__fxb .hero-comma { background: none; }
 .hero-line__fx, .hero-line__fxb { position: absolute; left: 0; top: 0; display: block; white-space: nowrap; pointer-events: none; }
 .hero-line__fx { z-index: 2; }
 .hero-line__fxb { z-index: 0; }

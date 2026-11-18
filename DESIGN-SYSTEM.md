@@ -260,3 +260,8 @@ Built by `js/hero-window.js` (markup, scenes), CSS block "Hero living window" at
 - **Buttons row** (≥900px): `margin: auto 0` between the subheading and the status line → equal gaps above and below.
 - **Verb props** (inside the word box, leave with its exit): kódol caret + `</>` badge; épít dimension line + counted width label; életre kelt 3 Lucide `sparkle`s twinkling twice; tervez frame + pointer.
 - **Status**: teal #2dd4bf dot with an expanding ring (2s), glass time pill (JetBrains Mono digits, blinking colon, 3D flip 0.4s on change).
+
+## Hero mobile (<900px) + comma accent
+- Buttons: PROJEKT INDÍTÁSA + PORTFÓLIÓ in one nowrap row, gap 20px; ≤380px the primary button scales (padding 15/5px, gap 6px, font −1px, tracking 0.2px) so both fit at 360px.
+- Living window on phones: a decorative "peek" in the free space between the buttons and the status line, width min(82vw, fits the space), left = 100vw − 0.85·W (15% past the right edge, cropped by the hero), vertically centred, tilt rotateY −12 / rotateZ −3, float ±4px, no pointer tilt; hidden if the free space is < 200px.
+- `.hero-comma`: the comma after "Webfejlesztő" is a real comma, `--card-primary` gradient (the section headings' dot colour), 0.85em, margin-left −0.04em; the shimmer / hover copies carry the same markup.
