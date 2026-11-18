@@ -7431,3 +7431,67 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 
 /* Hero headline: the variable Syne (wght 400-800, latin + latin-ext, self-hosted) for the magnetic-letters weight change; the rest of the site keeps the Google Syne 700/800 */
 @font-face { font-family: 'Syne Var'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(assets/fonts/syne-var-latin-ext.woff2) format('woff2'); }
+
+/* ═══ Hero living window (EXPERIMENT; js/hero-window.js builds the markup; delete this block + the script tag + js/hero-window.js + the font file to remove it) ═══
+   A floating, tilted browser window on the right side of the hero; its scene follows the living word (event "hero:word" from js/hero-fx.js). Absolutely positioned: it reserves no flow space (CLS 0). */
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/jetbrains-mono-400-latin-ext.woff2) format('woff2'); }
+.hw {
+    --hw-c: 99 102 241;                /* glow colour (r g b), tweened to the living word's colour (js) */
+    --hw-sw: 3;                        /* wireframe stroke width in viewBox units (1.5px on screen, js) */
+    position: absolute; z-index: 1; left: 0; top: 0; inline-size: 400px;
+    visibility: hidden; opacity: 0;    /* js reveals it after load, once it has found a free area */
+    pointer-events: none;
+}
+.hw.is-on { visibility: visible; pointer-events: auto; }
+.hw__float, .hw__tilt { position: relative; }
+.hw__float { perspective: 1600px; }
+.hw__tilt { transform-style: flat; }
+.hw__glow { position: absolute; inset: 14% -8% -20% -8%; border-radius: 50%; background: radial-gradient(closest-side, rgb(var(--hw-c) / 0.5), rgb(var(--hw-c) / 0.18) 55%, transparent 100%); pointer-events: none; }
+.hw__win {
+    position: relative; display: block; overflow: hidden; border-radius: 14px;
+    border: 1px solid rgb(255 255 255 / 0.16);                       /* the 1px light border */
+    background: #0b0c12; color: inherit; text-decoration: none; cursor: pointer;
+    box-shadow: 0 40px 80px -30px rgb(var(--hw-c) / 0.5), 0 20px 40px -20px rgb(0 0 0 / 0.55);
+}
+.hw__win::after { content: ""; position: absolute; inset: 0; z-index: 6; pointer-events: none; border-radius: inherit; background: linear-gradient(118deg, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0.03) 30%, transparent 46%); }   /* glass reflection */
+.hw__win:focus-visible { outline: 3px solid rgb(var(--hw-c)); outline-offset: 4px; }
+.hw__bar { position: relative; z-index: 5; display: flex; align-items: center; gap: 12px; block-size: 34px; padding-inline: 14px; background: #1d1f2b; }
+.hw__dots { display: flex; gap: 7px; flex: none; }
+.hw__dots i { display: block; inline-size: 10px; block-size: 10px; border-radius: 999px; }
+.hw__dots i:nth-child(1) { background: #ff5f57; }
+.hw__dots i:nth-child(2) { background: #febc2e; }
+.hw__dots i:nth-child(3) { background: #28c840; }
+.hw__addr { margin-inline: auto; min-inline-size: 0; max-inline-size: 56%; padding: 4px 12px; display: flex; align-items: center; gap: 6px; border-radius: 999px; background: rgb(255 255 255 / 0.06); font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 12px; line-height: 1.2; color: rgb(255 255 255 / 0.62); }
+.hw__addr .hw__lock { flex: none; inline-size: 12px; block-size: 12px; }
+.hw__url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hw__live { position: absolute; inset-inline-end: 12px; top: 50%; translate: 0 -50%; display: flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; background: rgb(26 143 163 / 0.18); color: #73d7e8; font: 600 10px/1 'Inter', 'Segoe UI', sans-serif; letter-spacing: 0.1em; opacity: 0; visibility: hidden; }
+.hw__live i { position: relative; inline-size: 7px; block-size: 7px; border-radius: 50%; background: #1a8fa3; }
+.hw__live i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #1a8fa3; animation: hwPing 1.8s ease-out infinite; }
+@keyframes hwPing { from { transform: scale(1); opacity: 0.7; } to { transform: scale(3); opacity: 0; } }
+.hw__view { display: block; position: relative; aspect-ratio: 16 / 10; container-type: inline-size; background: #12101f; overflow: hidden; }
+.hw__grid { position: absolute; inset: 0; background-image: linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px); background-size: 6.25cqw 6.25cqw; }
+.hw__s { position: absolute; inset: 0; visibility: hidden; opacity: 0; }
+.hw__svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+.hw__svg path { fill: none; stroke: rgb(255 255 255 / 0.7); stroke-width: var(--hw-sw); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.hw__pen { fill: #fff; opacity: 0; }
+/* code editor */
+.hw__s--code { background: #0f1018; font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace; font-size: 2.45cqw; line-height: 1.7; }
+.hw__tabs { display: flex; gap: 2px; padding: 1.6cqw 2cqw 0; background: #151622; }
+.hw__tab { padding: 1.1cqw 2.4cqw; border-radius: 6px 6px 0 0; color: rgb(255 255 255 / 0.42); font-size: 0.86em; }
+.hw__tab.is-on { background: #0f1018; color: rgb(255 255 255 / 0.9); box-shadow: inset 0 2px 0 #6366f1; }
+.hw__code { display: flex; padding: 3cqw 2cqw 0 0; }
+.hw__ln { flex: none; inline-size: 7cqw; padding-inline-end: 2cqw; text-align: right; color: rgb(255 255 255 / 0.22); user-select: none; }
+.hw__ln span { display: block; opacity: 0; }
+.hw__pre { margin: 0; font: inherit; white-space: pre; color: rgb(255 255 255 / 0.8); }
+.hw__pre .k-p { color: rgb(255 255 255 / 0.5); } .hw__pre .k-t { color: #9b3fd8; } .hw__pre .k-a { color: #6366f1; } .hw__pre .k-s { color: #C026A3; }
+.hw__caret { display: inline-block; inline-size: 0.12em; block-size: 1.15em; margin-inline-start: 1px; vertical-align: text-bottom; background: rgb(255 255 255 / 0.85); animation: hwBlink 1s steps(1) infinite; }
+@keyframes hwBlink { 50% { opacity: 0; } }
+/* build: tiles of the real screenshot */
+.hw__blk { position: absolute; overflow: hidden; opacity: 0; }
+.hw__blk canvas, .hw__full, .hw__video { position: absolute; display: block; object-fit: cover; object-position: top center; }
+.hw__blk canvas { inset: 0; inline-size: 100%; block-size: 100%; }
+.hw__full, .hw__video { inset: 0; inline-size: 100%; block-size: 100%; }
+.hw__video { opacity: 0; }
+.hw__sweep { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.26) 50%, transparent 62%); transform: translateX(-130%); }
+/* compact (mobile) / reduced motion */
+@media (prefers-reduced-motion: reduce) { .hw__live i::after, .hw__caret { animation: none; } }

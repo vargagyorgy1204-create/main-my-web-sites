@@ -240,3 +240,10 @@ One scroll choreography per entry, no layout animation (transform / opacity / st
 - Headline: 2 lines (Syne 800; font-size = min(clamp(34px, min(5.3vw, 11svh), 108px), (100vw - 2 x gutter) / 16.6)); the h1 keeps the full sentence in `.hero-vh`, the animated lines are aria-hidden. The living word (`.hero-live`: width reserved by the longest word, text absolutely placed, gradient text) scrambles every ~2.4s; hidden until the web fonts are in (`html.hero-wait`); reduced motion shows "tervez, kódol, épít". Lines drift apart and fade on scroll-out (ScrollTrigger, scrubbed).
 - Removed: the Tech stack card + badge, the ticker strip, the old WEB DEVELOPER outline headline. Hero bottom fades into Rólam (#170c26); about-story.js now starts its `--about-bg` scrub from #170c26.
 - tests/smoke.mjs: the hero joined the tight sections (7 tight, Rólam / Hogyan dolgozom the only wide anchors).
+
+## Hero "living window" (experiment)
+Built by `js/hero-window.js` (markup, scenes), CSS block "Hero living window" at the end of `style.css`, font `assets/fonts/jetbrains-mono-400-latin-ext.woff2`. Delete those three (+ the script tag and the `hero:word` dispatch in `js/hero-fx.js`) to remove it.
+- Sync: `js/hero-fx.js` dispatches `hero:word` ({index, word}) at the start of every enter tween; the window has no timer. Scenes: 0 wireframe draws · 1 code typed (17 ms/char; 28 ms would need ~4.3 s, the word holds 3.5 s) · 2 screenshot tiles drop on the wireframe · 3 loop video + LIVE. One project per cycle (portfolio-data order).
+- Placement: absolutely positioned (no flow space). Free area from the real text rects; clearance 48px horizontal / 56px vertical; width ≤ min(760, 42vw), 360–760px, else hidden. Desktop tilt rotateY -14 / rotateX 6 / rotateZ 1 (pointer ±5°), perspective 1600px, float ±6px / 7s. Mobile (<900px): below the buttons, width 100% of the column, tilt -8°, only if it fits above the status line.
+- Glow colour follows the word: tervez #6366f1, kódol #9b3fd8, épít #C026A3, életre kelt #1a8fa3.
+- Screenshots are drawn into canvases from a detached Image (never an LCP candidate); the built DOM appears after `load` (idle).

@@ -74,6 +74,7 @@
           gsap.set(ls, { yPercent: 70, opacity: 0, scale: 0.94, transformOrigin: '50% 100%', force3D: false });
           gsap.to(old, { yPercent: -70, opacity: 0, duration: 0.7, ease: 'power3.inOut', force3D: false, onComplete: function () { if (old.parentNode) old.parentNode.removeChild(old); } });
           gsap.to(ls, { yPercent: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out', stagger: 0.035, delay: 0.3, force3D: false,
+            onStart: function () { document.dispatchEvent(new CustomEvent('hero:word', { detail: { index: cur, word: words[cur] } })); },     /* the living window (js/hero-window.js) follows this */
             onComplete: function () { gsap.set(ls, { clearProps: 'transform,opacity' }); busy = false; } });
         }
         gsap.delayedCall(3.5, next);
