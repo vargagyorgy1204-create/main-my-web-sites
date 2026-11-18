@@ -7486,26 +7486,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 /* soft contact shadow under the phone */
 .pf-phone__shadow { position: absolute; inset-inline: 6%; inset-block-end: -3.5%; block-size: 7%; z-index: -1; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / 0.6), transparent); }
 
-/* floating posts: they come out of the screen, at different depths; independent loops (translate / rotate only) */
-.pf-float {
-  position: absolute;
-  z-index: 2;
-  inline-size: var(--fw);
-  aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: 12%;
-  border: 1px solid rgb(255 255 255 / 0.25);
-  box-shadow: 0 18px 36px -12px rgb(0 0 0 / 0.6);
-  transform: translateZ(var(--fz)) scale(var(--fs, 1));
-  animation: pfFloat var(--fd) ease-in-out var(--fl, 0s) infinite alternate;
-}
-.pf-float img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; }
-.pf-float--a { --fw: 34%; --fz: 60px; --fd: 6s; inset-inline-start: -26%; inset-block-start: 56%; }        /* mobile: below the profile header of the phone screen */
-.pf-float--b { --fw: 30%; --fz: 40px; --fd: 7.5s; --fl: -2s; inset-inline-end: -24%; inset-block-start: 34%; }
-.pf-float--c { display: none; }
-@keyframes pfFloat { from { translate: 0 -8px; rotate: -2deg; } to { translate: 0 8px; rotate: 2deg; } }
-.pf-ig.is-paused .pf-float { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) { .pf-float { animation: none; } .pf-phone__track { will-change: auto; } }
+@media (prefers-reduced-motion: reduce) { .pf-phone__track { will-change: auto; } }
 
 @media (min-width: 900px) {
   .pf-ig { --pf-ig-r: 24px; --pf-ig-clear: 36px; --pf-ig-ov: 50px; }      /* clear = phone <-> card edge (>= 24px to the header / neighbours); ov = how far the phone overflows the panel */
@@ -7522,13 +7503,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-phone-wrap { position: absolute; inset-inline-start: 50%; inset-block-start: 50%; translate: -50% -50%; margin: 0; inline-size: auto; block-size: min(calc(100svh - 32px - var(--pf-ig-clear) * 2), calc(100cqw * 0.62 * 19 / 9)); }
   .pf-phone { transform: rotateY(calc(18deg + var(--ty, 0deg))) rotateX(calc(6deg + var(--tx, 0deg))) rotateZ(-2deg); }
   /* upper-right: between the phone and the copy, fully outside the phone body (never over the profile header); lower-left: at the phone's lower-left */
-  /* sized / placed in stage units (cqw): the phone is at most 62cqw wide (centred), so a float right of it (17cqw + 1cqw gap) ends inside the stage and never reaches the copy */
-  .pf-float--a { --fw: 17cqw; --fz: 60px; inset-inline-end: auto; inset-inline-start: calc(100% + 1cqw); inset-block-start: 20%; }
-  .pf-float--b { --fw: 14cqw; --fz: 45px; inset-inline-start: auto; inset-inline-end: calc(100% + 1cqw); inset-block-start: auto; inset-block-end: 16%; }
-  .pf-float--c { display: none; }
 }
-/* a narrow stage (900-1150px wide windows): the floats stay inside the column, never over the copy */
-@container (max-width: 520px) { .pf-float--a { --fw: 15cqw; } .pf-float--b { --fw: 12cqw; } }
 @media (max-width: 899px) { .pf-ig { --pf-ig-card-w: 100%; --pf-ig-inset: 12px; --pf-ig-pad: 20px; --pf-ig-r: 18px; } }
 
 /* Portfólió -> Kapcsolat: the drifting glows of Kapcsolat are clipped at its top edge; a graphite veil (the colour Portfólió ends in) fades them in over the first 70% of --pf-ramp, so the two

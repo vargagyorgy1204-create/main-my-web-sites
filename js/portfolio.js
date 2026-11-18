@@ -119,7 +119,6 @@
     var set = '<span class="pf-phone__set">' + posts.map(img).join('') + '</span>';
     var url = esc(IG.profileUrl);
     var n = posts.length;
-    function fl(i, cls) { return '<span class="pf-float ' + cls + '" aria-hidden="true"><img src="' + esc(posts[i % n]) + '" width="360" height="360" alt="" loading="lazy" decoding="async"></span>'; }
     var layers = '<span class="pf-phone__layer" style="--z:-4px"></span><span class="pf-phone__layer" style="--z:-8px"></span><span class="pf-phone__layer" style="--z:-12px"></span><span class="pf-phone__layer" style="--z:-16px"></span>';
     return '<article class="pf-case pf-ig" id="pf-ig" data-theme="light" style="--accent:#c850c0">' +
       '<div class="pf-case__inner"><div class="pf-ig__panel">' +
@@ -133,7 +132,6 @@
         '</div>' +
         '<div class="pf-case__media pf-ig__stage"><div class="pf-phone-wrap">' +
           '<span class="pf-phone__shadow" aria-hidden="true"></span>' +
-          fl(1, 'pf-float--a') + fl(5, 'pf-float--b') +
           '<a class="pf-phone" href="' + url + '" target="_blank" rel="noopener" data-cursor="view" data-cursor-label="Megnézem" aria-label="Instagram-profil megnyitása: @' + esc(IG.handle) + '">' +
             layers +
             '<span class="pf-phone__face" aria-hidden="true"><span class="pf-phone__body"><span class="pf-phone__island"></span><span class="pf-phone__screen">' +
@@ -488,7 +486,7 @@
 
     var phone = igCard.querySelector('.pf-phone'), view = igCard.querySelector('.pf-phone__view'), track = igCard.querySelector('.pf-phone__track');
     if (!phone || !track || reduce) return;
-    /* everything below the card does is paused while it is off-screen: the floating posts (CSS loops, .is-paused) and the tilt / loop below */
+    /* everything below the card does is paused while it is off-screen: the tilt / loop below */
     var inView = false;
     function setPaused() { igCard.classList.toggle('is-paused', !inView || document.hidden); }
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { inView = es[es.length - 1].isIntersecting; setPaused(); }).observe(igCard); else inView = true;
