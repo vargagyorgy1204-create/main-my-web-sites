@@ -1,5 +1,5 @@
 /* hero-fx.js — the hero's "living text":
-   1. the living word cycles tervez -> kódol -> épít -> életre kelt (~3.5s per word) as a calm vertical roll: the old word slides up, the new letters rise from below (stagger, blur -> sharp).
+   1. the living word cycles tervez -> kódol -> épít -> életre kelt (~3.5s per word) as a calm vertical roll: the old word slides up, the new letters rise from below (stagger, fade-in + tiny scale). No clip box, no filter, no will-change on the word: those made a composited layer that showed as a hard-edged rectangle over the WebGL background.
       The sizer span holds the width of the longest word and the visible text is absolutely placed, so nothing around it ever moves (zero layout shift).
    2. scrolling out of the hero: the three headline lines drift apart and fade (GSAP ScrollTrigger, scrubbed).
    3. the status line's live Budapest time (updates every minute).
@@ -78,10 +78,10 @@
           txt.appendChild(nw);
           paint(nw);
           var ls = nw.children;
-          gsap.set(ls, { yPercent: 100, opacity: 0, filter: 'blur(6px)' });
-          gsap.to(old, { yPercent: -100, opacity: 0, duration: 0.7, ease: 'power3.inOut', onComplete: function () { if (old.parentNode) old.parentNode.removeChild(old); } });
-          gsap.to(ls, { yPercent: 0, opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power3.out', stagger: 0.035, delay: 0.3,
-            onComplete: function () { gsap.set(ls, { clearProps: 'transform,opacity,filter' }); busy = false; } });
+          gsap.set(ls, { yPercent: 70, opacity: 0, scale: 0.94, transformOrigin: '50% 100%', force3D: false });
+          gsap.to(old, { yPercent: -70, opacity: 0, duration: 0.7, ease: 'power3.inOut', force3D: false, onComplete: function () { if (old.parentNode) old.parentNode.removeChild(old); } });
+          gsap.to(ls, { yPercent: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out', stagger: 0.035, delay: 0.3, force3D: false,
+            onComplete: function () { gsap.set(ls, { clearProps: 'transform,opacity' }); busy = false; } });
         }
         gsap.delayedCall(3.5, next);
       };

@@ -3230,12 +3230,13 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 }
 /* the living word waits for the web fonts (a font swap would shift it; hidden boxes are not counted as layout shift) */
 html.hero-wait .hero-live, html.hero-wait .hero-headline, html.hero-wait .hero-sub, html.hero-wait .hero-ctas { visibility: hidden; }
-/* calm vertical roll (js/hero-fx.js): the word box is clipped (clip-path, no overflow:hidden), the letters carry the gradient themselves (offset by their x so it flows across the whole word) */
-.hero-live { clip-path: inset(-0.14em -0.12em -0.22em -0.12em); }
+/* calm vertical roll (js/hero-fx.js): NO clipping box / filter / will-change on the word (any of them makes a composited layer that shows as a hard-edged rectangle over the WebGL background); the letters carry the gradient themselves (offset by their x so it flows across the whole word) */
 .hero-live__txt.is-roll { background: none; }
 .hero-live__w { position: absolute; inset: 0 auto 0 0; white-space: pre; }
+/* ROOT CAUSE of the dark box: the global h1 text-shadow (0 12px 34px rgb(0 0 0 / .38), line 356) is inherited by the transparent-fill gradient letters; the blurred shadow of a transparent glyph is painted as a dark halo that the roll's clip box / the letters' own layers cut off with hard edges. The word carries no shadow. */
+.hero-live__txt, .hero-live__w, .hero-live__l { text-shadow: none; }
 .hero-live__l { display: inline-block; color: transparent; -webkit-text-fill-color: transparent; background-image: linear-gradient(90deg, #7f7fff 0%, #b765f2 55%, #ee5fcf 100%); background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; }
-html.hero-static .hero-live { display: inline; clip-path: none; }
+html.hero-static .hero-live { display: inline; }
 html.hero-static .hero-live__size { display: none; }
 html.hero-static .hero-live__txt { position: static; background-size: 100% 100%; }
 
