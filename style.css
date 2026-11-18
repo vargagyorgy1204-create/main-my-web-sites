@@ -7435,9 +7435,8 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pf-ig__copy { display: contents; }
 .pf-ig .pf-case__name { white-space: nowrap; margin: 0; max-inline-size: 100%; }
 .pf-ig .pf-case__block p { color: rgb(255 255 255 / 0.9); }
-.pf-ig .pf-case__btn { text-decoration: none; align-self: flex-start; }
+.pf-ig__btnwrap { align-self: flex-start; }
 .pf-ig__qr { display: none; }
-.pf-ig .pf-tag { background: rgb(15 11 28 / 0.35); border-color: rgb(255 255 255 / 0.3); }
 
 /* ---------- the 3D phone ---------- */
 .pf-phone-wrap { position: relative; inline-size: min(64%, 220px); aspect-ratio: 9 / 19; margin: var(--s3) auto; perspective: 1500px; }
@@ -7489,16 +7488,17 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 @media (min-width: 900px) {
   .pf-ig { --pf-ig-r: 24px; --pf-ig-clear: 24px; --pf-ig-ov: 50px; }      /* clear = phone <-> card edge (>= 24px to the header / neighbours); ov = how far the phone overflows the panel */
   .pf-ig .pf-case__inner { display: flex; align-items: center; padding-block: 0; }
-  .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
-  .pf-ig__copy { order: 2; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s3); min-inline-size: 0; }
-  .pf-ig .pf-case__meta { block-size: auto; min-block-size: 0; }
+  .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
+  /* the text group is centred in its 2/3 column (left-aligned inside) */
+  .pf-ig__copy { order: 2; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s3); min-inline-size: 0; inline-size: fit-content; max-inline-size: 100%; justify-self: center; }
+  .pf-ig .pf-case__block { max-inline-size: 34ch; }
   .pf-ig .pf-case__name { font-size: clamp(26px, 2.7vw, 52px); }
   .pf-ig__qr { margin: 0; display: flex; align-items: center; gap: var(--s2); }
-  .pf-ig__qr img { flex: none; display: block; inline-size: 96px; block-size: 96px; border-radius: 14px; background: #fff; }
+  .pf-ig__qr img { flex: none; display: block; inline-size: 96px; block-size: 96px; border-radius: 14px; background: #fff; object-fit: cover; }
   .pf-ig__qr figcaption { max-inline-size: 22ch; font-family: var(--font-ui); font-size: 12px; line-height: 1.4; color: rgb(255 255 255 / 0.85); }
   /* the stage is a size container (it stretches to the panel height): the phone is as tall as the panel + 0.9 insets (it overflows by ~0.45 inset on both sides) and at most 62% of the column wide */
   .pf-ig__stage { order: 1; position: relative; align-self: stretch; container-type: inline-size; }
-  .pf-phone-wrap { position: absolute; inset-inline-start: 0; inset-block-start: 50%; translate: 0 -50%; margin: 0; inline-size: auto; block-size: min(calc(100svh - 32px - var(--pf-ig-clear) * 2), calc(100cqw * 0.69 * 19 / 9)); }
+  .pf-phone-wrap { position: absolute; inset-inline-start: 0; inset-block-start: 50%; translate: 0 -50%; margin: 0; inline-size: auto; block-size: min(calc(100svh - 32px - var(--pf-ig-clear) * 2), calc(100cqw * 0.9 * 19 / 9)); }
   .pf-phone { transform: rotateY(calc(18deg + var(--ty, 0deg))) rotateX(calc(6deg + var(--tx, 0deg))) rotateZ(-2deg); }
   /* upper-right: between the phone and the copy, fully outside the phone body (never over the profile header); lower-left: at the phone's lower-left */
 }
@@ -7537,3 +7537,10 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 @media (min-width: 900px) { :root { --ctc-r: 32px; } }
 #contact.ctc { border-radius: var(--ctc-r) var(--ctc-r) 0 0; margin-top: calc(var(--ctc-r) * -1); }          /* pulled up over the light Portfólió, whose bottom padding grows by the same amount: the light shows in the corners */
 #portfolio { padding-block-end: calc(var(--section-bottom) + var(--ctc-r)); }
+
+/* Instagram card, mobile: phone first, then title, text, button (full-width-ish like the other mobile CTAs) */
+@media (max-width: 899px) {
+  .pf-ig__stage { order: -1; }
+  .pf-ig__btnwrap { align-self: stretch; order: 6; }
+  .pf-ig__btnwrap .hbtn { inline-size: 100%; }
+}

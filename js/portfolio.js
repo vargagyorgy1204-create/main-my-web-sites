@@ -123,11 +123,14 @@
     return '<article class="pf-case pf-ig" id="pf-ig" data-theme="light" style="--accent:#c850c0">' +
       '<div class="pf-case__inner"><div class="pf-ig__panel">' +
         '<div class="pf-ig__copy">' +
-          '<div class="pf-case__meta"><span class="pf-tag">Instagram</span></div>' +
           '<h3 class="pf-case__name">@' + esc(IG.handle) + '</h3>' +
-          '<div class="pf-case__block"><p>Az Instagramon megosztom az új projekteket, a munkafolyamat részleteit és a VarBro kreatív anyagait.</p></div>' +
-          '<a class="pf-btn pf-case__btn" href="' + url + '" target="_blank" rel="noopener">Megnyitom az Instagramon</a>' +
-          (IG.qr ? '<figure class="pf-ig__qr"><img src="' + esc(IG.qr) + '" width="96" height="96" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
+          '<div class="pf-case__block"><p>Itt látja elsőként az új projekteket és a munka részleteit.</p></div>' +
+          /* the same pill component as the "KAPCSOLAT" button (.cta-row__btn > .hbtn--primary) */
+          '<div class="cta-row__btn cta-row__btn--no-arrow pf-ig__btnwrap"><a class="hbtn hbtn--primary" href="' + url + '" target="_blank" rel="noopener">' +
+            '<span class="hbtn__glow" aria-hidden="true"></span><span class="hbtn__fill" aria-hidden="true"></span><span class="hbtn__rip" aria-hidden="true"></span>' +
+            '<span class="hbtn__text"><span class="hbtn__roll" data-text="INSTAGRAM">INSTAGRAM</span></span>' +
+            '<span class="hbtn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span></a></div>' +
+          (IG.qr ? '<figure class="pf-ig__qr"><img src="' + esc(IG.qr) + '" srcset="' + esc(IG.qr) + ' 192w, ' + esc(IG.qr.replace(/(\.[a-z0-9]+)$/i, '@2x$1')) + ' 384w" sizes="96px" width="96" height="96" alt="QR-kód az Instagram-profilhoz" loading="lazy" decoding="async">' +
             '<figcaption>Vagy olvassa be a kódot a telefonjával.</figcaption></figure>' : '') +
         '</div>' +
         '<div class="pf-case__media pf-ig__stage"><div class="pf-phone-wrap">' +
@@ -157,6 +160,8 @@
 
   var cases = Array.prototype.slice.call(deck.querySelectorAll('.pf-case:not(.pf-ig)'));
   var igCard = document.getElementById('pf-ig');
+  /* the liquid fill origin + ripple of script.js for the pill that was just rendered */
+  if (igCard && window.VB && VB.bindHbtn) igCard.querySelectorAll('.hbtn').forEach(VB.bindHbtn);
 
   /* -------------------------------------------------------------- videos
      One video at a time: the "active" card is the one on top of the deck
@@ -346,7 +351,7 @@
 
     /* Instagram card: its content plays once when the card settles. */
     if (igCard) (function () {
-      var parts = ['.pf-case__meta', '.pf-case__name', '.pf-case__block', '.pf-case__btn', '.pf-ig__qr', '.pf-phone-wrap']
+      var parts = ['.pf-case__name', '.pf-case__block', '.pf-ig__btnwrap', '.pf-ig__qr', '.pf-phone-wrap']
         .map(function (s) { return igCard.querySelector(s); }).filter(Boolean);
       if (plain) gsap.set(parts, { opacity: 0 });
       else gsap.set(parts, { y: 28, opacity: 0 });
