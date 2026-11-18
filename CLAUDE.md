@@ -12,6 +12,11 @@ Static HTML/CSS/JS on GitHub Pages (no build step). Pages: `index.html`, `myappr
 7. **Proportional layout system:** read `DESIGN-SYSTEM.md` before any layout / size change. All sizes are fluid tokens from the reference viewport 1440x900, defined once in the `DESIGN TOKENS` block of `style.css`; sections only use tokens (a new value = a new token + an updated table in `DESIGN-SYSTEM.md`). Pinned sections must fit one viewport on every standard viewport, also the short-wide ones (1518x670, 1366x768).
 8. **Review board — never automatic.** `node tests/board.mjs` (screenshots of every section x every standard viewport -> `board/index.html`, git-ignored) is run ONLY when the owner explicitly asks for the "board" / "дошка скріншотів". Then report the path to `board/index.html` and list the sections / viewports that changed visibly (pixel diff vs the previous board run > 2%; the script prints them; portfolio cells are animated and always show some noise).
 
+## Before every commit
+
+- Run `git diff --stat` and check `style.css` (and any other large file you edited): the line-count change must match the size of the intended change. If `style.css` grew or shrank by more than ~50 lines unexpectedly, or its last block is not the expected one, **STOP**: restore the file from HEAD (`git checkout HEAD -- style.css`) and re-apply the change with targeted edits (never rewrite the whole file with a script).
+- Prefer small targeted edits over regenerating large files.
+
 ## Viewports (tests/smoke.mjs)
 
 - **Standard set (`--full`):** phones 360x800, 390x844, 430x932; tablet 768x1024; laptops 1280x720, 1366x768, 1536x864; desktop 1440x900, 1920x1080; **the owner's real Chrome viewport 1518x670** (a 1920x1080 screen at Windows display scaling 125%: CSS px, not the 1897x840 you would measure at 100%). 2560x1440 only for the `titles` group.
