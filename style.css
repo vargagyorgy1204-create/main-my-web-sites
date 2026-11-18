@@ -7531,3 +7531,9 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
     .nav--menu-open .nav__bl { opacity: 0 !important; }
 }
 @media (prefers-reduced-motion: reduce) { .nav__bl { transition: none; } }
+
+/* ===== Kapcsolat: rounded top corners (the project cards' radius: 24px, 32px from 900px) ===== */
+:root { --ctc-r: 24px; }
+@media (min-width: 900px) { :root { --ctc-r: 32px; } }
+#contact.ctc { border-radius: var(--ctc-r) var(--ctc-r) 0 0; margin-top: calc(var(--ctc-r) * -1); }          /* pulled up over the light Portfólió, whose bottom padding grows by the same amount: the light shows in the corners */
+#portfolio { padding-block-end: calc(var(--section-bottom) + var(--ctc-r)); }
