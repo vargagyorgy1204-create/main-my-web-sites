@@ -126,7 +126,7 @@
           (IG.qr ? '<figure class="pf-ig__qr">' +
             '<span class="pf-qr__box">' +
               /* hand-drawn corner brackets (slightly irregular strokes, round caps); pathLength=1 so the draw-on can use dashoffset 1 -> 0 */
-              '<svg class="pf-qr__frame" viewBox="0 0 152 152" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+              '<svg class="pf-qr__frame" viewBox="0 0 152 152" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
                 '<path class="pf-qr__c" d="M4 40 C3 30 4.5 18 6 11 C7.5 5.5 12 4 18 4.5 C26 5 33 3.5 41 4"/>' +
                 '<path class="pf-qr__c" d="M111 3.5 C119 4.5 127 3 134 5 C140 6.5 147.5 8 148 15 C148.5 22 147 31 148.5 40"/>' +
                 '<path class="pf-qr__c" d="M148 112 C147 120 149 128 147 135 C145.5 142 141 148 134 147.5 C126 147 119 148.5 111 148"/>' +
@@ -294,10 +294,11 @@
         var label = qrBox.querySelector('.pf-qr__label');
         gsap.set(label, { clipPath: 'inset(-10% 100% -10% 0)' });
         var dtl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: igCard, start: 'top 88%', end: pinTop, scrub: true, invalidateOnRefresh: true } });
-        corners.forEach(function (el, i) { dtl.set(el, { opacity: 1 }, i * 0.25).to(el, { strokeDashoffset: 0, duration: 1 }, i * 0.25); });
-        dtl.to(label, { clipPath: 'inset(-10% -4% -10% 0)', duration: 0.9 }, 1.1)
-           .set(shaft, { opacity: 1 }, 2.0).to(shaft, { strokeDashoffset: 0, duration: 0.8 }, 2.0)
-           .set(head, { opacity: 1 }, 2.8).to(head, { strokeDashoffset: 0, duration: 0.3 }, 2.8);
+        /* order: label writes in -> arrow draws (shaft, then head) -> the 4 corner brackets (staggered) */
+        dtl.to(label, { clipPath: 'inset(-10% -4% -10% 0)', duration: 0.9 }, 0)
+           .set(shaft, { opacity: 1 }, 1.0).to(shaft, { strokeDashoffset: 0, duration: 0.8 }, 1.0)
+           .set(head, { opacity: 1 }, 1.8).to(head, { strokeDashoffset: 0, duration: 0.3 }, 1.8);
+        corners.forEach(function (el, i) { dtl.set(el, { opacity: 1 }, 2.1 + i * 0.25).to(el, { strokeDashoffset: 0, duration: 0.8 }, 2.1 + i * 0.25); });
       }
 
       return function () { stackOn = false; all.forEach(function (c) { c.style.visibility = ''; }); scheduleActive(); };
@@ -506,7 +507,7 @@
       if (qrEl && qrEl.offsetParent) {
         var up = Math.max(60, Math.round(qrEl.getBoundingClientRect().top - panel.getBoundingClientRect().top));
         qrEl.style.setProperty('--qr-up', up + 'px');
-        qrEl.style.setProperty('--qr-sw', (2.5 * 100 / (up + 4)).toFixed(2));
+        qrEl.style.setProperty('--qr-sw', (3 * 100 / (up + 4)).toFixed(2));
       }
       /* the slot is only as tall as the phone (+ 32px for its 3D overshoot) and pins vertically centred */
       igCard.style.setProperty('--pf-ig-slot-h', Math.round(Math.max(wrap.offsetHeight + 32, h + 2 * 16)) + 'px');

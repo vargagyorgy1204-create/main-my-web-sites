@@ -7497,14 +7497,14 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-ig .pf-case__name { font-size: clamp(26px, 2.7vw, 52px); }
   /* QR block: the white tile (--pf-qr, scannable) inside a hand-drawn bracket frame, at the top of the stack. The label + curly arrow sit ABOVE the card (dark ink on the light Portfolio
      background); js/portfolio.js sets --qr-up (QR top -> card top) so the arrow starts over the card edge and ends in the frame. */
-  .pf-ig { --pf-qr: 110px; --pf-qrbox: calc(var(--pf-qr) + 26px); }
-  .pf-ig__qr { display: block; position: relative; margin: 0; color: #fff; --qr-up: 120px; --qr-sw: 2.5; }
+  .pf-ig { --pf-qr-n: 140; --pf-qr: calc(var(--pf-qr-n) * 1px); --pf-qrbox: calc(var(--pf-qr) + 26px); }
+  .pf-ig__qr { display: block; position: relative; margin: 0; color: var(--card-secondary); --qr-up: 120px; --qr-sw: 3; }
   .pf-qr__box { position: relative; display: block; inline-size: var(--pf-qrbox); block-size: var(--pf-qrbox); }
-  .pf-qr__box img { position: absolute; inset: 13px; inline-size: var(--pf-qr); block-size: var(--pf-qr); border-radius: 12px; background: #fff; object-fit: cover; }
+  .pf-qr__box img { position: absolute; inset: 13px; inline-size: var(--pf-qr); block-size: var(--pf-qr); box-sizing: border-box; padding: 16%; border-radius: 14px; background: #fff; object-fit: contain; }
   .pf-qr__frame { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
   .pf-qr__label { position: absolute; z-index: 2; inset-inline-start: calc(var(--pf-qrbox) * 0.72 + (var(--qr-up) + 4px) * 0.34); inset-block-start: calc(var(--qr-up) * -1 - 40px); white-space: nowrap; font-family: 'Caveat', 'Segoe Script', cursive; font-weight: 600; font-size: 25px; line-height: 1; color: var(--card-secondary); rotate: -4deg; transform-origin: 0 100%; }
   .pf-qr__arrow { position: absolute; z-index: 2; color: var(--card-secondary); inline-size: calc((var(--qr-up) + 4px) * 0.5); block-size: calc(var(--qr-up) + 4px); inset-inline-start: calc(var(--pf-qrbox) * 0.72 - (var(--qr-up) + 4px) * 0.12); inset-block-start: calc(var(--qr-up) * -1 - 6px); overflow: visible; }
-  .pf-qr__frame g { stroke-width: 2.5; }
+  .pf-qr__frame g { stroke-width: calc(3 * 152 / (var(--pf-qr-n) + 26)); }
   .pf-qr__arrow g { stroke-width: var(--qr-sw); }
   /* the stage is a size container (it stretches to the panel height): the phone is as tall as the panel + 0.9 insets (it overflows by ~0.45 inset on both sides) and at most 62% of the column wide */
   .pf-ig__stage { order: 1; position: relative; align-self: stretch; container-type: inline-size; }
@@ -7558,4 +7558,4 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 /* the handwriting font of the Instagram QR label (self-hosted, Caveat 600, latin + latin-ext) */
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@media (min-width: 900px) and (max-width: 1100px) { .pf-ig { --pf-qr: 92px; } }
+@media (min-width: 900px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 120; } .pf-ig__copy { gap: var(--s1); } }
