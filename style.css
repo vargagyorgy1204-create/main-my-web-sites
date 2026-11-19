@@ -7578,6 +7578,8 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__pw { position: absolute; right: 100%; bottom: 0; z-index: 3; padding-right: 14px; visibility: hidden; pointer-events: none; inline-size: 274px; }
 .hw__pw.is-open { visibility: visible; pointer-events: auto; }
 .hw__pw.is-mobile { padding-right: 0; z-index: 8; }
+.hw__pw.is-above { right: 0; bottom: calc(100% + 14px); padding-right: 0; }
+.hw__mini.is-live i { animation: none; }
 .hw__panel { position: relative; inline-size: 100%; box-sizing: border-box; min-block-size: 200px; padding: 11px 12px 12px; border-radius: 18px; background: rgb(22 17 44 / 0.78); border: 1px solid rgb(255 255 255 / 0.22); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: 0 24px 60px rgb(0 0 0 / 0.5); color: #fff; font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 13px; }
 .hw__ph { display: flex; align-items: center; justify-content: space-between; margin-block-end: 10px; }
 .hw__pt { font: 700 13px/1 'Space Grotesk', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; color: rgb(255 255 255 / 0.9); }
@@ -7654,17 +7656,21 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 
 /* compact panels (max ~260px): the player card IS the panel (no outer card, a floating close button), scaled proportionally */
 .hw__panel.is-bare { min-block-size: 0; padding: 0; background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
-.hw__panel.is-bare .mp { --mp-z: 0.88; zoom: var(--mp-z); inline-size: calc(100% / var(--mp-z)); box-sizing: border-box; box-shadow: 0 24px 60px rgb(0 0 0 / 0.5); border-color: rgb(255 255 255 / 0.18); }
+.hw__panel.is-bare .mp { --mp-z: 0.88; zoom: var(--mp-z); inline-size: 100%; box-sizing: border-box; box-shadow: 0 24px 60px rgb(0 0 0 / 0.5); border-color: rgb(255 255 255 / 0.18); }
 .hw__pw.is-mobile .hw__panel.is-bare .mp { --mp-z: 1; }
 .hw__px--float { position: absolute; top: -9px; right: -9px; z-index: 2; inline-size: 26px; block-size: 26px; background: rgb(255 255 255 / 0.16); border-color: rgb(255 255 255 / 0.32); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-/* now-playing pill (js/hero-os.js): music keeps playing while scrolling; shown while the hero is off-screen */
-.hw-np { position: fixed; left: var(--content-gutter-tight, 20px); bottom: 16px; z-index: 1190; display: inline-flex; align-items: center; gap: 10px; max-inline-size: calc(100vw - 2 * var(--content-gutter-tight, 20px)); padding: 6px 6px 6px 14px; border-radius: 999px; background: rgb(22 17 44 / 0.72); border: 1px solid rgb(255 255 255 / 0.22); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 12px 34px rgb(0 0 0 / 0.4); color: #fff; font: 600 12.5px/1 'Space Grotesk', 'Segoe UI', sans-serif; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
-.hw-np.is-on { opacity: 1; visibility: visible; transform: none; }
-.hw-np__eq { display: inline-flex; align-items: flex-end; gap: 2px; block-size: 12px; flex: none; }
-.hw-np__eq i { inline-size: 3px; block-size: 100%; border-radius: 1px; background: #22c3d6; transform-origin: 50% 100%; animation: hwMini 0.9s ease-in-out infinite; }
-.hw-np__eq i:nth-child(2) { animation-delay: -0.3s; background: #9b3fd8; } .hw-np__eq i:nth-child(3) { animation-delay: -0.6s; background: #C026A3; }
-.hw-np__t { min-inline-size: 0; max-inline-size: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hw-np__b { flex: none; inline-size: 30px; block-size: 30px; border-radius: 50%; border: 0; background: rgb(255 255 255 / 0.16); color: #fff; display: grid; place-items: center; padding: 0; cursor: pointer; }
-.hw-np__b:hover, .hw-np__b:focus-visible { background: rgb(255 255 255 / 0.3); outline: none; }
-.hw-np__b svg { inline-size: 14px; block-size: 14px; }
-@media (prefers-reduced-motion: reduce) { .hw-np { transition: none; } .hw-np__eq i { animation: none; transform: scaleY(0.7); } }
+/* floating music button (js/hero-os.js): while music plays and the hero is out of view; bottom-left, centred under the header logo; hover / focus / tap springs it up into a pill with 3 buttons */
+.hw-fm { position: fixed; left: 20px; bottom: 20px; z-index: 1190; inline-size: 48px; block-size: 48px; border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; background: rgb(22 17 44 / 0.72); border: 1px solid rgb(255 255 255 / 0.28); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 12px 34px rgb(0 0 0 / 0.4); opacity: 0; visibility: hidden; transform: scale(0.6); transform-origin: 50% 100%; transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.3s, block-size 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.hw-fm.is-on { opacity: 1; visibility: visible; transform: none; }
+.hw-fm.is-on:hover, .hw-fm.is-on:focus-within, .hw-fm.is-on.is-open { block-size: 190px; }
+.hw-fm__btns { flex: none; display: flex; flex-direction: column; gap: 8px; padding: 8px 0 0; opacity: 0; transition: opacity 0.2s ease; }
+.hw-fm:hover .hw-fm__btns, .hw-fm:focus-within .hw-fm__btns, .hw-fm.is-open .hw-fm__btns { opacity: 1; transition-delay: 0.08s; }
+.hw-fm__btns button { inline-size: 34px; block-size: 34px; border-radius: 50%; border: 0; background: rgb(255 255 255 / 0.14); color: #fff; display: grid; place-items: center; padding: 0; cursor: pointer; }
+.hw-fm__btns button:hover, .hw-fm__btns button:focus-visible { background: rgb(255 255 255 / 0.3); outline: none; }
+.hw-fm__btns svg { inline-size: 15px; block-size: 15px; }
+.hw-fm__eq { flex: none; inline-size: 46px; block-size: 46px; border-radius: 50%; border: 0; background: none; display: grid; place-items: center; padding: 0; cursor: pointer; }
+.hw-fm__eq:focus-visible { outline: 2px solid #a5a7fb; outline-offset: -3px; }
+.hw-fm__bars { display: flex; align-items: flex-end; gap: 3px; block-size: 18px; }
+.hw-fm__bars i { inline-size: 3px; block-size: 100%; border-radius: 1.5px; background: #22c3d6; transform-origin: 50% 100%; transform: scaleY(0.25); }
+.hw-fm__bars i:nth-child(2) { background: #6366f1; } .hw-fm__bars i:nth-child(3) { background: #9b3fd8; } .hw-fm__bars i:nth-child(4) { background: #C026A3; }
+@media (prefers-reduced-motion: reduce) { .hw-fm, .hw-fm__btns { transition: none; } }

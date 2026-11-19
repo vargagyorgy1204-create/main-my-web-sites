@@ -28,7 +28,7 @@
     { title: 'Lofi House', artist: 'Zephiramusic · Pixabay', src: 'assets/audio/zephiramusic-lofi-house-611107.mp3' }
   ];
   var A = { ctx: null, master: null, an: null, data: null, idx: 0, playing: false, running: false, muted: false, vol: 0.3, audio: null, offTimer: 0, raf: 0, ui: null, err: false };
-  var BUCKETS = [[0, 2], [2, 4], [4, 6], [6, 9], [9, 13], [13, 18], [18, 24], [24, 32]];
+  A.session = false; A.lv = [0, 0, 0, 0, 0, 0, 0, 0]; A.avg = [0, 0, 0, 0, 0, 0, 0, 0]; A.peak = 0.5;
 
   function ensureCtx() {
     if (A.ctx) return true;
@@ -36,14 +36,16 @@
     if (!AC) return false;
     var c = A.ctx = new AC();
     A.master = c.createGain(); A.master.gain.value = 0;
-    A.an = c.createAnalyser(); A.an.fftSize = 64; A.an.smoothingTimeConstant = 0.75; A.data = new Uint8Array(A.an.frequencyBinCount);
-    A.master.connect(A.an); A.an.connect(c.destination);
+    A.an = c.createAnalyser(); A.an.fftSize = 1024; A.an.smoothingTimeConstant = 0.5; A.data = new Uint8Array(A.an.frequencyBinCount);
+    A.an.connect(A.master); A.master.connect(c.destination);
+    var bw = c.sampleRate / A.an.fftSize, f1 = Math.min(14000, c.sampleRate * 0.45); A.edges = [];
+    for (var i = 0; i <= 8; i++) { var e = Math.max(1, Math.round(40 * Math.pow(f1 / 40, i / 8) / bw)); if (i && e <= A.edges[i - 1]) e = A.edges[i - 1] + 1; A.edges.push(e); }      /* 8 log-spaced bands, 40 Hz -> 14 kHz */
     return true;
   }
   function ensureFile() {
     if (A.audio) return;
     var a = A.audio = new Audio(); a.preload = 'none';
-    var src = A.ctx.createMediaElementSource(a); src.connect(A.master);
+    var src = A.ctx.createMediaElementSource(a); src.connect(A.an);
     a.addEventListener('ended', function () { go(A.idx + 1, true); });
     a.addEventListener('error', function () { A.err = true; setPlaying(false); A.running = false; });
     a.addEventListener('loadedmetadata', function () { A.err = false; });
@@ -62,13 +64,13 @@
     if (on === A.playing) return;
     A.playing = on;
     document.dispatchEvent(new CustomEvent('hero:music', { detail: { playing: on } }));
-    ui(); loop(); npUpdate();
+    ui(); vizRun(); fmUpdate();
   }
   function play() {
     if (!ensureCtx()) return;
     clearTimeout(A.offTimer);
     if (!A.running) startTrack();
-    A.playing = false; setPlaying(true); fade();
+    A.session = true; A.playing = false; setPlaying(true); fade();
   }
   function pause() {
     if (!A.playing) return;
@@ -81,33 +83,79 @@
     clearTimeout(A.offTimer);
     stopTrack();
     A.idx = ((i % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length; A.err = false;
-    ui(); npUpdate();
+    ui(); fmUpdate();
     if (was) { ensureCtx(); startTrack(); A.playing = false; setPlaying(true); fade(); }
   }
-  /* the music keeps playing while the page scrolls (only the user, or a hidden tab, stops it; no automatic resume); off-screen hero -> a tiny "now playing" pill (bottom-left) */
-  function stopMusic() { if (A.playing) pause(); }
-  document.addEventListener('visibilitychange', function () { if (document.hidden) stopMusic(); });
-  var heroVisible = true, np = null, banner = null;
-  function npBuild() {
-    np = el('div', 'hw-np'); np.setAttribute('role', 'region'); np.setAttribute('aria-label', 'Most szól');
-    np.innerHTML = '<span class="hw-np__eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="hw-np__t"></span><button type="button" class="hw-np__b" aria-label="Szünet"><i data-lucide="pause"></i></button>';
-    np.querySelector('.hw-np__b').addEventListener('click', function () { pause(); });
-    document.body.appendChild(np); icons();
+  /* the music keeps playing while the page scrolls and while the tab is hidden (only the user stops it); the rAF visualisers rest while the tab is hidden.
+     While the hero is out of view a floating music button (bottom-left, under the header logo) gives control from anywhere. */
+  function stopFull() {                                             /* stop = pause + back to the start + hide the floating button */
+    var was = A.playing; A.session = false;
+    if (was) pause();
+    clearTimeout(A.offTimer);
+    A.offTimer = setTimeout(function () { stopTrack(); if (A.audio) { try { A.audio.currentTime = 0; } catch (e) { /* ignore */ } } if (A.ctx && A.ctx.state === 'running') A.ctx.suspend(); ui(); }, was ? 950 : 0);
+    fmUpdate();
   }
-  function npUpdate() {
-    var show = A.playing && !heroVisible;
-    if (show && !np) npBuild();
-    if (!np) return;
-    np.querySelector('.hw-np__t').textContent = PLAYLIST[A.idx].title;
-    if (show) {
-      banner = banner || document.getElementById('cookie-consent-banner');
-      var bh = banner && banner.getAttribute('aria-hidden') !== 'true' && banner.getBoundingClientRect().height > 0 ? banner.getBoundingClientRect().height + 16 : 0;      /* above the cookie banner while it is shown */
-      np.style.bottom = (16 + bh) + 'px';
-    }
-    np.classList.toggle('is-on', show);
+  var heroVisible = true, fm = null, banner = null;
+  function fmBuild() {
+    fm = el('div', 'hw-fm'); fm.setAttribute('role', 'group'); fm.setAttribute('aria-label', 'Zene vezérlők');
+    fm.innerHTML = '<div class="hw-fm__btns"><button type="button" data-f="play" aria-label="Szünet"><i data-lucide="pause"></i></button><button type="button" data-f="next" aria-label="Következő szám"><i data-lucide="skip-forward"></i></button><button type="button" data-f="stop" aria-label="Leállítás"><i data-lucide="square"></i></button></div>' +
+      '<button type="button" class="hw-fm__eq" aria-label="Zene vezérlők" aria-expanded="false"><span class="hw-fm__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>';
+    fm.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-f]');
+      if (b) { var f = b.dataset.f; if (f === 'play') { A.playing ? pause() : play(); } else if (f === 'next') go(A.idx + 1); else if (f === 'stop') { stopFull(); fm.classList.remove('is-open'); } return; }
+      if (e.target.closest('.hw-fm__eq')) { var o = fm.classList.toggle('is-open'); fm.querySelector('.hw-fm__eq').setAttribute('aria-expanded', o ? 'true' : 'false'); }          /* tap */
+    });
+    document.addEventListener('pointerdown', function (e) { if (fm && fm.classList.contains('is-open') && !fm.contains(e.target)) { fm.classList.remove('is-open'); fm.querySelector('.hw-fm__eq').setAttribute('aria-expanded', 'false'); } });
+    document.body.appendChild(fm); icons();
   }
-  if ('IntersectionObserver' in window && hero) new IntersectionObserver(function (es) { heroVisible = es[es.length - 1].isIntersecting; npUpdate(); }).observe(hero);
-  window.addEventListener('resize', function () { npUpdate(); });
+  function fmPlace() {
+    var lg = document.querySelector('.nav__logo'), r = lg ? lg.getBoundingClientRect() : { left: 20, width: 44, top: 20 };
+    banner = banner || document.getElementById('cookie-consent-banner');
+    var bh = banner && banner.getAttribute('aria-hidden') !== 'true' && banner.getBoundingClientRect().height > 0 ? banner.getBoundingClientRect().height + 16 : 0;        /* above the cookie banner while it is shown */
+    fm.style.left = Math.round(r.left + r.width / 2 - 24) + 'px'; fm.style.bottom = (Math.round(r.top) + bh) + 'px';                                                       /* same x-centre as the logo, bottom margin = the header's top margin */
+  }
+  function fmUpdate() {
+    var show = A.session && !heroVisible;
+    if (show && !fm) fmBuild();
+    if (!fm) return;
+    var pb = fm.querySelector('[data-f="play"]'), pl = A.playing;
+    if (pb.dataset.s !== (pl ? '1' : '0')) { pb.dataset.s = pl ? '1' : '0'; pb.setAttribute('aria-label', pl ? 'Szünet' : 'Lejátszás'); pb.innerHTML = '<i data-lucide="' + (pl ? 'pause' : 'play') + '"></i>'; icons(); }
+    if (show) fmPlace();
+    fm.classList.toggle('is-on', show);
+    if (!show) fm.classList.remove('is-open');
+  }
+  if ('IntersectionObserver' in window && hero) new IntersectionObserver(function (es) { heroVisible = es[es.length - 1].isIntersecting; fmUpdate(); }).observe(hero);
+  window.addEventListener('resize', function () { fmUpdate(); });
+
+  /* ---- visualisers: real audio (AnalyserNode), 8 log-spaced bands, attack ~0.4 / release ~0.12 per frame, a slight gain + auto-level so quiet tracks still move; rAF only while playing (and the tab is visible) */
+  function vizRun() { if (!A.raf && !document.hidden) A.raf = requestAnimationFrame(vizTick); }
+  function vizTick() {
+    A.raf = 0;
+    if (document.hidden) return;
+    var lv = A.lv, i, k, live = A.ctx && A.playing;
+    if (live) {
+      A.an.getByteFrequencyData(A.data);
+      var mx = 0, raw = [];
+      for (i = 0; i < 8; i++) { var sum = 0, m = 0, n = A.edges[i + 1] - A.edges[i]; for (k = A.edges[i]; k < A.edges[i + 1]; k++) { sum += A.data[k]; if (A.data[k] > m) m = A.data[k]; } var r = (0.55 * m + 0.45 * sum / n) / 255; raw.push(r); if (r > mx) mx = r; }
+      A.warm = A.warm || (A.warm0 = (A.warm0 || 0) + 1) > 6;          /* the first frames only learn the average (no start-up burst) */
+      A.peak = Math.max(mx, A.peak * 0.996, 0.4);                  /* auto-level: quiet tracks still move, loud ones do not stick at the top */
+      for (i = 0; i < 8; i++) {                                     /* level = a body part (relative to the loudest band) + a "punch" part (how far the band jumps above its own slow average): kicks / snares clearly pulse */
+        var base = Math.pow(Math.max(0, raw[i] / A.peak - 0.35) / 0.65, 1.8), punch = Math.max(0, raw[i] - A.avg[i]) / (0.2 * A.peak);
+        if (!A.warm) A.avg[i] = raw[i]; else A.avg[i] += (raw[i] - A.avg[i]) * 0.03;
+        var x = Math.min(1, 0.45 * base + 0.9 * punch); lv[i] += (x - lv[i]) * (x > lv[i] ? 0.4 : 0.12);
+      }
+    } else { for (i = 0; i < 8; i++) lv[i] += (0 - lv[i]) * 0.12; }
+    var rest = true; for (i = 0; i < 8; i++) if (lv[i] > 0.02) rest = false;
+    if (A.ui) for (i = 0; i < 8; i++) A.ui.bars[i].style.height = (4 + lv[i] * 28).toFixed(1) + 'px';
+    if (!mini) mini = document.querySelector('.hw__mini');
+    if (mini) { mini.classList.add('is-live'); var mb = mini.children, g = [(lv[0] + lv[1]) / 2, (lv[3] + lv[4]) / 2, (lv[6] + lv[7]) / 2]; for (i = 0; i < 3; i++) mb[i].style.transform = 'scaleY(' + (0.25 + 0.75 * g[i]).toFixed(3) + ')'; }
+    if (fm) { var fb = fm.querySelector('.hw-fm__bars').children, g4 = [(lv[0] + lv[1]) / 2, (lv[2] + lv[3]) / 2, (lv[4] + lv[5]) / 2, (lv[6] + lv[7]) / 2]; for (i = 0; i < 4; i++) fb[i].style.transform = 'scaleY(' + (0.2 + 0.8 * g4[i]).toFixed(3) + ')'; }
+    A.frames = (A.frames || 0) + 1;
+    if (cur === 'music') ui();
+    if (!rest || live) A.raf = requestAnimationFrame(vizTick);
+  }
+  var mini = null;
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) vizRun(); });
 
   function fmt(s) { if (!isFinite(s) || s < 0) s = 0; var m = Math.floor(s / 60), r = Math.floor(s % 60); return m + ':' + (r < 10 ? '0' : '') + r; }
   function pos() {                                                  /* {cur, dur} of the current track */
@@ -126,24 +174,6 @@
     U.fill.style.width = f + '%'; U.handle.style.insetInlineStart = f + '%'; U.handle.style.visibility = seekable ? '' : 'hidden';
     U.bar.setAttribute('aria-valuenow', String(Math.round(f)));
     U.el.textContent = fmt(p.cur); U.rem.textContent = p.dur ? '-' + fmt(p.dur - p.cur) : '0:00';
-  }
-  function loop() {
-    cancelAnimationFrame(A.raf); A.raf = 0;
-    if (!A.ui || cur !== 'music') return;
-    var rest = 0;
-    var tick = function () {
-      A.raf = 0;
-      if (cur !== 'music' || !A.ui) return;
-      ui();
-      var bars = A.ui.bars;
-      if (A.ctx && A.playing) {
-        A.an.getByteFrequencyData(A.data);
-        for (var i = 0; i < 8; i++) { var s = 0, n = 0; for (var k = BUCKETS[i][0]; k < BUCKETS[i][1]; k++) { s += A.data[k]; n++; } bars[i].style.height = Math.max(4, Math.min(32, (s / n / 255) * 1.5 * 32)) + 'px'; }
-        rest = 0;
-      } else if (rest++ < 20) { for (var j = 0; j < 8; j++) bars[j].style.height = '4px'; }
-      if (A.playing || rest < 20) A.raf = requestAnimationFrame(tick);
-    };
-    A.raf = requestAnimationFrame(tick);
   }
   function seekTo(frac) {
     var t = PLAYLIST[A.idx], p = pos();
@@ -293,13 +323,14 @@
       var x = el('button', 'hw__px', '<i data-lucide="x"></i>'); x.type = 'button'; x.setAttribute('aria-label', 'Panel bezárása');
       x.addEventListener('click', function () { api.close(); });
       host.innerHTML = '';
-      if (bare) { x.classList.add('hw__px--float'); host.appendChild(built[name].el); host.appendChild(x); } else { head.appendChild(x); host.appendChild(head); host.appendChild(built[name].el); }
+      if (bare) { host.appendChild(built[name].el); } else { head.appendChild(x); host.appendChild(head); host.appendChild(built[name].el); }
       host.setAttribute('aria-label', BUILD[name][0]);
       icons();
-      if (name === 'music') { ui(); loop(); }
+      if (name === 'music') { ui(); vizRun(); }
       var f = built[name].focus; if (f && f.focus) setTimeout(function () { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }, 60);
     },
-    closed: function (name) { cur = null; cancelAnimationFrame(A.raf); },
-    audio: function () { var p = pos(); return { playing: A.playing, state: A.ctx && A.ctx.state, idx: A.idx, track: PLAYLIST[A.idx].title, cur: p.cur, dur: p.dur, muted: A.muted, vol: A.vol, bars: A.ui && A.ui.bars.map(function (b) { return b.style.height; }) }; }
+    closed: function (name) { cur = null; },
+    audio: function () { var p = pos(); return { playing: A.playing, state: A.ctx && A.ctx.state, idx: A.idx, track: PLAYLIST[A.idx].title, cur: p.cur, dur: p.dur, muted: A.muted, vol: A.vol, session: A.session, frames: A.frames || 0, bars: A.ui && A.ui.bars.map(function (b) { return b.style.height; }) }; },
+    stop: stopFull
   };
 })();

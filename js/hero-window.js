@@ -320,7 +320,7 @@
     osQueue = cb;
     if (osState === 1) return;
     osState = 1;
-    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=5'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
+    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=6'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
     document.head.appendChild(sc);
   }
   function holdOn() {
@@ -347,10 +347,25 @@
       var mob = mode === 'mobile';
       pw.classList.toggle('is-mobile', mob);
       if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
-      else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }      /* the player needs ~320px */
+      else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }
       pw.classList.add('is-open');
+      placePanel();
       gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true });
     });
+  }
+  /* desktop: the panel sits to the left of the (tilted) window with >= 16px between its right edge and the window's visual left edge, bottom-aligned (lower half);
+     if it would touch the headline / subheading / buttons / status line it goes above the window instead */
+  function placePanel() {
+    pw.classList.remove('is-above'); pw.style.paddingRight = ''; pw.style.inlineSize = '';
+    if (mode !== 'desktop') return;
+    var pwr = pw.getBoundingClientRect(), wl = win.getBoundingClientRect().left;
+    var X = Math.max(14, Math.round(pwr.right - wl + 16 + 4));                       /* + float / tilt breathing room */
+    var PW = 260;
+    pw.style.paddingRight = X + 'px'; pw.style.inlineSize = (PW + X) + 'px';
+    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect();
+    var pl = hwr.left - X - PW - hr.left, pr = hwr.left - X - hr.left, pb = hwr.bottom - hr.top, pt = pb - hh;
+    var hit = obstacles(hr).some(function (o) { return o.r + 12 > pl && o.l - 12 < pr && o.b + 12 > pt && o.t - 12 < pb; });
+    if (hit) { pw.classList.add('is-above'); pw.style.paddingRight = ''; pw.style.inlineSize = PW + 'px'; }
   }
   function closePanel(silent) {
     if (!osApp) return;
