@@ -55,7 +55,7 @@
   abEl.className = 'hw__s hw__s--build';
   var blocks = [];
   var head = box('ab ab-head', 0, 0, 1000, 56); blocks.push(head);
-  box('ab-bar', 28, 14, 56, 30, head, 1000, 56).style.background = '#6366f1';
+  box('ab-bar', 28, 14, 56, 30, head, 1000, 56).style.background = 'var(--ab-logo, #6366f1)';
   [640, 752].forEach(function (x) { box('ab-soft', x, 22, 80, 12, head, 1000, 56); });
   var tgt = box('ab-tgt', 864, 17, 64, 22, head, 1000, 56);
   var tgk = box('ab-tgk', 4, 3, 16, 16, tgt, 64, 22);
@@ -320,7 +320,7 @@
     osQueue = cb;
     if (osState === 1) return;
     osState = 1;
-    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=6'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
+    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=7'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
     document.head.appendChild(sc);
   }
   function holdOn() {

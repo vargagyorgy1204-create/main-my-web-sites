@@ -219,43 +219,157 @@
     return { el: b, focus: q('.mp__play') };
   }
 
-  /* ================================================================ palette */
+  /* ================================================================ palette: designer-like generated palettes, an elegant card, "Kipróbálom" applies it to the living window */
   function hex(h, s, l) {
     h = ((h % 360) + 360) % 360; s /= 100; l /= 100;
     var a = s * Math.min(l, 1 - l), f = function (n) { var k = (n + h / 30) % 12, c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); var x = Math.round(255 * c).toString(16); return x.length < 2 ? '0' + x : x; };
     return ('#' + f(0) + f(8) + f(4)).toUpperCase();
   }
-  function genPalette() {                                           /* harmonious: analogous or triadic from a random base hue */
-    var h = Math.random() * 360, tri = Math.random() < 0.5, S = 62 + Math.random() * 16;
-    var H = tri ? [h, h + 120, h + 240, h + 60, h + 180] : [h - 40, h - 20, h, h + 20, h + 40];
-    var L = tri ? [46, 58, 52, 70, 80] : [34, 46, 56, 68, 80];
-    return H.map(function (x, i) { return hex(x, S, L[i]); });
+  function rgbOf(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
+  function lumOf(c) { var f = function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); }
+  function contrast(a, b) { var x = lumOf(a), y = lumOf(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  function satOf(c) { var mx = Math.max(c[0], c[1], c[2]), mn = Math.min(c[0], c[1], c[2]); return mx === 0 ? 0 : (mx - mn) / mx; }
+  var DARK = [20, 16, 28], LIGHT = [255, 255, 255];
+  function inkFor(bg) { return contrast(bg, LIGHT) >= contrast(bg, DARK) ? LIGHT : DARK; }       /* the text colour with the better contrast */
+  function css(c) { return 'rgb(' + Math.round(c[0]) + ' ' + Math.round(c[1]) + ' ' + Math.round(c[2]) + ')'; }
+  function mix(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+
+  var NAMES = [
+    [345, ['Rózsakvarc', 'Bordó selyem', 'Cseresznyevirág', 'Pirkadati rózsa', 'Vörösbor köd', 'Pipacsmező']],
+    [15, ['Őszi fűszer', 'Réz alkony', 'Mézes dió', 'Agyagkemence', 'Terrakotta nyár', 'Fahéjas reggel']],
+    [45, ['Homokdűne', 'Aranyóra', 'Borostyán', 'Szalmaszín', 'Vaj és méz', 'Búzamező']],
+    [70, ['Erdei moha', 'Zsályalevél', 'Mohazöld csend', 'Olajfaliget', 'Reggeli rét', 'Páfrányerdő']],
+    [165, ['Tengermély', 'Jégtó', 'Türkiz öböl', 'Fjord', 'Mélykék hullám', 'Üvegtenger']],
+    [200, ['Éjféli kék', 'Viharfelhő', 'Indigó éj', 'Tengeri szél', 'Kék óra', 'Havas alkony']],
+    [250, ['Levendulamező', 'Éjféli szilva', 'Ametiszt köd', 'Orgona alkony', 'Szilvaszirup', 'Bársonyos éjszaka']],
+    [300, ['Szilvás hajnal', 'Fukszia árnyék', 'Málna és bor', 'Rózsás alkonyat', 'Mályva szél', 'Orchidea csend']]
+  ];
+  function nameFor(h, last) {
+    h = ((h % 360) + 360) % 360;
+    var fam = NAMES[0];
+    if (h >= 15 && h < 345) for (var i = 1; i < NAMES.length; i++) if (h >= NAMES[i][0]) fam = NAMES[i];
+    var n; do { n = fam[1][Math.floor(Math.random() * fam[1].length)]; } while (n === last && fam[1].length > 1);
+    return n;
+  }
+  function genPalette(last) {                                       /* mostly a monochromatic ramp, very light -> very dark, with a slight hue drift; 30%: one muted accent */
+    var h = Math.random() * 360, drift = Math.random() * 16 - 8, r = Math.random;
+    var L = [90 + r() * 3 - 1.5, 71 + r() * 6 - 3, 50 + r() * 6 - 3, 31 + r() * 6 - 3, 12 + r() * 3 - 1.5];        /* spaced by ~19-21 points of lightness */
+    var S = [34 + r() * 12, 44 + r() * 14, 52 + r() * 16, 44 + r() * 12, 34 + r() * 10];
+    var cols = L.map(function (l, i) { return hex(h + drift * i, S[i], l); }), accent = -1;
+    if (r() < 0.3) {
+      accent = 1 + Math.floor(r() * 3);
+      var ah = r() < 0.5 ? h + 150 + r() * 60 : h + (r() < 0.5 ? -1 : 1) * (35 + r() * 20);
+      cols[accent] = hex(ah, 14 + r() * 14, L[accent]);             /* a sage / warm-grey like accent, same lightness as its slot */
+    }
+    return { cols: cols, accent: accent, name: nameFor(h, last), hue: h };
+  }
+
+  var P = { cur: null, host: null, ui: null, shown: null, applied: false, tw: null };
+  var APPLY_DEF = { view: [18, 16, 31], head: [44, 42, 85], h1: [99, 102, 241], h2: [155, 63, 216], c1: [14, 143, 163], c2: [34, 195, 214], card: [27, 25, 48], s1: [155, 63, 216], s2: [192, 38, 163], s3: [34, 195, 214], s4: [99, 102, 241], ink: [255, 255, 255], btn: [192, 38, 163], logo: [99, 102, 241] };
+  var apState = {}; Object.keys(APPLY_DEF).forEach(function (k) { apState[k] = APPLY_DEF[k].slice(); });
+  function setApplyVars(root) {
+    var a = apState, g = function (x, y, d) { return 'linear-gradient(' + d + 'deg, ' + css(x) + ', ' + css(y) + ')'; };
+    root.style.setProperty('--ab-view', css(a.view)); root.style.setProperty('--ab-head', css(a.head));
+    root.style.setProperty('--ab-hero', g(a.h1, a.h2, 135)); root.style.setProperty('--ab-chart', g(a.c1, a.c2, 160));
+    root.style.setProperty('--ab-card', css(a.card)); root.style.setProperty('--ab-ink', 'rgb(' + Math.round(a.ink[0]) + ' ' + Math.round(a.ink[1]) + ' ' + Math.round(a.ink[2]) + ' / 0.85)');
+    root.style.setProperty('--ab-soft', 'rgb(' + Math.round(a.ink[0]) + ' ' + Math.round(a.ink[1]) + ' ' + Math.round(a.ink[2]) + ' / 0.25)');
+    root.style.setProperty('--ab-btn', css(a.btn)); root.style.setProperty('--ab-logo', css(a.logo));
+    var cards = root.querySelectorAll('.ab-card'), st = [a.s1, a.s2, a.s3, a.s4];
+    for (var i = 0; i < cards.length; i++) cards[i].style.setProperty('--cc', css(st[i]));
+  }
+  function clearApplyVars(root) {
+    ['--ab-view', '--ab-head', '--ab-hero', '--ab-chart', '--ab-card', '--ab-ink', '--ab-soft', '--ab-btn', '--ab-logo'].forEach(function (k) { root.style.removeProperty(k); });
+    var cards = root.querySelectorAll('.ab-card'), st = [APPLY_DEF.s1, APPLY_DEF.s2, APPLY_DEF.s3, APPLY_DEF.s4];
+    for (var i = 0; i < cards.length; i++) cards[i].style.setProperty('--cc', css(st[i]));
+  }
+  function tweenApply(target, root, done) {
+    var keys = Object.keys(target);
+    if (reduce || !gsap) { keys.forEach(function (k) { apState[k] = target[k].slice(); }); setApplyVars(root); if (done) done(); return; }
+    var from = {}; keys.forEach(function (k) { from[k] = apState[k].slice(); });
+    var o = { t: 0 }; gsap.killTweensOf(o);
+    gsap.to(o, { t: 1, duration: 0.6, ease: 'power2.inOut', onUpdate: function () { keys.forEach(function (k) { apState[k] = mix(from[k], target[k], o.t); }); setApplyVars(root); }, onComplete: function () { if (done) done(); } });
+  }
+  function applyTargetFor(cols) {                                   /* map the palette (sorted dark -> light) onto the abstract site */
+    var rgb = cols.map(rgbOf).sort(function (a, b) { return lumOf(a) - lumOf(b); });
+    var acc = rgb.slice().sort(function (a, b) { return satOf(b) - satOf(a); })[0];
+    return { view: rgb[0], head: rgb[1], h1: rgb[2], h2: rgb[3], c1: rgb[3], c2: rgb[4], card: rgb[1], s1: rgb[2], s2: rgb[3], s3: rgb[4], s4: acc, ink: rgb[4], btn: acc, logo: rgb[3] };
+  }
+
+  function bgAt(cols, fx, fy, w, h) {                               /* the colour of the 150deg gradient (light -> dark) at a point (fractions of the panel box) */
+    var th = 150 * Math.PI / 180, dx = Math.sin(th), dy = -Math.cos(th), L = Math.abs(w * dx) + Math.abs(h * dy);
+    var t = Math.max(0, Math.min(1, ((fx - 0.5) * w * dx + (fy - 0.5) * h * dy) / L + 0.5));
+    var seg = t * (cols.length - 1), i = Math.min(cols.length - 2, Math.floor(seg));
+    return mix(cols[i], cols[i + 1], seg - i);
   }
   function buildPalette() {
-    var b = el('div', 'hw__pb');
-    var sw = el('div', 'hw__sw'), cells = [];
-    var toast = el('div', 'hw__toast'); toast.setAttribute('role', 'status');
-    var cols = genPalette();
-    var paint = function (c) { cells.forEach(function (x, i) { x.style.background = c[i]; x.dataset.hex = c[i]; x.setAttribute('aria-label', 'Szín másolása: ' + c[i]); x.firstChild.textContent = c[i]; }); };
-    for (var i = 0; i < 5; i++) { var c = el('button', 'hw__c', '<span></span>'); c.type = 'button'; cells.push(c); sw.appendChild(c); }
-    paint(cols);
+    var b = el('div', 'hw__pb pl');
+    b.innerHTML = '<h3 class="pl__name"></h3><p class="pl__sub">SZÍNPALETTA</p><div class="pl__caps"></div><div class="pl__dots"></div>' +
+      '<div class="pl__act"><button type="button" class="pl__btn" data-p="new"><i data-lucide="refresh-cw"></i><span>Új paletta</span></button><button type="button" class="pl__btn" data-p="try"><i data-lucide="wand-sparkles"></i><span>Kipróbálom</span></button></div>' +
+      '<button type="button" class="pl__reset" data-p="reset" hidden><i data-lucide="undo-2"></i><span>Visszaállítás</span></button><div class="pl__toast" role="status"></div>';
+    var caps = b.querySelector('.pl__caps'), dots = b.querySelector('.pl__dots'), cells = [], dd = [];
+    for (var i = 0; i < 5; i++) {
+      var c = el('button', 'pl__col', '<span class="pl__cap"><i data-lucide="copy"></i></span><span class="pl__hex"></span>'); c.type = 'button'; caps.appendChild(c); cells.push(c);
+      dd.push(dots.appendChild(el('span', 'pl__dot')));
+    }
+    P.ui = { b: b, name: b.querySelector('.pl__name'), sub: b.querySelector('.pl__sub'), cells: cells, dots: dd, toast: b.querySelector('.pl__toast'), reset: b.querySelector('.pl__reset'), tryB: b.querySelector('[data-p="try"]'), act: b.querySelector('.pl__act') };
+    P.cur = genPalette('');
     var tt = 0;
-    var say = function (m) { toast.textContent = m; toast.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(function () { toast.classList.remove('is-on'); }, 1200); };
+    var say = function (m, col) { P.ui.toast.textContent = m; var r = col.getBoundingClientRect(), br = b.getBoundingClientRect(); P.ui.toast.style.left = (r.left + r.width / 2 - br.left) + 'px'; P.ui.toast.style.top = (r.top - br.top - 6) + 'px'; P.ui.toast.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(function () { P.ui.toast.classList.remove('is-on'); }, 1200); };
+    function fallback(t) { try { var ta = el('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); } catch (e) { /* ignore */ } }
     cells.forEach(function (c) {
       c.addEventListener('click', function () {
-        var h = c.dataset.hex, ok = function () { say('Másolva!'); };
+        var h = c.dataset.hex, ok = function () { say('Másolva!', c); };
         if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(h).then(ok, function () { fallback(h); ok(); }); else { fallback(h); ok(); }
       });
     });
-    function fallback(t) { try { var ta = el('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); } catch (e) { /* ignore */ } }
-    var nb = el('button', 'hw__btn', '<i data-lucide="refresh-cw"></i><span>Új paletta</span>'); nb.type = 'button';
-    nb.addEventListener('click', function () {
-      var n = genPalette();
-      if (reduce || !gsap) { paint(n); return; }
-      gsap.to(cells, { scaleY: 0.15, rotationX: 70, duration: 0.15, stagger: 0.04, ease: 'power2.in', onComplete: function () { paint(n); gsap.to(cells, { scaleY: 1, rotationX: 0, duration: 0.3, stagger: 0.04, ease: 'back.out(2)', clearProps: 'transform' }); } });
+    b.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-p]'); if (!t) return; var a = t.dataset.p;
+      if (a === 'new') swap();
+      else if (a === 'try') { tweenApply(applyTargetFor(P.cur.cols), host && window.HeroWin ? window.HeroWin.root : document.querySelector('.hw'), null); P.applied = true; P.ui.reset.hidden = false; inks(P.cur); }
+      else if (a === 'reset') { var root = window.HeroWin.root; tweenApply(APPLY_DEF, root, function () { clearApplyVars(root); }); P.applied = false; P.ui.reset.hidden = true; }
     });
-    b.appendChild(sw); b.appendChild(nb); b.appendChild(toast);
-    return { el: b, focus: cells[0] };
+    function paint(p) {                                              /* static content + the text colours (AA against the gradient behind each text) */
+      var U = P.ui, cols = p.cols, rgb = cols.map(rgbOf);
+      U.name.textContent = p.name;
+      cells.forEach(function (c, i) {
+        c.dataset.hex = cols[i]; c.setAttribute('aria-label', 'Szín másolása: ' + cols[i]); c.querySelector('.pl__hex').textContent = cols[i];
+        var cap = c.querySelector('.pl__cap'); cap.style.background = cols[i]; cap.style.color = css(inkFor(rgb[i]));
+        var nx = rgb[(i + 1) % 5], from = rgb[i]; if (i === 4) { nx = rgb[0]; from = rgb.slice().sort(function (a, b2) { return lumOf(a) - lumOf(b2); })[0]; nx = rgb.slice().sort(function (a, b2) { return lumOf(b2) - lumOf(a); })[0]; }
+        dd[i].style.background = 'linear-gradient(135deg, ' + css(from) + ', ' + css(nx) + ')';
+      });
+      inks(p);
+    }
+    function inks(p) {
+      var U = P.ui, h = host, rgb = p.cols.map(rgbOf);
+      var W = h ? h.offsetWidth || 260 : 260, H = h ? h.offsetHeight || 270 : 270, bb = U.b.getBoundingClientRect(), hb = h ? h.getBoundingClientRect() : bb;
+      var frac = function (e) { var r = e.getBoundingClientRect(); return [((r.left + r.width / 2) - hb.left) / Math.max(1, hb.width), ((r.top + r.height / 2) - hb.top) / Math.max(1, hb.height)]; };
+      var set = function (e, varName, bgc) { var ink = inkFor(bgc); h.style.setProperty(varName, css(ink)); return ink; };
+      if (!h) return;
+      var ft = frac(U.name), fs = frac(U.sub), fh = frac(cells[2].querySelector('.pl__hex')), fa = frac(U.act);
+      var bt = bgAt(rgb, ft[0], ft[1], hb.width, hb.height), bs = bgAt(rgb, fs[0], fs[1], hb.width, hb.height), bh = bgAt(rgb, fh[0], fh[1], hb.width, hb.height), ba = bgAt(rgb, fa[0], fa[1], hb.width, hb.height);
+      /* hex labels sit under different capsules: each gets the better ink for its own spot */
+      var chip = function (e, inkVar, fillVar) {                    /* the better ink for the spot behind e; on a mid-tone (< 4.8:1 either way) the text gets its own small opaque chip (AA always) */
+        var f = frac(e), bg = bgAt(rgb, f[0], f[1], hb.width, hb.height), ink = inkFor(bg), fill = contrast(bg, ink) < 4.8 ? (ink === LIGHT ? DARK : LIGHT) : null;
+        e.style.setProperty(inkVar, css(ink)); if (fill) e.style.setProperty(fillVar, css(fill)); else e.style.removeProperty(fillVar);
+      };
+      cells.forEach(function (c) { chip(c.querySelector('.pl__hex'), '--hex-ink', '--hex-fill'); c.querySelector('.pl__hex').style.setProperty('color', 'var(--hex-ink)'); });
+      h.style.setProperty('--pl-t', css(inkFor(bt))); h.style.setProperty('--pl-s', css(inkFor(bs))); h.style.setProperty('--pl-b', css(inkFor(ba)));
+      [].forEach.call(U.b.querySelectorAll('.pl__btn, .pl__reset'), function (bn) { chip(bn, '--pl-b', '--pl-bf'); });          /* each button: the ink for its own spot (+ a chip on mid-tones) */
+    }
+    function bgOf(p) { return 'linear-gradient(150deg, ' + p.cols.map(function (c) { return c; }).join(', ') + ')'; }
+    function swap() {
+      var np = genPalette(P.cur.name), old = P.cur; P.cur = np;
+      if (reduce || !gsap) { paint(np); host.style.background = bgOf(np); return; }
+      gsap.to(cells.map(function (c) { return c.firstChild; }), { y: 26, opacity: 0, duration: 0.2, stagger: 0.04, ease: 'power2.in', overwrite: true, onComplete: function () {
+        paint(np);
+        gsap.fromTo(cells.map(function (c) { return c.firstChild; }), { y: -26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, stagger: 0.05, ease: 'back.out(1.6)', overwrite: true, clearProps: 'transform,opacity' });
+      } });
+      gsap.fromTo(P.ui.name, { opacity: 0 }, { opacity: 1, duration: 0.4, delay: 0.2 });
+      var o = { t: 0 }, fr = old.cols.map(rgbOf), to = np.cols.map(rgbOf);
+      gsap.to(o, { t: 1, duration: 0.6, ease: 'power2.inOut', onUpdate: function () { host.style.background = 'linear-gradient(150deg, ' + fr.map(function (c, i) { return css(mix(c, to[i], o.t)); }).join(', ') + ')'; }, onComplete: function () { host.style.background = bgOf(np); inks(np); } });
+    }
+    var obj = { el: b, focus: cells[0], onOpen: function () { host.style.background = bgOf(P.cur); paint(P.cur); P.ui.reset.hidden = !P.applied; } };
+    return obj;
   }
 
   /* ================================================================ mood */
@@ -309,6 +423,7 @@
     return { el: b, focus: ta };
   }
 
+  if (document.fonts && document.fonts.load) document.fonts.load('600 20px "Cormorant Garamond"');
   var BUILD = { music: ['Zene', buildMusic], palette: ['Paletta', buildPalette], mood: ['Hangulat', buildMood], msg: ['Üzenet', buildMsg] };
 
   window.HeroOS = {
@@ -317,15 +432,15 @@
       if (cur === 'music' && name !== 'music') { /* the music keeps playing; only the equalizer loop stops */ }
       cur = name; host = api.host;
       if (!built[name]) { var r = BUILD[name][1](); built[name] = r; }
-      var bare = name === 'music';
-      host.classList.toggle('is-bare', bare);
-      var head = el('div', 'hw__ph', bare ? '' : '<span class="hw__pt">' + BUILD[name][0] + '</span>');
-      var x = el('button', 'hw__px', '<i data-lucide="x"></i>'); x.type = 'button'; x.setAttribute('aria-label', 'Panel bezárása');
-      x.addEventListener('click', function () { api.close(); });
+      var bare = name === 'music' || name === 'palette';           /* the player / palette card IS the panel: no header, no close button (dock icon, Esc, leaving close it) */
+      host.classList.toggle('is-bare', name === 'music'); host.classList.toggle('is-pal', name === 'palette');
+      if (name !== 'palette') { host.style.background = ''; }
       host.innerHTML = '';
-      if (bare) { host.appendChild(built[name].el); } else { head.appendChild(x); host.appendChild(head); host.appendChild(built[name].el); }
+      if (!bare) host.appendChild(el('div', 'hw__ph', '<span class="hw__pt">' + BUILD[name][0] + '</span>'));
+      host.appendChild(built[name].el);
       host.setAttribute('aria-label', BUILD[name][0]);
       icons();
+      if (built[name].onOpen) built[name].onOpen();
       if (name === 'music') { ui(); vizRun(); }
       var f = built[name].focus; if (f && f.focus) setTimeout(function () { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }, 60);
     },

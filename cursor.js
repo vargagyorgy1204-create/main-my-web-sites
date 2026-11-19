@@ -328,7 +328,7 @@
         if (!t) return;
         if (t.closest(FIELD) && !t.closest(FORMFIELD)) { root.classList.add('cursor-on-field'); return; }
         if (t.closest('[data-cursor="plain"]')) return;     /* ring + dot only: no text beam, no frame */
-        var tryEl = t.closest('[data-cursor="try"]');         /* the hero mini-OS window: a 64px glass ring with a label */
+        var tryEl = t.closest('.hw__dock, .hw__pw') ? null : t.closest('[data-cursor="try"]');         /* the hero mini-OS window: a 64px glass ring with a label */
         if (tryEl) {                                          /* a small Lucide hand icon in the ring (the data-cursor-label text stays the accessible name of the element) */
             ring.classList.add('is-try');
             if (!label.querySelector('svg')) { label.innerHTML = '<i data-lucide="pointer" class="cursor-try-ic"></i>'; try { if (window.lucide && lucide.createIcons) lucide.createIcons(); } catch (e3) { /* ignore */ } }
