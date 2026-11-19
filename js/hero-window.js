@@ -261,11 +261,11 @@
     var res = null;
     if (window.innerWidth >= 900) {
       /* anchored bottom-right: right edge = the content container's right edge (the Rólam card), bottom = the status line's bottom (>= 32px above the hero bottom);
-         width clamp(260px, 21vw, 390px), scaled down (min 220px) only if it would come within 40px of the headline / subheading / buttons / status line */
+         width clamp(300px, 25vw, 470px), scaled down (min 220px) only if it would come within 40px of the headline / subheading / buttons / status line */
       var card = document.querySelector('#about .about-bio-card') || document.querySelector('#about .about-premium-grid');      /* the Rólam card: the content container's right edge */
       var rEdge = card ? card.getBoundingClientRect().right - hr.left : inner.right - hr.left;
       var bottom = Math.min(st.bottom - hr.top, hr.height - 32) - 20;      /* -20: the tilt + float push the visual bottom edge a few px lower than the layout box (visual gap stays >= 32px) */
-      for (var W = Math.min(390, Math.max(260, 0.21 * window.innerWidth)); W >= 220 && !res; W -= 4) {
+      for (var W = Math.min(470, Math.max(300, 0.25 * window.innerWidth)); W >= 220 && !res; W -= 4) {
         var H = BAR + W * 0.625, left = rEdge - W, top = bottom - H;
         var hit = obs.some(function (o) { return o.r + CL > left && o.l - CL < left + W && o.b + CL > top && o.t - CL < top + H; });
         if (!hit) res = { left: left, top: top, W: W, H: H };
@@ -320,7 +320,7 @@
     osQueue = cb;
     if (osState === 1) return;
     osState = 1;
-    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=4'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
+    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=5'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
     document.head.appendChild(sc);
   }
   function holdOn() {
@@ -347,7 +347,7 @@
       var mob = mode === 'mobile';
       pw.classList.toggle('is-mobile', mob);
       if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
-      else { pw.style.left = ''; pw.style.width = name === 'music' ? '334px' : ''; pw.style.right = ''; pw.style.bottom = ''; }      /* the player needs ~320px */
+      else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }      /* the player needs ~320px */
       pw.classList.add('is-open');
       gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true });
     });

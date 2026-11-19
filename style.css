@@ -7575,10 +7575,10 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__app[aria-pressed="true"] { box-shadow: 0 0 0 2px #fff; }
 .hw__app::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 10px); left: 50%; translate: -50% 4px; padding: 3px 8px; border-radius: 6px; background: rgb(15 11 28 / 0.92); color: #fff; font: 500 11px/1.2 'Inter', sans-serif; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, translate 0.15s ease; }
 .hw__app:hover::after, .hw__app:focus-visible::after { opacity: 1; translate: -50% 0; }
-.hw__pw { position: absolute; right: 100%; bottom: 0; z-index: 3; padding-right: 14px; visibility: hidden; pointer-events: none; inline-size: 294px; }
+.hw__pw { position: absolute; right: 100%; bottom: 0; z-index: 3; padding-right: 14px; visibility: hidden; pointer-events: none; inline-size: 274px; }
 .hw__pw.is-open { visibility: visible; pointer-events: auto; }
 .hw__pw.is-mobile { padding-right: 0; z-index: 8; }
-.hw__panel { position: relative; inline-size: 100%; box-sizing: border-box; min-block-size: 200px; padding: 12px 14px 14px; border-radius: 18px; background: rgb(22 17 44 / 0.78); border: 1px solid rgb(255 255 255 / 0.22); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: 0 24px 60px rgb(0 0 0 / 0.5); color: #fff; font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 13px; }
+.hw__panel { position: relative; inline-size: 100%; box-sizing: border-box; min-block-size: 200px; padding: 11px 12px 12px; border-radius: 18px; background: rgb(22 17 44 / 0.78); border: 1px solid rgb(255 255 255 / 0.22); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: 0 24px 60px rgb(0 0 0 / 0.5); color: #fff; font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 13px; }
 .hw__ph { display: flex; align-items: center; justify-content: space-between; margin-block-end: 10px; }
 .hw__pt { font: 700 13px/1 'Space Grotesk', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; color: rgb(255 255 255 / 0.9); }
 .hw__px { inline-size: 28px; block-size: 28px; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.25); background: rgb(255 255 255 / 0.08); color: #fff; display: grid; place-items: center; padding: 0; cursor: pointer; }
@@ -7612,7 +7612,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__app::before { content: ""; position: absolute; left: 50%; bottom: -8px; inline-size: 4px; block-size: 4px; margin-left: -2px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity 0.2s ease; }
 .hw__app[aria-pressed="true"]::before, .hw.is-music .hw__app--music::before { opacity: 1; }
 .hw__dock { padding-bottom: 14px; }
-.hw__mini { display: none; align-items: flex-end; gap: 2px; block-size: 10px; margin-inline-start: 12px; padding: 0; border: 0; background: none; cursor: pointer; }
+.hw__mini { display: none; align-items: flex-end; gap: 2px; block-size: 10px; margin-inline-start: auto; padding: 0; border: 0; background: none; cursor: pointer; }
 .hw.is-music .hw__mini { display: inline-flex; }
 .hw__mini i { inline-size: 3px; block-size: 100%; border-radius: 1px; background: #22c3d6; transform-origin: 50% 100%; animation: hwMini 0.9s ease-in-out infinite; }
 .hw__mini i:nth-child(2) { animation-delay: -0.3s; background: #9b3fd8; } .hw__mini i:nth-child(3) { animation-delay: -0.6s; background: #C026A3; }
@@ -7651,3 +7651,20 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .mp__play[aria-pressed="true"] .mp__ic-play { display: none; } .mp__play[aria-pressed="true"] .mp__ic-pause { display: inline-block; }
 .mp__mute[aria-pressed="true"] .mp__ic-on { display: none; } .mp__mute[aria-pressed="true"] .mp__ic-off { display: inline-block; }
 .mp button:focus-visible, .mp__bar:focus-visible { outline: 2px solid #a5a7fb; outline-offset: 2px; }
+
+/* compact panels (max ~260px): the player card IS the panel (no outer card, a floating close button), scaled proportionally */
+.hw__panel.is-bare { min-block-size: 0; padding: 0; background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.hw__panel.is-bare .mp { --mp-z: 0.88; zoom: var(--mp-z); inline-size: calc(100% / var(--mp-z)); box-sizing: border-box; box-shadow: 0 24px 60px rgb(0 0 0 / 0.5); border-color: rgb(255 255 255 / 0.18); }
+.hw__pw.is-mobile .hw__panel.is-bare .mp { --mp-z: 1; }
+.hw__px--float { position: absolute; top: -9px; right: -9px; z-index: 2; inline-size: 26px; block-size: 26px; background: rgb(255 255 255 / 0.16); border-color: rgb(255 255 255 / 0.32); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+/* now-playing pill (js/hero-os.js): music keeps playing while scrolling; shown while the hero is off-screen */
+.hw-np { position: fixed; left: var(--content-gutter-tight, 20px); bottom: 16px; z-index: 1190; display: inline-flex; align-items: center; gap: 10px; max-inline-size: calc(100vw - 2 * var(--content-gutter-tight, 20px)); padding: 6px 6px 6px 14px; border-radius: 999px; background: rgb(22 17 44 / 0.72); border: 1px solid rgb(255 255 255 / 0.22); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 12px 34px rgb(0 0 0 / 0.4); color: #fff; font: 600 12.5px/1 'Space Grotesk', 'Segoe UI', sans-serif; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
+.hw-np.is-on { opacity: 1; visibility: visible; transform: none; }
+.hw-np__eq { display: inline-flex; align-items: flex-end; gap: 2px; block-size: 12px; flex: none; }
+.hw-np__eq i { inline-size: 3px; block-size: 100%; border-radius: 1px; background: #22c3d6; transform-origin: 50% 100%; animation: hwMini 0.9s ease-in-out infinite; }
+.hw-np__eq i:nth-child(2) { animation-delay: -0.3s; background: #9b3fd8; } .hw-np__eq i:nth-child(3) { animation-delay: -0.6s; background: #C026A3; }
+.hw-np__t { min-inline-size: 0; max-inline-size: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hw-np__b { flex: none; inline-size: 30px; block-size: 30px; border-radius: 50%; border: 0; background: rgb(255 255 255 / 0.16); color: #fff; display: grid; place-items: center; padding: 0; cursor: pointer; }
+.hw-np__b:hover, .hw-np__b:focus-visible { background: rgb(255 255 255 / 0.3); outline: none; }
+.hw-np__b svg { inline-size: 14px; block-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .hw-np { transition: none; } .hw-np__eq i { animation: none; transform: scaleY(0.7); } }

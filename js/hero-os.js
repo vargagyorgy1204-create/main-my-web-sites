@@ -62,7 +62,7 @@
     if (on === A.playing) return;
     A.playing = on;
     document.dispatchEvent(new CustomEvent('hero:music', { detail: { playing: on } }));
-    ui(); loop();
+    ui(); loop(); npUpdate();
   }
   function play() {
     if (!ensureCtx()) return;
@@ -81,12 +81,33 @@
     clearTimeout(A.offTimer);
     stopTrack();
     A.idx = ((i % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length; A.err = false;
-    ui();
+    ui(); npUpdate();
     if (was) { ensureCtx(); startTrack(); A.playing = false; setPlaying(true); fade(); }
   }
+  /* the music keeps playing while the page scrolls (only the user, or a hidden tab, stops it; no automatic resume); off-screen hero -> a tiny "now playing" pill (bottom-left) */
   function stopMusic() { if (A.playing) pause(); }
-  if ('IntersectionObserver' in window && hero) new IntersectionObserver(function (es) { if (!es[es.length - 1].isIntersecting) stopMusic(); }).observe(hero);
   document.addEventListener('visibilitychange', function () { if (document.hidden) stopMusic(); });
+  var heroVisible = true, np = null, banner = null;
+  function npBuild() {
+    np = el('div', 'hw-np'); np.setAttribute('role', 'region'); np.setAttribute('aria-label', 'Most szól');
+    np.innerHTML = '<span class="hw-np__eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="hw-np__t"></span><button type="button" class="hw-np__b" aria-label="Szünet"><i data-lucide="pause"></i></button>';
+    np.querySelector('.hw-np__b').addEventListener('click', function () { pause(); });
+    document.body.appendChild(np); icons();
+  }
+  function npUpdate() {
+    var show = A.playing && !heroVisible;
+    if (show && !np) npBuild();
+    if (!np) return;
+    np.querySelector('.hw-np__t').textContent = PLAYLIST[A.idx].title;
+    if (show) {
+      banner = banner || document.getElementById('cookie-consent-banner');
+      var bh = banner && banner.getAttribute('aria-hidden') !== 'true' && banner.getBoundingClientRect().height > 0 ? banner.getBoundingClientRect().height + 16 : 0;      /* above the cookie banner while it is shown */
+      np.style.bottom = (16 + bh) + 'px';
+    }
+    np.classList.toggle('is-on', show);
+  }
+  if ('IntersectionObserver' in window && hero) new IntersectionObserver(function (es) { heroVisible = es[es.length - 1].isIntersecting; npUpdate(); }).observe(hero);
+  window.addEventListener('resize', function () { npUpdate(); });
 
   function fmt(s) { if (!isFinite(s) || s < 0) s = 0; var m = Math.floor(s / 60), r = Math.floor(s % 60); return m + ':' + (r < 10 ? '0' : '') + r; }
   function pos() {                                                  /* {cur, dur} of the current track */
@@ -266,11 +287,13 @@
       if (cur === 'music' && name !== 'music') { /* the music keeps playing; only the equalizer loop stops */ }
       cur = name; host = api.host;
       if (!built[name]) { var r = BUILD[name][1](); built[name] = r; }
-      var head = el('div', 'hw__ph', '<span class="hw__pt">' + BUILD[name][0] + '</span>');
+      var bare = name === 'music';
+      host.classList.toggle('is-bare', bare);
+      var head = el('div', 'hw__ph', bare ? '' : '<span class="hw__pt">' + BUILD[name][0] + '</span>');
       var x = el('button', 'hw__px', '<i data-lucide="x"></i>'); x.type = 'button'; x.setAttribute('aria-label', 'Panel bezárása');
       x.addEventListener('click', function () { api.close(); });
-      head.appendChild(x);
-      host.innerHTML = ''; host.appendChild(head); host.appendChild(built[name].el);
+      host.innerHTML = '';
+      if (bare) { x.classList.add('hw__px--float'); host.appendChild(built[name].el); host.appendChild(x); } else { head.appendChild(x); host.appendChild(head); host.appendChild(built[name].el); }
       host.setAttribute('aria-label', BUILD[name][0]);
       icons();
       if (name === 'music') { ui(); loop(); }
