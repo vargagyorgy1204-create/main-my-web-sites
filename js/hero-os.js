@@ -1,5 +1,5 @@
 /* hero-os.js — the panels of the hero's "mini OS" (js/hero-window.js loads this file on the FIRST dock open; nothing here runs before that).
-   window.HeroOS.open(name, api) fills the glass panel (api.host) with one of: music (a generated ambient pad, Web Audio only, no audio files), palette (a generated HSL palette, click = copy HEX),
+   window.HeroOS.open(name, api) fills the glass panel (api.host) with one of: music (a playlist player for the mp3 files in assets/audio/), palette (a generated HSL palette, click = copy HEX),
    mood (re-colours the hero shader + window glow, kept for this session), msg (a tiny contact form to the site's Formspree endpoint).
    The AudioContext is created on the first play click only. Music fades in/out (0.8s), starts only on click (default volume 30%) and stops when the hero leaves the viewport or the tab is hidden. */
 (function () {
@@ -15,14 +15,19 @@
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
   /* ================================================================ music player (ported from the demo site: #musicCard / .player, js/cards.js)
-     PLAYLIST: add a track = add one entry. { title, artist, src } = an mp3 (not preloaded: loaded on its first play), { title, artist, gen: true } = the generated Web Audio ambient pad.
-     One AudioContext (created on the first play click): file tracks via MediaElementSource, the generated pad via a gain gate, both -> master gain (volume / mute / 0.8s fades) -> AnalyserNode (equaliser). */
+     PLAYLIST: adding a track = adding one entry { title, artist, src } (mp3 files in assets/audio/, not preloaded: a file is fetched on its first play).
+     One AudioContext (created on the first play click): MediaElementSource -> master gain (volume / mute / 0.8s fades) -> AnalyserNode (equaliser) -> output. */
   var PLAYLIST = [
     { title: 'Lo-fi Coding Mix', artist: 'prettyjohn1 · Pixabay', src: 'assets/audio/lofi.mp3' },
-    { title: 'VarBro Ambient', artist: 'generált · Web Audio', gen: true }
+    { title: 'Chillhop Jazz Coffee Shop', artist: 'Alex Morgan · Pixabay', src: 'assets/audio/alex-morgan-chillhop-jazz-coffee-shop-552792.mp3' },
+    { title: 'Lofi Cocktail Bar', artist: 'Alex Morgan · Pixabay', src: 'assets/audio/alex-morgan-lofi-cocktail-bar-568153.mp3' },
+    { title: 'Cruce De Sentimientos', artist: 'Exventry · Pixabay', src: 'assets/audio/exventry-cruce-de-sentimientos-612102.mp3' },
+    { title: 'Lofi Beats', artist: 'The Mountain · Pixabay', src: 'assets/audio/the_mountain-lofi-beats-567433.mp3' },
+    { title: 'Beautiful Lofi', artist: 'Zephiramusic · Pixabay', src: 'assets/audio/zephiramusic-beautiful-lofi-603162.mp3' },
+    { title: 'Blues Lofi', artist: 'Zephiramusic · Pixabay', src: 'assets/audio/zephiramusic-blues-lofi-602637.mp3' },
+    { title: 'Lofi House', artist: 'Zephiramusic · Pixabay', src: 'assets/audio/zephiramusic-lofi-house-611107.mp3' }
   ];
-  var A = { ctx: null, master: null, an: null, data: null, gen: null, engine: false, oscs: [], idx: 0, playing: false, running: false, muted: false, vol: 0.3, audio: null, chordTimer: 0, offTimer: 0, step: 0, genAcc: 0, genStart: 0, raf: 0, ui: null, err: false };
-  var CHORDS = [[110.0, 164.81, 261.63, 392.0], [87.31, 174.61, 261.63, 329.63], [130.81, 196.0, 246.94, 329.63], [98.0, 196.0, 293.66, 329.63]];     /* Am7, Fmaj7, Cmaj7, G6/9 */
+  var A = { ctx: null, master: null, an: null, data: null, idx: 0, playing: false, running: false, muted: false, vol: 0.3, audio: null, offTimer: 0, raf: 0, ui: null, err: false };
   var BUCKETS = [[0, 2], [2, 4], [4, 6], [6, 9], [9, 13], [13, 18], [18, 24], [24, 32]];
 
   function ensureCtx() {
@@ -32,25 +37,8 @@
     var c = A.ctx = new AC();
     A.master = c.createGain(); A.master.gain.value = 0;
     A.an = c.createAnalyser(); A.an.fftSize = 64; A.an.smoothingTimeConstant = 0.75; A.data = new Uint8Array(A.an.frequencyBinCount);
-    A.gen = c.createGain(); A.gen.gain.value = 0; A.gen.connect(A.master);
     A.master.connect(A.an); A.an.connect(c.destination);
     return true;
-  }
-  function ensureEngine() {                                         /* the generated pad, built on first use */
-    if (A.engine) return; A.engine = true;
-    var c = A.ctx;
-    var lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 760; lp.Q.value = 0.6;
-    var lfo = c.createOscillator(); lfo.frequency.value = 0.07; var lg = c.createGain(); lg.gain.value = 260; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
-    CHORDS[0].forEach(function (f, i) {                              /* 4 voices x 2 detuned oscillators */
-      [-6, 6].forEach(function (d) {
-        var o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = d;
-        var g = c.createGain(); g.gain.value = 0.055; o.connect(g); g.connect(lp); o.start(); o._v = i; A.oscs.push(o);
-      });
-    });
-    var dry = c.createGain(); dry.gain.value = 0.75; lp.connect(dry); dry.connect(A.gen);
-    var dl = c.createDelay(1); dl.delayTime.value = 0.41; var fb = c.createGain(); fb.gain.value = 0.42; var dlp = c.createBiquadFilter(); dlp.type = 'lowpass'; dlp.frequency.value = 1800;
-    var wet = c.createGain(); wet.gain.value = 0.5;
-    lp.connect(dl); dl.connect(dlp); dlp.connect(fb); fb.connect(dl); dlp.connect(wet); wet.connect(A.gen);
   }
   function ensureFile() {
     if (A.audio) return;
@@ -60,28 +48,16 @@
     a.addEventListener('error', function () { A.err = true; setPlaying(false); A.running = false; });
     a.addEventListener('loadedmetadata', function () { A.err = false; });
   }
-  function chord() { var ch = CHORDS[A.step % CHORDS.length]; A.step++; var t = A.ctx.currentTime; A.oscs.forEach(function (o) { o.frequency.setTargetAtTime(ch[o._v], t, 1.2); }); }
   function level() { return A.muted ? 0 : A.vol; }
   function fade() { if (A.ctx) { A.master.gain.cancelScheduledValues(A.ctx.currentTime); A.master.gain.setTargetAtTime(A.playing ? level() : 0, A.ctx.currentTime, 0.27); } }   /* ~0.8s */
   function startTrack() {
     var t = PLAYLIST[A.idx]; A.err = false;
-    A.ctx.resume();
-    if (t.gen) {
-      ensureEngine(); A.gen.gain.setTargetAtTime(0.5, A.ctx.currentTime, 0.05);
-      chord(); clearInterval(A.chordTimer); A.chordTimer = setInterval(chord, 8000); A.genStart = performance.now();
-    } else {
-      ensureFile(); A.gen.gain.setTargetAtTime(0, A.ctx.currentTime, 0.05);
-      if (A.audio.getAttribute('data-src') !== t.src) { A.audio.setAttribute('data-src', t.src); A.audio.src = t.src; }     /* the mp3 is fetched on its first play only */
-      var p = A.audio.play(); if (p && p.catch) p.catch(function () { A.err = true; setPlaying(false); A.running = false; });
-    }
+    A.ctx.resume(); ensureFile();
+    if (A.audio.getAttribute('data-src') !== t.src) { A.audio.setAttribute('data-src', t.src); A.audio.src = t.src; }     /* the mp3 is fetched on its first play only */
+    var p = A.audio.play(); if (p && p.catch) p.catch(function () { A.err = true; setPlaying(false); A.running = false; });
     A.running = true;
   }
-  function stopTrack() {
-    if (!A.running) return;
-    var t = PLAYLIST[A.idx];
-    if (t.gen) { clearInterval(A.chordTimer); A.genAcc += (performance.now() - A.genStart) / 1000; } else if (A.audio) A.audio.pause();
-    A.running = false;
-  }
+  function stopTrack() { if (!A.running) return; if (A.audio) A.audio.pause(); A.running = false; }
   function setPlaying(on) {
     if (on === A.playing) return;
     A.playing = on;
@@ -104,19 +80,18 @@
     var was = A.playing || auto;
     clearTimeout(A.offTimer);
     stopTrack();
-    A.idx = ((i % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length; A.genAcc = 0; A.err = false;
+    A.idx = ((i % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length; A.err = false;
     ui();
-    if (was) { ensureCtx(); A.ctx.resume(); startTrack(); A.playing = false; setPlaying(true); fade(); }
+    if (was) { ensureCtx(); startTrack(); A.playing = false; setPlaying(true); fade(); }
   }
   function stopMusic() { if (A.playing) pause(); }
   if ('IntersectionObserver' in window && hero) new IntersectionObserver(function (es) { if (!es[es.length - 1].isIntersecting) stopMusic(); }).observe(hero);
   document.addEventListener('visibilitychange', function () { if (document.hidden) stopMusic(); });
 
   function fmt(s) { if (!isFinite(s) || s < 0) s = 0; var m = Math.floor(s / 60), r = Math.floor(s % 60); return m + ':' + (r < 10 ? '0' : '') + r; }
-  function pos() {                                                  /* {cur, dur} of the current track (dur 0 = endless) */
-    var t = PLAYLIST[A.idx];
-    if (t.gen) return { cur: A.genAcc + (A.running ? (performance.now() - A.genStart) / 1000 : 0), dur: 0 };
-    return { cur: A.audio && A.audio.getAttribute('data-src') === t.src ? A.audio.currentTime : 0, dur: A.audio && A.audio.getAttribute('data-src') === t.src && isFinite(A.audio.duration) ? A.audio.duration : 0 };
+  function pos() {                                                  /* {cur, dur} of the current track */
+    var t = PLAYLIST[A.idx], ok = A.audio && A.audio.getAttribute('data-src') === t.src;
+    return { cur: ok ? A.audio.currentTime : 0, dur: ok && isFinite(A.audio.duration) ? A.audio.duration : 0 };
   }
   function ui() {
     var U = A.ui; if (!U) return;
@@ -124,12 +99,12 @@
     U.title.textContent = A.err ? 'Nem tölthető be' : t.title; U.artist.textContent = A.err ? 'Kérjük, próbálja újra' : t.artist;
     U.play.setAttribute('aria-pressed', A.playing ? 'true' : 'false'); U.play.setAttribute('aria-label', A.playing ? 'Szünet' : 'Lejátszás');
     U.mute.setAttribute('aria-pressed', A.muted ? 'true' : 'false');
-    var seekable = !t.gen && p.dur > 0;
+    var seekable = p.dur > 0;
     U.bar.setAttribute('aria-disabled', seekable ? 'false' : 'true');
     var f = seekable ? Math.min(100, p.cur / p.dur * 100) : 0;
     U.fill.style.width = f + '%'; U.handle.style.insetInlineStart = f + '%'; U.handle.style.visibility = seekable ? '' : 'hidden';
     U.bar.setAttribute('aria-valuenow', String(Math.round(f)));
-    U.el.textContent = fmt(p.cur); U.rem.textContent = t.gen ? '∞' : (p.dur ? '-' + fmt(p.dur - p.cur) : '0:00');
+    U.el.textContent = fmt(p.cur); U.rem.textContent = p.dur ? '-' + fmt(p.dur - p.cur) : '0:00';
   }
   function loop() {
     cancelAnimationFrame(A.raf); A.raf = 0;
@@ -151,7 +126,7 @@
   }
   function seekTo(frac) {
     var t = PLAYLIST[A.idx], p = pos();
-    if (t.gen || !A.audio || !(p.dur > 0)) return;
+    if (!A.audio || !(p.dur > 0)) return;
     A.audio.currentTime = Math.max(0, Math.min(p.dur, frac * p.dur)); ui();
   }
 
