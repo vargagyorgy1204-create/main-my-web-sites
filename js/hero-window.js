@@ -77,18 +77,23 @@
   var cur = document.createElement('span'); cur.className = 'ab-cur'; cur.innerHTML = '<i data-lucide="mouse-pointer-2"></i>';
   blocks.forEach(function (b) { abEl.appendChild(b); }); abEl.appendChild(ripple); abEl.appendChild(cur);
 
+  var DOCK = [['music', 'Zene', 'music'], ['palette', 'Paletta', 'palette'], ['mood', 'Hangulat', 'sun-moon'], ['msg', 'Üzenet', 'message-square']];
   var w = document.createElement('div');
   w.className = 'hw';
   w.innerHTML =
     '<div class="hw__float"><div class="hw__tilt"><span class="hw__glow"></span>' +
-    '<a class="hw__win" href="#portfolio" data-cursor="view" data-cursor-label="Megnézem" aria-label="Portfólió megtekintése">' +
+    '<div class="hw__win" role="group" tabindex="0" data-cursor="try" data-cursor-label="Próbálja ki" aria-label="Interaktív mini rendszer: zene, paletta, hangulat, üzenet">' +
       '<span class="hw__bar"><span class="hw__dots" aria-hidden="true"><i></i><i></i><i></i></span></span>' +
       '<span class="hw__view" aria-hidden="true"><span class="hw__grid"></span>' +
         '<span class="hw__s hw__s--wire"><svg class="hw__svg" viewBox="0 0 1000 625" preserveAspectRatio="none">' + WIRE.map(function (e) { return '<path d="' + e[0] + '" pathLength="1"/>'; }).join('') + '<circle class="hw__pen" r="7" cx="0" cy="0"/></svg></span>' +
         '<span class="hw__s hw__s--code"><span class="hw__tabs"><span class="hw__tab is-on">index.html</span><span class="hw__tab">style.css</span></span>' +
           '<span class="hw__code"><span class="hw__ln">' + SNIPPET.map(function (l, i) { return '<span>' + (i + 1) + '</span>'; }).join('') + '</span><pre class="hw__pre"></pre></span></span>' +
       '</span>' +
-    '</a></div></div>';
+      '<div class="hw__dock" role="toolbar" aria-label="Alkalmazások">' +
+        DOCK.map(function (d) { return '<button type="button" class="hw__app hw__app--' + d[0] + '" data-app="' + d[0] + '" data-tip="' + d[1] + '" aria-label="' + d[1] + '"><i data-lucide="' + d[2] + '"></i></button>'; }).join('') +
+      '</div>' +
+    '</div></div>' +
+    '<div class="hw__pw" aria-live="polite"><div class="hw__panel" role="dialog" aria-modal="false" tabindex="-1"></div></div>';
   w.querySelector('.hw__view').appendChild(abEl);
   hero.appendChild(w);
   var icons = function () { if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } } };
@@ -132,7 +137,7 @@
   function typeStart() { typeStop(); paintTyped(0); typing = { acc: -250 }; gsap.ticker.add(typeTick); }
   function typeStop() { if (typing) { gsap.ticker.remove(typeTick); typing = null; } }
   function typeTick(time, dt) {
-    if (!typing || !visible) return;
+    if (!typing || !visible || held) return;
     typing.acc += dt;
     var cost = Math.max(0, Math.floor(typing.acc / MS)), n = 0, c = 0;                 /* leading indentation is free (auto-indent) */
     while (n < toks.length && (c < cost || toks[n].free)) { if (!toks[n].free) c++; n++; }
@@ -142,6 +147,8 @@
 
   /* ------------------------------------------------ colour of the glow follows the word */
   var COLS = [[99, 102, 241], [155, 63, 216], [192, 38, 163], [34, 195, 214]];
+  try { var sm = window.sessionStorage.getItem('vb-hero-mood'); if (sm && window.HERO_THEMES && window.HERO_THEMES[sm]) COLS = window.HERO_THEMES[sm].glow; } catch (e0) { /* ignore */ }
+  document.addEventListener('hero:theme', function (e) { var t = e.detail && window.HERO_THEMES && window.HERO_THEMES[e.detail.name]; if (t) { COLS = t.glow; if (scene >= 0) tintTo(scene); } });
   var col = { r: 99, g: 102, b: 241 };
   function tintTo(i) {
     var c = COLS[i] || COLS[0];
@@ -212,11 +219,12 @@
   }
 
   /* ------------------------------------------------ the sync: one listener, no timer */
-  var ready = false, visible = true, last = bootLast, log = window.__hwLog = [];
+  var ready = false, visible = true, last = bootLast, log = window.__hwLog = [], held = false, pending = null;
   document.addEventListener('hero:word', function (e) {
     var i = e.detail && e.detail.index;
     if (typeof i !== 'number') return;
     last = i;
+    if (held) { pending = i; return; }                              /* the story is paused: it catches up on leave */
     if (!ready || !visible || document.hidden || reduce) return;
     go(i);
     log.push({ word: i, scene: scene, t: Math.round(performance.now()) });
@@ -225,10 +233,10 @@
     new IntersectionObserver(function (es) {
       var v = es[es.length - 1].isIntersecting;
       if (v === visible) return; visible = v;
-      if (tl) tl.paused(!v);
+      if (tl) tl.paused(!v || held);
     }, { threshold: 0.05 }).observe(hero);
   }
-  document.addEventListener('visibilitychange', function () { if (document.hidden) { if (tl) tl.pause(); } else if (visible && tl) tl.resume(); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { if (tl) tl.pause(); } else if (visible && tl && !held) tl.resume(); });
 
   /* ------------------------------------------------ placement: compact, bottom-right (mobile: below the buttons if it fits) */
   var CL = 50;                                                      /* layout clearance; the tilt makes the near edge recede, so the visual clearance is >= 40px */
@@ -281,6 +289,7 @@
     w.style.left = Math.round(fit.left) + 'px'; w.style.top = Math.round(fit.top) + 'px'; w.style.width = Math.round(fit.W) + 'px';
     var sw = 1.5 * 1000 / view.clientWidth; w.style.setProperty('--hw-sw', sw.toFixed(2));
     mode = window.innerWidth >= 900 ? 'desktop' : 'mobile';
+    dock.style.left = mode === 'mobile' ? Math.round((window.innerWidth - fit.left) / 2 - 8) + 'px' : '';                       /* phones: the dock sits in the visible part of the peeking window */
     var rest = restTilt();
     gsap.set(tilt, { rotationY: rest.y, rotationX: rest.x, rotationZ: rest.z });
     return true;
@@ -297,6 +306,70 @@
     qy(rest.y + 5 * nx); qx(rest.x - 5 * ny);
   }, { passive: true });
   hero.addEventListener('pointerleave', function () { if (mode === 'desktop') { var rest = restTilt(); qy(rest.y); qx(rest.x); } });
+
+  /* ------------------------------------------------ "mini OS": hover / focus-within (desktop) or tap (touch) pauses the story, blurs + dims the content and slides up a glass dock;
+     a dock icon opens one glass panel at a time (js/hero-os.js, loaded on the first dock open). Leaving / tap outside / Esc hides everything and resumes the story where it was. */
+  var win = $('.hw__win'), dock = $('.hw__dock'), pw = $('.hw__pw'), panel = $('.hw__panel'), apps = [].slice.call(w.querySelectorAll('.hw__app'));
+  var osState = 0, osQueue = null, osApp = null;                    /* 0 not loaded, 1 loading, 2 ready */
+  var api = { host: panel, wrap: pw, win: win, root: w, reduce: reduce, close: closePanel, isMobile: function () { return mode === 'mobile'; }, back: function () { var b = apps.filter(function (x) { return x.dataset.app === osApp; })[0]; if (b) b.focus(); } };
+  window.HeroWin = api;
+  gsap.set(dock, { autoAlpha: 0, y: 20 });
+  function loadOS(cb) {
+    if (osState === 2) { cb(); return; }
+    osQueue = cb;
+    if (osState === 1) return;
+    osState = 1;
+    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=1'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
+    document.head.appendChild(sc);
+  }
+  function holdOn() {
+    if (held || !ready || mode === 'off') return;
+    held = true; w.classList.add('is-hold');
+    if (tl) tl.pause();
+    gsap.to(dock, { autoAlpha: 1, y: 0, duration: reduce ? 0 : 0.35, ease: 'back.out(1.7)', overwrite: true });
+    loadOS(function () { /* panels are built on demand */ });
+  }
+  function holdOff() {
+    if (!held) return;
+    closePanel(true);
+    held = false; w.classList.remove('is-hold');
+    gsap.to(dock, { autoAlpha: 0, y: 20, duration: reduce ? 0 : 0.25, ease: 'power2.in', overwrite: true });
+    if (pending !== null) { var i = pending; pending = null; if (ready && visible && !document.hidden && !reduce) { go(i); log.push({ word: i, scene: scene, t: Math.round(performance.now()), resync: true }); } }
+    else if (tl && visible && !document.hidden) tl.resume();
+  }
+  function openPanel(name) {
+    osApp = name;
+    apps.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.app === name ? 'true' : 'false'); });
+    loadOS(function () {
+      if (osApp !== name || !window.HeroOS) return;
+      window.HeroOS.open(name, api);
+      var mob = mode === 'mobile';
+      pw.classList.toggle('is-mobile', mob);
+      if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
+      else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }
+      pw.classList.add('is-open');
+      gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true });
+    });
+  }
+  function closePanel(silent) {
+    if (!osApp) return;
+    var name = osApp; osApp = null;
+    apps.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+    if (window.HeroOS) window.HeroOS.closed(name);
+    gsap.to(panel, { autoAlpha: 0, x: 20, duration: reduce ? 0 : 0.25, ease: 'power2.in', overwrite: true, onComplete: function () { pw.classList.remove('is-open'); } });
+    if (!silent) { var b = apps.filter(function (x) { return x.dataset.app === name; })[0]; if (b) b.focus(); }
+  }
+  gsap.set(panel, { autoAlpha: 0 });
+  apps.forEach(function (b) { b.addEventListener('click', function () { var n = b.dataset.app; if (osApp === n) closePanel(); else openPanel(n); }); });
+  var hovering = false, touchMode = false;
+  w.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { hovering = true; touchMode = false; holdOn(); } });
+  w.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { hovering = false; if (document.activeElement && w.contains(document.activeElement)) document.activeElement.blur(); holdOff(); } });
+  w.addEventListener('focusin', function () { holdOn(); });
+  w.addEventListener('focusout', function () { if (touchMode) return; setTimeout(function () { if (!hovering && !w.contains(document.activeElement)) holdOff(); }, 0); });       /* keyboard: focus left the window */
+  win.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') { touchMode = true; if (!held) holdOn(); } });                       /* tap */
+  document.addEventListener('pointerdown', function (e) { if (held && !w.contains(e.target)) holdOff(); });                           /* tap / click outside */
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && held) { if (osApp) closePanel(); else { holdOff(); if (document.activeElement && w.contains(document.activeElement)) document.activeElement.blur(); } } });
+  window.addEventListener('scroll', function () { if (held && mode === 'mobile') holdOff(); }, { passive: true });
 
   /* ------------------------------------------------ entrance: after load, after the headline lines */
   var rt = 0;

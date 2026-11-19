@@ -267,7 +267,7 @@
         releaseMagnet();
         setFrame(null);
         mode = 'hover';
-        if (ring) ring.classList.remove('is-link-small', 'is-text', 'is-view', 'is-magnetic');
+        if (ring) ring.classList.remove('is-link-small', 'is-text', 'is-view', 'is-try', 'is-magnetic');
         root.classList.remove('has-cursor', 'cursor-keyboard', 'cursor-on-field', 'cursor-press');
     }
     /* touch: switch off at once; the compat mouse events browsers fire right after a tap are ignored for 500 ms */
@@ -328,6 +328,8 @@
         if (!t) return;
         if (t.closest(FIELD) && !t.closest(FORMFIELD)) { root.classList.add('cursor-on-field'); return; }
         if (t.closest('[data-cursor="plain"]')) return;     /* ring + dot only: no text beam, no frame */
+        var tryEl = t.closest('[data-cursor="try"]');         /* the hero mini-OS window: a 64px glass ring with a label */
+        if (tryEl) { ring.classList.add('is-try'); label.textContent = tryEl.getAttribute('data-cursor-label') || ''; return; }
         var view = t.closest(VIEW);
         if (view) {
             ring.classList.add('is-view');
@@ -343,7 +345,7 @@
         try { setStateInner(target); } catch (err) {
             /* one bad element must not stop the cursor: drop the frame and carry on; repeated failures give the native cursor back */
             if (++failures > 5) { broken = true; disable(); restoreNative(err); return; }
-            try { setFrame(null); ring.classList.remove('is-link-small', 'is-text', 'is-view', 'is-magnetic'); } catch (e2) { /* ignore */ }
+            try { setFrame(null); ring.classList.remove('is-link-small', 'is-text', 'is-view', 'is-try', 'is-magnetic'); } catch (e2) { /* ignore */ }
         }
     }
     function setStateInner(target) {
@@ -364,7 +366,7 @@
             if (frame && mode === 'hover') {
                 if (!holdTimer) holdTimer = setTimeout(function () {
                     holdTimer = 0;
-                    ring.classList.remove('is-view', 'is-text', 'is-link-small', 'is-magnetic');
+                    ring.classList.remove('is-view', 'is-try', 'is-text', 'is-link-small', 'is-magnetic');
                     label.textContent = '';
                     applyPlain(document.elementFromPoint(mx, my));
                     kick();
@@ -372,14 +374,14 @@
                 return;
             }
             cancelHold();
-            ring.classList.remove('is-view', 'is-text', 'is-link-small', 'is-magnetic');
+            ring.classList.remove('is-view', 'is-try', 'is-text', 'is-link-small', 'is-magnetic');
             label.textContent = '';
             applyPlain(t);
             return;
         }
 
         cancelHold();
-        ring.classList.remove('is-view', 'is-text', 'is-link-small', 'is-magnetic');
+        ring.classList.remove('is-view', 'is-try', 'is-text', 'is-link-small', 'is-magnetic');
         label.textContent = '';
         var kind = classify(el);
         if (kind === 'card') {
@@ -430,7 +432,7 @@
         root.classList.add('cursor-keyboard');
         root.classList.remove('cursor-on-field', 'cursor-hidden');
         root.classList.toggle('cursor-dark', isDark(el));
-        ring.classList.remove('is-view', 'is-text', 'is-link-small', 'is-magnetic');
+        ring.classList.remove('is-view', 'is-try', 'is-text', 'is-link-small', 'is-magnetic');
         var kind = classify(el);
         if (kind === 'card') { setFrame(null); ring.classList.add('is-link-small'); } else { setFrame(el.querySelector(':scope > [data-magnet-inner]') || el, kind); }
         kick();

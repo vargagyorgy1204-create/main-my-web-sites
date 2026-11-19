@@ -5,6 +5,13 @@
 (function () {
   'use strict';
 
+  /* the hero moods (js/hero-os.js "Hangulat"): shader colours (r,g,b 0-255 of the three blobs) + the living window's glow colours per word; the verbs' own colours never change */
+  window.HERO_THEMES = {
+    night:  { label: 'Éjszaka',   shader: [[91, 91, 240], [155, 63, 216], [192, 38, 163]], glow: [[99, 102, 241], [155, 63, 216], [192, 38, 163], [34, 195, 214]], sw: ['#6366f1', '#9b3fd8', '#C026A3'] },
+    ocean:  { label: 'Óceán',     shader: [[30, 58, 138], [20, 184, 166], [34, 211, 238]], glow: [[30, 58, 138], [20, 184, 166], [34, 211, 238], [20, 184, 166]], sw: ['#1e3a8a', '#14b8a6', '#22d3ee'] },
+    sunset: { label: 'Naplemente', shader: [[190, 24, 93], [249, 115, 22], [245, 158, 11]], glow: [[190, 24, 93], [249, 115, 22], [245, 158, 11], [249, 115, 22]], sw: ['#be185d', '#f97316', '#f59e0b'] }
+  };
+
   var hero = document.getElementById('hero');
   var bg = hero && hero.querySelector('.hero-bg');
   var canvas = bg && bg.querySelector('.hero-gl');
@@ -22,7 +29,7 @@
   var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   var FRAG = [
     'precision mediump float;',
-    'uniform vec2 uR;uniform float uT;uniform vec2 uM;uniform vec2 uP;uniform float uA;uniform float uE;',
+    'uniform vec2 uR;uniform float uT;uniform vec2 uM;uniform vec2 uP;uniform float uA;uniform float uE;uniform vec3 uC1;uniform vec3 uC2;uniform vec3 uC3;',
     'vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}',
     'vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}',
     'vec3 permute(vec3 x){return mod289(((x*34.)+1.)*x);}',
@@ -55,7 +62,7 @@
     ' float b2=smoothstep(.95,0.,length(pq-c2));',
     ' float b3=smoothstep(.95,0.,length(pq-c3));',
     ' vec3 base=vec3(.059,.043,.11);',
-    ' vec3 blue=vec3(.357,.357,.941);vec3 vio=vec3(.608,.247,.847);vec3 pink=vec3(.753,.149,.639);',
+    ' vec3 blue=uC1;vec3 vio=uC2;vec3 pink=uC3;',
     ' vec3 col=base+blue*b1*.5+vio*b2*.46+pink*b3*.44;',
     ' float lift=smoothstep(.3*max(asp,1.),0.,length(q-pp))*uA;col=col*(1.+.15*lift)+vec3(.05,.02,.08)*lift;',
     ' float n=snoise(pq*2.4+t*2.)*.5+.5;col+=(n-.5)*.05;',
@@ -82,7 +89,7 @@
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);   /* one oversized triangle covers the screen */
   var loc = gl.getAttribLocation(prog, 'p');
   gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  var uR = gl.getUniformLocation(prog, 'uR'), uT = gl.getUniformLocation(prog, 'uT'), uM = gl.getUniformLocation(prog, 'uM'), uE = gl.getUniformLocation(prog, 'uE'), uP = gl.getUniformLocation(prog, 'uP'), uA = gl.getUniformLocation(prog, 'uA');
+  var uR = gl.getUniformLocation(prog, 'uR'), uT = gl.getUniformLocation(prog, 'uT'), uM = gl.getUniformLocation(prog, 'uM'), uE = gl.getUniformLocation(prog, 'uE'), uC1 = gl.getUniformLocation(prog, 'uC1'), uC2 = gl.getUniformLocation(prog, 'uC2'), uC3 = gl.getUniformLocation(prog, 'uC3'), uP = gl.getUniformLocation(prog, 'uP'), uA = gl.getUniformLocation(prog, 'uA');
 
   var scale = window.innerWidth < 900 ? 0.3 : 0.45;             /* reduced resolution: the gradient is soft, the browser scales it up */
   function resize() {
@@ -105,6 +112,10 @@
   hero.addEventListener('pointerleave', function () { clearTimeout(idleT); actT = 0; });
 
   var visible = true, raf = 0, last = 0, t0 = performance.now(), started = false;
+  /* mood colours: eased towards the target (~1.2s); the stored mood (sessionStorage, this session only) applies instantly */
+  var cc = [[91, 91, 240], [155, 63, 216], [192, 38, 163]].map(function (a) { return a.slice(); }), ct = cc.map(function (a) { return a.slice(); });
+  try { var sm = window.sessionStorage.getItem('vb-hero-mood'); if (sm && window.HERO_THEMES[sm]) { ct = window.HERO_THEMES[sm].shader.map(function (a) { return a.slice(); }); cc = ct.map(function (a) { return a.slice(); }); } } catch (e0) { /* ignore */ }
+  document.addEventListener('hero:theme', function (e) { var t = e.detail && window.HERO_THEMES[e.detail.name]; if (t) { ct = t.shader.map(function (a) { return a.slice(); }); run(); } });
   var faded = false;                                                /* js/hero-bg-pin.js: the background has faded out completely (Rólam pinned) */
   document.addEventListener('hero:bgfade', function (e) { faded = !!(e.detail && e.detail.faded); if (!faded) run(); });
   function frame(now) {
@@ -117,6 +128,9 @@
     var k = 1 - Math.exp(-dt / 1.2), kf = 1 - Math.exp(-dt / 0.35);    /* ~1.2s lag for the blob and the activity, ~0.35s for the light lift */
     mx += (tx - mx) * k; my += (ty - my) * k; px += (tx - px) * kf; py += (ty - py) * kf;
     act += (actT - act) * k;
+    var kc = 1 - Math.exp(-dt / 0.4);
+    for (var ci = 0; ci < 3; ci++) for (var cj = 0; cj < 3; cj++) cc[ci][cj] += (ct[ci][cj] - cc[ci][cj]) * kc;
+    gl.uniform3f(uC1, cc[0][0] / 255, cc[0][1] / 255, cc[0][2] / 255); gl.uniform3f(uC2, cc[1][0] / 255, cc[1][1] / 255, cc[1][2] / 255); gl.uniform3f(uC3, cc[2][0] / 255, cc[2][1] / 255, cc[2][2] / 255);
     resize();
     gl.uniform2f(uR, canvas.width, canvas.height);
     gl.uniform1f(uE, Math.max(0, (canvas.clientHeight - hero.clientHeight) / Math.max(1, hero.clientHeight)));      /* extension below the hero, as a fraction of the hero height */

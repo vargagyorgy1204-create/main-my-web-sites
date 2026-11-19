@@ -146,7 +146,7 @@ async function indexChecks(vp) {
   // stuck-at-zero scan: anything in the page body still inline-hidden after the full pass (excluding intentional states)
   await frames(p, 6);
   const stuck = await p.evaluate(() => [...document.querySelectorAll('main *, section *, footer *')]
-    .filter(e => e.style && e.style.opacity === '0' && !e.closest('#about, .menu, .modal, .pf-modal, .service-modal-overlay, .cookie-banner, [aria-hidden="true"]') && e.getBoundingClientRect().height > 8 && !e.closest('#portfolio'))
+    .filter(e => e.style && e.style.opacity === '0' && !e.closest('#about, .menu, .modal, .pf-modal, .service-modal-overlay, .cookie-banner, .hw, [aria-hidden="true"]') && e.getBoundingClientRect().height > 8 && !e.closest('#portfolio'))
     .map(e => (e.className && String(e.className).slice(0, 30)) || e.tagName).slice(0, 6));
   rec(tag, 'nothing stuck at opacity 0', stuck.length === 0, stuck.join(', '));
 
@@ -225,10 +225,10 @@ async function otherPage(page, vp) {
   const p = await open(ctx, page, tag, errs);
   const H = await p.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < H; y += Math.round(vp.h * 0.6)) { await scrollTo(p, y); await frames(p, 5); }
-  await until(p, () => [...document.querySelectorAll('main *, section *, footer *')].filter(e => e.style && e.style.opacity === '0' && e.getBoundingClientRect().height > 8 && !e.closest('[aria-hidden="true"], .menu, .modal, .cookie-banner')).length === 0, null, 3000);
+  await until(p, () => [...document.querySelectorAll('main *, section *, footer *')].filter(e => e.style && e.style.opacity === '0' && e.getBoundingClientRect().height > 8 && !e.closest('[aria-hidden="true"], .menu, .modal, .cookie-banner, .hw')).length === 0, null, 3000);
   const info = await p.evaluate(() => ({
     ov: document.documentElement.scrollWidth - innerWidth,
-    stuck: [...document.querySelectorAll('main *, section *, footer *')].filter(e => e.style && e.style.opacity === '0' && e.getBoundingClientRect().height > 8 && !e.closest('[aria-hidden="true"], .menu, .modal, .cookie-banner')).length,
+    stuck: [...document.querySelectorAll('main *, section *, footer *')].filter(e => e.style && e.style.opacity === '0' && e.getBoundingClientRect().height > 8 && !e.closest('[aria-hidden="true"], .menu, .modal, .cookie-banner, .hw')).length,
     h1: !!document.querySelector('h1'),
     legal: !!document.querySelector('.footer-legal a, .page-legal a'),
     menu: document.querySelectorAll('#menu .menu__link').length,
