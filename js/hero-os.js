@@ -59,6 +59,7 @@
       if (A.ctx) { A.master.gain.cancelScheduledValues(A.ctx.currentTime); A.master.gain.setTargetAtTime(0, A.ctx.currentTime, 0.27); A.offTimer = setTimeout(function () { if (!A.playing && A.ctx.state === 'running') A.ctx.suspend(); }, 1000); }
     }
     playUI(); eqLoop();
+    document.dispatchEvent(new CustomEvent('hero:music', { detail: { playing: A.playing } }));
   }
   function playUI() {
     if (!A.btn) return;

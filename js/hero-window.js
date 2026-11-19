@@ -83,7 +83,7 @@
   w.innerHTML =
     '<div class="hw__float"><div class="hw__tilt"><span class="hw__glow"></span>' +
     '<div class="hw__win" role="group" tabindex="0" data-cursor="try" data-cursor-label="Próbálja ki" aria-label="Interaktív mini rendszer: zene, paletta, hangulat, üzenet">' +
-      '<span class="hw__bar"><span class="hw__dots" aria-hidden="true"><i></i><i></i><i></i></span></span>' +
+      '<span class="hw__bar"><span class="hw__dots" aria-hidden="true"><i></i><i></i><i></i></span><button type="button" class="hw__mini" aria-label="Zene megnyitása"><i></i><i></i><i></i></button></span>' +
       '<span class="hw__view" aria-hidden="true"><span class="hw__grid"></span>' +
         '<span class="hw__s hw__s--wire"><svg class="hw__svg" viewBox="0 0 1000 625" preserveAspectRatio="none">' + WIRE.map(function (e) { return '<path d="' + e[0] + '" pathLength="1"/>'; }).join('') + '<circle class="hw__pen" r="7" cx="0" cy="0"/></svg></span>' +
         '<span class="hw__s hw__s--code"><span class="hw__tabs"><span class="hw__tab is-on">index.html</span><span class="hw__tab">style.css</span></span>' +
@@ -93,6 +93,7 @@
         DOCK.map(function (d) { return '<button type="button" class="hw__app hw__app--' + d[0] + '" data-app="' + d[0] + '" data-tip="' + d[1] + '" aria-label="' + d[1] + '"><i data-lucide="' + d[2] + '"></i></button>'; }).join('') +
       '</div>' +
     '</div></div>' +
+    '<div class="hw__nudge" aria-hidden="true">Próbálja ki <i data-lucide="arrow-down"></i></div>' +
     '<div class="hw__pw" aria-live="polite"><div class="hw__panel" role="dialog" aria-modal="false" tabindex="-1"></div></div>';
   w.querySelector('.hw__view').appendChild(abEl);
   hero.appendChild(w);
@@ -319,7 +320,7 @@
     osQueue = cb;
     if (osState === 1) return;
     osState = 1;
-    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=1'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
+    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=2'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
     document.head.appendChild(sc);
   }
   function holdOn() {
@@ -360,6 +361,18 @@
     if (!silent) { var b = apps.filter(function (x) { return x.dataset.app === name; })[0]; if (b) b.focus(); }
   }
   gsap.set(panel, { autoAlpha: 0 });
+  var mini = $('.hw__mini'), nudge = $('.hw__nudge'), everHovered = false;
+  document.addEventListener('hero:music', function (e) { w.classList.toggle('is-music', !!(e.detail && e.detail.playing)); });
+  mini.addEventListener('click', function () { if (!held) holdOn(); openPanel('music'); });
+  function hideNudge() { gsap.killTweensOf(nudge); gsap.to(nudge, { autoAlpha: 0, duration: 0.2 }); }
+  w.addEventListener('pointerenter', function () { everHovered = true; hideNudge(); });
+  /* one-time nudge: ~7s on the hero with a mouse and no hover on the window yet -> "Próbálja ki" above the window for 3s (once per session; not on touch / reduced motion) */
+  var nudged = false; try { nudged = !!window.sessionStorage.getItem('vb-hero-nudge'); } catch (e0) { /* ignore */ }
+  if (!reduce && !nudged) setTimeout(function () {
+    if (everHovered || held || mode !== 'desktop' || !visible || document.hidden || !root.classList.contains('has-cursor')) return;
+    try { window.sessionStorage.setItem('vb-hero-nudge', '1'); } catch (e1) { /* ignore */ }
+    gsap.timeline().fromTo(nudge, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' }).to(nudge, { autoAlpha: 0, y: 4, duration: 0.4, ease: 'power2.in' }, '+=2.2');
+  }, 7000);
   apps.forEach(function (b) { b.addEventListener('click', function () { var n = b.dataset.app; if (osApp === n) closePanel(); else openPanel(n); }); });
   var hovering = false, touchMode = false;
   w.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { hovering = true; touchMode = false; holdOn(); } });

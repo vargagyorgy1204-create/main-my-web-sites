@@ -3718,7 +3718,10 @@ html.has-cursor .contact-field input:not([type="checkbox"]):not([type="radio"]):
 .cursor-ring.is-view .cursor-label { opacity: 1; }
 /* try: the hero mini-OS window (data-cursor="try"): a 64px glass ring with a small label ("Próbálja ki"); the dot hides */
 .cursor-ring.is-try::before { width: 64px; height: 64px; margin: -32px 0 0 -32px; border-color: rgb(255 255 255 / 0.85); background: rgb(255 255 255 / 0.14); box-shadow: 0 8px 28px rgb(99 102 241 / 0.35); }
-.cursor-ring.is-try .cursor-label { opacity: 1; font-size: 10px; letter-spacing: 0.02em; }
+.cursor-ring.is-try .cursor-label { opacity: 1; }
+.cursor-ring.is-try .cursor-label svg { display: block; inline-size: 22px; block-size: 22px; stroke: #fff; stroke-width: 2; fill: none; animation: cursorTap 1.6s ease-in-out infinite; }
+@keyframes cursorTap { 0%, 55%, 100% { transform: scale(1); } 70% { transform: scale(0.85); } 85% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .cursor-ring.is-try .cursor-label svg { animation: none; } }
 .cursor-ring.is-try + .cursor-dot { opacity: 0; }
 html.cursor-dark .cursor-ring.is-try::before { border-color: rgb(255 255 255 / 0.85); background: rgb(255 255 255 / 0.14); }
 .cursor-ring.is-view + .cursor-dot { opacity: 0; }
@@ -7612,3 +7615,16 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__st { margin: 0; font-size: 11.5px; } .hw__st.is-err { color: #fda4af; }
 .hw__ok { display: grid; justify-items: center; gap: 10px; padding-block: 22px; text-align: center; } .hw__ok svg { inline-size: 30px; block-size: 30px; color: #2dd4bf; } .hw__ok p { margin: 0; font: 600 14px/1.4 'Space Grotesk', sans-serif; }
 @media (prefers-reduced-motion: reduce) { .hw__view, .hw__app, .hw__toast { transition: none; } }
+
+/* mini OS polish: dock dot (open panel / music playing), top-bar equalizer, one-time nudge */
+.hw__app::before { content: ""; position: absolute; left: 50%; bottom: -8px; inline-size: 4px; block-size: 4px; margin-left: -2px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity 0.2s ease; }
+.hw__app[aria-pressed="true"]::before, .hw.is-music .hw__app--music::before { opacity: 1; }
+.hw__dock { padding-bottom: 14px; }
+.hw__mini { display: none; align-items: flex-end; gap: 2px; block-size: 10px; margin-inline-start: 12px; padding: 0; border: 0; background: none; cursor: pointer; }
+.hw.is-music .hw__mini { display: inline-flex; }
+.hw__mini i { inline-size: 3px; block-size: 100%; border-radius: 1px; background: #22c3d6; transform-origin: 50% 100%; animation: hwMini 0.9s ease-in-out infinite; }
+.hw__mini i:nth-child(2) { animation-delay: -0.3s; background: #9b3fd8; } .hw__mini i:nth-child(3) { animation-delay: -0.6s; background: #C026A3; }
+@keyframes hwMini { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+.hw__nudge { position: absolute; right: 18px; bottom: calc(100% + 6px); z-index: 9; display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: rgb(255 255 255 / 0.16); border: 1px solid rgb(255 255 255 / 0.32); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); color: #fff; font: 600 12px/1 'Space Grotesk', sans-serif; white-space: nowrap; opacity: 0; visibility: hidden; pointer-events: none; }
+.hw__nudge svg { inline-size: 14px; block-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .hw__mini i { animation: none; transform: scaleY(0.7); } }
