@@ -14,92 +14,183 @@
   function icons() { if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } } }
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
-  /* ================================================================ music: generated ambient pad */
-  var A = { ctx: null, master: null, an: null, oscs: [], lfo: null, playing: false, vol: 0.3, step: 0, chordTimer: 0, offTimer: 0, raf: 0, bars: null, btn: null, data: null };
+  /* ================================================================ music player (ported from the demo site: #musicCard / .player, js/cards.js)
+     PLAYLIST: add a track = add one entry. { title, artist, src } = an mp3 (not preloaded: loaded on its first play), { title, artist, gen: true } = the generated Web Audio ambient pad.
+     One AudioContext (created on the first play click): file tracks via MediaElementSource, the generated pad via a gain gate, both -> master gain (volume / mute / 0.8s fades) -> AnalyserNode (equaliser). */
+  var PLAYLIST = [
+    { title: 'Lo-fi Coding Mix', artist: 'prettyjohn1 · Pixabay', src: 'assets/audio/lofi.mp3' },
+    { title: 'VarBro Ambient', artist: 'generált · Web Audio', gen: true }
+  ];
+  var A = { ctx: null, master: null, an: null, data: null, gen: null, engine: false, oscs: [], idx: 0, playing: false, running: false, muted: false, vol: 0.3, audio: null, chordTimer: 0, offTimer: 0, step: 0, genAcc: 0, genStart: 0, raf: 0, ui: null, err: false };
   var CHORDS = [[110.0, 164.81, 261.63, 392.0], [87.31, 174.61, 261.63, 329.63], [130.81, 196.0, 246.94, 329.63], [98.0, 196.0, 293.66, 329.63]];     /* Am7, Fmaj7, Cmaj7, G6/9 */
-  function ensureAudio() {
+  var BUCKETS = [[0, 2], [2, 4], [4, 6], [6, 9], [9, 13], [13, 18], [18, 24], [24, 32]];
+
+  function ensureCtx() {
     if (A.ctx) return true;
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
     var c = A.ctx = new AC();
     A.master = c.createGain(); A.master.gain.value = 0;
-    A.an = c.createAnalyser(); A.an.fftSize = 64; A.an.smoothingTimeConstant = 0.8; A.data = new Uint8Array(A.an.frequencyBinCount);
+    A.an = c.createAnalyser(); A.an.fftSize = 64; A.an.smoothingTimeConstant = 0.75; A.data = new Uint8Array(A.an.frequencyBinCount);
+    A.gen = c.createGain(); A.gen.gain.value = 0; A.gen.connect(A.master);
+    A.master.connect(A.an); A.an.connect(c.destination);
+    return true;
+  }
+  function ensureEngine() {                                         /* the generated pad, built on first use */
+    if (A.engine) return; A.engine = true;
+    var c = A.ctx;
     var lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 760; lp.Q.value = 0.6;
-    A.lfo = c.createOscillator(); A.lfo.frequency.value = 0.07; var lg = c.createGain(); lg.gain.value = 260; A.lfo.connect(lg); lg.connect(lp.frequency); A.lfo.start();
+    var lfo = c.createOscillator(); lfo.frequency.value = 0.07; var lg = c.createGain(); lg.gain.value = 260; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
     CHORDS[0].forEach(function (f, i) {                              /* 4 voices x 2 detuned oscillators */
       [-6, 6].forEach(function (d) {
         var o = c.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = d;
         var g = c.createGain(); g.gain.value = 0.055; o.connect(g); g.connect(lp); o.start(); o._v = i; A.oscs.push(o);
       });
     });
-    var dry = c.createGain(); dry.gain.value = 0.75; lp.connect(dry); dry.connect(A.master);
+    var dry = c.createGain(); dry.gain.value = 0.75; lp.connect(dry); dry.connect(A.gen);
     var dl = c.createDelay(1); dl.delayTime.value = 0.41; var fb = c.createGain(); fb.gain.value = 0.42; var dlp = c.createBiquadFilter(); dlp.type = 'lowpass'; dlp.frequency.value = 1800;
     var wet = c.createGain(); wet.gain.value = 0.5;
-    lp.connect(dl); dl.connect(dlp); dlp.connect(fb); fb.connect(dl); dlp.connect(wet); wet.connect(A.master);     /* soft feedback delay = a cheap reverb tail */
-    A.master.connect(A.an); A.an.connect(c.destination);
-    return true;
+    lp.connect(dl); dl.connect(dlp); dlp.connect(fb); fb.connect(dl); dlp.connect(wet); wet.connect(A.gen);
   }
-  function chord() {                                                /* a gentle progression, one chord per ~8s (glides) */
-    var ch = CHORDS[A.step % CHORDS.length]; A.step++;
-    var t = A.ctx.currentTime;
-    A.oscs.forEach(function (o) { o.frequency.setTargetAtTime(ch[o._v], t, 1.2); });
+  function ensureFile() {
+    if (A.audio) return;
+    var a = A.audio = new Audio(); a.preload = 'none';
+    var src = A.ctx.createMediaElementSource(a); src.connect(A.master);
+    a.addEventListener('ended', function () { go(A.idx + 1, true); });
+    a.addEventListener('error', function () { A.err = true; setPlaying(false); A.running = false; });
+    a.addEventListener('loadedmetadata', function () { A.err = false; });
   }
-  function setPlay(on) {
-    if (on === A.playing) return;
-    if (on) {
-      if (!ensureAudio()) return;
-      clearTimeout(A.offTimer);
-      A.ctx.resume();
-      A.playing = true;
-      A.master.gain.cancelScheduledValues(A.ctx.currentTime); A.master.gain.setTargetAtTime(A.vol * 0.5, A.ctx.currentTime, 0.27);    /* ~0.8s fade in */
-      chord(); A.chordTimer = setInterval(chord, 8000);
+  function chord() { var ch = CHORDS[A.step % CHORDS.length]; A.step++; var t = A.ctx.currentTime; A.oscs.forEach(function (o) { o.frequency.setTargetAtTime(ch[o._v], t, 1.2); }); }
+  function level() { return A.muted ? 0 : A.vol; }
+  function fade() { if (A.ctx) { A.master.gain.cancelScheduledValues(A.ctx.currentTime); A.master.gain.setTargetAtTime(A.playing ? level() : 0, A.ctx.currentTime, 0.27); } }   /* ~0.8s */
+  function startTrack() {
+    var t = PLAYLIST[A.idx]; A.err = false;
+    A.ctx.resume();
+    if (t.gen) {
+      ensureEngine(); A.gen.gain.setTargetAtTime(0.5, A.ctx.currentTime, 0.05);
+      chord(); clearInterval(A.chordTimer); A.chordTimer = setInterval(chord, 8000); A.genStart = performance.now();
     } else {
-      A.playing = false;
-      clearInterval(A.chordTimer);
-      if (A.ctx) { A.master.gain.cancelScheduledValues(A.ctx.currentTime); A.master.gain.setTargetAtTime(0, A.ctx.currentTime, 0.27); A.offTimer = setTimeout(function () { if (!A.playing && A.ctx.state === 'running') A.ctx.suspend(); }, 1000); }
+      ensureFile(); A.gen.gain.setTargetAtTime(0, A.ctx.currentTime, 0.05);
+      if (A.audio.getAttribute('data-src') !== t.src) { A.audio.setAttribute('data-src', t.src); A.audio.src = t.src; }     /* the mp3 is fetched on its first play only */
+      var p = A.audio.play(); if (p && p.catch) p.catch(function () { A.err = true; setPlaying(false); A.running = false; });
     }
-    playUI(); eqLoop();
-    document.dispatchEvent(new CustomEvent('hero:music', { detail: { playing: A.playing } }));
+    A.running = true;
   }
-  function playUI() {
-    if (!A.btn) return;
-    A.btn.setAttribute('aria-label', A.playing ? 'Szünet' : 'Lejátszás'); A.btn.setAttribute('aria-pressed', A.playing ? 'true' : 'false');
-    A.btn.innerHTML = '<i data-lucide="' + (A.playing ? 'pause' : 'play') + '"></i>'; icons();
+  function stopTrack() {
+    if (!A.running) return;
+    var t = PLAYLIST[A.idx];
+    if (t.gen) { clearInterval(A.chordTimer); A.genAcc += (performance.now() - A.genStart) / 1000; } else if (A.audio) A.audio.pause();
+    A.running = false;
   }
-  function eqLoop() {
-    cancelAnimationFrame(A.raf); A.raf = 0;
-    if (!A.bars || cur !== 'music') return;
-    var tick = function () {
-      A.raf = 0;
-      if (cur !== 'music' || !A.bars) return;
-      var v = [0.12, 0.12, 0.12, 0.12, 0.12];
-      if (A.ctx && A.playing) { A.an.getByteFrequencyData(A.data); for (var i = 0; i < 5; i++) { var s = 0, n = 0; for (var k = 1 + i * 2; k < 3 + i * 2; k++) { s += A.data[k]; n++; } v[i] = Math.max(0.12, Math.min(1, (s / n / 255) * 1.7)); } }
-      for (var j = 0; j < 5; j++) A.bars[j].style.transform = 'scaleY(' + v[j].toFixed(3) + ')';
-      if (A.playing || A.bars[0].dataset.settle !== '1') A.raf = requestAnimationFrame(tick);
-      A.bars[0].dataset.settle = A.playing ? '0' : '1';
-    };
-    A.raf = requestAnimationFrame(tick);
+  function setPlaying(on) {
+    if (on === A.playing) return;
+    A.playing = on;
+    document.dispatchEvent(new CustomEvent('hero:music', { detail: { playing: on } }));
+    ui(); loop();
   }
-  function stopMusic() { if (A.playing) setPlay(false); }
+  function play() {
+    if (!ensureCtx()) return;
+    clearTimeout(A.offTimer);
+    if (!A.running) startTrack();
+    A.playing = false; setPlaying(true); fade();
+  }
+  function pause() {
+    if (!A.playing) return;
+    setPlaying(false); fade();
+    clearTimeout(A.offTimer);
+    A.offTimer = setTimeout(function () { if (!A.playing) { stopTrack(); if (A.ctx && A.ctx.state === 'running') A.ctx.suspend(); } }, 950);
+  }
+  function go(i, auto) {                                            /* switch track (keeps playing if it was playing) */
+    var was = A.playing || auto;
+    clearTimeout(A.offTimer);
+    stopTrack();
+    A.idx = ((i % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length; A.genAcc = 0; A.err = false;
+    ui();
+    if (was) { ensureCtx(); A.ctx.resume(); startTrack(); A.playing = false; setPlaying(true); fade(); }
+  }
+  function stopMusic() { if (A.playing) pause(); }
   if ('IntersectionObserver' in window && hero) new IntersectionObserver(function (es) { if (!es[es.length - 1].isIntersecting) stopMusic(); }).observe(hero);
   document.addEventListener('visibilitychange', function () { if (document.hidden) stopMusic(); });
 
+  function fmt(s) { if (!isFinite(s) || s < 0) s = 0; var m = Math.floor(s / 60), r = Math.floor(s % 60); return m + ':' + (r < 10 ? '0' : '') + r; }
+  function pos() {                                                  /* {cur, dur} of the current track (dur 0 = endless) */
+    var t = PLAYLIST[A.idx];
+    if (t.gen) return { cur: A.genAcc + (A.running ? (performance.now() - A.genStart) / 1000 : 0), dur: 0 };
+    return { cur: A.audio && A.audio.getAttribute('data-src') === t.src ? A.audio.currentTime : 0, dur: A.audio && A.audio.getAttribute('data-src') === t.src && isFinite(A.audio.duration) ? A.audio.duration : 0 };
+  }
+  function ui() {
+    var U = A.ui; if (!U) return;
+    var t = PLAYLIST[A.idx], p = pos();
+    U.title.textContent = A.err ? 'Nem tölthető be' : t.title; U.artist.textContent = A.err ? 'Kérjük, próbálja újra' : t.artist;
+    U.play.setAttribute('aria-pressed', A.playing ? 'true' : 'false'); U.play.setAttribute('aria-label', A.playing ? 'Szünet' : 'Lejátszás');
+    U.mute.setAttribute('aria-pressed', A.muted ? 'true' : 'false');
+    var seekable = !t.gen && p.dur > 0;
+    U.bar.setAttribute('aria-disabled', seekable ? 'false' : 'true');
+    var f = seekable ? Math.min(100, p.cur / p.dur * 100) : 0;
+    U.fill.style.width = f + '%'; U.handle.style.insetInlineStart = f + '%'; U.handle.style.visibility = seekable ? '' : 'hidden';
+    U.bar.setAttribute('aria-valuenow', String(Math.round(f)));
+    U.el.textContent = fmt(p.cur); U.rem.textContent = t.gen ? '∞' : (p.dur ? '-' + fmt(p.dur - p.cur) : '0:00');
+  }
+  function loop() {
+    cancelAnimationFrame(A.raf); A.raf = 0;
+    if (!A.ui || cur !== 'music') return;
+    var rest = 0;
+    var tick = function () {
+      A.raf = 0;
+      if (cur !== 'music' || !A.ui) return;
+      ui();
+      var bars = A.ui.bars;
+      if (A.ctx && A.playing) {
+        A.an.getByteFrequencyData(A.data);
+        for (var i = 0; i < 8; i++) { var s = 0, n = 0; for (var k = BUCKETS[i][0]; k < BUCKETS[i][1]; k++) { s += A.data[k]; n++; } bars[i].style.height = Math.max(4, Math.min(32, (s / n / 255) * 1.5 * 32)) + 'px'; }
+        rest = 0;
+      } else if (rest++ < 20) { for (var j = 0; j < 8; j++) bars[j].style.height = '4px'; }
+      if (A.playing || rest < 20) A.raf = requestAnimationFrame(tick);
+    };
+    A.raf = requestAnimationFrame(tick);
+  }
+  function seekTo(frac) {
+    var t = PLAYLIST[A.idx], p = pos();
+    if (t.gen || !A.audio || !(p.dur > 0)) return;
+    A.audio.currentTime = Math.max(0, Math.min(p.dur, frac * p.dur)); ui();
+  }
+
   function buildMusic() {
-    var b = el('div', 'hw__pb');
-    var row = el('div', 'hw__row');
-    var btn = el('button', 'hw__play'); btn.type = 'button'; A.btn = btn;
-    var info = el('div', 'hw__tr', '<strong>VarBro Focus</strong><span>Nyugodt ambient · generált</span>');
-    row.appendChild(btn); row.appendChild(info);
-    var bars = el('div', 'hw__eq'); bars.setAttribute('aria-hidden', 'true'); A.bars = [];
-    for (var i = 0; i < 5; i++) { var bar = el('i'); bars.appendChild(bar); A.bars.push(bar); }
-    var vol = el('label', 'hw__vol', '<span>Hangerő</span>');
-    var rng = el('input'); rng.type = 'range'; rng.min = 0; rng.max = 100; rng.value = Math.round(A.vol * 100); rng.setAttribute('aria-label', 'Hangerő');
-    rng.addEventListener('input', function () { A.vol = rng.value / 100; if (A.ctx && A.playing) A.master.gain.setTargetAtTime(A.vol * 0.5, A.ctx.currentTime, 0.1); });
-    vol.appendChild(rng);
-    btn.addEventListener('click', function () { setPlay(!A.playing); });
-    b.appendChild(row); b.appendChild(bars); b.appendChild(vol);
-    playUI();
-    return { el: b, focus: btn };
+    var b = el('div', 'hw__pb mp');
+    b.innerHTML =
+      '<div class="mp__top"><div class="mp__art" aria-hidden="true"><i data-lucide="music-2"></i></div>' +
+      '<div class="mp__meta"><p class="mp__title"></p><p class="mp__artist"></p></div>' +
+      '<div class="mp__eq" aria-hidden="true">' + new Array(9).join('<span class="mp__eqb"></span>') + '</div></div>' +
+      '<div class="mp__prog"><span class="mp__time mp__el">0:00</span>' +
+        '<div class="mp__bar" role="slider" tabindex="0" aria-label="Lejátszási pozíció" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-disabled="true"><div class="mp__fill"></div><div class="mp__handle"></div></div>' +
+      '<span class="mp__time mp__rem">0:00</span></div>' +
+      '<div class="mp__ctl">' +
+        '<button type="button" class="mp__btn mp__skip" data-a="prev" aria-label="Előző szám"><i data-lucide="skip-back"></i></button>' +
+        '<button type="button" class="mp__btn mp__play" data-a="play" aria-label="Lejátszás" aria-pressed="false"><i data-lucide="play" class="mp__ic-play"></i><i data-lucide="pause" class="mp__ic-pause"></i></button>' +
+        '<button type="button" class="mp__btn mp__skip" data-a="next" aria-label="Következő szám"><i data-lucide="skip-forward"></i></button>' +
+        '<button type="button" class="mp__btn mp__skip mp__mute" data-a="mute" aria-label="Némítás" aria-pressed="false"><i data-lucide="volume-2" class="mp__ic-on"></i><i data-lucide="volume-x" class="mp__ic-off"></i></button>' +
+      '</div>';
+    var q = function (s) { return b.querySelector(s); };
+    var bar = q('.mp__bar');
+    A.ui = { el: q('.mp__el'), rem: q('.mp__rem'), title: q('.mp__title'), artist: q('.mp__artist'), bar: bar, fill: q('.mp__fill'), handle: q('.mp__handle'), play: q('.mp__play'), mute: q('.mp__mute'), bars: [].slice.call(b.querySelectorAll('.mp__eqb')) };
+    b.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-a]'); if (!btn) return;
+      var a = btn.dataset.a;
+      if (a === 'play') { A.playing ? pause() : play(); }
+      else if (a === 'prev') go(A.idx - 1); else if (a === 'next') go(A.idx + 1);
+      else if (a === 'mute') { A.muted = !A.muted; fade(); ui(); }
+    });
+    var dragging = false, frac = function (e) { var r = bar.getBoundingClientRect(); return (e.clientX - r.left) / r.width; };
+    bar.addEventListener('pointerdown', function (e) { if (bar.getAttribute('aria-disabled') === 'true') return; dragging = true; bar.setPointerCapture(e.pointerId); seekTo(frac(e)); });
+    bar.addEventListener('pointermove', function (e) { if (dragging) seekTo(frac(e)); });
+    bar.addEventListener('pointerup', function () { dragging = false; }); bar.addEventListener('pointercancel', function () { dragging = false; });
+    bar.addEventListener('keydown', function (e) {
+      if (bar.getAttribute('aria-disabled') === 'true') return;
+      var p = pos(), d = { ArrowLeft: -5, ArrowRight: 5 }[e.key];
+      if (d) { e.preventDefault(); seekTo((p.cur + d) / p.dur); } else if (e.key === 'Home') { e.preventDefault(); seekTo(0); } else if (e.key === 'End') { e.preventDefault(); seekTo(1); }
+    });
+    ui();
+    return { el: b, focus: q('.mp__play') };
   }
 
   /* ================================================================ palette */
@@ -207,10 +298,10 @@
       host.innerHTML = ''; host.appendChild(head); host.appendChild(built[name].el);
       host.setAttribute('aria-label', BUILD[name][0]);
       icons();
-      if (name === 'music') { playUI(); eqLoop(); }
+      if (name === 'music') { ui(); loop(); }
       var f = built[name].focus; if (f && f.focus) setTimeout(function () { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }, 60);
     },
-    closed: function (name) { if (name === 'music') { cur = null; cancelAnimationFrame(A.raf); } else cur = null; },
-    audio: function () { return { playing: A.playing, state: A.ctx && A.ctx.state, vol: A.vol, bars: A.bars && A.bars.map(function (b) { return b.style.transform; }) }; }
+    closed: function (name) { cur = null; cancelAnimationFrame(A.raf); },
+    audio: function () { var p = pos(); return { playing: A.playing, state: A.ctx && A.ctx.state, idx: A.idx, track: PLAYLIST[A.idx].title, cur: p.cur, dur: p.dur, muted: A.muted, vol: A.vol, bars: A.ui && A.ui.bars.map(function (b) { return b.style.height; }) }; }
   };
 })();

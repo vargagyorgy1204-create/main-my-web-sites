@@ -320,7 +320,7 @@
     osQueue = cb;
     if (osState === 1) return;
     osState = 1;
-    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=2'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
+    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=3'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
     document.head.appendChild(sc);
   }
   function holdOn() {
@@ -347,7 +347,7 @@
       var mob = mode === 'mobile';
       pw.classList.toggle('is-mobile', mob);
       if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
-      else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }
+      else { pw.style.left = ''; pw.style.width = name === 'music' ? '334px' : ''; pw.style.right = ''; pw.style.bottom = ''; }      /* the player needs ~320px */
       pw.classList.add('is-open');
       gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true });
     });
