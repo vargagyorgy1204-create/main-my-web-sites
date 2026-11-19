@@ -116,8 +116,19 @@
           for (i = 0; i < n; i++) { var bw = ls[i].getBoundingClientRect().width; ls[i].style.width = bw + 'px'; ls[i].style.textAlign = 'center'; }
           var lt = document.createElement('span'), rt = document.createElement('span');             /* absolutely placed beside the word: no layout width, never touches another line */
           lt.className = 'hero-live__code'; rt.className = 'hero-live__code'; lt.textContent = '<'; rt.textContent = '/>';
-          lt.style.right = '100%'; lt.style.marginRight = '0.18em'; rt.style.left = '100%'; rt.style.marginLeft = '0.18em';
+          lt.style.right = '100%'; rt.style.left = '100%';
           w.appendChild(lt); w.appendChild(rt);
+          /* the word stays put; only the brackets move. "/>" gets a normal word space (0.28em) on the free right side; "<" is centred in the (only ~0.28em wide) space between "aki" and the word,
+             so it clears both neighbours by its glyph side-bearings instead of touching "aki" */
+          var fpx = parseFloat(getComputedStyle(w).fontSize) || 72, lineIn = w.closest('.hero-line__in'), akiNode = lineIn && lineIn.firstChild;
+          rt.style.marginLeft = (0.28 * fpx) + 'px';
+          var gapL = 0.04 * fpx;
+          if (akiNode && akiNode.nodeType === 3) {
+            var rg = document.createRange(); rg.setStart(akiNode, 0); rg.setEnd(akiNode, Math.max(0, akiNode.length - 1));
+            var interval = w.getBoundingClientRect().left - rg.getBoundingClientRect().right;
+            gapL = Math.max(0, (interval - lt.offsetWidth) / 2);
+          }
+          lt.style.marginRight = gapL + 'px';
           gsap.set(ls, { opacity: 0 }); gsap.set([lt, rt], { opacity: 0 });
           var st = { p: 0 };
           tl.set(ls, { opacity: 1 }, 0).to(st, { p: 1, duration: 0.6, ease: 'none', onUpdate: function () {

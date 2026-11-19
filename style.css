@@ -3197,7 +3197,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 }
 
 /* the block (headline, lead, buttons) hangs directly under the label (label -> headline = --eyebrow-head-gap, as in the other sections); the status line stays at the bottom */
-.hero-title { position: relative; margin: 0 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(34px, min(8.2vw, 10.8svh), 150px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
+.hero-title { position: relative; margin: 0 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(36px, min(8.69vw, 11.45svh), 159px), calc((100vw - 2 * var(--content-gutter)) / 10.75)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
 .hero-headline {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
@@ -3311,7 +3311,7 @@ html.hero-static .hero-live__txt { position: static; }
 
 @media (max-width: 899px) {
     .hero-live { --hero-sw: 1px; }
-    .hero-title { font-size: min(clamp(28px, 10.4vw, 64px), calc((100vw - 2 * var(--content-gutter)) / 11)); }          /* same three lines, smaller */
+    .hero-title { font-size: min(clamp(30px, 11.02vw, 68px), calc((100vw - 2 * var(--content-gutter)) / 10.75)); }          /* same three lines, smaller */
     .hero-line__in { white-space: normal; }
     .hero-ctas { margin-bottom: 0; flex-wrap: nowrap; align-items: center; gap: 20px; }          /* PROJEKT INDÍTÁSA + PORTFÓLIÓ in one row, never wrapped */
     .hero-ctas .cta-row__btn { flex: 0 1 auto; min-width: 0; }
