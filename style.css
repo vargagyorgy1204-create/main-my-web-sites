@@ -7721,3 +7721,17 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pl__side .pl__btn::after { content: attr(data-tip); position: absolute; right: calc(100% + 8px); top: 50%; translate: 0 -50%; padding: 5px 9px; border-radius: 999px; background: #14101c; color: #fff; font: 600 11px/1 'Inter', sans-serif; white-space: nowrap; opacity: 0; transform: translateX(4px); pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; z-index: 4; }
 .pl__side .pl__btn:hover::after, .pl__side .pl__btn:focus-visible::after { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .pl__hex, .pl__side .pl__btn::after { transition: none; } }
+
+/* ═══ Mini OS Paletta, roomier (300px) + clean capsule hover ═══ */
+.hw__panel.is-pal { padding: 16px 14px; min-block-size: 170px; display: grid; align-content: center; }
+.pl { grid-template-columns: minmax(0, 1fr) 48px; gap: 0 12px; }
+.pl__caps { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-block-end: 16px; }
+.pl__col { position: relative; }
+.pl__cap { aspect-ratio: 1 / 1.6; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.pl__cap svg { inline-size: 14px; block-size: 14px; }
+.pl__col:hover .pl__cap, .pl__col:focus-visible .pl__cap { transform: translateY(-4px) scale(1.04); box-shadow: 0 12px 20px rgb(0 0 0 / 0.26), inset 0 1px 0 rgb(255 255 255 / 0.4); }
+.pl__col:focus-visible { outline: none; }
+.pl__col:focus-visible .pl__cap { outline: 2px solid var(--pl-b, #fff); outline-offset: 2px; }
+.pl__hex { position: absolute; inset-inline: 0; inset-block-start: calc(100% + 4px); margin-inline: auto; inline-size: max-content; transform: none; pointer-events: none; }
+.pl__side { justify-self: center; }
+@media (prefers-reduced-motion: reduce) { .pl__cap { transition: none; } }

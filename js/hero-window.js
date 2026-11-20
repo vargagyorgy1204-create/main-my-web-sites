@@ -360,11 +360,14 @@
     if (mode !== 'desktop') return;
     var pwr = pw.getBoundingClientRect(), wl = win.getBoundingClientRect().left;
     var X = Math.max(14, Math.round(pwr.right - wl + 16 + 4));                       /* + float / tilt breathing room */
-    var PW = 260;
+    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect(), PW = 260, hit = true, widths = osApp === 'palette' ? [300, 260] : [260];
+    for (var k = 0; k < widths.length && hit; k++) {                                 /* the roomier palette (300px) shrinks to 260px only where it would touch the text */
+      PW = widths[k];
+      var pl = hwr.left - X - PW - hr.left, pr = hwr.left - X - hr.left, pb = hwr.bottom - hr.top, pt = pb - hh;
+      hit = obstacles(hr).some(function (o) { return o.r + 12 > pl && o.l - 12 < pr && o.b + 12 > pt && o.t - 12 < pb; });
+    }
+    if (hit) PW = widths[0];
     pw.style.paddingRight = X + 'px'; pw.style.inlineSize = (PW + X) + 'px';
-    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect();
-    var pl = hwr.left - X - PW - hr.left, pr = hwr.left - X - hr.left, pb = hwr.bottom - hr.top, pt = pb - hh;
-    var hit = obstacles(hr).some(function (o) { return o.r + 12 > pl && o.l - 12 < pr && o.b + 12 > pt && o.t - 12 < pb; });
     if (hit) { pw.classList.add('is-above'); pw.style.paddingRight = ''; pw.style.inlineSize = PW + 'px'; }
   }
   function closePanel(silent) {
