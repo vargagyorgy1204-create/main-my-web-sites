@@ -372,22 +372,31 @@
   /* ================================================================ mood */
   function buildMood() {
     var T = window.HERO_THEMES || {};
-    var b = el('div', 'hw__pb hw__mood'); b.setAttribute('role', 'radiogroup'); b.setAttribute('aria-label', 'Hangulat');
+    var b = el('div', 'hw__pb hm'); b.innerHTML = '<h3 class="hm__title">Hangulat</h3><div class="hm__row" role="radiogroup" aria-label="Hangulat"></div>';
+    var row = b.querySelector('.hm__row');
     var now = 'night'; try { now = window.sessionStorage.getItem('vb-hero-mood') || 'night'; } catch (e) { /* ignore */ }
+    var stars = [[14, 12, 0], [70, 8, 1.2], [38, 26, 2.1], [84, 34, 0.6], [24, 44, 3], [58, 18, 1.8], [90, 14, 2.6]].map(function (s) { return '<i class="hm__star" style="left:' + s[0] + '%;top:' + s[1] + '%;--dl:' + s[2] + 's"></i>'; }).join('');
+    var wave = function (c, cls) { return '<svg class="hm__wave ' + cls + '" viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 Q25 2 50 12 T100 12 T150 12 T200 12 V24 H0Z" fill="' + c + '"/></svg>'; };
+    var SCENE = {
+      night: '<span class="hm__aur hm__aur--a"></span><span class="hm__aur hm__aur--b"></span>' + stars,
+      ocean: wave('rgb(34 211 238 / .35)', 'hm__wave--1') + wave('rgb(20 184 166 / .55)', 'hm__wave--2') + wave('rgb(14 80 130 / .85)', 'hm__wave--3'),
+      sunset: '<span class="hm__sun"></span><span class="hm__sea"><i></i><i></i><i></i></span>'
+    };
     var items = [];
     ['night', 'ocean', 'sunset'].forEach(function (k) {
       var t = T[k]; if (!t) return;
-      var r = el('button', 'hw__opt', '<span class="hw__dots3">' + t.sw.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join('') + '</span><span class="hw__ol">' + t.label + '</span>');
+      var r = el('button', 'hm__card hm__card--' + k, '<span class="hm__scene">' + SCENE[k] + '<span class="hm__chk"><i data-lucide="check"></i></span></span><span class="hm__lb">' + t.label + '</span>');
       r.type = 'button'; r.setAttribute('role', 'radio'); r.dataset.k = k;
       r.addEventListener('click', function () {
         items.forEach(function (x) { x.setAttribute('aria-checked', x === r ? 'true' : 'false'); });
         try { window.sessionStorage.setItem('vb-hero-mood', k); } catch (e) { /* ignore */ }
         document.dispatchEvent(new CustomEvent('hero:theme', { detail: { name: k } }));
       });
-      items.push(r); b.appendChild(r);
+      items.push(r); row.appendChild(r);
     });
     items.forEach(function (x) { x.setAttribute('aria-checked', x.dataset.k === now ? 'true' : 'false'); });
-    return { el: b, focus: items[0] };
+    b.classList.toggle('is-still', reduce);
+    return { el: b, focus: items.filter(function (x) { return x.getAttribute('aria-checked') === 'true'; })[0] || items[0], onOpen: function () { b.classList.add('is-run'); } };
   }
 
   /* ================================================================ message */
@@ -429,8 +438,8 @@
       if (cur === 'music' && name !== 'music') { /* the music keeps playing; only the equalizer loop stops */ }
       cur = name; host = api.host;
       if (!built[name]) { var r = BUILD[name][1](); built[name] = r; }
-      var bare = name === 'music' || name === 'palette';           /* the player / palette card IS the panel: no header, no close button (dock icon, Esc, leaving close it) */
-      host.classList.toggle('is-bare', name === 'music'); host.classList.toggle('is-pal', name === 'palette');
+      var bare = name === 'music' || name === 'palette' || name === 'mood';           /* the player / palette card IS the panel: no header, no close button (dock icon, Esc, leaving close it) */
+      host.classList.toggle('is-bare', name === 'music'); host.classList.toggle('is-pal', name === 'palette'); host.classList.toggle('is-mood', name === 'mood');
       if (name !== 'palette') { host.style.background = ''; }
       host.innerHTML = '';
       if (!bare) host.appendChild(el('div', 'hw__ph', '<span class="hw__pt">' + BUILD[name][0] + '</span>'));
@@ -441,7 +450,7 @@
       if (name === 'music') { ui(); vizRun(); }
       var f = built[name].focus; if (f && f.focus) setTimeout(function () { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }, 60);
     },
-    closed: function (name) { cur = null; },
+    closed: function (name) { cur = null; if (built.mood) built.mood.el.classList.remove('is-run'); },
     audio: function () { var p = pos(); return { playing: A.playing, state: A.ctx && A.ctx.state, idx: A.idx, track: PLAYLIST[A.idx].title, cur: p.cur, dur: p.dur, muted: A.muted, vol: A.vol, session: A.session, frames: A.frames || 0, bars: A.ui && A.ui.bars.map(function (b) { return b.style.height; }) }; },
     stop: stopFull
   };

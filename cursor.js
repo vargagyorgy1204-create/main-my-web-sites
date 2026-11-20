@@ -367,7 +367,7 @@
 
         /* the Paletta panel (hero mini-OS): only the dot, no ring / frame / label */
         ring.classList.remove('is-dot');
-        if (t && t.closest('.pl')) {
+        if (t && t.closest('.pl, .hm')) {
             cancelHold(); releaseMagnet(); setFrame(null);
             ring.classList.remove('is-view', 'is-try', 'is-text', 'is-link-small', 'is-magnetic');
             label.textContent = '';

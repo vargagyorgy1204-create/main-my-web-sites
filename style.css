@@ -7773,3 +7773,42 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 /* Dock: icons centred in the pill (equal padding all round); the active dot is absolute, inside the bottom padding, and reserves no space */
 .hw__dock { padding: 10px; gap: 10px; }
 .hw__app::before { bottom: -7px; }
+
+/* ═══ Mini OS Hangulat: three atmosphere cards (js/hero-os.js buildMood). One layer draws the panel; animations only while the panel is open (is-run) ═══ */
+.hw__panel.is-mood { padding: 16px 14px; min-block-size: 0; border: 0; background: rgb(22 17 44 / 0.94); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 24px 60px rgb(0 0 0 / 0.45); }
+.hm__title { margin: 0 0 12px; font: 600 17px/20px 'Cormorant Garamond', 'Playfair Display', Georgia, serif; letter-spacing: 0.04em; color: #fff; }
+.hm__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.hm__card { display: grid; justify-items: stretch; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer; min-inline-size: 0; font: inherit; color: inherit; }
+.hm__card:focus-visible { outline: none; }
+.hm__scene { position: relative; display: block; block-size: 114px; border-radius: 14px; overflow: hidden; isolation: isolate; outline: 1.5px solid transparent; outline-offset: 3px; transition: transform 0.25s ease, outline-color 0.2s ease; --sp: 1; }
+.hm__card:hover .hm__scene, .hm__card:focus-visible .hm__scene { transform: translateY(-3px); --sp: 1.7; }
+.hm__card[aria-checked="true"] .hm__scene { transform: scale(1.04); outline-color: rgb(255 255 255 / 0.7); }
+.hm__card[aria-checked="true"]:hover .hm__scene, .hm__card[aria-checked="true"]:focus-visible .hm__scene { transform: translateY(-3px) scale(1.04); }
+.hm__card:focus-visible .hm__scene { outline-color: rgb(255 255 255 / 0.7); }
+.hm__lb { text-align: center; font: 500 11px/13px 'Space Grotesk', sans-serif; color: rgb(255 255 255 / 0.8); }
+.hm__chk { position: absolute; z-index: 3; inset-block-start: 6px; inset-inline-end: 6px; inline-size: 18px; block-size: 18px; border-radius: 50%; background: #fff; color: #14101c; display: grid; place-items: center; opacity: 0; transform: scale(0.6); transition: opacity 0.2s ease, transform 0.25s ease; }
+.hm__chk svg { inline-size: 12px; block-size: 12px; stroke-width: 2.5; }
+.hm__card[aria-checked="true"] .hm__chk { opacity: 1; transform: none; }
+.hm__scene *, .hm__scene i { animation-duration: calc(var(--d, 10s) / var(--sp, 1)); animation-timing-function: linear; animation-iteration-count: infinite; }
+.hm:not(.is-run) .hm__scene * { animation-play-state: paused; }
+.hm.is-still .hm__scene * { animation: none; }
+/* Éjszaka */
+.hm__card--night .hm__scene { background: linear-gradient(180deg, #05040f 0%, #120d33 100%); }
+.hm__aur { position: absolute; border-radius: 50%; filter: blur(14px); --d: 14s; animation-name: hmDrift; animation-direction: alternate; animation-timing-function: ease-in-out; }
+.hm__aur--a { inline-size: 95%; block-size: 55%; inset-block-start: 4%; inset-inline-start: -25%; background: rgb(155 63 216 / 0.75); }
+.hm__aur--b { inline-size: 80%; block-size: 50%; inset-block-start: 26%; inset-inline-end: -28%; background: rgb(99 102 241 / 0.65); --d: 18s; animation-delay: -6s; }
+.hm__star { position: absolute; inline-size: 2px; block-size: 2px; border-radius: 50%; background: #fff; --d: 5s; animation-name: hmTwinkle; animation-delay: calc(var(--dl, 0s) * -1); }
+@keyframes hmDrift { from { transform: translate(0, 0) scale(1); } to { transform: translate(14%, 8%) scale(1.12); } }
+@keyframes hmTwinkle { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.5); } }
+/* Óceán */
+.hm__card--ocean .hm__scene { background: linear-gradient(180deg, #0a2a63 0%, #0e7f95 65%, #22c3d6 100%); }
+.hm__wave { position: absolute; inset-inline-start: 0; inset-block-end: 0; inline-size: 200%; --d: 16s; animation-name: hmWave; }
+.hm__wave--1 { block-size: 64%; --d: 22s; } .hm__wave--2 { block-size: 46%; --d: 15s; animation-direction: reverse; } .hm__wave--3 { block-size: 30%; --d: 10s; }
+@keyframes hmWave { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* Naplemente */
+.hm__card--sunset .hm__scene { background: linear-gradient(180deg, #6d1a8a 0%, #C026A3 28%, #f97316 56%, #fbbf24 66%); }
+.hm__sun { position: absolute; inline-size: 32px; block-size: 32px; border-radius: 50%; inset-inline-start: calc(50% - 16px); inset-block-start: calc(66% - 16px); background: radial-gradient(circle at 50% 45%, #fff6c2 0%, #fcd34d 55%, #f97316 100%); box-shadow: 0 0 18px 4px rgb(251 191 36 / 0.55); }
+.hm__sea { position: absolute; inset-inline: 0; inset-block-end: 0; block-size: 34%; background: linear-gradient(180deg, #7a1f5c 0%, #2d0b3d 100%); }
+.hm__sea i { position: absolute; block-size: 2px; border-radius: 2px; background: rgb(255 214 120 / 0.65); inset-inline-start: 50%; translate: -50% 0; --d: 6s; animation-name: hmShimmer; }
+.hm__sea i:nth-child(1) { inline-size: 46%; inset-block-start: 16%; } .hm__sea i:nth-child(2) { inline-size: 30%; inset-block-start: 46%; animation-delay: -2s; } .hm__sea i:nth-child(3) { inline-size: 18%; inset-block-start: 74%; animation-delay: -4s; }
+@keyframes hmShimmer { 0%, 100% { transform: scaleX(0.6); opacity: 0.3; } 50% { transform: scaleX(1); opacity: 0.9; } }
