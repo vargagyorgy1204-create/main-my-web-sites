@@ -1,0 +1,2063 @@
+{
+ "hero_1440x900.jpg": {
+  "id": "hero",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero_1366x768.jpg": {
+  "id": "hero",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.hero-eyebrow.section-eyebrow 11.8px \"Webfejlesztés & Dizájn\""
+   ]
+  },
+  "errors": []
+ },
+ "hero_1280x720.jpg": {
+  "id": "hero",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.hero-eyebrow.section-eyebrow 11.6px \"Webfejlesztés & Dizájn\""
+   ]
+  },
+  "errors": []
+ },
+ "hero-os_1440x900.jpg": {
+  "id": "hero-os",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero-os_1366x768.jpg": {
+  "id": "hero-os",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.hero-eyebrow.section-eyebrow 11.8px \"Webfejlesztés & Dizájn\""
+   ]
+  },
+  "errors": []
+ },
+ "hero-os_1280x720.jpg": {
+  "id": "hero-os",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.hero-eyebrow.section-eyebrow 11.6px \"Webfejlesztés & Dizájn\""
+   ]
+  },
+  "errors": []
+ },
+ "about-1_1440x900.jpg": {
+  "id": "about-1",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-1_1366x768.jpg": {
+  "id": "about-1",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p#abt-eyebrow 11.8px \"Rólam\""
+   ]
+  },
+  "errors": []
+ },
+ "about-1_1280x720.jpg": {
+  "id": "about-1",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p#abt-eyebrow 11.6px \"Rólam\""
+   ]
+  },
+  "errors": []
+ },
+ "about-4_1440x900.jpg": {
+  "id": "about-4",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-4_1366x768.jpg": {
+  "id": "about-4",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p#abt-eyebrow 11.8px \"Rólam\""
+   ]
+  },
+  "errors": []
+ },
+ "about-4_1280x720.jpg": {
+  "id": "about-4",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p#abt-eyebrow 11.6px \"Rólam\""
+   ]
+  },
+  "errors": []
+ },
+ "skills_1440x900.jpg": {
+  "id": "skills",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "skills_1366x768.jpg": {
+  "id": "skills",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.section-eyebrow 11.8px \"Készségek & Technológia\""
+   ]
+  },
+  "errors": []
+ },
+ "skills_1280x720.jpg": {
+  "id": "skills",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.section-eyebrow 11.6px \"Készségek & Technológia\""
+   ]
+  },
+  "errors": []
+ },
+ "why-1_1440x900.jpg": {
+  "id": "why-1",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-1_1366x768.jpg": {
+  "id": "why-1",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.section-eyebrow 11.8px \"Értékek & Garanciák\""
+   ]
+  },
+  "errors": []
+ },
+ "why-1_1280x720.jpg": {
+  "id": "why-1",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.section-eyebrow 11.6px \"Értékek & Garanciák\""
+   ]
+  },
+  "errors": []
+ },
+ "why-6_1440x900.jpg": {
+  "id": "why-6",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-6_1366x768.jpg": {
+  "id": "why-6",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.section-eyebrow 11.8px \"Értékek & Garanciák\""
+   ]
+  },
+  "errors": []
+ },
+ "why-6_1280x720.jpg": {
+  "id": "why-6",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.section-eyebrow 11.6px \"Értékek & Garanciák\""
+   ]
+  },
+  "errors": []
+ },
+ "steps_1440x900.jpg": {
+  "id": "steps",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "steps_1366x768.jpg": {
+  "id": "steps",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "steps_1280x720.jpg": {
+  "id": "steps",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "services_1440x900.jpg": {
+  "id": "services",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "services_1280x720.jpg": {
+  "id": "services",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.svt-eyebrow.section-eyebrow 11.6px \"Szolgáltatások\""
+   ]
+  },
+  "errors": []
+ },
+ "services_1366x768.jpg": {
+  "id": "services",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.svt-eyebrow.section-eyebrow 11.8px \"Szolgáltatások\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-head_1440x900.jpg": {
+  "id": "pf-head",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-head_1280x720.jpg": {
+  "id": "pf-head",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-head_1366x768.jpg": {
+  "id": "pf-head",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-1_1440x900.jpg": {
+  "id": "pf-1",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-1_1280x720.jpg": {
+  "id": "pf-1",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-1_1366x768.jpg": {
+  "id": "pf-1",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-2_1440x900.jpg": {
+  "id": "pf-2",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Borbély\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-2_1280x720.jpg": {
+  "id": "pf-2",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Borbély\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-2_1366x768.jpg": {
+  "id": "pf-2",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Borbély\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-3_1440x900.jpg": {
+  "id": "pf-3",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítócég\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-3_1280x720.jpg": {
+  "id": "pf-3",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítócég\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-3_1366x768.jpg": {
+  "id": "pf-3",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítócég\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-4_1440x900.jpg": {
+  "id": "pf-4",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítás\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-4_1280x720.jpg": {
+  "id": "pf-4",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítás\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-4_1366x768.jpg": {
+  "id": "pf-4",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítás\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-5_1440x900.jpg": {
+  "id": "pf-5",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Ingatlaniroda\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-5_1280x720.jpg": {
+  "id": "pf-5",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Ingatlaniroda\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-5_1366x768.jpg": {
+  "id": "pf-5",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Ingatlaniroda\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-6_1440x900.jpg": {
+  "id": "pf-6",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Fitnesz\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-6_1280x720.jpg": {
+  "id": "pf-6",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Fitnesz\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-ig_1440x900.jpg": {
+  "id": "pf-ig",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-6_1366x768.jpg": {
+  "id": "pf-6",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Fitnesz\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-ig_1280x720.jpg": {
+  "id": "pf-ig",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-ig_1366x768.jpg": {
+  "id": "pf-ig",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-dialog_1440x900.jpg": {
+  "id": "pf-dialog",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-dialog_1280x720.jpg": {
+  "id": "pf-dialog",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-dialog_1366x768.jpg": {
+  "id": "pf-dialog",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact_1440x900.jpg": {
+  "id": "contact",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact_1280x720.jpg": {
+  "id": "contact",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.ctc-eyebrow.section-eyebrow 11.6px \"Kapcsolat\""
+   ]
+  },
+  "errors": []
+ },
+ "contact-form_1440x900.jpg": {
+  "id": "contact-form",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact_1366x768.jpg": {
+  "id": "contact",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "p.ctc-eyebrow.section-eyebrow 11.8px \"Kapcsolat\""
+   ]
+  },
+  "errors": []
+ },
+ "contact-form_1280x720.jpg": {
+  "id": "contact-form",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "footer_1440x900.jpg": {
+  "id": "footer",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact-form_1366x768.jpg": {
+  "id": "contact-form",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "footer_1280x720.jpg": {
+  "id": "footer",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "footer_1366x768.jpg": {
+  "id": "footer",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-approach_1440x900.jpg": {
+  "id": "p-approach",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-approach_1280x720.jpg": {
+  "id": "p-approach",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "h1.ap-eyebrow.section-eyebrow 11.6px \"Hogyan dolgozom\""
+   ]
+  },
+  "errors": []
+ },
+ "p-approach_1366x768.jpg": {
+  "id": "p-approach",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "h1.ap-eyebrow.section-eyebrow 11.8px \"Hogyan dolgozom\""
+   ]
+  },
+  "errors": []
+ },
+ "p-whatsapp_1440x900.jpg": {
+  "id": "p-whatsapp",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-whatsapp_1280x720.jpg": {
+  "id": "p-whatsapp",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-whatsapp_1366x768.jpg": {
+  "id": "p-whatsapp",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-privacy_1440x900.jpg": {
+  "id": "p-privacy",
+  "vp": "1440x900",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-privacy_1280x720.jpg": {
+  "id": "p-privacy",
+  "vp": "1280x720",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-privacy_1366x768.jpg": {
+  "id": "p-privacy",
+  "vp": "1366x768",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero_1920x1080.jpg": {
+  "id": "hero",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero_1518x670.jpg": {
+  "id": "hero",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero_1536x864.jpg": {
+  "id": "hero",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero-os_1920x1080.jpg": {
+  "id": "hero-os",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero-os_1518x670.jpg": {
+  "id": "hero-os",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-1_1920x1080.jpg": {
+  "id": "about-1",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-1_1518x670.jpg": {
+  "id": "about-1",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero-os_1536x864.jpg": {
+  "id": "hero-os",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-4_1920x1080.jpg": {
+  "id": "about-4",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-4_1518x670.jpg": {
+  "id": "about-4",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-1_1536x864.jpg": {
+  "id": "about-1",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "skills_1518x670.jpg": {
+  "id": "skills",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "skills_1920x1080.jpg": {
+  "id": "skills",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-4_1536x864.jpg": {
+  "id": "about-4",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-1_1518x670.jpg": {
+  "id": "why-1",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-1_1920x1080.jpg": {
+  "id": "why-1",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "skills_1536x864.jpg": {
+  "id": "skills",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-6_1518x670.jpg": {
+  "id": "why-6",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-1_1536x864.jpg": {
+  "id": "why-1",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-6_1920x1080.jpg": {
+  "id": "why-6",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "steps_1518x670.jpg": {
+  "id": "steps",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "steps_1920x1080.jpg": {
+  "id": "steps",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-6_1536x864.jpg": {
+  "id": "why-6",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "services_1518x670.jpg": {
+  "id": "services",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "steps_1536x864.jpg": {
+  "id": "steps",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "services_1920x1080.jpg": {
+  "id": "services",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-head_1518x670.jpg": {
+  "id": "pf-head",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\"",
+    "li 11.5px \"Ingatlankártyák\"",
+    "li 11.5px \"Prémium tipográfia\""
+   ]
+  },
+  "errors": []
+ },
+ "services_1536x864.jpg": {
+  "id": "services",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-head_1920x1080.jpg": {
+  "id": "pf-head",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-1_1518x670.jpg": {
+  "id": "pf-1",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\"",
+    "li 11.5px \"Ingatlankártyák\"",
+    "li 11.5px \"Prémium tipográfia\"",
+    "li 11.5px \"Prémium animációk\"",
+    "li 11.5px \"Reszponzív\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-head_1536x864.jpg": {
+  "id": "pf-head",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-1_1920x1080.jpg": {
+  "id": "pf-1",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-2_1518x670.jpg": {
+  "id": "pf-2",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Borbély\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\"",
+    "li 11.5px \"Időpontfoglalás\"",
+    "li 11.5px \"Galéria\"",
+    "li 11.5px \"Árlista\"",
+    "li 11.5px \"Mobilra optimalizált\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-1_1536x864.jpg": {
+  "id": "pf-1",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-2_1920x1080.jpg": {
+  "id": "pf-2",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Borbély\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-3_1518x670.jpg": {
+  "id": "pf-3",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítócég\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\"",
+    "li 11.5px \"Több iroda\"",
+    "li 11.5px \"Vélemények\"",
+    "li 11.5px \"Szolgáltatáskártyák\"",
+    "li 11.5px \"Gyors kapcsolat\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-2_1536x864.jpg": {
+  "id": "pf-2",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Borbély\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-3_1920x1080.jpg": {
+  "id": "pf-3",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítócég\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-4_1518x670.jpg": {
+  "id": "pf-4",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítás\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\"",
+    "li 11.5px \"Otthon / Iroda váltó\"",
+    "li 11.5px \"Szolgáltatáslista\"",
+    "li 11.5px \"Árak és rendelés\"",
+    "li 11.5px \"Típusonkénti rendezés\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-3_1536x864.jpg": {
+  "id": "pf-3",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítócég\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-4_1920x1080.jpg": {
+  "id": "pf-4",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítás\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-5_1518x670.jpg": {
+  "id": "pf-5",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Ingatlaniroda\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\"",
+    "li 11.5px \"Ingatlankereső\"",
+    "li 11.5px \"Kiemelt ajánlatok\"",
+    "li 11.5px \"Naplementés hangulat\"",
+    "li 11.5px \"Reszponzív\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-4_1536x864.jpg": {
+  "id": "pf-4",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítás\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-5_1920x1080.jpg": {
+  "id": "pf-5",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Ingatlaniroda\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-6_1518x670.jpg": {
+  "id": "pf-6",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Fitnesz\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\"",
+    "li 11.5px \"Edzéstípusok\"",
+    "li 11.5px \"Edzők bemutatása\"",
+    "li 11.5px \"Mozgó sávok\"",
+    "li 11.5px \"Reszponzív\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-5_1536x864.jpg": {
+  "id": "pf-5",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Ingatlaniroda\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-6_1920x1080.jpg": {
+  "id": "pf-6",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Fitnesz\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-ig_1518x670.jpg": {
+  "id": "pf-ig",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-6_1536x864.jpg": {
+  "id": "pf-6",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Fitnesz\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-ig_1920x1080.jpg": {
+  "id": "pf-ig",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-ig_1536x864.jpg": {
+  "id": "pf-ig",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-dialog_1920x1080.jpg": {
+  "id": "pf-dialog",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-dialog_1518x670.jpg": {
+  "id": "pf-dialog",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-dialog_1536x864.jpg": {
+  "id": "pf-dialog",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact_1920x1080.jpg": {
+  "id": "contact",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact_1518x670.jpg": {
+  "id": "contact",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact-form_1920x1080.jpg": {
+  "id": "contact-form",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact_1536x864.jpg": {
+  "id": "contact",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact-form_1518x670.jpg": {
+  "id": "contact-form",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "footer_1920x1080.jpg": {
+  "id": "footer",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact-form_1536x864.jpg": {
+  "id": "contact-form",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "footer_1518x670.jpg": {
+  "id": "footer",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "footer_1536x864.jpg": {
+  "id": "footer",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-approach_1920x1080.jpg": {
+  "id": "p-approach",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-approach_1518x670.jpg": {
+  "id": "p-approach",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-approach_1536x864.jpg": {
+  "id": "p-approach",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-whatsapp_1920x1080.jpg": {
+  "id": "p-whatsapp",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-whatsapp_1518x670.jpg": {
+  "id": "p-whatsapp",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-whatsapp_1536x864.jpg": {
+  "id": "p-whatsapp",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-privacy_1920x1080.jpg": {
+  "id": "p-privacy",
+  "vp": "1920x1080",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-privacy_1518x670.jpg": {
+  "id": "p-privacy",
+  "vp": "1518x670",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-privacy_1536x864.jpg": {
+  "id": "p-privacy",
+  "vp": "1536x864",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero_2560x1440.jpg": {
+  "id": "hero",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "hero-os_2560x1440.jpg": {
+  "id": "hero-os",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-1_2560x1440.jpg": {
+  "id": "about-1",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "about-4_2560x1440.jpg": {
+  "id": "about-4",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "skills_2560x1440.jpg": {
+  "id": "skills",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-1_2560x1440.jpg": {
+  "id": "why-1",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "why-6_2560x1440.jpg": {
+  "id": "why-6",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "steps_2560x1440.jpg": {
+  "id": "steps",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "services_2560x1440.jpg": {
+  "id": "services",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-head_2560x1440.jpg": {
+  "id": "pf-head",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-1_2560x1440.jpg": {
+  "id": "pf-1",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Luxusingatlan\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-2_2560x1440.jpg": {
+  "id": "pf-2",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Borbély\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-3_2560x1440.jpg": {
+  "id": "pf-3",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítócég\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-4_2560x1440.jpg": {
+  "id": "pf-4",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Takarítás\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-5_2560x1440.jpg": {
+  "id": "pf-5",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Ingatlaniroda\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-6_2560x1440.jpg": {
+  "id": "pf-6",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": [
+    "span.pf-tag 11.0px \"Fitnesz\"",
+    "span.pf-tag.pf-tag--ghost 11.0px \"Koncepció\""
+   ]
+  },
+  "errors": []
+ },
+ "pf-ig_2560x1440.jpg": {
+  "id": "pf-ig",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "pf-dialog_2560x1440.jpg": {
+  "id": "pf-dialog",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact_2560x1440.jpg": {
+  "id": "contact",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "contact-form_2560x1440.jpg": {
+  "id": "contact-form",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "footer_2560x1440.jpg": {
+  "id": "footer",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-approach_2560x1440.jpg": {
+  "id": "p-approach",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-whatsapp_2560x1440.jpg": {
+  "id": "p-whatsapp",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ },
+ "p-privacy_2560x1440.jpg": {
+  "id": "p-privacy",
+  "vp": "2560x1440",
+  "checks": {
+   "hscroll": 0,
+   "outside": [],
+   "overlaps": [],
+   "small": []
+  },
+  "errors": []
+ }
+}
