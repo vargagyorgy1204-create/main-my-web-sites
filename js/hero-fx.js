@@ -118,17 +118,10 @@
           lt.className = 'hero-live__code'; rt.className = 'hero-live__code'; lt.textContent = '<'; rt.textContent = '/>';
           lt.style.right = '100%'; rt.style.left = '100%';
           w.appendChild(lt); w.appendChild(rt);
-          /* the word stays put; only the brackets move. "/>" gets a normal word space (0.28em) on the free right side; "<" is centred in the (only ~0.28em wide) space between "aki" and the word,
-             so it clears both neighbours by its glyph side-bearings instead of touching "aki" */
-          var fpx = parseFloat(getComputedStyle(w).fontSize) || 72, lineIn = w.closest('.hero-line__in'), akiNode = lineIn && lineIn.firstChild;
-          rt.style.marginLeft = (0.28 * fpx) + 'px';
-          var gapL = 0.04 * fpx;
-          if (akiNode && akiNode.nodeType === 3) {
-            var rg = document.createRange(); rg.setStart(akiNode, 0); rg.setEnd(akiNode, Math.max(0, akiNode.length - 1));
-            var interval = w.getBoundingClientRect().left - rg.getBoundingClientRect().right;
-            gapL = Math.max(0, (interval - lt.offsetWidth) / 2);
-          }
-          lt.style.marginRight = gapL + 'px';
+          /* the word shifts right by the width of "<" + a 0.28em gap, in sync with the brackets (0.4s); "<" stays put on the spot the word used to start, so it keeps the normal word space from "aki";
+             "/>" rides with the word and gets its own 0.28em gap. The living word's box is as wide as the longest word, so the shifted line always fits. */
+          var fpx = parseFloat(getComputedStyle(w).fontSize) || 72, dx = Math.round(lt.offsetWidth + 0.28 * fpx);
+          lt.style.marginRight = (0.28 * fpx) + 'px'; rt.style.marginLeft = (0.28 * fpx) + 'px';
           gsap.set(ls, { opacity: 0 }); gsap.set([lt, rt], { opacity: 0 });
           var st = { p: 0 };
           tl.set(ls, { opacity: 1 }, 0).to(st, { p: 1, duration: 0.6, ease: 'none', onUpdate: function () {
@@ -137,7 +130,8 @@
               ls[j].textContent = st.p >= lock ? fin[j] : SYMS.charAt(Math.floor(st.p * 14 + j * 3) % SYMS.length);
             }
           }, onComplete: function () { for (var j = 0; j < n; j++) { ls[j].textContent = fin[j]; ls[j].style.width = ''; ls[j].style.textAlign = ''; } } }, 0)
-            .fromTo(lt, { x: -12, opacity: 0 }, { x: 0, opacity: 0.6, duration: 0.4, ease: 'power2.out' }, 0.6)
+            .fromTo(w, { x: 0 }, { x: dx, duration: 0.4, ease: 'power2.out', force3D: false }, 0.6)
+            .fromTo(lt, { x: dx, opacity: 0 }, { x: 0, opacity: 0.6, duration: 0.4, ease: 'power2.out', force3D: false }, 0.6)         /* cancels the word's shift: "<" stays where the word used to start */
             .fromTo(rt, { x: 12, opacity: 0 }, { x: 0, opacity: 0.6, duration: 0.4, ease: 'power2.out' }, 0.6);
         },
         function (w, tl, inn, ls) {                                  /* épít: letters lock together; four brand blocks fall to the right of the word and stack into a stair */
@@ -193,7 +187,7 @@
           txt.appendChild(nw);
           var inn = nw.firstChild, ls = [].slice.call(inn.children);
           gsap.set(ls, { opacity: 0 });                              /* hidden until its enter starts */
-          gsap.to(old, { opacity: 0, y: -8, duration: 0.35, ease: 'power2.in', force3D: false, onComplete: function () { if (old.parentNode) old.parentNode.removeChild(old); } });
+          gsap.to(old, { opacity: 0, y: -8, x: 0, duration: 0.35, ease: 'power2.in', force3D: false, onComplete: function () { if (old.parentNode) old.parentNode.removeChild(old); } });
           var tl = gsap.timeline({ delay: 0.3,
             onStart: function () { document.dispatchEvent(new CustomEvent('hero:word', { detail: { index: idx, word: words[idx] } })); },     /* the living window (js/hero-window.js) follows this */
             onComplete: function () {
