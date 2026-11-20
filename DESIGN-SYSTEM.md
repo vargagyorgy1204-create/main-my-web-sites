@@ -290,3 +290,5 @@ Built by `js/hero-window.js` (markup, scenes), CSS block "Hero living window" at
 - **Paletta tall capsules** (block "Mini OS Paletta, tall capsules"): no "SZÍNPALETTA" subtitle; name serif 17px top-left. Capsules aspect 1:2.3 (~39×89px, gap 8px); side buttons 28px round (icons 14px, gap 8px) in a 36px column, 10px gutter. Panel 300×200px (padding 14/12/14/14).
 
 - **Cursor state `is-dot`** (cursor.js `setStateInner`, CSS block "Mini OS Paletta: dot-only cursor"): over the Paletta panel (`.pl`: capsules, side buttons) the ring (`::before`) fades out and only the 6px dot stays; leaving the panel restores the ring. **Capsule frame:** hover / `:focus-visible` adds `outline: 1.5px` in the capsule's own ink at 70% opacity, `outline-offset: 3px` (follows the pill radius), fade 0.2s (Chrome renders a 1.5px outline as 1px at DPR 1). **Panel height** ~171px: vertical padding 16px, name margin 10px, 18px under the capsules for the HEX label; no `min-block-size`.
+
+- **Paletta edge:** no light glass border or inner highlight; `1px solid rgb(0 0 0 / .15)` + soft outer shadow only.

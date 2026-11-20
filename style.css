@@ -7756,3 +7756,6 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pl__col:hover .pl__cap, .pl__col:focus-visible .pl__cap { outline-color: color-mix(in srgb, currentColor 70%, transparent); }
 .pl__col:focus-visible .pl__cap { outline-style: solid; outline-width: 1.5px; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .pl__cap { transition: none; } }
+
+/* Paletta: clean edge, no light glass border / inner highlight (subtle dark 1px border + soft outer shadow only) */
+.hw__panel.is-pal { border: 1px solid rgb(0 0 0 / 0.15); box-shadow: 0 24px 60px rgb(0 0 0 / 0.45); }
