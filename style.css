@@ -7759,3 +7759,13 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 
 /* Paletta: clean edge, no light glass border / inner highlight (subtle dark 1px border + soft outer shadow only) */
 .hw__panel.is-pal { border: 1px solid rgb(0 0 0 / 0.15); box-shadow: 0 24px 60px rgb(0 0 0 / 0.45); }
+
+/* Paletta edge root fix: the 1px border made the inline gradient (sized to the padding box, repeating) tile its light start colour into the border area = a light line on the bottom edge / corners. No border at all now; one element draws the card (gradient + radius + soft shadow). Buttons centred on the capsule row. */
+.hw__panel.is-pal { border: 0; padding: 17px 13px 17px 15px; box-shadow: 0 24px 60px rgb(0 0 0 / 0.45); background-repeat: no-repeat; }
+.hw__panel.is-pal .pl { padding-block-end: 18px; grid-template-rows: auto auto; align-items: stretch; }
+.pl__main { display: contents; }
+.pl__name { grid-column: 1; grid-row: 1; line-height: 20px; }
+.pl__caps { grid-column: 1; grid-row: 2; margin-block-end: 0; }
+.pl__side { grid-column: 2; grid-row: 2; align-self: center; }
+.pl__cap { aspect-ratio: auto; block-size: 89px; }
+.pl__side { block-size: 0; align-content: center; overflow: visible; }

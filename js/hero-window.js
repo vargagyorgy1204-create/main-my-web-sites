@@ -350,7 +350,7 @@
       else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }
       pw.classList.add('is-open');
       placePanel();
-      gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true });
+      gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true, clearProps: 'transform' });   /* no leftover identity transform layer on the panel */
     });
   }
   /* desktop: the panel sits to the left of the (tilted) window with >= 16px between its right edge and the window's visual left edge, bottom-aligned (lower half);
