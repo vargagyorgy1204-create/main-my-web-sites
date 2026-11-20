@@ -348,7 +348,7 @@
       pw.classList.toggle('is-mobile', mob);
       if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
       else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }
-      pw.classList.add('is-open');
+      pw.classList.add('is-open'); w.classList.add('has-panel');
       placePanel();
       gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true, clearProps: 'transform' });   /* no leftover identity transform layer on the panel */
     });
@@ -362,7 +362,8 @@
     if (mode !== 'desktop') return;
     var pwr = pw.getBoundingClientRect(), wr = win.getBoundingClientRect();
     var X = Math.max(14, Math.round(pwr.right - wr.left + 16 + 4));                  /* + float / tilt breathing room */
-    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect(), obs = obstacles(hr);
+    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect(), obs = obstacles(hr), lg = panel.querySelector('.mc__log');
+    if (lg) hh += Math.max(0, 80 - lg.offsetHeight);                                   /* the chat grows up to its 80px log: place it for the full height */
     var pref = osApp === 'palette' || osApp === 'msg' ? 300 : osApp === 'mood' ? 264 : 260;
     var hit = function (l, r, t, b, m) { return obs.some(function (o) { return o.r + m > l && o.l - m < r && o.b + m > t && o.t - m < b; }); };
     var pb = hwr.bottom - hr.top;
@@ -378,7 +379,7 @@
   function closePanel(silent) {
     if (!osApp) return;
     var name = osApp; osApp = null;
-    apps.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+    apps.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); }); w.classList.remove('has-panel');
     if (window.HeroOS) window.HeroOS.closed(name);
     gsap.to(panel, { autoAlpha: 0, x: 20, duration: reduce ? 0 : 0.25, ease: 'power2.in', overwrite: true, onComplete: function () { pw.classList.remove('is-open'); } });
     if (!silent) { var b = apps.filter(function (x) { return x.dataset.app === name; })[0]; if (b) b.focus(); }

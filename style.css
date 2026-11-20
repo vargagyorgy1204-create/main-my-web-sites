@@ -7808,7 +7808,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .mc__nm { margin: 0; font: 600 12px/14px 'Space Grotesk', sans-serif; color: #fff; }
 .mc__stt { margin: 2px 0 0; display: flex; align-items: center; gap: 5px; font: 400 10px/12px 'Inter', sans-serif; color: rgb(255 255 255 / 0.65); }
 .mc__dot { inline-size: 6px; block-size: 6px; border-radius: 50%; background: #2dd4bf; flex: none; }
-.mc__log { display: flex; flex-direction: column; gap: 6px; block-size: 80px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.25) transparent; }
+.mc__log { display: flex; flex-direction: column; gap: 6px; min-block-size: 24px; max-block-size: 80px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.25) transparent; }
 .mc__b { max-inline-size: 86%; padding: 7px 10px; font: 400 12px/1.4 'Inter', sans-serif; color: #fff; overflow-wrap: anywhere; animation: mcIn 0.3s ease both; }
 .mc__b--l { align-self: flex-start; background: rgb(255 255 255 / 0.08); border-radius: 14px 14px 14px 4px; }
 .mc__b--r { align-self: flex-end; background: linear-gradient(135deg, #6366f1, #C026A3); border-radius: 14px 14px 4px 14px; white-space: pre-wrap; }
@@ -7842,3 +7842,5 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .mc__log > :first-child { margin-block-start: auto; }
 /* panels placed over the window (no room on the left): read as a layer on top */
 .hw__pw.is-over .hw__panel:not(.is-bare), .hw__pw.is-over .mp { box-shadow: 0 30px 70px rgb(0 0 0 / 0.62), 0 6px 18px rgb(0 0 0 / 0.35); }
+/* the dock tooltip is hidden while a panel is open (it would be covered by / cut by the panel) */
+.hw.has-panel .hw__app::after { display: none; }
