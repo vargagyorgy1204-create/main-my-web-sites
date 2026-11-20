@@ -7840,3 +7840,5 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .mc__new { justify-self: start; margin-block-start: 6px; padding: 0; border: 0; background: none; color: #c4b5fd; font: 600 11px/1.2 'Space Grotesk', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .mc__new[hidden], .mc__note[hidden] { display: none; }
 .mc__log > :first-child { margin-block-start: auto; }
+/* panels placed over the window (no room on the left): read as a layer on top */
+.hw__pw.is-over .hw__panel:not(.is-bare), .hw__pw.is-over .mp { box-shadow: 0 30px 70px rgb(0 0 0 / 0.62), 0 6px 18px rgb(0 0 0 / 0.35); }

@@ -353,22 +353,27 @@
       gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true, clearProps: 'transform' });   /* no leftover identity transform layer on the panel */
     });
   }
-  /* desktop: the panel sits to the left of the (tilted) window with >= 16px between its right edge and the window's visual left edge, bottom-aligned (lower half);
-     if it would touch the headline / subheading / buttons / status line it goes above the window instead */
+  /* desktop placement, in order:
+     a) left of the (tilted) window, >= 16px gap, bottom-aligned, if it touches no text (headline / subheading / buttons / status line);
+     b) otherwise a floating layer over the window's LEFT part: right edge at ~60% of the window width, bottom just above the dock (the dock stays visible), >= 24px from the text;
+     c) if even b) touches the text: the panel scales down (down to 240px). Never above the window. */
   function placePanel() {
-    pw.classList.remove('is-above'); pw.style.paddingRight = ''; pw.style.inlineSize = '';
+    pw.classList.remove('is-above', 'is-over'); pw.style.paddingRight = ''; pw.style.inlineSize = ''; pw.style.right = ''; pw.style.bottom = ''; pw.style.transform = ''; pw.style.transformOrigin = ''; pw.dataset.place = 'a';
     if (mode !== 'desktop') return;
-    var pwr = pw.getBoundingClientRect(), wl = win.getBoundingClientRect().left;
-    var X = Math.max(14, Math.round(pwr.right - wl + 16 + 4));                       /* + float / tilt breathing room */
-    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect(), PW = 260, hit = true, widths = osApp === 'palette' || osApp === 'msg' ? [300, 260] : osApp === 'mood' ? [264, 240] : [260];
-    for (var k = 0; k < widths.length && hit; k++) {                                 /* the roomier palette (300px) shrinks to 260px only where it would touch the text */
-      PW = widths[k];
-      var pl = hwr.left - X - PW - hr.left, pr = hwr.left - X - hr.left, pb = hwr.bottom - hr.top, pt = pb - hh;
-      hit = obstacles(hr).some(function (o) { return o.r + 12 > pl && o.l - 12 < pr && o.b + 12 > pt && o.t - 12 < pb; });
-    }
-    if (hit) PW = widths[0];
-    pw.style.paddingRight = X + 'px'; pw.style.inlineSize = (PW + X) + 'px';
-    if (hit) { pw.classList.add('is-above'); pw.style.paddingRight = ''; pw.style.inlineSize = PW + 'px'; }
+    var pwr = pw.getBoundingClientRect(), wr = win.getBoundingClientRect();
+    var X = Math.max(14, Math.round(pwr.right - wr.left + 16 + 4));                  /* + float / tilt breathing room */
+    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect(), obs = obstacles(hr);
+    var pref = osApp === 'palette' || osApp === 'msg' ? 300 : osApp === 'mood' ? 264 : 260;
+    var hit = function (l, r, t, b, m) { return obs.some(function (o) { return o.r + m > l && o.l - m < r && o.b + m > t && o.t - m < b; }); };
+    var pb = hwr.bottom - hr.top;
+    if (!hit(hwr.left - X - pref - hr.left, hwr.left - X - hr.left, pb - hh, pb, 12)) { pw.style.paddingRight = X + 'px'; pw.style.inlineSize = (pref + X) + 'px'; return; }   /* a */
+    var redge = wr.left + 0.6 * wr.width, raise = Math.max(0, Math.round(hwr.bottom - dock.getBoundingClientRect().top + 10));
+    var bb = hwr.bottom - hr.top - raise, PW = pref, ws = [pref, 260, 240].filter(function (v, i, a2) { return v <= pref && a2.indexOf(v) === i; });
+    for (var k = 0; k < ws.length; k++) { PW = ws[k]; var sc = PW / pref, l = redge - hr.left - PW; if (!hit(l, l + PW, bb - hh * sc, bb, 24)) break; }
+    pw.classList.add('is-over'); pw.style.paddingRight = '0'; pw.style.inlineSize = pref + 'px';
+    pw.style.right = Math.round(hwr.right - redge) + 'px'; pw.style.bottom = raise + 'px';
+    if (PW !== pref) { pw.style.transformOrigin = 'right bottom'; pw.style.transform = 'scale(' + (PW / pref).toFixed(3) + ')'; }    /* c: a proportional scale-down */
+    pw.dataset.place = PW === pref ? 'b' : 'c';
   }
   function closePanel(silent) {
     if (!osApp) return;
