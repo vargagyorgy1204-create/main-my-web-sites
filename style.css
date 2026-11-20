@@ -7700,3 +7700,24 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pl__toast { position: absolute; z-index: 3; translate: -50% -100%; padding: 5px 10px; border-radius: 999px; background: #14101c; color: #fff; font: 700 11px/1 'Inter', sans-serif; white-space: nowrap; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; }
 .pl__toast.is-on { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .pl__name, .pl__sub, .pl__hex, .pl__btn, .pl__reset, .pl__cap, .pl__cap svg, .pl__toast { transition: none; } }
+
+/* ═══ Mini OS Paletta, compact (same footprint as the player): capsules + a vertical column of round icon buttons on the right edge ═══ */
+.hw__panel.is-pal { padding: 12px 10px 12px 12px; }
+.pl { grid-template-columns: minmax(0, 1fr) 36px; gap: 0 10px; justify-items: stretch; align-items: center; }
+.pl__main { display: grid; justify-items: center; min-inline-size: 0; }
+.pl__name { font-size: 16px; }
+.pl__sub { font-size: 8px; margin: 3px 0 10px; }
+.pl__caps { gap: 6px; }
+.pl__cap { aspect-ratio: 1 / 1.6; }
+.pl__cap svg { inline-size: 12px; block-size: 12px; }
+.pl__col { gap: 5px; overflow: visible; }
+.pl__hex { font-size: 9px; padding: 2px 4px; opacity: 0; transform: translateY(-3px); white-space: nowrap; transition: opacity 0.2s ease, transform 0.2s ease, color 0.6s ease, background-color 0.6s ease; }
+.pl__col:hover .pl__hex, .pl__col:focus-visible .pl__hex { opacity: 1; transform: none; }
+.pl__side { display: grid; gap: 8px; justify-items: center; align-content: center; }
+.pl__side .pl__btn { position: relative; inline-size: 36px; block-size: 36px; padding: 0; justify-content: center; gap: 0; border-radius: 50%; }
+.pl__side .pl__btn svg { inline-size: 16px; block-size: 16px; }
+.pl__side .pl__reset { margin: 0; inline-size: 30px; block-size: 30px; border: 1px solid color-mix(in srgb, var(--pl-b, #fff) 55%, transparent); text-decoration: none; }
+.pl__side .pl__reset svg { inline-size: 14px; block-size: 14px; }
+.pl__side .pl__btn::after { content: attr(data-tip); position: absolute; right: calc(100% + 8px); top: 50%; translate: 0 -50%; padding: 5px 9px; border-radius: 999px; background: #14101c; color: #fff; font: 600 11px/1 'Inter', sans-serif; white-space: nowrap; opacity: 0; transform: translateX(4px); pointer-events: none; transition: opacity 0.15s ease, transform 0.15s ease; z-index: 4; }
+.pl__side .pl__btn:hover::after, .pl__side .pl__btn:focus-visible::after { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .pl__hex, .pl__side .pl__btn::after { transition: none; } }

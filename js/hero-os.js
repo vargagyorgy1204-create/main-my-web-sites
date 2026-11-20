@@ -303,15 +303,14 @@
   }
   function buildPalette() {
     var b = el('div', 'hw__pb pl');
-    b.innerHTML = '<h3 class="pl__name"></h3><p class="pl__sub">SZÍNPALETTA</p><div class="pl__caps"></div><div class="pl__dots"></div>' +
-      '<div class="pl__act"><button type="button" class="pl__btn" data-p="new"><i data-lucide="refresh-cw"></i><span>Új paletta</span></button><button type="button" class="pl__btn" data-p="try"><i data-lucide="wand-sparkles"></i><span>Kipróbálom</span></button></div>' +
-      '<button type="button" class="pl__reset" data-p="reset" hidden><i data-lucide="undo-2"></i><span>Visszaállítás</span></button><div class="pl__toast" role="status"></div>';
-    var caps = b.querySelector('.pl__caps'), dots = b.querySelector('.pl__dots'), cells = [], dd = [];
+    b.innerHTML = '<div class="pl__main"><h3 class="pl__name"></h3><p class="pl__sub">SZÍNPALETTA</p><div class="pl__caps"></div></div>' +
+      '<div class="pl__side pl__act"><button type="button" class="pl__btn" data-p="new" data-tip="Új paletta" aria-label="Új paletta"><i data-lucide="refresh-cw"></i></button><button type="button" class="pl__btn" data-p="try" data-tip="Kipróbálom" aria-label="Kipróbálom"><i data-lucide="wand-2"></i></button>' +
+      '<button type="button" class="pl__btn pl__reset" data-p="reset" data-tip="Visszaállítás" aria-label="Visszaállítás" hidden><i data-lucide="rotate-ccw"></i></button></div><div class="pl__toast" role="status"></div>';
+    var caps = b.querySelector('.pl__caps'), cells = [];
     for (var i = 0; i < 5; i++) {
       var c = el('button', 'pl__col', '<span class="pl__cap"><i data-lucide="copy"></i></span><span class="pl__hex"></span>'); c.type = 'button'; caps.appendChild(c); cells.push(c);
-      dd.push(dots.appendChild(el('span', 'pl__dot')));
     }
-    P.ui = { b: b, name: b.querySelector('.pl__name'), sub: b.querySelector('.pl__sub'), cells: cells, dots: dd, toast: b.querySelector('.pl__toast'), reset: b.querySelector('.pl__reset'), tryB: b.querySelector('[data-p="try"]'), act: b.querySelector('.pl__act') };
+    P.ui = { b: b, name: b.querySelector('.pl__name'), sub: b.querySelector('.pl__sub'), cells: cells, toast: b.querySelector('.pl__toast'), reset: b.querySelector('.pl__reset'), tryB: b.querySelector('[data-p="try"]'), act: b.querySelector('.pl__act') };
     P.cur = genPalette('');
     var tt = 0;
     var say = function (m, col) { P.ui.toast.textContent = m; var r = col.getBoundingClientRect(), br = b.getBoundingClientRect(); P.ui.toast.style.left = (r.left + r.width / 2 - br.left) + 'px'; P.ui.toast.style.top = (r.top - br.top - 6) + 'px'; P.ui.toast.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(function () { P.ui.toast.classList.remove('is-on'); }, 1200); };
@@ -334,8 +333,6 @@
       cells.forEach(function (c, i) {
         c.dataset.hex = cols[i]; c.setAttribute('aria-label', 'Szín másolása: ' + cols[i]); c.querySelector('.pl__hex').textContent = cols[i];
         var cap = c.querySelector('.pl__cap'); cap.style.background = cols[i]; cap.style.color = css(inkFor(rgb[i]));
-        var nx = rgb[(i + 1) % 5], from = rgb[i]; if (i === 4) { nx = rgb[0]; from = rgb.slice().sort(function (a, b2) { return lumOf(a) - lumOf(b2); })[0]; nx = rgb.slice().sort(function (a, b2) { return lumOf(b2) - lumOf(a); })[0]; }
-        dd[i].style.background = 'linear-gradient(135deg, ' + css(from) + ', ' + css(nx) + ')';
       });
       inks(p);
     }
@@ -354,7 +351,7 @@
       };
       cells.forEach(function (c) { chip(c.querySelector('.pl__hex'), '--hex-ink', '--hex-fill'); c.querySelector('.pl__hex').style.setProperty('color', 'var(--hex-ink)'); });
       h.style.setProperty('--pl-t', css(inkFor(bt))); h.style.setProperty('--pl-s', css(inkFor(bs))); h.style.setProperty('--pl-b', css(inkFor(ba)));
-      [].forEach.call(U.b.querySelectorAll('.pl__btn, .pl__reset'), function (bn) { chip(bn, '--pl-b', '--pl-bf'); });          /* each button: the ink for its own spot (+ a chip on mid-tones) */
+      [].forEach.call(U.b.querySelectorAll('.pl__btn'), function (bn) { chip(bn, '--pl-b', '--pl-bf'); });          /* each button: the ink for its own spot (+ a chip on mid-tones) */
     }
     function bgOf(p) { return 'linear-gradient(150deg, ' + p.cols.map(function (c) { return c; }).join(', ') + ')'; }
     function swap() {
