@@ -7775,19 +7775,19 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__app::before { bottom: -7px; }
 
 /* ═══ Mini OS Hangulat: three atmosphere cards (js/hero-os.js buildMood). One layer draws the panel; animations only while the panel is open (is-run) ═══ */
-.hw__panel.is-mood { padding: 16px 14px; min-block-size: 0; border: 0; background: rgb(22 17 44 / 0.94); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 24px 60px rgb(0 0 0 / 0.45); }
-.hm__title { margin: 0 0 12px; font: 600 17px/20px 'Cormorant Garamond', 'Playfair Display', Georgia, serif; letter-spacing: 0.04em; color: #fff; }
-.hm__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.hm__card { display: grid; justify-items: stretch; gap: 8px; padding: 0; border: 0; background: none; cursor: pointer; min-inline-size: 0; font: inherit; color: inherit; }
+.hw__panel.is-mood { padding: 14px 12px; min-block-size: 0; border: 0; background: rgb(22 17 44 / 0.94); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 24px 60px rgb(0 0 0 / 0.45); }
+.hm__title { margin: 0 0 10px; font: 600 15px/18px 'Cormorant Garamond', 'Playfair Display', Georgia, serif; letter-spacing: 0.04em; color: #fff; }
+.hm__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.hm__card { display: grid; justify-items: stretch; gap: 7px; padding: 0; border: 0; background: none; cursor: pointer; min-inline-size: 0; font: inherit; color: inherit; }
 .hm__card:focus-visible { outline: none; }
-.hm__scene { position: relative; display: block; block-size: 114px; border-radius: 14px; overflow: hidden; isolation: isolate; outline: 1.5px solid transparent; outline-offset: 3px; transition: transform 0.25s ease, outline-color 0.2s ease; --sp: 1; }
+.hm__scene { position: relative; display: block; block-size: 100px; border-radius: 12px; overflow: hidden; isolation: isolate; outline: 1.5px solid transparent; outline-offset: 3px; transition: transform 0.25s ease, outline-color 0.2s ease; --sp: 1; }
 .hm__card:hover .hm__scene, .hm__card:focus-visible .hm__scene { transform: translateY(-3px); --sp: 1.7; }
 .hm__card[aria-checked="true"] .hm__scene { transform: scale(1.04); outline-color: rgb(255 255 255 / 0.7); }
 .hm__card[aria-checked="true"]:hover .hm__scene, .hm__card[aria-checked="true"]:focus-visible .hm__scene { transform: translateY(-3px) scale(1.04); }
 .hm__card:focus-visible .hm__scene { outline-color: rgb(255 255 255 / 0.7); }
-.hm__lb { text-align: center; font: 500 11px/13px 'Space Grotesk', sans-serif; color: rgb(255 255 255 / 0.8); }
-.hm__chk { position: absolute; z-index: 3; inset-block-start: 6px; inset-inline-end: 6px; inline-size: 18px; block-size: 18px; border-radius: 50%; background: #fff; color: #14101c; display: grid; place-items: center; opacity: 0; transform: scale(0.6); transition: opacity 0.2s ease, transform 0.25s ease; }
-.hm__chk svg { inline-size: 12px; block-size: 12px; stroke-width: 2.5; }
+.hm__lb { text-align: center; font: 500 10px/12px 'Space Grotesk', sans-serif; color: rgb(255 255 255 / 0.8); }
+.hm__chk { position: absolute; z-index: 3; inset-block-start: 6px; inset-inline-end: 6px; inline-size: 16px; block-size: 16px; border-radius: 50%; background: #fff; color: #14101c; display: grid; place-items: center; opacity: 0; transform: scale(0.6); transition: opacity 0.2s ease, transform 0.25s ease; }
+.hm__chk svg { inline-size: 10px; block-size: 10px; stroke-width: 2.5; }
 .hm__card[aria-checked="true"] .hm__chk { opacity: 1; transform: none; }
 .hm__scene *, .hm__scene i { animation-duration: calc(var(--d, 10s) / var(--sp, 1)); animation-timing-function: linear; animation-iteration-count: infinite; }
 .hm:not(.is-run) .hm__scene * { animation-play-state: paused; }
@@ -7807,7 +7807,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 @keyframes hmWave { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 /* Naplemente */
 .hm__card--sunset .hm__scene { background: linear-gradient(180deg, #6d1a8a 0%, #C026A3 28%, #f97316 56%, #fbbf24 66%); }
-.hm__sun { position: absolute; inline-size: 32px; block-size: 32px; border-radius: 50%; inset-inline-start: calc(50% - 16px); inset-block-start: calc(66% - 16px); background: radial-gradient(circle at 50% 45%, #fff6c2 0%, #fcd34d 55%, #f97316 100%); box-shadow: 0 0 18px 4px rgb(251 191 36 / 0.55); }
+.hm__sun { position: absolute; inline-size: 28px; block-size: 28px; border-radius: 50%; inset-inline-start: calc(50% - 14px); inset-block-start: calc(66% - 14px); background: radial-gradient(circle at 50% 45%, #fff6c2 0%, #fcd34d 55%, #f97316 100%); box-shadow: 0 0 18px 4px rgb(251 191 36 / 0.55); }
 .hm__sea { position: absolute; inset-inline: 0; inset-block-end: 0; block-size: 34%; background: linear-gradient(180deg, #7a1f5c 0%, #2d0b3d 100%); }
 .hm__sea i { position: absolute; block-size: 2px; border-radius: 2px; background: rgb(255 214 120 / 0.65); inset-inline-start: 50%; translate: -50% 0; --d: 6s; animation-name: hmShimmer; }
 .hm__sea i:nth-child(1) { inline-size: 46%; inset-block-start: 16%; } .hm__sea i:nth-child(2) { inline-size: 30%; inset-block-start: 46%; animation-delay: -2s; } .hm__sea i:nth-child(3) { inline-size: 18%; inset-block-start: 74%; animation-delay: -4s; }

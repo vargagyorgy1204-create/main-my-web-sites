@@ -360,7 +360,7 @@
     if (mode !== 'desktop') return;
     var pwr = pw.getBoundingClientRect(), wl = win.getBoundingClientRect().left;
     var X = Math.max(14, Math.round(pwr.right - wl + 16 + 4));                       /* + float / tilt breathing room */
-    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect(), PW = 260, hit = true, widths = osApp === 'palette' || osApp === 'mood' ? [300, 260] : [260];
+    var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect(), PW = 260, hit = true, widths = osApp === 'palette' ? [300, 260] : osApp === 'mood' ? [264, 240] : [260];
     for (var k = 0; k < widths.length && hit; k++) {                                 /* the roomier palette (300px) shrinks to 260px only where it would touch the text */
       PW = widths[k];
       var pl = hwr.left - X - PW - hr.left, pr = hwr.left - X - hr.left, pb = hwr.bottom - hr.top, pt = pb - hh;
