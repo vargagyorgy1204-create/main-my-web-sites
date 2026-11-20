@@ -11,6 +11,7 @@ Static HTML/CSS/JS on GitHub Pages (no build step). Pages: `index.html`, `myappr
 6. Global rules from `~/.claude/CLAUDE.md` still apply (Lucide icons via CDN, static HTML default).
 7. **Proportional layout system:** read `DESIGN-SYSTEM.md` before any layout / size change. All sizes are fluid tokens from the reference viewport 1440x900, defined once in the `DESIGN TOKENS` block of `style.css`; sections only use tokens (a new value = a new token + an updated table in `DESIGN-SYSTEM.md`). Pinned sections must fit one viewport on every standard viewport, also the short-wide ones (1518x670, 1366x768).
 8. **Review board — never automatic.** `node tests/board.mjs` (screenshots of every section x every standard viewport -> `board/index.html`, git-ignored) is run ONLY when the owner explicitly asks for the "board" / "дошка скріншотів". Then report the path to `board/index.html` and list the sections / viewports that changed visibly (pixel diff vs the previous board run > 2%; the script prints them; portfolio cells are animated and always show some noise).
+9. **board/ is local-only, never commit or push it** (no `git add -f board/`; it is in `.gitignore` and must not be deployed to GitHub Pages).
 
 ## Before every commit
 
