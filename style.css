@@ -7746,3 +7746,13 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pl__side { gap: 8px; }
 .pl__side .pl__btn, .pl__side .pl__reset { inline-size: 28px; block-size: 28px; }
 .pl__side .pl__btn svg, .pl__side .pl__reset svg { inline-size: 14px; block-size: 14px; }
+
+/* ═══ Mini OS Paletta: dot-only cursor, capsule frame, shorter panel ═══ */
+.cursor-ring.is-dot::before { opacity: 0; transition: opacity 0.15s ease; }
+.cursor-ring.is-dot + .cursor-dot { opacity: 1; }
+.hw__panel.is-pal { padding-block: 16px; min-block-size: 0; }
+.pl__name { margin-block-end: 10px; }
+.pl__cap { outline: 1.5px solid transparent; outline-offset: 3px; transition: transform 0.25s ease, box-shadow 0.25s ease, outline-color 0.2s ease; }
+.pl__col:hover .pl__cap, .pl__col:focus-visible .pl__cap { outline-color: color-mix(in srgb, currentColor 70%, transparent); }
+.pl__col:focus-visible .pl__cap { outline-style: solid; outline-width: 1.5px; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .pl__cap { transition: none; } }
