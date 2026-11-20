@@ -401,32 +401,62 @@
 
   /* ================================================================ message */
   function buildMsg() {
-    var b = el('div', 'hw__pb');
-    var f = el('form', 'hw__form');
-    f.setAttribute('novalidate', '');
-    f.innerHTML = '<textarea name="message" rows="3" required placeholder="Írjon pár sort…" aria-label="Üzenet"></textarea>' +
-      '<input type="email" name="email" placeholder="E-mail (válaszhoz)" aria-label="E-mail (válaszhoz)" autocomplete="email">' +
-      '<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hw__hp" aria-hidden="true">' +
-      '<input type="hidden" name="_subject" value="Üzenet a hero mini rendszerből">' +
-      '<button type="submit" class="hw__btn hw__btn--go"><i data-lucide="send"></i><span>Küldés</span></button>' +
-      '<p class="hw__note">Az üzenet elküldésével elfogadja az <a href="adatvedelem.html" target="_blank" rel="noopener">Adatkezelési tájékoztatót</a>.</p>' +
-      '<p class="hw__st" role="status"></p>';
-    var st = f.querySelector('.hw__st'), go = f.querySelector('.hw__btn--go'), ta = f.querySelector('textarea');
-    f.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (!ta.value.trim()) { st.textContent = 'Kérjük, írjon néhány sort.'; st.className = 'hw__st is-err'; ta.focus(); return; }
-      st.textContent = ''; st.className = 'hw__st';
-      var fd = new FormData(f), els = [].slice.call(f.elements);
-      els.forEach(function (x) { x.disabled = true; }); go.querySelector('span').textContent = 'Küldés…';
-      var fail = function () { els.forEach(function (x) { x.disabled = false; }); go.querySelector('span').textContent = 'Küldés'; st.textContent = 'Nem sikerült elküldeni. Kérjük, próbálja újra később.'; st.className = 'hw__st is-err'; };
-      fetch('https://formspree.io/f/xeerdkob', { method: 'POST', body: fd, headers: { Accept: 'application/json' } }).then(function (r) {
-        if (!r.ok) throw new Error('http ' + r.status);
-        f.reset(); els.forEach(function (x) { x.disabled = false; }); go.querySelector('span').textContent = 'Küldés';
-        b.classList.add('is-done'); b.innerHTML = '<div class="hw__ok" role="status"><i data-lucide="check"></i><p>Köszönöm! Hamarosan válaszolok.</p></div>'; icons();
-      }).catch(fail);
+    var WA = 'https://wa.me/36307840378', MAILRE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var b = el('div', 'hw__pb mc');
+    b.innerHTML = '<div class="mc__hd"><img class="mc__av" src="assets/avatar-vg.webp" width="28" height="28" alt="" decoding="async"><div class="mc__who"><p class="mc__nm">Varga György</p><p class="mc__stt"><i class="mc__dot"></i>Általában 24 órán belül válaszol</p></div></div>' +
+      '<div class="mc__log" role="log" aria-live="polite"></div>' +
+      '<form class="mc__form" novalidate><div class="mc__mailw"><div><input type="email" name="email" class="mc__mail" placeholder="E-mail a válaszhoz (opcionális)" aria-label="E-mail a válaszhoz (opcionális)" autocomplete="email" tabindex="-1"></div></div>' +
+      '<div class="mc__comp"><textarea name="message" rows="1" placeholder="Írjon üzenetet…" aria-label="Üzenet"></textarea><button type="submit" class="mc__send" aria-label="Küldés"><i data-lucide="send"></i></button></div>' +
+      '<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="mc__hp" aria-hidden="true"><input type="hidden" name="_subject" value="Üzenet a hero mini rendszerből">' +
+      '<p class="mc__note">A küldéssel elfogadja az <a href="adatvedelem.html" target="_blank" rel="noopener">Adatkezelési tájékoztatót</a>.</p></form>';
+    var log = b.querySelector('.mc__log'), f = b.querySelector('.mc__form'), ta = f.querySelector('textarea'), mail = f.querySelector('.mc__mail'), go = f.querySelector('.mc__send'), comp = f.querySelector('.mc__comp');
+    var busy = false, pending = null, timers = [];
+    function later(fn, ms) { var t = setTimeout(fn, reduce ? 0 : ms); timers.push(t); return t; }
+    function down() { log.scrollTop = log.scrollHeight; }
+    function bubble(side, html) { var d = el('div', 'mc__b mc__b--' + side, html); log.appendChild(d); down(); return d; }
+    function typing() { var d = el('div', 'mc__b mc__b--l mc__typing', '<i></i><i></i><i></i>'); d.setAttribute('aria-label', 'Gépel…'); log.appendChild(d); down(); return d; }
+    function reply(html, after) { var t = typing(); later(function () { t.remove(); var d = bubble('l', html); if (after) after(d); }, 800); }
+    function lock(on) { busy = on; ta.disabled = on; mail.disabled = on; go.disabled = on; f.classList.toggle('is-busy', on); }
+    function grow() { ta.style.blockSize = 'auto'; ta.style.blockSize = Math.min(ta.scrollHeight, 64) + 'px'; f.classList.toggle('is-typing', ta.value.length > 0); mail.tabIndex = ta.value.length > 0 ? 0 : -1; }
+    ta.addEventListener('input', grow);
+    ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); f.requestSubmit ? f.requestSubmit() : send(); } });
+    function post(text, em) {
+      var fd = new FormData(f); fd.set('message', text); if (em) fd.set('email', em); else fd.delete('email');
+      return fetch('https://formspree.io/f/xeerdkob', { method: 'POST', body: fd, headers: { Accept: 'application/json' } }).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); });
+    }
+    function run(text, em) {
+      lock(true); var t = typing();
+      post(text, em).then(function () {
+        t.remove(); pending = null; lock(false); mail.value = ''; grow();
+        reply('Köszönöm! Hamarosan válaszolok. ✓✓');
+      }).catch(function () {
+        t.remove(); pending = { text: text, em: em }; lock(false);
+        var d = bubble('l', 'Hiba történt, kérem próbálja újra, vagy írjon <a href="' + WA + '" target="_blank" rel="noopener">WhatsAppon</a>.<button type="button" class="mc__retry" data-retry>Újrapróba</button>');
+        d.classList.add('is-err');
+      });
+    }
+    function send() {
+      if (busy) return;
+      var text = ta.value.trim(), em = mail.value.trim();
+      if (!text) { comp.classList.remove('is-shake'); void comp.offsetWidth; comp.classList.add('is-shake'); ta.focus(); return; }
+      if (em && !MAILRE.test(em)) { mail.setAttribute('aria-invalid', 'true'); mail.focus(); return; }
+      mail.removeAttribute('aria-invalid');
+      bubble('r', '').textContent = text; log.lastChild.classList.add('is-new');
+      ta.value = ''; grow();
+      run(text, em);
+    }
+    f.addEventListener('submit', function (e) { e.preventDefault(); send(); });
+    mail.addEventListener('input', function () { mail.removeAttribute('aria-invalid'); });
+    log.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-retry]') || busy || !pending) return;
+      var rb = e.target.closest('[data-retry]'); rb.remove(); run(pending.text, pending.em);
     });
-    b.appendChild(f);
-    return { el: b, focus: ta };
+    return { el: b, focus: ta, onOpen: function () {
+      grow();
+      if (b.dataset.intro) { down(); return; }
+      b.dataset.intro = '1';
+      var t = typing(); later(function () { t.remove(); bubble('l', 'Üdvözlöm! 👋 Miben segíthetek?'); }, 800);
+    } };
   }
 
   if (document.fonts && document.fonts.load) document.fonts.load('600 20px "Cormorant Garamond"');
@@ -438,8 +468,8 @@
       if (cur === 'music' && name !== 'music') { /* the music keeps playing; only the equalizer loop stops */ }
       cur = name; host = api.host;
       if (!built[name]) { var r = BUILD[name][1](); built[name] = r; }
-      var bare = name === 'music' || name === 'palette' || name === 'mood';           /* the player / palette card IS the panel: no header, no close button (dock icon, Esc, leaving close it) */
-      host.classList.toggle('is-bare', name === 'music'); host.classList.toggle('is-pal', name === 'palette'); host.classList.toggle('is-mood', name === 'mood');
+      var bare = name === 'music' || name === 'palette' || name === 'mood' || name === 'msg';           /* the player / palette card IS the panel: no header, no close button (dock icon, Esc, leaving close it) */
+      host.classList.toggle('is-bare', name === 'music'); host.classList.toggle('is-pal', name === 'palette'); host.classList.toggle('is-mood', name === 'mood' || name === 'msg');
       if (name !== 'palette') { host.style.background = ''; }
       host.innerHTML = '';
       if (!bare) host.appendChild(el('div', 'hw__ph', '<span class="hw__pt">' + BUILD[name][0] + '</span>'));
