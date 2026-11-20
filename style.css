@@ -7769,3 +7769,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pl__side { grid-column: 2; grid-row: 2; align-self: center; }
 .pl__cap { aspect-ratio: auto; block-size: 89px; }
 .pl__side { block-size: 0; align-content: center; overflow: visible; }
+
+/* Dock: icons centred in the pill (equal padding all round); the active dot is absolute, inside the bottom padding, and reserves no space */
+.hw__dock { padding: 10px; gap: 10px; }
+.hw__app::before { bottom: -7px; }
