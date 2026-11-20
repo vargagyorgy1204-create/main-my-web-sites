@@ -303,14 +303,14 @@
   }
   function buildPalette() {
     var b = el('div', 'hw__pb pl');
-    b.innerHTML = '<div class="pl__main"><h3 class="pl__name"></h3><p class="pl__sub">SZÍNPALETTA</p><div class="pl__caps"></div></div>' +
+    b.innerHTML = '<div class="pl__main"><h3 class="pl__name"></h3><div class="pl__caps"></div></div>' +
       '<div class="pl__side pl__act"><button type="button" class="pl__btn" data-p="new" data-tip="Új paletta" aria-label="Új paletta"><i data-lucide="refresh-cw"></i></button><button type="button" class="pl__btn" data-p="try" data-tip="Kipróbálom" aria-label="Kipróbálom"><i data-lucide="wand-2"></i></button>' +
       '<button type="button" class="pl__btn pl__reset" data-p="reset" data-tip="Visszaállítás" aria-label="Visszaállítás" hidden><i data-lucide="rotate-ccw"></i></button></div><div class="pl__toast" role="status"></div>';
     var caps = b.querySelector('.pl__caps'), cells = [];
     for (var i = 0; i < 5; i++) {
       var c = el('button', 'pl__col', '<span class="pl__cap"><i data-lucide="copy"></i></span><span class="pl__hex"></span>'); c.type = 'button'; caps.appendChild(c); cells.push(c);
     }
-    P.ui = { b: b, name: b.querySelector('.pl__name'), sub: b.querySelector('.pl__sub'), cells: cells, toast: b.querySelector('.pl__toast'), reset: b.querySelector('.pl__reset'), tryB: b.querySelector('[data-p="try"]'), act: b.querySelector('.pl__act') };
+    P.ui = { b: b, name: b.querySelector('.pl__name'), cells: cells, toast: b.querySelector('.pl__toast'), reset: b.querySelector('.pl__reset'), tryB: b.querySelector('[data-p="try"]'), act: b.querySelector('.pl__act') };
     P.cur = genPalette('');
     var tt = 0;
     var say = function (m, col) { P.ui.toast.textContent = m; var r = col.getBoundingClientRect(), br = b.getBoundingClientRect(); P.ui.toast.style.left = (r.left + r.width / 2 - br.left) + 'px'; P.ui.toast.style.top = (r.top - br.top - 6) + 'px'; P.ui.toast.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(function () { P.ui.toast.classList.remove('is-on'); }, 1200); };
@@ -342,15 +342,15 @@
       var frac = function (e) { var r = e.getBoundingClientRect(); return [((r.left + r.width / 2) - hb.left) / Math.max(1, hb.width), ((r.top + r.height / 2) - hb.top) / Math.max(1, hb.height)]; };
       var set = function (e, varName, bgc) { var ink = inkFor(bgc); h.style.setProperty(varName, css(ink)); return ink; };
       if (!h) return;
-      var ft = frac(U.name), fs = frac(U.sub), fh = frac(cells[2].querySelector('.pl__hex')), fa = frac(U.act);
-      var bt = bgAt(rgb, ft[0], ft[1], hb.width, hb.height), bs = bgAt(rgb, fs[0], fs[1], hb.width, hb.height), bh = bgAt(rgb, fh[0], fh[1], hb.width, hb.height), ba = bgAt(rgb, fa[0], fa[1], hb.width, hb.height);
+      var ft = frac(U.name), fh = frac(cells[2].querySelector('.pl__hex')), fa = frac(U.act);
+      var bt = bgAt(rgb, ft[0], ft[1], hb.width, hb.height), bh = bgAt(rgb, fh[0], fh[1], hb.width, hb.height), ba = bgAt(rgb, fa[0], fa[1], hb.width, hb.height);
       /* hex labels sit under different capsules: each gets the better ink for its own spot */
       var chip = function (e, inkVar, fillVar) {                    /* the better ink for the spot behind e; on a mid-tone (< 4.8:1 either way) the text gets its own small opaque chip (AA always) */
         var f = frac(e), bg = bgAt(rgb, f[0], f[1], hb.width, hb.height), ink = inkFor(bg), fill = contrast(bg, ink) < 4.8 ? (ink === LIGHT ? DARK : LIGHT) : null;
         e.style.setProperty(inkVar, css(ink)); if (fill) e.style.setProperty(fillVar, css(fill)); else e.style.removeProperty(fillVar);
       };
       cells.forEach(function (c) { chip(c.querySelector('.pl__hex'), '--hex-ink', '--hex-fill'); c.querySelector('.pl__hex').style.setProperty('color', 'var(--hex-ink)'); });
-      h.style.setProperty('--pl-t', css(inkFor(bt))); h.style.setProperty('--pl-s', css(inkFor(bs))); h.style.setProperty('--pl-b', css(inkFor(ba)));
+      h.style.setProperty('--pl-t', css(inkFor(bt))); h.style.setProperty('--pl-b', css(inkFor(ba)));
       [].forEach.call(U.b.querySelectorAll('.pl__btn'), function (bn) { chip(bn, '--pl-b', '--pl-bf'); });          /* each button: the ink for its own spot (+ a chip on mid-tones) */
     }
     function bgOf(p) { return 'linear-gradient(150deg, ' + p.cols.map(function (c) { return c; }).join(', ') + ')'; }

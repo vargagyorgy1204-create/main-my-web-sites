@@ -7735,3 +7735,14 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pl__hex { position: absolute; inset-inline: 0; inset-block-start: calc(100% + 4px); margin-inline: auto; inline-size: max-content; transform: none; pointer-events: none; }
 .pl__side { justify-self: center; }
 @media (prefers-reduced-motion: reduce) { .pl__cap { transition: none; } }
+
+/* ═══ Mini OS Paletta, tall capsules + small side buttons (no subtitle) ═══ */
+.hw__panel.is-pal { padding: 14px 12px 14px 14px; min-block-size: 200px; }
+.pl { grid-template-columns: minmax(0, 1fr) 36px; gap: 0 10px; }
+.pl__name { font-size: 17px; text-align: start; justify-self: start; margin-block-end: 12px; }
+.pl__main { justify-items: stretch; }
+.pl__caps { margin-block-end: 18px; }
+.pl__cap { aspect-ratio: 1 / 2.3; }
+.pl__side { gap: 8px; }
+.pl__side .pl__btn, .pl__side .pl__reset { inline-size: 28px; block-size: 28px; }
+.pl__side .pl__btn svg, .pl__side .pl__reset svg { inline-size: 14px; block-size: 14px; }
