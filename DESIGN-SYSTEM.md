@@ -20,14 +20,17 @@ One system, one place: every size on the site is a **fluid token** derived from 
 |---|---|---|---|---|---|---|---|
 | `--hdr-h` | `92px` (76px < 768px) | 76 | 92 | 92 | 92 | 92 | 92 |
 | `--hdr-side` / `--hdr-logo-w` | `32px` / `44px` (header zones) | 32 / 44 | 32 / 44 | 32 / 44 | 32 / 44 | 32 / 44 | 32 / 44 |
-| `--content-gutter` | `20px`; ≥ 1024px: `--hdr-side + --hdr-logo-w + 32px` | 20 | 108 | 108 | 108 | 108 | 108 |
-| `--content-max` | `clamp(1152px, 78vw, 1480px)` | 1152 | 1152 | 1152 | 1184 | 1198 | 1480 |
+| `--gutter` | **the one side gutter** (left = right): `20px`; ≥ 1024px: `96px` (= logo right edge 76px + 20px). `--content-gutter` and `--content-gutter-tight` are aliases of it | 20 | 96 | 96 | 96 | 96 | 96 |
+| `--content-max` | `100vw − 2 × --gutter` (every section spans gutter → gutter, never re-centred; was `clamp(1152px, 78vw, 1480px)`) | 350 | 1088 | 1248 | 1326 | 1344 | 1728 |
 | `--section-top` | `--hdr-h + clamp(24px, 4svh, 56px)` (section top → eyebrow) | 109.8 | 122.7 | 128 | 118.8 | 126.5 | 135.2 |
 | `--section-bottom` | `clamp(48px, 9svh, 104px)` (last block → section / viewport bottom) | 76 | 69.1 | 81 | 60.3 | 77.8 | 97.2 |
 | `--sec-bottom` | `clamp(20px, 3svh, 28px)` (legacy, pinned Együttműködés bottom padding) | 25.3 | 23 | 27 | 20.1 | 25.9 | 28 |
 | `--section-top-tight` | `--hdr-h + clamp(8px, 1.6svh, 20px)` (tight anchor, see below) | 90 | 104.3 | 106.4 | 102.7 | 104.3 | 109.3 |
-| `--content-gutter-tight` | `20px`; ≥ 1024px: `96px` (= logo right edge 76px + 20px) | 20 | 96 | 96 | 96 | 96 | 96 |
-| `--content-max-tight` | `100vw − 2 × --content-gutter-tight` (content spans gutter → gutter, never re-centred) | 350 | 1174 | 1248 | 1326 | 1344 | 1728 |
+| `--content-gutter-tight` / `--content-max-tight` | aliases of `--gutter` / `--content-max` (the wide and the tight anchor now share one gutter) | 20 / 350 | 96 / 1088 | 96 / 1248 | 96 / 1326 | 96 / 1344 | 96 / 1728 |
+| `--hero-lift` | `clamp(8px, 1.78svh, 16px)` (hero label sits this much higher than the other eyebrows) | 8 | 12.8 | 16 | 11.9 | 16 | 16 |
+| `--hero-title-sub` | `clamp(21px, 4.2svh, 45px)` (headline → subheading, +50%) | 33.6 | 28.8 | 37.8 | 28.1 | 37.8 | 45 |
+| `--hero-sub-fs` | `clamp(18px, min(1.93vw, 2.7svh), 26px)` (subheading ≥ 900px, +17%) | – | 19.4 | 24.3 | 18.1 | 24.3 | 26 |
+| `--hero-sub-w` | `36em` (two balanced lines, `text-wrap: balance`) | – | 36em | 36em | 36em | 36em | 36em |
 | `--eyebrow-size` | `clamp(11px, 8px + 0.28vw, 13px)` | 11 | 11.8 | 12 | 12.3 | 12.3 | 13 |
 | `--eyebrow-gap` | `clamp(12px, 1.6svh, 20px)` (generic eyebrow → next block) | 13.5 | 12.3 | 14.4 | 12 | 13.8 | 17.3 |
 | `--eyebrow-head-gap` | `10px` (eyebrow → heading of the unified sections) | 10 | 10 | 10 | 10 | 10 | 10 |
@@ -312,3 +315,7 @@ Built by `js/hero-window.js` (markup, scenes), CSS block "Hero living window" at
 - **Dock tooltip** is hidden while a panel is open (`.hw.has-panel .hw__app::after { display: none }`, set in `openPanel` / `closePanel`). **Üzenet log** now grows with its content: `min-block-size: 24px; max-block-size: 80px`, then scrolls; `placePanel()` measures the chat at its full height (log 80px) so the mode (a / b / c) chosen at open stays valid as the chat grows.
 
 - **Hero «kódol» brackets:** the word shifts right by the width of "<" + 0.28em (`dx`, 0.4s, power2.out, in sync with the brackets); "<" stays on the spot the word used to start (its own x cancels the shift), so the gaps "aki" → "<" → word → "/>" are all the normal 0.28em word space. The living word's box is as wide as the longest word ("életre kelt"), so the shifted line always fits; on exit the old word's x returns to 0 together with the fade.
+
+- **Symmetric gutters (one token).** `--gutter` (20px; ≥ 1024px 96px) is the only side gutter: Hero, Rólam, Készségek, Értékek, Együttműködés, Szolgáltatások, Portfólió, Kapcsolat, the footer (`padding-inline`, `.footer-container` no longer capped at 1200px) and the policy / Hogyan dolgozom pages all span gutter → gutter (left = right at every viewport). The header keeps `--hdr-side` 32px (logo left edge = burger right edge, symmetric): the 96px content line is deliberately the logo's right edge + 20px so the fixed logo never overlaps content. Exceptions: the Portfólió case cards (full width by design) and the centred whatsappcontact card.
+- **Hero text block:** label `--hero-lift` higher (label → headline gap unchanged); headline → subheading `--hero-title-sub`; subheading exactly two lines (`--hero-sub-fs`, `--hero-sub-w`, `text-wrap: balance`) with the copy "Látványos és modern weboldalakat építek, amelyek erősítik vállalkozása online jelenlétét."; the buttons stay centred between the subheading and the status line.
+- **Living window scales with the free space:** width `clamp(300px, 25vw, 720px)` (360px at 1440 = the former look; 480 at 1920, 640 at 2560), right edge = the right gutter line (the tilt is measured and corrected in `layout()`), bottom = status line. Above 360px the window keeps a 360px layout width and is scaled as a whole (`gsap scale`, origin top left, S = W / 360): the dock, the panels and their text grow in the same ratio. `placePanel()` computes hit tests in screen px and CSS lengths in layout px (÷ S); rules a / b / c and the ≥ 40px clearance are unchanged.

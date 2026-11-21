@@ -313,7 +313,7 @@
     P.ui = { b: b, name: b.querySelector('.pl__name'), cells: cells, toast: b.querySelector('.pl__toast'), reset: b.querySelector('.pl__reset'), tryB: b.querySelector('[data-p="try"]'), act: b.querySelector('.pl__act') };
     P.cur = genPalette('');
     var tt = 0;
-    var say = function (m, col) { P.ui.toast.textContent = m; var r = col.getBoundingClientRect(), br = b.getBoundingClientRect(); P.ui.toast.style.left = (r.left + r.width / 2 - br.left) + 'px'; P.ui.toast.style.top = (r.top - br.top - 6) + 'px'; P.ui.toast.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(function () { P.ui.toast.classList.remove('is-on'); }, 1200); };
+    var say = function (m, col) { P.ui.toast.textContent = m; var r = col.getBoundingClientRect(), br = b.getBoundingClientRect(), k = (b.offsetWidth ? br.width / b.offsetWidth : 1) || 1; P.ui.toast.style.left = ((r.left + r.width / 2 - br.left) / k) + 'px'; P.ui.toast.style.top = ((r.top - br.top - 6) / k) + 'px'; P.ui.toast.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(function () { P.ui.toast.classList.remove('is-on'); }, 1200); };
     function fallback(t) { try { var ta = el('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); } catch (e) { /* ignore */ } }
     cells.forEach(function (c) {
       c.addEventListener('click', function () {

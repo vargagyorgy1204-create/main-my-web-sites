@@ -253,20 +253,20 @@
     var st = hero.querySelector('.hero-status'); if (st) add(st.getBoundingClientRect());
     return out;
   }
-  var BAR = 30;
+  var BAR = 30, BASE = 360;                                          /* BASE: the layout width at the 1440 reference; wider windows are scaled from it */
   function place() {
     var hr = hero.getBoundingClientRect(), inner = hero.querySelector('.hero-inner').getBoundingClientRect();
     var obs = obstacles(hr), Lft = inner.left - hr.left;
     var st = hero.querySelector('.hero-status').getBoundingClientRect();
     var res = null;
     if (window.innerWidth >= 900) {
-      /* anchored bottom-right: right edge = the content container's right edge (the Rólam card), bottom = the status line's bottom (>= 32px above the hero bottom);
-         width clamp(300px, 25vw, 470px), scaled down (min 220px) only if it would come within 40px of the headline / subheading / buttons / status line */
-      var card = document.querySelector('#about .about-bio-card') || document.querySelector('#about .about-premium-grid');      /* the Rólam card: the content container's right edge */
-      var rEdge = card ? card.getBoundingClientRect().right - hr.left : inner.right - hr.left;
+      /* anchored bottom-right: right edge = the right gutter line (the hero content's right edge; the tilt is corrected in layout()), bottom = the status line's bottom (>= 32px above the hero bottom);
+         width clamp(300px, 25vw, 720px) (360px at 1440), scaled down (min 220px) only if it would come within 40px of the headline / subheading / buttons / status line;
+         above 360px the whole window (dock, panels) scales proportionally (layout()) */
+      var rEdge = inner.right - hr.left;
       var bottom = Math.min(st.bottom - hr.top, hr.height - 32) - 20;      /* -20: the tilt + float push the visual bottom edge a few px lower than the layout box (visual gap stays >= 32px) */
-      for (var W = Math.min(470, Math.max(300, 0.25 * window.innerWidth)); W >= 220 && !res; W -= 4) {
-        var H = BAR + W * 0.625, left = rEdge - W, top = bottom - H;
+      for (var W = Math.min(720, Math.max(300, 0.25 * window.innerWidth)); W >= 220 && !res; W -= 4) {
+        var H = BAR * Math.max(1, W / BASE) + W * 0.625, left = rEdge - W, top = bottom - H;
         var hit = obs.some(function (o) { return o.r + CL > left && o.l - CL < left + W && o.b + CL > top && o.t - CL < top + H; });
         if (!hit) res = { left: left, top: top, W: W, H: H };
       }
@@ -287,12 +287,18 @@
   function layout() {
     fit = place();
     if (!fit) { mode = 'off'; w.classList.remove('is-on'); gsap.set(w, { opacity: 0 }); return false; }
-    w.style.left = Math.round(fit.left) + 'px'; w.style.top = Math.round(fit.top) + 'px'; w.style.width = Math.round(fit.W) + 'px';
-    var sw = 1.5 * 1000 / view.clientWidth; w.style.setProperty('--hw-sw', sw.toFixed(2));
     mode = window.innerWidth >= 900 ? 'desktop' : 'mobile';
+    fit.S = mode === 'desktop' && fit.W > BASE ? fit.W / BASE : 1;                    /* the window keeps its BASE layout and is scaled (dock, panels, text: one ratio) */
+    w.style.left = Math.round(fit.left) + 'px'; w.style.top = Math.round(fit.top) + 'px'; w.style.width = Math.round(fit.S > 1 ? BASE : fit.W) + 'px';
+    gsap.set(w, { scale: fit.S, transformOrigin: '0% 0%' });
+    var sw = 1.5 * 1000 / view.clientWidth; w.style.setProperty('--hw-sw', sw.toFixed(2));
     dock.style.left = mode === 'mobile' ? Math.round((window.innerWidth - fit.left) / 2 - 8) + 'px' : '';                       /* phones: the dock sits in the visible part of the peeking window */
     var rest = restTilt();
     gsap.set(tilt, { rotationY: rest.y, rotationX: rest.x, rotationZ: rest.z });
+    if (mode === 'desktop') {                                                           /* the tilted window's visual right edge sits on the gutter line */
+      var inr = hero.querySelector('.hero-inner').getBoundingClientRect().right, vr = win.getBoundingClientRect().right;
+      if (Math.abs(vr - inr) > 0.5) { fit.left += inr - vr; w.style.left = Math.round(fit.left) + 'px'; }
+    }
     return true;
   }
   function restTilt() { return window.innerWidth >= 900 ? { y: -14, x: 6, z: 1 } : { y: -12, x: 0, z: -3 }; }
@@ -320,7 +326,7 @@
     osQueue = cb;
     if (osState === 1) return;
     osState = 1;
-    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=12'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
+    var sc = document.createElement('script'); sc.src = 'js/hero-os.js?v=13'; sc.onload = function () { osState = 2; if (osQueue) { var f = osQueue; osQueue = null; f(); } }; sc.onerror = function () { osState = 0; };
     document.head.appendChild(sc);
   }
   function holdOn() {
@@ -361,18 +367,20 @@
     pw.classList.remove('is-above', 'is-over'); pw.style.paddingRight = ''; pw.style.inlineSize = ''; pw.style.right = ''; pw.style.bottom = ''; pw.style.transform = ''; pw.style.transformOrigin = ''; pw.dataset.place = 'a';
     if (mode !== 'desktop') return;
     var pwr = pw.getBoundingClientRect(), wr = win.getBoundingClientRect();
-    var X = Math.max(14, Math.round(pwr.right - wr.left + 16 + 4));                  /* + float / tilt breathing room */
+    var S = (fit && fit.S) || 1;                                                      /* the window is scaled by S: screen px = layout px x S (hit tests in screen px, CSS lengths in layout px) */
+    var X = Math.max(14, Math.round(pwr.right - wr.left + 16 + 4));                  /* screen px; + float / tilt breathing room */
     var hr = hero.getBoundingClientRect(), hh = panel.offsetHeight, hwr = w.getBoundingClientRect(), obs = obstacles(hr), lg = panel.querySelector('.mc__log');
     if (lg) hh += Math.max(0, 80 - lg.offsetHeight);                                   /* the chat grows up to its 80px log: place it for the full height */
+    hh *= S;
     var pref = osApp === 'palette' || osApp === 'msg' ? 300 : osApp === 'mood' ? 264 : 260;
     var hit = function (l, r, t, b, m) { return obs.some(function (o) { return o.r + m > l && o.l - m < r && o.b + m > t && o.t - m < b; }); };
     var pb = hwr.bottom - hr.top;
-    if (!hit(hwr.left - X - pref - hr.left, hwr.left - X - hr.left, pb - hh, pb, 12)) { pw.style.paddingRight = X + 'px'; pw.style.inlineSize = (pref + X) + 'px'; return; }   /* a */
-    var redge = wr.left + 0.6 * wr.width, raise = Math.max(0, Math.round(hwr.bottom - dock.getBoundingClientRect().top + 10));
-    var bb = hwr.bottom - hr.top - raise, PW = pref, ws = [pref, 260, 240].filter(function (v, i, a2) { return v <= pref && a2.indexOf(v) === i; });
-    for (var k = 0; k < ws.length; k++) { PW = ws[k]; var sc = PW / pref, l = redge - hr.left - PW; if (!hit(l, l + PW, bb - hh * sc, bb, 24)) break; }
+    if (!hit(hwr.left - X - pref * S - hr.left, hwr.left - X - hr.left, pb - hh, pb, 12)) { pw.style.paddingRight = (X / S) + 'px'; pw.style.inlineSize = (pref + X / S) + 'px'; return; }   /* a */
+    var redge = wr.left + 0.6 * wr.width, raise = Math.max(0, Math.round((hwr.bottom - dock.getBoundingClientRect().top) / S + 10));
+    var bb = hwr.bottom - hr.top - raise * S, PW = pref, ws = [pref, 260, 240].filter(function (v, i, a2) { return v <= pref && a2.indexOf(v) === i; });
+    for (var k = 0; k < ws.length; k++) { PW = ws[k]; var sc = PW / pref, l = redge - hr.left - PW * S; if (!hit(l, l + PW * S, bb - hh * sc, bb, 24)) break; }
     pw.classList.add('is-over'); pw.style.paddingRight = '0'; pw.style.inlineSize = pref + 'px';
-    pw.style.right = Math.round(hwr.right - redge) + 'px'; pw.style.bottom = raise + 'px';
+    pw.style.right = Math.round((hwr.right - redge) / S) + 'px'; pw.style.bottom = raise + 'px';
     if (PW !== pref) { pw.style.transformOrigin = 'right bottom'; pw.style.transform = 'scale(' + (PW / pref).toFixed(3) + ')'; }    /* c: a proportional scale-down */
     pw.dataset.place = PW === pref ? 'b' : 'c';
   }

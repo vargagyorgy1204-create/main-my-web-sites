@@ -20,8 +20,9 @@
     --hdr-h: 92px;                                                         /* fixed header height (76px on phones) */
     --hdr-side: 32px;                                                      /* logo / burger distance from the window edge */
     --hdr-logo-w: 44px;
-    --content-gutter: 20px;                                                /* side line (>= 1024px: logo column + 32px, see below) */
-    --content-max: clamp(1152px, 78vw, 1480px);                            /* 1152px up to 1480px wide screens, 1440 unchanged */
+    --gutter: 20px;                                                        /* THE side gutter of the whole site (left = right; >= 1024px: 96px = logo right edge 76px + 20px); header offset --hdr-side is separate */
+    --content-gutter: var(--gutter);                                       /* aliases of --gutter (kept so no selector changes) */
+    --content-max: calc(100vw - 2 * var(--gutter));                        /* content spans gutter -> gutter on every screen, never re-centred */
     /* vertical rhythm of a section */
     --section-top: calc(var(--hdr-h) + clamp(24px, 4svh, 56px));           /* section top -> eyebrow */
     --section-bottom: clamp(48px, 9svh, 104px);                            /* last content block -> section / viewport bottom */
@@ -78,8 +79,8 @@
     --footer-stamp-d: clamp(70px, 9.3svh, 100px);                          /* back-to-top badge: the hero badge size (76px on phones) */
     /* tight anchor (.section--tight): closer to the top-left; the gutter is the logo's right edge (32 + 44) + 20px, symmetric on the right */
     --section-top-tight: calc(var(--hdr-h) + clamp(8px, 1.6svh, 20px));
-    --content-gutter-tight: 20px;
-    --content-max-tight: calc(100vw - 2 * var(--content-gutter-tight));
+    --content-gutter-tight: var(--gutter);
+    --content-max-tight: var(--content-max);
     /* headings */
     --section-heading-size: clamp(18px, min(4.277vw, 6.84svh), 69.12px);   /* the 6 unified .section-heading */
     --section-heading-lh: 1.12;
@@ -92,6 +93,11 @@
     --pf-meta-h: 36px;                                                     /* counter + tags row */
     --pf-text-min: 300px;                                                  /* the text column never gets narrower (tags rows, 900-1100px wide windows) */
     --pf-bar-h: 36px;                                                      /* the browser window's top bar (dots strip) */
+    /* hero text block + living window (reference 1440x900) */
+    --hero-lift: clamp(8px, 1.78svh, 16px);                                /* the label sits this much higher than the other sections' eyebrows (label -> headline gap unchanged) */
+    --hero-title-sub: clamp(21px, 4.2svh, 45px);                           /* headline -> subheading (was clamp(14px, 2.8svh, 30px), +50%) */
+    --hero-sub-fs: clamp(18px, min(1.93vw, 2.7svh), 26px);                 /* subheading size >= 900px (was clamp(15.4px, min(1.65vw, 2.31svh), 22px), +17%) */
+    --hero-sub-w: 36em;                                                    /* wide enough for two balanced lines, too narrow for one */
 }
 @media (max-width: 1023px) { :root { --footer-stamp-d: 76px; } }
 @media (max-width: 767px) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
@@ -99,8 +105,7 @@
 @media (min-width: 768px) { :root { --btn-fs: clamp(13px, 1.45svh, 15px); --btn-pad-y: clamp(10px, 1.6svh, 15px); --btn-px: clamp(24px, 3.4svh, 34px); } }
 @media (min-width: 1024px) { :root { --cf-photo-d: clamp(150px, 19svh, 176px); } }
 @media (min-width: 1024px) { :root { --cf-fs: 13.5px; --cf-h: clamp(39.6px, 5.04svh, 43.2px); --cf-label-scale: 0.78; --cf-label-top: 4.5px; } }
-@media (min-width: 1024px) { :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); } }
-@media (min-width: 1024px) { :root { --content-gutter-tight: 96px; } }   /* = logo right edge 76px + 20px */
+@media (min-width: 1024px) { :root { --gutter: 96px; } }   /* = logo right edge 76px + 20px */
 
 /* ===== TIGHT ANCHOR — the standard of Készségek, Értékek, Együttműködés, Szolgáltatások, Portfólió, Kapcsolat (class .section--tight) =====
    Hero, Rólam, the footer and the other pages keep the wide anchor above. */
@@ -1572,14 +1577,14 @@ body.service-modal-open { overflow: hidden; }
 footer {
     background: linear-gradient(135deg, #1a1a2e 0%, #0f0c29 100%);
     color: white;
-    padding: 60px 20px 30px;
+    padding: 60px var(--gutter) 30px;
     margin-top: 0;               /* the gap above the footer belongs to the page content, so the footer is identical on every page */
     width: 100%;                 /* also inside a flex-centred body (whatsappcontact.html) */
     border-top: 2px solid var(--primary);
 }
 
 .footer-container {
-    max-width: 1200px;
+    max-width: none;             /* gutter -> gutter like every section */
     margin: 0 auto;
 }
 
@@ -3139,7 +3144,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
     display: flex;
     flex-direction: column;
     text-align: left;
-    padding: var(--section-top) var(--content-gutter) clamp(24px, 4svh, 56px);
+    padding: calc(var(--section-top) - var(--hero-lift)) var(--content-gutter) clamp(24px, 4svh, 56px);          /* the label sits --hero-lift (16px at 1440x900) higher than the other sections' eyebrows */
 }
 
 /* background: a static CSS gradient is always there (also the fallback); the WebGL canvas fades in over it once it runs (js/hero-gl.js) */
@@ -3197,7 +3202,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 }
 
 /* the block (headline, lead, buttons) hangs directly under the label (label -> headline = --eyebrow-head-gap, as in the other sections); the status line stays at the bottom */
-.hero-title { position: relative; margin: 0 0 clamp(14px, 2.8svh, 30px); font-size: min(clamp(36px, min(8.69vw, 11.45svh), 159px), calc((100vw - 2 * var(--content-gutter)) / 10.75)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
+.hero-title { position: relative; margin: 0 0 var(--hero-title-sub); font-size: min(clamp(36px, min(8.69vw, 11.45svh), 159px), calc((100vw - 2 * var(--content-gutter)) / 10.75)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
 .hero-headline {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
@@ -3283,6 +3288,9 @@ html.hero-static .hero-live__txt { position: static; }
 }
 #hero .text-link { --tl-color: #fff; }
 .hero-title ~ .hero-ctas { margin-bottom: auto; padding-bottom: clamp(8px, 3svh, 40px); }
+@media (min-width: 900px) {          /* subheading: exactly two balanced lines (+17% size, wide enough for two lines, never for one) */
+    .hero-sub { font-size: var(--hero-sub-fs); max-width: var(--hero-sub-w); }
+}
 @media (min-width: 900px) {          /* the buttons row sits exactly midway between the subheading's bottom and the status line's top */
     .hero-sub { margin-bottom: 0; }
     .hero-title ~ .hero-ctas { margin: auto 0; padding-block: clamp(12px, 2.4svh, 28px); }
@@ -5528,7 +5536,7 @@ footer {
     overflow: hidden;
     background: rgb(15, 22, 41);
     border-top: 1px solid rgb(255 255 255 / 0.08);
-    padding: 64px 20px 0;
+    padding: 64px var(--gutter) 0;
 }
 #contact + footer { margin-top: 0; }
 .footer-content { position: relative; z-index: 1; }
@@ -5761,8 +5769,6 @@ footer { padding-bottom: var(--cb-h, 0px); }
    Left/right content lines are therefore identical in every section and on every page. Exceptions: the Portfólió
    case cards (full width) and the footer (untouched). Below 1024px the header auto-hides instead (nav.js). */
 @media (min-width: 1024px) {
-    :root { --content-gutter: calc(var(--hdr-side) + var(--hdr-logo-w) + 32px); }
-
     #hero { padding-inline: var(--content-gutter); }
     section#skills { padding-inline: var(--content-gutter) !important; }
     #services.svt { padding-inline: var(--content-gutter); }

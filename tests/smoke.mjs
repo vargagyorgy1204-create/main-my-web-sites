@@ -335,7 +335,7 @@ async function layoutChecks(vp) {
   const TIGHT = ['hero', 'skills', 'why', 'steps', 'services', 'contact', 'portfolioHead'];   // the hero joined the tight corridor with the "living text" redesign
   const wideLefts = ['about'].map(k => edges[k]).filter(Boolean).map(e => e[0]);
   const tightLefts = TIGHT.map(k => edges[k]).filter(Boolean).map(e => e[0]);
-  const gutterMin = hdr.logo[2] + 32 - 1;   // wide: logo right edge + 32px air
+  const gutterMin = hdr.logo[2] + 20 - 1;   // one gutter for all sections: logo right edge + 20px air (96px)
   const L = wideLefts[0], LT = tightLefts[0];
   rec(tag, 'Rólam keeps the wide left content line, 32px clear of the logo', wideLefts.every(x => Math.abs(x - L) <= 1) && L >= gutterMin, JSON.stringify({ hero: edges.hero, about: edges.about }));
   rec(tag, 'the tight sections (hero included) share one left content line, >= 20px clear of the logo', tightLefts.every(x => Math.abs(x - LT) <= 1) && LT >= hdr.logo[2] + 20 - 1, JSON.stringify(TIGHT.map(k => [k, edges[k] && edges[k][0]])));
@@ -485,9 +485,8 @@ async function titleSystem(vp) {
   const r0 = rows[0];
   // wide anchor (hero, Hogyan dolgozom): --section-top = hdr + clamp(24px, 4svh, 56px); corridor = gutter, or the centred clamp(1152px, 78vw, 1480px) column
   const expTop = r0.hdr + Math.min(56, Math.max(24, 0.04 * vp.h));
-  const gutterPx = vp.w >= 1024 ? 32 + 44 + 32 : 20;
-  const maxW = Math.min(1480, Math.max(1152, 0.78 * vp.w));
-  const expLeft = gutterPx + Math.max(0, (r0.clientW - 2 * gutterPx - maxW) / 2);
+  const gutterPx = vp.w >= 1024 ? 96 : 20;      // --gutter: one gutter for every section (wide anchor included), content spans gutter -> gutter
+  const expLeft = gutterPx;
   // tight anchor (.section--tight): --section-top = hdr + clamp(8px, 1.6svh, 20px); gutter 96px (>= 1024px) / 20px, content spans gutter -> gutter
   const expTopT = r0.hdr + Math.min(20, Math.max(8, 0.016 * vp.h));
   const expLeftT = vp.w >= 1024 ? 96 : 20;
@@ -500,8 +499,9 @@ async function titleSystem(vp) {
   rec(tag, `wide anchor: eyebrow top = section top + ${Math.round(expTop)}px (Hogyan dolgozom)`, badTop.length === 0, badTop.join(' '));
   const badLeft = wide.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
   rec(tag, `wide anchor: eyebrow left = ${Math.round(expLeft)}px`, badLeft.length === 0, badLeft.join(' '));
-  const badTopT = tight.filter(r => Math.abs(r.top - expTopT) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
-  rec(tag, `tight anchor: eyebrow top = section top + ${expTopT.toFixed(1)}px in all seven sections`, badTopT.length === 0, badTopT.join(' '));
+  const heroLift = Math.min(16, Math.max(8, 0.0178 * vp.h));   // --hero-lift: the hero label sits higher than the other eyebrows
+  const badTopT = tight.filter(r => Math.abs(r.top - (r.name === 'hero' ? expTopT - heroLift : expTopT)) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
+  rec(tag, `tight anchor: eyebrow top = section top + ${expTopT.toFixed(1)}px (hero: -${heroLift.toFixed(1)}px --hero-lift) in all seven sections`, badTopT.length === 0, badTopT.join(' '));
   const badLeftT = tight.filter(r => Math.abs(r.left - expLeftT) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
   rec(tag, `tight anchor: eyebrow left = ${expLeftT}px in all seven sections`, badLeftT.length === 0, badLeftT.join(' '));
   const badRightT = tight.filter(r => r.firstRight != null && Math.abs(r.firstRight - expLeftT) > 2).map(r => `${r.name}:${Math.round(r.firstRight)}`);
