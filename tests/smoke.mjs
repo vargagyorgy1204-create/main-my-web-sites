@@ -376,10 +376,47 @@ async function layoutChecks(vp) {
     const r = await p2.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => { const s = getComputedStyle(e), f = parseFloat(getComputedStyle(e.closest('section, .ap') || e).getPropertyValue('--fit')) || 1; return [s.fontFamily, (parseFloat(s.fontSize) * f).toFixed(2) + 'px', s.fontWeight, (parseFloat(s.letterSpacing) * f).toFixed(2) + 'px', s.textTransform, s.fontStyle].join('|'); })   /* rendered size: the fitted sections lay the eyebrow out at size / fit */); await p2.close(); return r;
   })();
   const all = eb.concat(eb2);
-  rec(tag, 'six section eyebrows on index (Együttműködés and Portfólió have none) + one on myapproach exist', eb.length === 6 && eb2.length === 1, `${eb.length}+${eb2.length}`);
+  rec(tag, 'seven section eyebrows on index (only Portfólió has none) + one on myapproach exist', eb.length === 7 && eb2.length === 1, `${eb.length}+${eb2.length}`);
   rec(tag, 'all eyebrows share font / size / weight / spacing / uppercase', new Set(all).size === 1 && /uppercase/.test(all[0]), [...new Set(all)].join(' || '));
   const ebTxt = await p.evaluate(() => [...document.querySelectorAll('.section-eyebrow')].map(e => e.textContent.trim()));
   rec(tag, 'eyebrow labels are written in normal case', ebTxt.every(t => t !== t.toUpperCase() || t.length < 2), ebTxt.join(' / '));
+  // 4) Együttműködés: label + heading + 2-line subheading, a smooth step progress, the compact KAPCSOLAT pill (pinned layout, >= 900px)
+  {
+    const geo = await p.evaluate(() => { const s = document.getElementById('steps'), pin = s.querySelector('.steps-pin'); return { top: s.getBoundingClientRect().top + scrollY, total: s.offsetHeight - pin.offsetHeight, pinned: getComputedStyle(pin).position === 'sticky' }; });
+    const at = async t => { await p.evaluate(([y]) => (window.VB && VB.lenis ? VB.lenis.scrollTo(y, { immediate: true }) : window.scrollTo(0, y)), [geo.top + t * geo.total]); await frames(p, 8); await sleep(900); };
+    await p.evaluate(() => { (window.VB = window.VB || {}); });
+    const st = async () => p.evaluate(() => {
+      const R = e => e.getBoundingClientRect(), q = s => document.querySelector(s), steps = [...document.querySelectorAll('.process__step')];
+      return { p: +q('.process').style.getPropertyValue('--p'), len: parseFloat(q('.process').style.getPropertyValue('--len')), cur: q('.st-reel').style.getPropertyValue('--cur'),
+        cls: steps.map(x => x.classList.contains('is-done') ? 'D' : x.classList.contains('is-current') ? 'C' : x.classList.contains('is-active') ? 'A' : '-').join(''),
+        op: steps.map(x => +(+getComputedStyle(x.querySelector('.process__body')).opacity).toFixed(2)),
+        ic: steps.map(x => Math.round(R(x.querySelector('.pn-ic')).width)), dot: Math.round(R(q('.pn-dot')).width), trackH: Math.round(R(q('.process__track')).height),
+        fillW: R(q('.process__fill')).width, badge: steps.map(x => +new DOMMatrix(getComputedStyle(x.querySelector('.pn-badge')).transform).a.toFixed(2)) };
+    });
+    const txt = await p.evaluate(() => ({ eb: document.querySelector('#steps .section-eyebrow').textContent.trim(), aria: document.querySelector('.steps-title').getAttribute('aria-label'), sub: document.querySelector('.steps-sub').textContent.trim(), icons: [...document.querySelectorAll('.pn-ic i, .pn-ic svg')].map(e => e.getAttribute('data-lucide') || e.className.baseVal || '').join(',') }));
+    rec(tag, 'Együttműködés: label, heading and subheading texts', txt.eb === 'Együttműködés' && /^Lépésről lépésre/.test(txt.aria) && txt.sub === 'Az első beszélgetéstől az élő weboldalig: négy átlátható lépés, meglepetések nélkül.', JSON.stringify(txt).slice(0, 220));
+    const subm = await p.evaluate(() => { const e = document.querySelector('.steps-sub'), cs = getComputedStyle(e), hs = getComputedStyle(document.querySelector('.hero-sub')); return { lines: Math.round(e.getBoundingClientRect().height / parseFloat(cs.lineHeight)), fs: parseFloat(cs.fontSize), hfs: parseFloat(hs.fontSize), fit: parseFloat(document.getElementById('steps').style.getPropertyValue('--fit')) || 1 }; });
+    rec(tag, 'subheading: two lines, the Hero subheading size (rendered)', subm.lines === 2 && Math.abs(subm.fs * subm.fit - subm.hfs) <= 0.8, JSON.stringify(subm));
+    if (geo.pinned) {
+      await at(0.02); const s0 = await st();
+      await at(0.4); const s1 = await st();
+      await at(0.62); const s2 = await st();
+      await at(0.97); const s3 = await st();
+      rec(tag, 'progress: nothing lit before the pin (all dots, 0/4), 10px dots, 2px track', s0.cls === '----' && s0.cur === '0' && s0.dot === 10 && s0.trackH === 2 && s0.p === 0, JSON.stringify(s0));
+      rec(tag, 'progress: the fill grows with the scroll, a reached node is a 48px icon, text 100% / 75% / 45%', s1.p > 0.1 && s1.p < s2.p && Math.abs(s1.fillW - s1.p * s1.len) <= 3 && s1.ic[0] >= 46 && s1.op[0] === 0.75 && s1.op[s1.cls.indexOf('C')] === 1 && s1.op[3] === 0.45 && s1.ic[3] <= 20, JSON.stringify(s1));
+      rec(tag, 'progress: completed steps get the check badge, the counter follows', /^D/.test(s2.cls) && s2.badge[0] === 1 && s2.badge[3] === 0 && Number(s2.cur) >= 2, JSON.stringify(s2));
+      rec(tag, 'progress: end = all four steps completed (4/4, check badges, full fill)', s3.cls === 'DDDD' && s3.cur === '4' && s3.p === 1 && s3.badge.every(b => b === 1) && s3.op.every(o => o === 0.75), JSON.stringify(s3));
+      await at(0.4); const s4 = await st();
+      rec(tag, 'progress reverses smoothly when scrolling up', s4.cls === s1.cls && Math.abs(s4.p - s1.p) < 0.02, `${s4.cls} ${s4.p} vs ${s1.cls} ${s1.p}`);
+      await at(0.97);
+      const pill = await p.evaluate(() => { const b = document.querySelector('#steps-cta .hbtn'), cs = getComputedStyle(b), ref = document.querySelector('#services-cta .hbtn'), gl = parseFloat(getComputedStyle(document.querySelector('.steps-pin')).paddingLeft); const r = b.getBoundingClientRect(); const bh = parseFloat(cs.height), fs = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--btn-fs')) || parseFloat(cs.fontSize); return { w: r.width, h: bh, padL: parseFloat(cs.paddingLeft), padR: parseFloat(cs.paddingRight), want: 1.5 * (bh - parseFloat(cs.fontSize)) / 2, right: document.documentElement.clientWidth - r.right, gl, refW: ref ? ref.getBoundingClientRect().width : 0 }; });
+      rec(tag, 'KAPCSOLAT pill: width auto, horizontal padding 1.5 x the visual vertical padding, on the right gutter line', Math.abs(pill.padL - pill.want) <= 1.5 && Math.abs(pill.padR - pill.padL) <= 0.5 && Math.abs(pill.right - pill.gl) <= 1.5, JSON.stringify(pill));
+      if (vp.h >= 1000) {
+        const m = await p.evaluate(() => { const r = document.querySelector('.steps-inner').getBoundingClientRect(); return { top: r.top, bottom: innerHeight - r.bottom }; });
+        rec(tag, 'tall screens: the block is vertically centred in the pinned viewport', Math.abs(m.top - m.bottom) <= 6, JSON.stringify(m));
+      }
+    }
+  }
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
   await ctx.close();
 }
@@ -447,7 +484,7 @@ async function titleSystem(vp) {
     ['about', 'index', '#about', '.abt-eyebrow', null, '.about-photo-card', true],
     ['skills', 'index', '#skills', '#skills .section-eyebrow', '#skills .section-heading', '#skills .skills-list', true, '#skills .skills-list'],
     ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .hs__card', true],   // the strip is wider than the corridor: only the first card's left line counts
-    ['steps', 'index', '#steps', '#steps .steps-title', null, '#steps .process', true, '#steps .process'],   // Együttműködés: no eyebrow / section heading - its head is one large line (.steps-title), documented exception
+    ['steps', 'index', '#steps', '#steps .section-eyebrow', null, '#steps .process', true, '#steps .process'],   // Együttműködés: label (eyebrow) + its own heading line (.steps-title, sized to fit one line), documented exception
     ['services', 'index', '#services', '.svt-eyebrow', '#services .section-heading', '.svt-row', true, '.svt-row'],
     ['portfolio', 'index', '#portfolio', '#portfolio .section-heading', '#portfolio .section-heading', '.pf__sub', true, null],   // Portfólió: no eyebrow, the heading sits on the anchor
     ['contact', 'index', '#contact', '.ctc-eyebrow', '#contact .section-heading', '.contact-grid', true, '.contact-grid'],
@@ -489,7 +526,7 @@ async function titleSystem(vp) {
   // tight anchor (.section--tight): --section-top = hdr + clamp(8px, 1.6svh, 20px); gutter 96px (>= 1024px) / 20px, content spans gutter -> gutter
   const expTopT = r0.hdr + Math.min(20, Math.max(8, 0.016 * vp.h));
   const expLeftT = vp.w >= 1024 ? 96 : 20;
-  rec(tag, 'eyebrow typography identical in all sections (Együttműködés and Portfólió have none: the heading sits on the anchor)', new Set(rows.filter(r => !['steps', 'portfolio'].includes(r.name)).map(r => r.typo)).size === 1, [...new Set(rows.filter(r => !['steps', 'portfolio'].includes(r.name)).map(r => r.typo))].join(' || '));
+  rec(tag, 'eyebrow typography identical in all sections (Portfólió has none: the heading sits on the anchor)', new Set(rows.filter(r => !['portfolio'].includes(r.name)).map(r => r.typo)).size === 1, [...new Set(rows.filter(r => !['portfolio'].includes(r.name)).map(r => r.typo))].join(' || '));
   // Rólam is the one exception to the anchor system: its eyebrow lives inside the white text card (typography is still checked above)
   const anchored = rows.filter(r => r.name !== 'about');
   const wide = anchored.filter(r => !r.tight), tight = anchored.filter(r => r.tight);

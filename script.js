@@ -833,11 +833,11 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         .observe(document.body, { attributes: true, attributeFilter: ['class'] });
 })();
 
-// Steps (Együttműködés) - "charge running along the line": ONE chain (a single svg: circle tracks + line tracks + their gradient fills, tangent joins, one stroke width, one gradient),
-// scrubbed by the scroll: the head enters circle 1 at its left point, goes round it (the ring fills), leaves at the right point -> segment 1 -> circle 2 -> ... -> circle 4. A step is reached
-// when the head arrives at its circle, passed when it leaves. The section pins on large screens (240svh of run; nothing is lit before the pin begins), the counter rolls 0/4 -> 4/4 with the steps,
-// the heading plays the shared letter-rise reveal (+ dropping dot) when the section top reaches 85% of the viewport.
-// Phones (< 768px) / short windows: no pin, the path follows the circles (the mark is ~60% of the viewport). Reduced motion: everything shown completed (4/4).
+// Steps (Együttműködés) - a smooth step progress: a thin 2px track through the four nodes, a brand-gradient fill that grows with the scroll (scrub, no steps) with a soft glowing head at its tip.
+// A node is a 10px dot until the fill reaches it, then it grows into a 48px round gradient icon (one glow pulse); a completed step gets a check badge. The text of a step: upcoming 45% / current
+// 100% / completed 75% (CSS, 0.4s). Everything is reversible. The counter in the heading ("1/4.") rolls with the steps; the heading plays the shared letter-rise reveal when the section top
+// reaches 85% of the viewport. >= 900px (and >= 520px tall, motion allowed) the section pins (240svh of run; nothing is lit before the pin begins); below / short windows: no pin, the track is vertical
+// (stacked steps) and the fill follows the mark at ~60% of the viewport. Reduced motion: every step completed, static (4/4).
 (function () {
     var section = document.getElementById('steps');
     var process = document.querySelector('.process');
@@ -845,199 +845,56 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     var steps = Array.prototype.slice.call(process.querySelectorAll('.process__step'));
     var N = steps.length;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var pinQuery = window.matchMedia('(min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)');
+    var pinQuery = window.matchMedia('(min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)');
     var ticking = false;
     var title = section.querySelector('.steps-title');
     var reel = section.querySelector('.st-reel'), counter = section.querySelector('.st-count');
-    var tip = process.querySelector('.process__head');
     var nodes = steps.map(function (s) { return s.querySelector('.process__node'); });
-    var texts = steps.map(function (s) { return s.querySelector('.process__text'); });
     /* the closing row (.cta-row, shared with Szolgáltatások) plays its sequential entrance only in the pinned layout */
     var ctaRow = section.querySelector('.cta-row');
     function armCta() { if (ctaRow) ctaRow.classList.toggle('cta-row--armed', pinQuery.matches); }
     armCta(); window.addEventListener('resize', armCta);
-    /* the KAPCSOLAT pill is exactly as large as the Szolgáltatások CTA pill (their labels differ in length): it takes that pill's width */
-    function matchPill() {
-        var mine = ctaRow && ctaRow.querySelector('.hbtn'), ref = document.querySelector('#services-cta .hbtn');
-        if (!mine || !ref) return;
-        mine.style.minWidth = '';
-        var w = ref.getBoundingClientRect().width;
-        if (w > mine.getBoundingClientRect().width) mine.style.minWidth = w.toFixed(2) + 'px';
-    }
-    window.addEventListener('resize', matchPill); window.addEventListener('load', matchPill);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(matchPill);
-    matchPill();
 
-    /* the Lucide check is drawn with its stroke: pathLength 1 */
-    steps.forEach(function (step) {
-        var ck = step.querySelector('.pn-check');
-        if (ck) { Array.prototype.forEach.call(ck.querySelectorAll('path, polyline'), function (p) { p.setAttribute('pathLength', '1'); }); ck.setAttribute('data-draw', ''); }
-    });
-
-    /* ---- the descriptions: one mask per rendered line, risen when the step is reached ---- */
-    function splitText(p) {
-        var full = p.getAttribute('data-rv-text');
-        if (full === null) { full = p.textContent.replace(/\s+/g, ' ').trim(); p.setAttribute('data-rv-text', full); }
-        p.textContent = '';
-        var words = full.split(' '), spans = words.map(function (w, i) {
-            var s = document.createElement('span'); s.textContent = w; p.appendChild(s);
-            if (i < words.length - 1) p.appendChild(document.createTextNode(' '));
-            return s;
-        });
-        var lines = [], top = null;
-        spans.forEach(function (s, i) {
-            var t = Math.round(s.getBoundingClientRect().top);
-            if (top === null || Math.abs(t - top) > 3) { lines.push([]); top = t; }
-            lines[lines.length - 1].push(words[i]);
-        });
-        p.textContent = '';
-        lines.forEach(function (ws, k) {
-            var l = document.createElement('span'), i = document.createElement('span');
-            l.className = 'rv-line'; i.className = 'rv-i'; i.textContent = ws.join(' ');
-            l.style.setProperty('--ri', k); l.appendChild(i); p.appendChild(l);
-        });
+    /* ---- geometry: the track runs through the centres of the nodes (x in the row layout, y in the stacked one); th[i] = where along it node i sits (0..1) ---- */
+    var th = [0, 1 / 3, 2 / 3, 1], len = 0, vertical = false;
+    function measure() {
+        var pr = process.getBoundingClientRect(), k = pr.width / (process.offsetWidth || 1) || 1;
+        vertical = window.innerWidth < 900;
+        var c = nodes.map(function (n) { var r = n.getBoundingClientRect(); return vertical ? ((r.top + r.height / 2) - pr.top) / k : ((r.left + r.width / 2) - pr.left) / k; });
+        len = Math.max(0, c[N - 1] - c[0]);
+        th = c.map(function (v) { return len > 0 ? (v - c[0]) / len : 0; });
+        process.style.setProperty('--len', len.toFixed(1) + 'px');
     }
-    var splitDone = false;
-    function splitAll() {
-        if (reduce) return;
-        texts.forEach(function (p, i) {
-            if (!p) return;
-            splitText(p); p.classList.add('rv-prep');
-            p.classList.toggle('rv-in', steps[i].classList.contains('is-active'));         /* in sync with the steps already reached */
-        });
-        splitDone = true;
-    }
-
-    /* ---- the charge path: pieces ring0, seg0, ring1, seg1, ... (weights: a ring 0.55, a segment 1); pos 0..TW along it, -1 = not started ---- */
-    /* a ring that is followed by a line is 1.5 turns (enter at the left point, round the whole circle, on over the top half to the right point where the line leaves); the last one is 1 turn */
-    var WR = 0.55, WS = 1, ringS = [], ringE = [], segS = [], segE = [], WRk = [], TURN = [], TW = 0;
-    for (var k = 0; k < N; k++) {
-        TURN[k] = k < N - 1 ? 1.5 : 1; WRk[k] = WR * TURN[k];
-        ringS[k] = TW; TW += WRk[k]; ringE[k] = TW;
-        if (k < N - 1) { segS[k] = TW; TW += WS; segE[k] = TW; }
-    }
-    var SW = 2, geo = null, chain = null, chainFil = { rings: [], segs: [] }, vertical = false;
-    /* the chain svg: built once, laid out (in the unscaled local pixels of .process) by layoutChain */
-    function svgEl(tag, attrs, parent) {
-        var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
-        for (var a in attrs) e.setAttribute(a, attrs[a]);
-        if (parent) parent.appendChild(e);
-        return e;
-    }
-    var chainTrk = { rings: [], segs: [] };
-    function buildChain() {
-        chain = svgEl('svg', { 'class': 'pn-chain', 'aria-hidden': 'true', focusable: 'false' });
-        var defs = svgEl('defs', {}, chain), g = svgEl('linearGradient', { id: 'pnChainGrad', gradientUnits: 'userSpaceOnUse', x1: '0', y1: '0', x2: '1', y2: '0' }, defs);
-        svgEl('stop', { offset: '0', 'stop-color': '#6c63ff' }, g); svgEl('stop', { offset: '1', 'stop-color': '#c850c0' }, g);
-        var trk = svgEl('g', {}, chain), fil = svgEl('g', { 'class': 'pn-fills' }, chain);
-        for (var i = 0; i < N; i++) {
-            chainTrk.rings[i] = svgEl('path', { 'class': 'pn-trk' }, trk);
-            chainFil.rings[i] = svgEl('path', { 'class': 'pn-fil', pathLength: '1' }, fil);
-            if (i < N - 1) { chainTrk.segs[i] = svgEl('line', { 'class': 'pn-trk' }, trk); chainFil.segs[i] = svgEl('line', { 'class': 'pn-fil', pathLength: '1' }, fil); }
-        }
-        chain._grad = g;
-        process.insertBefore(chain, process.firstChild);
-    }
-    function localPos(n, step) {                                    /* the node's position in the unscaled local pixels of .process (sub-pixel: the step's rect + the node's offset in it; the node itself may be scaled) */
-        var pr = process.getBoundingClientRect(), sr = step.getBoundingClientRect(), k = pr.width / (process.offsetWidth || 1) || 1;
-        return { x: (sr.left - pr.left) / k + n.offsetLeft, y: (sr.top - pr.top) / k + n.offsetTop };
-    }
-    function layoutChain() {
-        if (!chain) buildChain();
-        var W = process.offsetWidth, H = process.offsetHeight;
-        vertical = window.innerWidth < 768;
-        chain.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-        geo = { rings: [], segs: [], a0: vertical ? 1.5 * Math.PI : Math.PI };
-        var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
-        nodes.forEach(function (n, i) {
-            var p = localPos(n, steps[i]), w = n.offsetWidth, r = w / 2 - SW / 2, cx = p.x + w / 2, cy = p.y + n.offsetHeight / 2;
-            geo.rings[i] = { cx: cx, cy: cy, r: r };
-            minX = Math.min(minX, cx - w / 2); maxX = Math.max(maxX, cx + w / 2); minY = Math.min(minY, cy - w / 2); maxY = Math.max(maxY, cy + w / 2);
-            var sx = cx + r * Math.cos(geo.a0), sy = cy + r * Math.sin(geo.a0), ox = cx - r * Math.cos(geo.a0), oy = cy - r * Math.sin(geo.a0);
-            var d = 'M' + sx + ' ' + sy + 'A' + r + ' ' + r + ' 0 1 1 ' + ox + ' ' + oy + 'A' + r + ' ' + r + ' 0 1 1 ' + sx + ' ' + sy;
-            chainTrk.rings[i].setAttribute('d', d); chainFil.rings[i].setAttribute('d', d);
-        });
-        for (var i = 0; i < N - 1; i++) {
-            var a = geo.rings[i], b = geo.rings[i + 1], o = a.r + SW / 2, s = null;           /* o = the ring's outer edge */
-            if (Math.abs(a.cy - b.cy) < 2 && b.cx > a.cx) s = { x1: a.cx + o, y1: a.cy, x2: b.cx - o, y2: a.cy };
-            else if (Math.abs(a.cx - b.cx) < 2 && b.cy > a.cy) s = { x1: a.cx, y1: a.cy + o, x2: a.cx, y2: b.cy - o };
-            geo.segs[i] = s;
-            [chainTrk.segs[i], chainFil.segs[i]].forEach(function (e) {
-                if (s) { e.setAttribute('x1', s.x1); e.setAttribute('y1', s.y1); e.setAttribute('x2', s.x2); e.setAttribute('y2', s.y2); e.style.display = ''; }
-                else e.style.display = 'none';
-            });
-        }
-        var g = chain._grad;
-        g.setAttribute('x1', vertical ? (minX + maxX) / 2 : minX); g.setAttribute('x2', vertical ? (minX + maxX) / 2 : maxX);
-        g.setAttribute('y1', vertical ? minY : (minY + maxY) / 2); g.setAttribute('y2', vertical ? maxY : (minY + maxY) / 2);
-    }
-    layoutChain();
-    window.addEventListener('load', layoutChain);
-    if ('ResizeObserver' in window) new ResizeObserver(layoutChain).observe(process);
     function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
 
-    /* ---- the state: cur = the latest step the head has arrived at (-1: none), doneTo = the last step whose ring is complete (-1: none) ---- */
-    var curState = -2, doneState = -2, movingT = [];
-    function setState(cur, doneTo) {
-        if (cur === curState && doneTo === doneState) return;
-        curState = cur; doneState = doneTo;
+    /* ---- the state: cur = the latest step the fill has reached (-1: none), finAll = the last step is completed too ---- */
+    var curState = -2, finState = null;
+    function setState(cur, finAll) {
+        if (cur === curState && finAll === finState) return;
+        curState = cur; finState = finAll;
         steps.forEach(function (step, i) {
-            var reached = i <= cur, done = i <= doneTo;
+            var reached = i <= cur, done = i < cur || (finAll && i === N - 1 && cur === N - 1);
             step.classList.toggle('is-active', reached);
             step.classList.toggle('is-current', reached && !done);
             step.classList.toggle('is-done', done);
-            var p = texts[i];
-            if (p && p.classList.contains('rv-prep') && p.classList.contains('rv-in') !== reached) {
-                p.classList.add('rv-moving'); p.classList.toggle('rv-in', reached);
-                clearTimeout(movingT[i]); movingT[i] = setTimeout(function () { p.classList.remove('rv-moving'); }, 1600);
-            }
         });
         if (reel) reel.style.setProperty('--cur', String(cur + 1));            /* 0/4 (dim) before step 1, then 1..4 exactly with the steps; rolls back on reverse */
         if (counter) counter.classList.toggle('on', cur >= 0);
     }
 
-    /* pos -> every ring / segment fraction, the state and the glowing head */
+    /* pos (-1 = not started, 0..1 along the track) -> the fill, the head, the state */
     function applyPos(pos, finAll) {
-        var cur = -1, doneTo = -1;
-        for (var i = 0; i < N; i++) {
-            var g = clamp01((pos - ringS[i]) / WRk[i]), rf = Math.min(1, g * TURN[i]), sf = i < N - 1 ? clamp01((pos - segS[i]) / WS) : 0;
-            steps[i].style.setProperty('--ring', rf.toFixed(3));
-            steps[i].style.setProperty('--seg', sf.toFixed(3));
-            setFill(chainFil.rings[i], rf);
-            if (i < N - 1) setFill(chainFil.segs[i], geo && geo.segs[i] ? sf : 0);
-            if (pos >= ringS[i]) cur = i;
-            if (pos > ringE[i] + 1e-6) doneTo = i;
-        }
-        if (finAll) doneTo = N - 1;
-        setState(cur, doneTo);
-        placeHead(pos);
-    }
-    function setFill(e, f) {                                        /* the gradient fill of one piece: dash offset = 1 - fraction; an undrawn round cap would leave a dot */
-        if (!e) return;
-        e.style.strokeDashoffset = (1 - f).toFixed(4); e.style.visibility = f > 0.0005 ? 'visible' : 'hidden';
-    }
-    function placeHead(pos) {
-        if (!tip || reduce) return;
-        if (pos <= 0.0001 || pos >= TW - 0.0001) { tip.style.opacity = '0'; return; }
-        if (!geo) return;
-        var x = null, y = null;
-        for (var i = 0; i < N && x === null; i++) {
-            if (pos <= ringE[i]) {                                        /* round circle i: in at its left (top on phones) point, clockwise; 1.5 turns, out at the opposite point */
-                var rg = geo.rings[i], th = geo.a0 + clamp01((pos - ringS[i]) / WRk[i]) * TURN[i] * 2 * Math.PI;
-                x = rg.cx + rg.r * Math.cos(th); y = rg.cy + rg.r * Math.sin(th);
-            } else if (i < N - 1 && pos <= segE[i]) {                     /* along line i, towards the next circle */
-                var s = geo.segs[i], f = clamp01((pos - segS[i]) / WS);
-                if (s) { x = s.x1 + f * (s.x2 - s.x1); y = s.y1 + f * (s.y2 - s.y1); }
-            }
-        }
-        if (x === null) { tip.style.opacity = '0'; return; }
-        tip.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
-        tip.style.opacity = '1';
+        var p = pos < 0 ? 0 : clamp01(pos);
+        process.style.setProperty('--p', p.toFixed(4));
+        process.classList.toggle('is-running', pos >= 0 && !(finAll && pos >= 1));
+        var cur = -1;
+        for (var i = 0; i < N; i++) if (pos >= 0 && pos >= th[i] - 1e-6) cur = i;
+        setState(cur, !!finAll);
     }
 
     /* the pinned timeline: t -> pos; step 1 is reached just after the pin begins (nothing before) */
     var T0 = 0.07, T1 = 0.93, TDONE = 0.97;
-    function posAt(t) { return t < T0 ? -1 : clamp01((t - T0) / (T1 - T0)) * TW; }
+    function posAt(t) { return t < T0 ? -1 : clamp01((t - T0) / (T1 - T0)); }
 
     function fit() {
         var inner = section.querySelector('.steps-inner');
@@ -1048,7 +905,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         var avail = window.innerHeight - parseFloat(pcs.paddingTop) - parseFloat(pcs.paddingBottom);
         section.style.setProperty('--fit', '1');
         var natural = inner.offsetHeight;
-        /* the head line is laid out at size / fit, so it always renders at the common size: only the rest scales */
+        /* the head line (and the label / subheading) are laid out at size / fit, so they always render at the common size: only the rest scales */
         var hd = inner.querySelector('.steps-title');
         var fixedH = hd ? hd.offsetHeight : 0;
         var s = natural > fixedH ? Math.max(0.55, Math.min(1, (avail - fixedH) / (natural - fixedH))) : 1;
@@ -1059,7 +916,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     function update() {
         ticking = false;
-        if (reduce) { applyPos(TW, true); section.classList.add('steps-done'); if (ctaRow) ctaRow.classList.add('is-in'); return; }
+        if (reduce) { applyPos(1, true); section.classList.add('steps-done'); if (ctaRow) ctaRow.classList.add('is-in'); return; }
         var r = section.getBoundingClientRect();
         var vh = window.innerHeight;
         if (pinQuery.matches) {
@@ -1070,18 +927,19 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
             section.classList.toggle('steps-done', t >= TDONE);
             if (ctaRow) ctaRow.classList.toggle('is-in', t >= TDONE);
         } else {
-            /* no pin: the path follows the circles: the mark (~60% of the viewport) is a position along it; a ring takes +-36px of scroll */
-            var mark = vh * 0.6, R = 36, yc = nodes.map(function (n) { var b = n.getBoundingClientRect(); return b.top + b.height / 2; });
-            var pos = -1;
-            for (var i = 0; i < N; i++) {
-                if (mark >= yc[i] - R && mark <= yc[i] + R) { pos = ringS[i] + (mark - (yc[i] - R)) / (2 * R) * WRk[i]; break; }
-                if (i < N - 1 && mark > yc[i] + R && mark < yc[i + 1] - R) { pos = segS[i] + (mark - (yc[i] + R)) / Math.max(1, yc[i + 1] - yc[i] - 2 * R) * WS; break; }
-                if (i === N - 1 && mark > yc[i] + R) pos = TW;
+            /* no pin: the fill follows the mark (~60% of the viewport) along the track (stacked: down the nodes; a short wide window: by the row's position) */
+            var mark = vh * 0.6, pos;
+            if (vertical) {
+                var yc = nodes.map(function (n) { var b = n.getBoundingClientRect(); return b.top + b.height / 2; });
+                pos = mark < yc[0] - 24 ? -1 : clamp01((mark - yc[0]) / Math.max(1, yc[N - 1] - yc[0]));
+            } else {
+                var pr = process.getBoundingClientRect();
+                pos = clamp01((vh * 0.85 - pr.top) / (vh * 0.4)); if (pos <= 0) pos = -1;
             }
             var bodyB = steps[N - 1].getBoundingClientRect().bottom;
-            applyPos(pos, pos >= TW && bodyB < vh * 0.85);
+            applyPos(pos, pos >= 1 && bodyB < vh * 0.85);
             section.classList.add('steps-done');
-            if (ctaRow) ctaRow.classList.toggle('is-in', pos >= ringS[N - 1]);
+            if (ctaRow) ctaRow.classList.toggle('is-in', pos >= th[N - 1]);
         }
     }
 
@@ -1093,10 +951,8 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         scheduleSnap();
     }
 
-    /* ---- gentle snap (pinned only): after the scroll stops, settle where a ring is complete (like Értékek) ---- */
-    var snapT = 0, TARGETS = [];
-    for (var q = 0; q < N - 1; q++) TARGETS.push(T0 + ringE[q] / TW * (T1 - T0));
-    TARGETS.push(0.985);
+    /* ---- gentle snap (pinned only): after the scroll stops, settle where a step has just been reached (like Értékek) ---- */
+    var snapT = 0;
     function scheduleSnap() { clearTimeout(snapT); snapT = setTimeout(snap, 180); }
     function snap() {
         if (reduce || !pinQuery.matches || !window.VB || !VB.lenis || VB.lenis.isScrolling) return;
@@ -1104,8 +960,9 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         var total = Math.max(1, r.height - (pinEl ? pinEl.offsetHeight : window.innerHeight));
         var t = -r.top / total;
         if (t < 0.03 || t > 0.995) return;
-        var best = TARGETS[0];
-        TARGETS.forEach(function (x) { if (Math.abs(x - t) < Math.abs(best - t)) best = x; });
+        var targets = th.slice(1).map(function (x) { return T0 + x * (T1 - T0) + 0.01; }); targets.push(0.985);      /* a hair past the node: the step has surely been reached */
+        var best = targets[0];
+        targets.forEach(function (x) { if (Math.abs(x - t) < Math.abs(best - t)) best = x; });
         var dy = (best - t) * total;
         if (Math.abs(dy) < 6) return;
         VB.lenis.scrollTo(window.scrollY + dy, { duration: 0.6 });
@@ -1113,7 +970,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     /* ---- the heading: the SAME reveal as "Három terület, egy kézből." (the shared .fx-* rules in style.css: letters rise from their masks, the accent dot drops with a ripple; the
        proximity hover comes from js/heading-fx.js) - compressed to <= 1.3s and started EARLY: when the section top enters 85% of the viewport (before the pin begins), so it has
-       landed before step 1 charges. Leaving downwards (scrolling back up) reverses it. The counter is not part of it (see setState). ---- */
+       landed before step 1 is reached. Leaving downwards (scrolling back up) reverses it. The counter is not part of it (see setState). ---- */
     var chars = [];
     if (title) {
         Array.prototype.forEach.call(title.querySelectorAll('.st-rv'), function (rv) {
@@ -1149,9 +1006,12 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', function () { fit(); if (splitDone) splitAll(); layoutChain(); onScroll(); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { splitAll(); fit(); layoutChain(); update(); });
+    window.addEventListener('resize', function () { fit(); measure(); onScroll(); });
+    if ('ResizeObserver' in window) new ResizeObserver(function () { measure(); onScroll(); }).observe(process);
+    window.addEventListener('load', function () { measure(); update(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(); measure(); update(); });
     fit();
+    measure();
     update();
 })();
 

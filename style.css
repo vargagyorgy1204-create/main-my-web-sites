@@ -4,7 +4,7 @@
     --accent-green: #A3BF6F;
     --dark: #0f0c29;
     --gradient: linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
-    /* Brand card system */
+
     --card-primary:      linear-gradient(135deg, #6c63ff 0%, #c850c0 100%);
     --card-secondary:    #1a1f2e;
     --card-accent-warm:  linear-gradient(135deg, #7c1263 0%, #c850c0 100%);
@@ -16,14 +16,14 @@
    Reference viewport 1440x900: every size is a fluid clamp() of vw / svh derived from it. A section may only USE these tokens;
    a new value needs a new token here. */
 :root {
-    /* header + content corridor */
+
     --hdr-h: 92px;                                                         /* fixed header height (76px on phones) */
     --hdr-side: 32px;                                                      /* logo / burger distance from the window edge */
     --hdr-logo-w: 44px;
     --gutter: 20px;                                                        /* THE side gutter of the whole site (left = right; >= 1024px: 96px = logo right edge 76px + 20px); header offset --hdr-side is separate */
     --content-gutter: var(--gutter);                                       /* aliases of --gutter (kept so no selector changes) */
     --content-max: calc(100vw - 2 * var(--gutter));                        /* content spans gutter -> gutter on every screen, never re-centred */
-    /* vertical rhythm of a section */
+
     --section-top: calc(var(--hdr-h) + clamp(24px, 4svh, 56px));           /* section top -> eyebrow */
     --section-bottom: clamp(48px, 9svh, 104px);                            /* last content block -> section / viewport bottom */
     --sec-bottom: clamp(20px, 3svh, 28px);                                 /* pinned Együttműködés bottom padding (legacy, tighter) */
@@ -31,21 +31,21 @@
     --eyebrow-gap: clamp(12px, 1.6svh, 20px);                              /* generic eyebrow -> next block */
     --eyebrow-head-gap: 10px;                                              /* eyebrow -> heading of the unified sections */
     --head-gap: clamp(28px, 4svh, 56px);                                   /* heading -> first content block */
-    /* Együttműködés: vertical rhythm of a step and of the closing row */
+
     --step-circle-title: clamp(20px, 2.6svh, 32px);                        /* number circle -> step title */
     --step-title-desc: clamp(10px, 1.4svh, 16px);                          /* step title -> description */
     --step-desc-divider: clamp(32px, 5svh, 56px);                          /* description -> divider above the CTA row */
     --cta-line-fs: 18px;                                                   /* the closing row's text lines = the step descriptions (16px on phones) */
     --head-steps-gap: clamp(40px, 6svh, 72px);                             /* Együttműködés: heading -> the steps row */
     --divider-cta: clamp(24px, 3.4svh, 40px);                              /* divider -> CTA row */
-    /* outline / pill buttons of Szolgáltatások + the CTA row: one size (the "Részletek" button is the reference) */
+
     --btn-fs: 15px;
     --btn-pad-y: 15px;
     --btn-px: 34px;
     --btn-h: calc(2 * var(--btn-pad-y) + 1.2 * var(--btn-fs) + 4px);       /* 2 x padding + line-height 1.2 + 2 x 2px border */
-    /* Szolgáltatások */
+
     --svc-desc-btn-gap: clamp(36px, 5svh, 60px);                           /* service description -> Részletek / Ajánlatot kérek buttons (same in all three blocks) */
-    /* Kapcsolat form card (fields, spacing) */
+
     --cf-fs: 16px;                                                         /* text / placeholder of inputs, select, textarea on phones / tablets (>= 16px: no iOS zoom); 13.5px from 1024px */
     --cf-h: 43.2px;                                                        /* input / select height on phones / tablets; clamp(39.6px, 5.04svh, 43.2px) from 1024px */
     --cf-label-scale: 0.666;                                               /* floating label: 16px -> ~10.7px (0.78 -> ~10.5px at 13.5px) */
@@ -68,7 +68,7 @@
     --cf-btn-gap: calc(var(--cf-title-gap) + 0.27 * var(--cf-title-fs));      /* consent row -> submit ring = title letters' bottom -> first field: the title gap + the descender room of the title line (0.27em) */
     --cf-pad-top: clamp(20px, 2.8svh, 30px);                               /* form card top edge -> title */
     --cf-bottom-pad: calc(var(--cf-btn-gap) * 1.4 - 1px);                     /* submit ring (outer edge) AND e-mail button -> card bottom = 1.4 x (consent row -> submit ring): optical compensation, the card's 1px border is part of it */
-    /* footer: divider line + back-to-top badge */
+
     --footer-desc-fs: 16px;                                                /* footer description (first column), line-height 1.6 */
     --footer-link-fs: 15.2px;                                              /* Navigáció links and Elérhetőség rows */
     --footer-link-lh: 1.75;
@@ -77,23 +77,23 @@
     --footer-pad-y: clamp(33px, calc(5.5svh - 3px), 57px);                             /* footer top edge -> column headings AND bottom of the tallest column -> divider line (equal) */
     --footer-divider-bottom: clamp(24px, 4svh, 48px);                      /* divider line -> wordmark top */
     --footer-stamp-d: clamp(70px, 9.3svh, 100px);                          /* back-to-top badge: the hero badge size (76px on phones) */
-    /* tight anchor (.section--tight): closer to the top-left; the gutter is the logo's right edge (32 + 44) + 20px, symmetric on the right */
+
     --section-top-tight: calc(var(--hdr-h) + clamp(8px, 1.6svh, 20px));
     --content-gutter-tight: var(--gutter);
     --content-max-tight: var(--content-max);
-    /* headings */
+
     --section-heading-size: clamp(18px, min(4.277vw, 6.84svh), 69.12px);   /* the 6 unified .section-heading */
     --section-heading-lh: 1.12;
     --about-heading-size: clamp(30px, 8.2vw, 42px);                        /* Rólam, list layout */
     --about-heading-size-pinned: clamp(30px, min(5.29vw, 7.59svh), 74px);   /* Rólam, pinned story (>= 900px; +15% of the former min(4.6vw, 6.6svh), 64px) */
-    /* Portfólió project cards: ONE spacing logic (see DESIGN-SYSTEM.md) */
+
     --pf-card-pad: clamp(20px, 4vw, 64px);                                 /* the card's padding, equal on all four sides */
     --pf-gap-col: clamp(24px, 3.3vw, 56px);                                /* text column <-> video column */
     --pf-gap-meta: clamp(14px, 2.4svh, 28px);                              /* meta row <-> text / video grid */
     --pf-meta-h: 36px;                                                     /* counter + tags row */
     --pf-text-min: 300px;                                                  /* the text column never gets narrower (tags rows, 900-1100px wide windows) */
     --pf-bar-h: 36px;                                                      /* the browser window's top bar (dots strip) */
-    /* hero text block + living window (reference 1440x900) */
+
     --hero-lift: clamp(8px, 1.78svh, 16px);                                /* the label sits this much higher than the other sections' eyebrows (label -> headline gap unchanged) */
     --hero-title-sub: clamp(21px, 4.2svh, 45px);                           /* headline -> subheading (was clamp(14px, 2.8svh, 30px), +50%) */
     --hero-sub-fs: clamp(18px, min(1.93vw, 2.7svh), 26px);                 /* subheading size >= 900px (was clamp(15.4px, min(1.65vw, 2.31svh), 22px), +17%) */
@@ -115,7 +115,7 @@
     --content-max: var(--content-max-tight);
 }
 @media (min-width: 1024px) {
-    /* the Készségek row columns keep their proportions of the old 1152px corridor (56 | 48 | 1fr | 380 of a 1128px row) */
+
     #skills .skill-row { grid-template-columns: 4.96% 4.26% minmax(0, 1fr) minmax(0, 33.7%); }
 }
 
@@ -262,7 +262,7 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
     justify-content: center;
     gap: clamp(20px, 4svh, 40px);
     block-size: 100%;
-    /* the header (logo + close X, 92px) stays clear above the list */
+
     padding: 92px 24px clamp(24px, 4svh, 48px);
     overflow-y: auto;
 }
@@ -288,7 +288,7 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
     padding: 6px 12px;
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    /* five items + socials fit one screen: width- and height-aware */
+
     font-size: clamp(28px, min(6vw, 7.6svh), 64px);
     line-height: 1.3;
     text-wrap: balance;
@@ -927,7 +927,7 @@ html.has-cursor .service-modal-close:hover,
     height: 40px;
     border-radius: 14px;
     color: #fff;
-    /* the Értékek tile: translucent, tinted with the dialog's accent, 1px inner ring, white 1.75px Lucide icon at 55% of the tile */
+
     background: color-mix(in srgb, var(--m-accent) 34%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--m-accent-2) 42%, transparent);
 }
@@ -2614,7 +2614,7 @@ body.contact-page {
 }
 
 .btn-about {
-    /* same size / type as the "Részletek" outline button (tokens --btn-*), light-theme colours on the white card */
+
     position: relative;
     isolation: isolate;
     display: inline-flex;
@@ -2994,7 +2994,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
     max-width: calc(var(--ap-h) * 0.8);
     max-height: var(--ap-h);
     aspect-ratio: 4 / 5;
-    /* the frame breathes: the gradient angle drifts slowly (paint only, no layout) */
+
     background:
         linear-gradient(var(--card-secondary), var(--card-secondary)) padding-box,
         linear-gradient(var(--ap-ang), #6c63ff 0%, #c850c0 100%) border-box;
@@ -3909,7 +3909,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     width: 100%;
     height: 100%;
     border-radius: 32px;
-    /* no backdrop-filter (expensive under a moving element): a slightly more opaque solid gradient reads the same */
+
     background: linear-gradient(145deg, rgba(30, 36, 64, 0.94), rgba(15, 22, 41, 0.96));
     border: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow: 0 12px 26px rgba(0, 0, 0, 0.38);
@@ -3981,7 +3981,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     list-style: none;
 }
 .process__step { position: relative; }
-/* (the step circle, its ring, number, check and the body states: see the Együttműködés block at the end of the file) */
 .process__title {
     margin: 0 0 12px;
     font-family: 'Syne', sans-serif;
@@ -3995,11 +3994,10 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     text-shadow: none;
 }
 /* four columns: smaller titles that may wrap to two lines; the reserved height keeps every paragraph on the same y */
-@media (min-width: 768px) {
+@media (min-width: 900px) {
     .process__title { font-size: clamp(19px, 1.9vw, 25px); overflow-wrap: break-word; }   /* one-word titles: no reserved second line */
     .process__text { max-width: none; }
 }
-/* tablet: 2 x 2 columns, one line per row (node 1-2 and node 3-4) */
 @media (min-width: 768px) and (max-width: 1199px) {
     .process { --n: 2; grid-template-columns: repeat(2, 1fr); row-gap: 48px; }
 }
@@ -4012,18 +4010,18 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     color: rgba(255, 255, 255, 0.65);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 899px) {
     #steps { padding: 88px 20px; }
     .steps-head { margin-bottom: 44px; }
     .process { grid-template-columns: 1fr; gap: 40px; }
     .process__title { min-height: 0; }
-    .process__step { display: grid; grid-template-columns: 56px 1fr; column-gap: 20px; align-items: start; }
-    .process__body { margin-top: 4px; }
+    .process__step { display: grid; grid-template-columns: 48px 1fr; column-gap: 20px; align-items: start; }
+    .process__body { margin-top: 0; }
 }
 
 /* Steps – pinned (sticky) mode: section stays on screen while the line draws step by step */
-@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-    /* section = the stage (its content + --section-top above + --section-bottom below, never more than one viewport) + 220svh of pin run; --stage-h is set by script.js */
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+
     #steps { height: calc(100vh + 220vh); height: calc(100svh + 240svh); height: calc(var(--stage-h, 100svh) + 240svh); padding: 0; }
     .steps-pin {
         position: sticky;
@@ -5444,7 +5442,7 @@ footer {
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    /* vertical fade: lightest at the top of the letters, practically the footer background in the lower third */
+
     -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0.5) 22%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.12) 55%, rgb(0 0 0 / 0.06) 68%, rgb(0 0 0 / 0.04) 100%);
     mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0.5) 22%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.12) 55%, rgb(0 0 0 / 0.06) 68%, rgb(0 0 0 / 0.04) 100%);
 }
@@ -5563,10 +5561,10 @@ footer { padding-bottom: var(--cb-h, 0px); }
     #why { padding-inline: var(--content-gutter) !important; }
 
 }
-@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps { padding-inline: 0; }
     .steps-pin { padding-inline: var(--content-gutter); }
-    /* the pinned block is scaled to fit the height: widen the layout box by 1/fit so the scaled result still spans the corridor */
+
     .steps-pin .steps-inner {
         width: calc(min(var(--content-max), 100%) / var(--fit, 1));
         max-width: none;
@@ -5593,7 +5591,7 @@ footer { padding-bottom: var(--cb-h, 0px); }
     .nav--scrolled::before { opacity: 1; }
 }
 @media (max-width: 1023px) {
-    /* no backdrop-filter support: a slightly stronger tint only */
+
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
         .nav::before { background: rgba(14, 16, 32, 0.6); }
         .nav--on-light::before { background: rgba(255, 255, 255, 0.72); }
@@ -5651,7 +5649,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     width: fit-content;
 }
 @media (min-width: 768px) and (min-height: 520px) { #why { align-items: flex-start !important; } }
-@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps { padding: 0; }                       /* the pinned stage carries the padding */
     .steps-pin { align-items: flex-start; padding-inline: var(--content-gutter); }
     .steps-pin .steps-inner { transform-origin: left top; }
@@ -5694,7 +5692,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 @media (min-width: 768px) and (min-height: 520px) {
     #why .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
 }
-@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps .steps-title { font-size: calc(min(var(--section-heading-size), var(--st-cap)) / var(--fit, 1)); }
 }
 
@@ -5706,7 +5704,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 /* the cards take whatever is left under the heading (the heading, eyebrow and bottom gap never give way): low windows get shorter cards */
 
 /* ===== EGYÜTTMŰKÖDÉS: step rhythm ===== */
-.process__node { transform-origin: 0 50%; }             /* the active circle grows from its left edge: the title stays flush with it */
+
 @media (min-width: 768px) {
     .process__body { margin-top: var(--step-circle-title); }
     .process__title { margin-bottom: var(--step-title-desc); }
@@ -6634,11 +6632,9 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .service-modal[data-view="single"] > .service-modal__scroll { padding-bottom: 0; }
 .service-modal[data-view="single"]:not(.extra-modal) > .service-modal__scroll { margin-bottom: calc(var(--sm-r) - 7px); }
 
-/* ===== EGYÜTTMŰKÖDÉS: "charge running along the line" (script.js: the steps IIFE) =====
-   Head: one large line (the section heading's typography) - "Együttműködés" decodes (random letters settle left -> right), "1/4" is an odometer
-   reel in the brand gradient. Steps: the circles are plain outlines; a gradient ring draws when a step is reached, the number rolls to the gradient, the ring
-   turns slowly while the step is current; a passed step turns its number into a check and sends one ripple. States: .is-active (reached), .is-current
-   (the latest), .is-done (passed). Transform / opacity / stroke only. */
+/* ===== EGYÜTTMŰKÖDÉS: label + "Lépésről lépésre 1/4." + subheading, a smooth step progress (script.js: the steps IIFE) =====
+   Head: the section label (.section-eyebrow), one large line (the section heading's typography) with the counter "1/4" as an odometer reel in the brand gradient, and a 2-line
+   subheading (the Hero's subheading style). Steps: see the "step progress" block at the end of the file. */
 .steps-title {
     --st-cap: calc(min(100vw - 2 * var(--content-gutter), var(--content-max)) / 20.3);        /* "Lépésről lépésre 1/4." is 20.2em wide: it stays on one line between the gutters */
     margin: 0;
@@ -6657,80 +6653,27 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .st-reel { display: inline-block; vertical-align: top; height: calc(var(--section-heading-lh) * 1em); overflow: clip; }
 .st-reel > span { display: block; text-align: left; transform: translateY(calc(var(--cur, 0) * -100%)); transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
 
-.process__node {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: transparent;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: rgb(255 255 255 / 0.45);
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.process__node::before { content: ""; position: absolute; z-index: -1; inset: -10px; border-radius: 50%; background: radial-gradient(circle, rgb(200 80 192 / 0.38), rgb(108 99 255 / 0.18) 45%, transparent 70%); opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
-.process__node::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1.5px solid rgb(200 80 192 / 0.7); opacity: 0; pointer-events: none; }
-.pn-num { position: relative; display: block; width: 2.4em; height: 1.4em; line-height: 1.4; font-variant-numeric: tabular-nums; clip-path: inset(0 -3px); }
-.pn-n { position: absolute; inset: 0; display: block; text-align: center; text-indent: 0.08em; line-height: 1.4; letter-spacing: inherit; transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.pn-n2 { translate: 0 115%; color: transparent; -webkit-text-fill-color: transparent; background: var(--card-primary); -webkit-background-clip: text; background-clip: text; }
-.pn-check { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; stroke: #fff; stroke-width: 2.3; pointer-events: none; }      /* ~45% of the circle, 2.5px stroke */
-.pn-check path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.4s ease; }
-.pn-check { visibility: hidden; transition: visibility 0s 0.45s; }                         /* an undrawn dash would still leave its round cap as a dot */
-.process__step.is-done .pn-check { visibility: visible; transition-delay: 0s; }
-.pn-check:not([data-draw]) path { stroke-dasharray: none; stroke-dashoffset: 0; opacity: 0; }
 
-.process__step.is-active .pn-n:not(.pn-n2) { translate: 0 -115%; }
-.process__step.is-active .pn-n2 { translate: 0 0; }
-.process__node::before { scale: 0.85; transition: opacity 0.5s ease, scale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.process__step.is-current .process__node::before { opacity: 1; scale: 1.12; }
-.process__step.is-done .process__node::before { opacity: 0.3; scale: 1.05; }
-.process__step.is-done .pn-n2 { translate: 0 -115%; }
-.process__step.is-done .pn-check[data-draw] path { stroke-dashoffset: 0; transition-delay: 0.15s; }
-.process__step.is-done .process__node::after { animation: pnRipple 0.7s ease-out both; }
+
 @keyframes pnRipple { from { transform: scale(1); opacity: 0.7; } to { transform: scale(2.3); opacity: 0; } }
-/* the body: dim title until the step is reached, the description rises line by line from masks (the .rv-* rules, toggled with .is-active) */
-.process__body { opacity: 1; transform: none; transition: none; }
-.process__title { color: rgb(255 255 255 / 0.4); -webkit-text-fill-color: rgb(255 255 255 / 0.4); transition: color 0.5s ease, -webkit-text-fill-color 0.5s ease; }
-.process__step.is-active .process__title { color: #fff; -webkit-text-fill-color: #fff; }
-@media (min-width: 768px) { .process__text { max-width: min(100%, 30ch); text-wrap: balance; } }
+
+@media (min-width: 900px) { .process__text { max-width: min(100%, 30ch); text-wrap: balance; } }
 .process__text { font-size: var(--cta-line-fs); line-height: 1.45; }
-.process__text .rv-line { display: block; white-space: nowrap; }
-.process__text .rv-i { display: block; transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd, 0s), opacity 0.45s ease var(--rd, 0s); }
-.process__text.rv-prep .rv-i { transform: translateY(100%); opacity: 0; --rd: 0s; }
-.process__text.rv-prep.rv-in .rv-i { transform: none; opacity: 1; --rd: calc(0.15s + var(--ri, 0) * 0.07s); }
-.process__text.rv-moving .rv-line { overflow: clip; }
-/* the charge: a glowing head at the tip of the filling line (JS moves it; desktop and phone layouts, not the 2 x 2 tablet one) */
-.process__head { position: absolute; left: 0; top: 0; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: radial-gradient(circle, #fff 0, rgb(200 80 192 / 0.9) 35%, transparent 70%); opacity: 0; pointer-events: none; will-change: transform; }
-@media (prefers-reduced-motion: reduce) {
-    .process__node, .process__node::before, .pn-n, .pn-check path, .st-reel > span, .process__title, .process__text .rv-i { transition: none !important; }
-    .process__step.is-done .process__node::after { animation: none; }
-    .process__head { display: none; }
-}
+
+@media (prefers-reduced-motion: reduce) { .st-reel > span { transition: none !important; } }
 @media (max-width: 767px) { .steps-title { font-size: min(var(--section-heading-size), calc((100vw - 40px) / 16)); } }      /* "EGYÜTTMŰKÖDÉS" (15.7em) must fit between the phone gutters */
 #steps-cta .hbtn { justify-content: center; }
 
-/* ===== EGYÜTTMŰKÖDÉS refinements: two-line head, segments that wrap the circles, one charge path ===== */
-.steps-title .st-line { display: block; }
+/* ===== EGYÜTTMŰKÖDÉS refinements ===== */
+
 .st-nb { display: inline-block; white-space: nowrap; margin-left: 0.35em; }          /* the counter and its dot never part; 0.35em after the text */
 #steps .steps-head { margin-bottom: var(--head-steps-gap); }
-@media (min-width: 768px) and (max-width: 1199px) { .process__head { display: none; } }
+
 @media (max-width: 767px) { :root { --cta-line-fs: 16px; } }
 @media (min-width: 1200px) { .process__text { max-width: none; width: calc(100% + 20px); } }      /* four columns: the description may reach 20px into the column gap (12px stay free) so it keeps two lines at 1366 too */
-@media (min-width: 1200px) and (max-width: 1319px) { :root { --cta-line-fs: 16px; } }      /* the narrowest desktop columns (1280): the shared line size is 16px, so the descriptions keep two lines */
+@media (min-width: 900px) and (max-width: 1319px) { :root { --cta-line-fs: 16px; } }      /* the narrowest desktop columns (1280): the shared line size is 16px, so the descriptions keep two lines */
 
-/* ===== EGYÜTTMŰKÖDÉS: services-style heading reveal (shared .fx-* rules above), counter synced to the steps, the line and the circles as one chain ===== */
-/* The chain (script.js builds one svg over .process): circle tracks, line tracks, and their gradient fills share one stroke width (2px), round caps and ONE gradient mapped along the
-   whole row. Each line runs from the outer edge of circle N to the outer edge of circle N+1 on the centre line (tangent joins); nothing is drawn inside a circle. */
-.pn-chain { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.pn-chain .pn-trk { fill: none; stroke: rgb(255 255 255 / 0.12); stroke-width: 2; stroke-linecap: round; }
-.pn-chain .pn-fil { fill: none; stroke: url(#pnChainGrad); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; visibility: hidden; }
-.pn-chain .pn-fills { filter: drop-shadow(0 0 5px rgb(200 80 192 / 0.5)); }
-
+/* ===== EGYÜTTMŰKÖDÉS: services-style heading reveal (shared .fx-* rules above), counter synced to the steps ===== */
 /* heading: shared reveal, compressed to <= 1.3s (letters 0.01s apart, 0.55s each, the dot drops at 0.45s); the counter is NOT part of it (script.js: driven by the step state only) */
 #steps .steps-title { --stg: 0.01s; --dd: 0.45s; }
 #steps .steps-title .sh-char { transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.35s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s); }
@@ -6760,7 +6703,6 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 :root { --why-bg: #170f36; --why-ramp: clamp(140px, 24svh, 260px); }
 #why { background: linear-gradient(180deg, #0f1629 0, var(--why-bg) var(--why-ramp), var(--why-bg) calc(100% - var(--why-ramp)), #0f1629 100%); }
 #why .section-heading { --sh-color: #fff; }
-
 
 /* ===== Készségek -> Értékek: one long, eased blend (~1 viewport): the lower max(35%, 50svh) of Készségek shifts #10172a toward the Értékek violet-navy, the top --why-ramp-top of Értékek finishes it
    (smoothstep over the whole span, 10 stops per part: no linear band). Készségek keeps its flat #10172a above the blend; the two parts meet at the same colour. */
@@ -6966,7 +6908,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
   .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
   /* the text group is centred in its 2/3 column (left-aligned inside) */
   .pf-ig__copy { order: 2; display: flex; flex-direction: column; align-items: center; text-align: center; --pf-cg: var(--s2); gap: var(--pf-cg); min-inline-size: 0; inline-size: fit-content; max-inline-size: 100%; justify-self: center;
-    /* centre the VISIBLE group: the frame's top stroke sits a few px inside its box, so the copy is pulled up by that inset (top gap = bottom gap) */
+
     margin-block-start: calc(var(--pf-qrbox) * -0.0217 + 1.5px); }
   .pf-ig__btnwrap { margin-block-start: calc(var(--pf-cg) * 0.5); }              /* description -> button = 1.5 x the title -> description gap */
   .pf-ig .pf-case__block { max-inline-size: 36ch; }
@@ -7519,4 +7461,53 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
     .hs__track { scroll-behavior: auto; }
     .hs__bg { display: none !important; }
     .hs__ic, .hs__card::before, .hs__card::after, .hs__card.is-active .hs__ic { animation: none !important; }
+}
+
+/* ===== EGYÜTTMŰKÖDÉS: subheading (the Hero's subheading style, two balanced lines), step progress, compact CTA pill =====
+   Step progress: a thin 2px track (white 12%) through the centres of the four nodes; a brand-gradient fill grows with the scroll (scrub, no steps) with a soft glowing head at its tip
+   (script.js sets --p 0..1 on .process and --len = the track length in px). A node starts as a 10px dot (white 30%); when the fill reaches it, it grows into a 48px round brand-gradient icon
+   (the mini OS dock style) with one soft glow pulse; a completed step gets a 14px check badge on the icon's corner. Text: upcoming 45%, current 100%, completed 75% (0.4s). */
+.steps-sub {
+    margin: clamp(10px, 1.9svh, 22px) 0 0;
+    font: 400 calc(var(--hero-sub-fs) / var(--fit, 1))/1.65 'Montserrat', sans-serif;
+    color: rgb(255 255 255 / 0.68);
+    max-inline-size: var(--hero-sub-w);
+    text-wrap: balance;
+}
+@media (max-width: 899px) { .steps-sub { font-size: 15.4px; max-inline-size: none; } }
+.process { --p: 0; --len: 0px; }
+.process__track { position: absolute; z-index: 0; left: 24px; top: 23px; inline-size: var(--len); block-size: 2px; border-radius: 1px; background: rgb(255 255 255 / 0.12); pointer-events: none; }
+.process__fill { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(90deg, #5b5bf0, #9b3fd8 55%, #C026A3); transform-origin: 0 50%; transform: scaleX(var(--p)); }
+.process__tip { position: absolute; left: -6px; top: -5px; inline-size: 12px; block-size: 12px; border-radius: 50%; background: #e68bd3; box-shadow: 0 0 10px 3px rgb(200 80 192 / 0.75), 0 0 26px 8px rgb(108 99 255 / 0.45); transform: translateX(calc(var(--len) * var(--p))); opacity: 0; transition: opacity 0.3s ease; will-change: transform; }
+.process.is-running .process__tip { opacity: 1; }
+.process__node { position: relative; z-index: 1; display: grid; place-items: center; inline-size: 48px; block-size: 48px; }
+.pn-dot { display: block; inline-size: 10px; block-size: 10px; border-radius: 50%; background: rgb(255 255 255 / 0.3); transition: opacity 0.4s ease, transform 0.4s ease; }
+.pn-ic { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.35); background: var(--g); color: #fff; box-shadow: 0 8px 20px rgb(0 0 0 / 0.3); opacity: 0; transform: scale(0.2); transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; }
+.pn-ic svg { inline-size: 22px; block-size: 22px; stroke-width: 1.75; }
+.pn-ic::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; box-shadow: 0 0 0 0 rgb(155 63 216 / 0.6); opacity: 0; pointer-events: none; }
+.process__step.is-active .pn-ic { opacity: 1; transform: none; }
+.process__step.is-active .pn-dot { opacity: 0; transform: scale(0.4); }
+.process__step.is-active .pn-ic::after { animation: pnGlow 0.9s ease-out 1; }
+@keyframes pnGlow { 0% { opacity: 0.9; box-shadow: 0 0 0 0 rgb(155 63 216 / 0.6), 0 0 18px 4px rgb(200 80 192 / 0.5); } 100% { opacity: 0; box-shadow: 0 0 0 16px rgb(155 63 216 / 0), 0 0 30px 12px rgb(200 80 192 / 0); } }
+.pn-badge { position: absolute; right: -3px; bottom: -3px; z-index: 2; display: grid; place-items: center; inline-size: 14px; block-size: 14px; border-radius: 50%; background: #2dd4bf; color: #06231f; box-shadow: 0 0 0 2px #0f1629; transform: scale(0); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.pn-badge svg { inline-size: 9px; block-size: 9px; stroke-width: 3; }
+.process__step.is-done .pn-badge { transform: scale(1); }
+.process__body { opacity: 0.45; transition: opacity 0.4s ease; }
+.process__step.is-active .process__body { opacity: 0.75; }
+.process__step.is-current .process__body { opacity: 1; }
+@media (max-width: 899px) {                                                    /* stacked: a vertical track through the node centres */
+    .process__track { left: 23px; top: 24px; inline-size: 2px; block-size: var(--len); }
+    .process__fill { background: linear-gradient(180deg, #5b5bf0, #9b3fd8 55%, #C026A3); transform-origin: 50% 0; transform: scaleY(var(--p)); }
+    .process__tip { left: -5px; top: -6px; transform: translateY(calc(var(--len) * var(--p))); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pn-dot, .pn-ic, .pn-badge, .process__body, .process__tip { transition: none; }
+    .process__step.is-active .pn-ic::after { animation: none; }
+    .process__tip { display: none; }
+}
+/* the KAPCSOLAT pill: width auto, horizontal padding = 1.5 x its visual vertical padding (the Hero button's proportion), same height / type / glow / alignment to the right gutter */
+#steps-cta .cta-row__btn .hbtn { min-width: 0; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); }
+/* tall screens: the whole block (label -> CTA row) is centred inside the pinned viewport */
+@media (min-width: 900px) and (min-height: 1000px) and (prefers-reduced-motion: no-preference) {
+    .steps-pin { height: 100svh; max-height: none; align-items: center; padding-block: var(--hdr-h); }
 }
