@@ -32,9 +32,9 @@
     --eyebrow-head-gap: 10px;                                              /* eyebrow -> heading of the unified sections */
     --head-gap: clamp(28px, 4svh, 56px);                                   /* heading -> first content block */
 
-    --step-circle-title: clamp(20px, 2.6svh, 32px);                        /* number circle -> step title */
+    --step-circle-title: clamp(28px, 3.64svh, 44.8px);                     /* icon -> step title (+40%) */
     --step-title-desc: clamp(10px, 1.4svh, 16px);                          /* step title -> description */
-    --step-desc-divider: clamp(32px, 5svh, 56px);                          /* description -> divider above the CTA row */
+    --step-desc-divider: clamp(48px, 7.5svh, 84px);                        /* description -> divider above the CTA row (+50%); also divider -> the CTA text (equal) */
     --cta-line-fs: 18px;                                                   /* the closing row's text lines = the step descriptions (16px on phones) */
     --head-steps-gap: clamp(40px, 6svh, 72px);                             /* Együttműködés: heading -> the steps row */
     --divider-cta: clamp(24px, 3.4svh, 40px);                              /* divider -> CTA row */
@@ -3995,7 +3995,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 }
 /* four columns: smaller titles that may wrap to two lines; the reserved height keeps every paragraph on the same y */
 @media (min-width: 900px) {
-    .process__title { font-size: clamp(19px, 1.9vw, 25px); overflow-wrap: break-word; }   /* one-word titles: no reserved second line */
+    .process__title { font-size: clamp(17.1px, 1.71vw, 22.5px); overflow-wrap: break-word; }   /* one-word titles: no reserved second line */
     .process__text { max-width: none; }
 }
 @media (min-width: 768px) and (max-width: 1199px) {
@@ -6658,7 +6658,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 @keyframes pnRipple { from { transform: scale(1); opacity: 0.7; } to { transform: scale(2.3); opacity: 0; } }
 
 @media (min-width: 900px) { .process__text { max-width: min(100%, 30ch); text-wrap: balance; } }
-.process__text { font-size: var(--cta-line-fs); line-height: 1.45; }
+.process__text { font-size: calc(var(--cta-line-fs) * 0.9); line-height: 1.45; }
 
 @media (prefers-reduced-motion: reduce) { .st-reel > span { transition: none !important; } }
 @media (max-width: 767px) { .steps-title { font-size: min(var(--section-heading-size), calc((100vw - 40px) / 16)); } }      /* "EGYÜTTMŰKÖDÉS" (15.7em) must fit between the phone gutters */
@@ -7511,3 +7511,5 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
 @media (min-width: 900px) and (min-height: 1000px) and (prefers-reduced-motion: no-preference) {
     .steps-pin { height: 100svh; max-height: none; align-items: center; padding-block: var(--hdr-h); }
 }
+/* Együttműködés: the gap between the divider and the CTA text equals the gap between the descriptions and the divider (--step-desc-divider; no extra lift) */
+#steps .cta-row { --divider-cta: calc(var(--step-desc-divider) - 2px); --cta-lift: 0px; }
