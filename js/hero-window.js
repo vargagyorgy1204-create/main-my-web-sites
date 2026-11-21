@@ -210,14 +210,104 @@
       .to(cur, { scale: 0.82, duration: 0.1, yoyo: true, repeat: 1 }, 1.6)
       .fromTo(ripple, { opacity: 0.8, scale: 0.2 }, { opacity: 0, scale: 2.6, duration: 0.65, ease: 'power2.out' }, 1.62)
       .to(cur, { opacity: 0, duration: 0.3 }, 2.2);
+    if (window.HeroDemo.on()) demoAdd(2.55);
   }
   function go(i) {
     if (tl) { tl.kill(); tl = null; }
-    typeStop();
+    typeStop(); demoReset();
     scene = i;
     tintTo(i);
     if (i === 0) sceneWire(); else if (i === 1) sceneCode(); else if (i === 2) sceneBuild(); else sceneAlive();
   }
+
+
+  /* ------------------------------------------------ the mini OS demo inside the "életre kelt" scene (desktop, until the visitor has used the real dock)
+     A fake cursor (the window's own arrow) slides the real dock up, clicks Paletta (5 capsules pop above the dock, the site recolours), Zene (a "now playing" chip with a bouncing
+     equalizer in the top bar: no audio), Hangulat (the glow takes the Naplemente tint for 1s), then the dock hides and the brand colours return. It is part of the scene's own timeline, so
+     the off-screen / hold pauses apply; the word roll (js/hero-fx.js) asks HeroDemo.on() for the longer hold and HeroDemo.busy() to wait for the end. */
+  var demoUsed = false, demoRun = false;
+  try { demoUsed = !!window.sessionStorage.getItem('vb-hero-demo-used'); } catch (e2) { /* ignore */ }
+  var DPAL = ['#0b3c49', '#1b7f8e', '#2ec4b6', '#ffd166', '#ef476f'];                 /* the demo palette ("Lagúna") */
+  var dEls = null, eqTw = [];
+  function demoEls() {
+    if (dEls) return dEls;
+    var dk = $('.hw__dock'), par = dk.offsetParent || dk.parentNode, bar = $('.hw__bar');
+    var mk = function (tag, cls, html, into) { var e = document.createElement(tag); e.className = cls; if (html) e.innerHTML = html; (into || par).appendChild(e); return e; };
+    dEls = {
+      dock: dk, par: par,
+      cur: mk('span', 'hw__dcur', '<i data-lucide="mouse-pointer-2"></i>'),
+      ring: mk('span', 'hw__dring'),
+      strip: mk('span', 'hw__dstrip', DPAL.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join('')),
+      np: mk('span', 'hw__np', '<span class="hw__eq"><i></i><i></i><i></i></span>Most szól', bar)
+    };
+    dEls.eq = [].slice.call(dEls.np.querySelectorAll('.hw__eq i'));
+    gsap.set([dEls.cur, dEls.ring, dEls.strip, dEls.np], { autoAlpha: 0 });
+    icons();
+    return dEls;
+  }
+  function setPal(on) {                                                              /* recolour the abstract site (scoped to the window, never the page) */
+    var set = function (k, v) { if (on) w.style.setProperty(k, v); else w.style.removeProperty(k); };
+    set('--ab-view', '#0a1a22'); set('--ab-head', DPAL[0]); set('--ab-hero', 'linear-gradient(135deg, ' + DPAL[1] + ', ' + DPAL[2] + ')');
+    set('--ab-chart', 'linear-gradient(160deg, ' + DPAL[3] + ', ' + DPAL[4] + ')'); set('--ab-card', '#12303b');
+    set('--ab-btn', DPAL[4]); set('--ab-logo', DPAL[3]);
+  }
+  function recolour(on) { gsap.timeline().to(abEl, { opacity: 0.2, duration: 0.2, ease: 'power1.in' }).call(function () { setPal(on); }).to(abEl, { opacity: 1, duration: 0.4, ease: 'power1.out' }); }
+  function demoReset() {
+    eqTw.forEach(function (t) { t.kill(); }); eqTw = [];
+    if (!dEls) { demoRun = false; return; }
+    gsap.killTweensOf([dEls.cur, dEls.ring, dEls.strip, dEls.np, abEl]);
+    gsap.set([dEls.cur, dEls.ring, dEls.strip, dEls.np], { autoAlpha: 0 });
+    if (!demoRun) return;
+    gsap.set(abEl, { autoAlpha: 1 });
+    [].forEach.call(w.querySelectorAll('.hw__app.is-dpress'), function (a) { a.classList.remove('is-dpress'); });
+    setPal(false);
+    if (!held) gsap.set(dEls.dock, { autoAlpha: 0, y: 20 });
+    if (scene >= 0) tintTo(scene);
+    demoRun = false;
+  }
+  function demoAdd(t0) {                                                             /* appends the demo to the alive timeline `tl`, starting at t0 */
+    var E = demoEls(), dk = E.dock, par = E.par, vw = par.clientWidth, vh = par.clientHeight;
+    var bottom = parseFloat(getComputedStyle(dk).bottom) || 10, dh = dk.offsetHeight, dl = (vw - dk.offsetWidth) / 2, dt = vh - bottom - dh;
+    var pt = function (n) { var a = w.querySelector('.hw__app--' + n); return { x: dl + a.offsetLeft + a.offsetWidth / 2, y: dt + a.offsetTop + a.offsetHeight / 2 }; };
+    var P = { music: pt('music'), palette: pt('palette'), mood: pt('mood') };
+    gsap.set(E.strip, { bottom: bottom + dh + 8, y: 8, scale: 0.7, transformOrigin: '50% 100%' });
+    var sun = (window.HERO_THEMES && window.HERO_THEMES.sunset && window.HERO_THEMES.sunset.glow[1]) || [249, 115, 22];
+    var press = function (n, t) {
+      var a = w.querySelector('.hw__app--' + n);
+      tl.call(function () { a.classList.add('is-dpress'); }, null, t)
+        .call(function () { a.classList.remove('is-dpress'); }, null, t + 0.22)
+        .fromTo(E.cur, { scale: 1 }, { scale: 0.8, duration: 0.09, yoyo: true, repeat: 1, ease: 'power1.inOut' }, t)
+        .set(E.ring, { x: P[n].x, y: P[n].y }, t)
+        .fromTo(E.ring, { autoAlpha: 0.9, scale: 0.2 }, { autoAlpha: 0, scale: 1.5, duration: 0.45, ease: 'power2.out' }, t);
+    };
+    tl.call(function () { demoRun = true; }, null, t0 - 0.05)
+      .set(E.cur, { x: vw * 0.78, y: vh * 0.5 }, t0)
+      .to(E.cur, { autoAlpha: 1, duration: 0.2 }, t0)
+      .to(E.cur, { x: P.palette.x + 30, y: P.palette.y - 34, duration: 0.5, ease: 'power2.inOut' }, t0)
+      .to(dk, { autoAlpha: 1, y: 0, duration: 0.35, ease: 'back.out(1.7)' }, t0 + 0.2)
+      .to(E.cur, { x: P.palette.x, y: P.palette.y, duration: 0.3, ease: 'power2.inOut' }, t0 + 0.6);
+    press('palette', t0 + 0.95);
+    tl.to(E.strip, { autoAlpha: 1, y: 0, scale: 1, duration: 0.3, ease: 'back.out(1.8)' }, t0 + 1.05)
+      .to(E.strip, { autoAlpha: 0, y: 6, scale: 0.85, duration: 0.15, ease: 'power1.in' }, t0 + 2.25)
+      .add(function () { recolour(true); }, t0 + 2.25)
+      .to(E.cur, { x: P.music.x, y: P.music.y, duration: 0.3, ease: 'power2.inOut' }, t0 + 2.5);
+    press('music', t0 + 2.85);
+    tl.to(E.np, { autoAlpha: 1, duration: 0.25 }, t0 + 2.95)
+      .add(function () { eqTw = E.eq.map(function (b, i) { return gsap.fromTo(b, { scaleY: 0.3 }, { scaleY: 1, duration: 0.26 + i * 0.07, yoyo: true, repeat: -1, ease: 'sine.inOut', transformOrigin: '50% 100%' }); }); }, t0 + 2.95)
+      .to(E.cur, { x: P.mood.x, y: P.mood.y, duration: 0.3, ease: 'power2.inOut' }, t0 + 3.25);
+    press('mood', t0 + 3.55);
+    tl.to(col, { r: sun[0], g: sun[1], b: sun[2], duration: 0.2, ease: 'power2.out', onUpdate: function () { w.style.setProperty('--hw-c', Math.round(col.r) + ' ' + Math.round(col.g) + ' ' + Math.round(col.b)); } }, t0 + 3.65)
+      .add(function () { tintTo(scene); }, t0 + 4.85)
+      .to(E.cur, { autoAlpha: 0, x: vw * 0.78, y: vh * 0.5, duration: 0.3, ease: 'power2.in' }, t0 + 4.7)
+      .to(dk, { autoAlpha: 0, y: 20, duration: 0.25, ease: 'power2.in' }, t0 + 4.75)
+      .to(E.np, { autoAlpha: 0, duration: 0.2 }, t0 + 4.75)
+      .add(function () { recolour(false); }, t0 + 4.8)
+      .call(function () { eqTw.forEach(function (t) { t.kill(); }); eqTw = []; demoRun = false; }, null, t0 + 5.3);
+  }
+  window.HeroDemo = {
+    on: function () { return !reduce && !demoUsed && mode === 'desktop'; },
+    busy: function () { return demoRun; }
+  };
 
   /* ------------------------------------------------ the sync: one listener, no timer */
   var ready = false, visible = true, last = bootLast, log = window.__hwLog = [], held = false, pending = null;
@@ -331,6 +421,7 @@
   }
   function holdOn() {
     if (held || !ready || mode === 'off') return;
+    if (demoRun) { if (tl) { tl.kill(); tl = null; } demoReset(); }                   /* the visitor took over: the demo ends here (this cycle) */
     held = true; w.classList.add('is-hold');
     if (tl) tl.pause();
     gsap.to(dock, { autoAlpha: 1, y: 0, duration: reduce ? 0 : 0.35, ease: 'back.out(1.7)', overwrite: true });
@@ -345,7 +436,7 @@
     else if (tl && visible && !document.hidden) tl.resume();
   }
   function openPanel(name) {
-    osApp = name;
+    osApp = name; demoUsed = true; try { window.sessionStorage.setItem('vb-hero-demo-used', '1'); } catch (e3) { /* ignore */ }
     apps.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.app === name ? 'true' : 'false'); });
     loadOS(function () {
       if (osApp !== name || !window.HeroOS) return;

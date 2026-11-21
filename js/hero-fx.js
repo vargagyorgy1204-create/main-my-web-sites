@@ -46,8 +46,9 @@
   if (txt) {
     root.classList.add('hero-wait');
     var go = function () { root.classList.remove('hero-wait'); };
+    var HU = 'őŐűŰáéíóöúüÁÉÍÓÖÚÜ';                                   /* Hungarian letters live in the latin-ext subset: load it too, or the headline re-measures when it arrives (layout shift) */
     if (document.fonts && document.fonts.load && document.fonts.ready) {            /* wait for the headline faces themselves (fonts.ready alone can resolve before they were requested) */
-      Promise.all([document.fonts.load('800 40px Syne'), document.fonts.load('500 16px Montserrat'), document.fonts.load('400 16px Montserrat')]).then(function () { return document.fonts.ready; }).then(go, go);
+      Promise.all([document.fonts.load('800 40px Syne', HU), document.fonts.load('500 16px Montserrat', HU), document.fonts.load('400 16px Montserrat', HU)]).then(function () { return document.fonts.ready; }).then(function () { var chk = function () { if (document.fonts.check('800 40px Syne', HU) && document.fonts.check('400 16px Montserrat', HU)) go(); else setTimeout(chk, 40); }; chk(); }, go);      /* released only once the faces are really usable (setTimeout 3s below is the fallback) */
       setTimeout(go, 3000);
     } else go();
   }
@@ -177,12 +178,17 @@
           });
         }
       ];
+      var gate = 0;
       var next = function () {
+        if (window.HeroDemo && window.HeroDemo.busy() && gate++ < 80) { gsap.delayedCall(0.25, next); return; }      /* the living window's mini OS demo: the word waits for its end (max 20s) */
+        gate = 0;
+        var hold = 3.5;
         if (!busy && !document.hidden && built) {
           busy = true;
           var old = txt.querySelector('.hero-live__w');
           cur = (cur + 1) % words.length;
           var idx = cur;
+          if (idx === 3 && window.HeroDemo && window.HeroDemo.on()) hold = 8.2;                    /* "életre kelt" holds ~8s while the window plays its demo */
           var nw = makeWord(words[idx], idx);
           txt.appendChild(nw);
           var inn = nw.firstChild, ls = [].slice.call(inn.children);
@@ -197,7 +203,7 @@
             } });
           ENTER[idx](nw, tl, inn, ls);
         }
-        gsap.delayedCall(3.5, next);
+        gsap.delayedCall(hold, next);
       };
       var start = function () { build(); gsap.delayedCall(3.5 + 0.9, next); };
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); else start();
