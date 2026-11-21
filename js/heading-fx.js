@@ -22,11 +22,20 @@
 
   function split(h) {
     if (h.classList.contains('is-split')) return;
-    var text = (h.textContent || '').replace(/\s+/g, ' ').trim();
+    /* forced line breaks: a <br class="..."> in the markup is kept between the lines (CSS may hide it at some sizes) */
+    var lines = [], brs = [], cur = '';
+    Array.prototype.forEach.call(h.childNodes, function (n) {
+      if (n.nodeName === 'BR') { lines.push(cur); brs.push(n.className || ''); cur = ''; } else cur += n.textContent;
+    });
+    lines.push(cur);
+    var text = lines.join(' ').replace(/\s+/g, ' ').trim();
     if (!text) return;
     h.setAttribute('aria-label', text);
     var frag = document.createDocumentFragment();
-    text.split(' ').forEach(function (w, wi, all) {
+    var words = [];
+    lines.forEach(function (ln, li) { ln.replace(/\s+/g, ' ').trim().split(' ').forEach(function (w) { if (w) words.push([w, li]); }); });
+    words.forEach(function (wl, wi, all) {
+      var w = wl[0];
       var word = document.createElement('span');
       word.className = 'sh-word';
       word.setAttribute('aria-hidden', 'true');
@@ -42,7 +51,10 @@
         word.appendChild(mask);
       });
       frag.appendChild(word);
-      if (wi < all.length - 1) frag.appendChild(document.createTextNode(' '));
+      if (wi < all.length - 1) {
+        if (all[wi + 1][1] !== wl[1]) { var br = document.createElement('br'); br.className = brs[wl[1]] || ''; frag.appendChild(br); }
+        else frag.appendChild(document.createTextNode(' '));
+      }
     });
     h.textContent = '';
     h.appendChild(frag);

@@ -508,10 +508,12 @@ async function titleSystem(vp) {
   rec(tag, `tight anchor: content right edge = ${expLeftT}px from the window edge (symmetric) in the sections that have a full-width block`, badRightT.length === 0, badRightT.join(' ') || tight.filter(r => r.firstRight != null).map(r => `${r.name}:${Math.round(r.firstRight)}`).join(' '));
   const hr = rows.filter(r => r.headTypo && !['hero'].includes(r.name));
   rec(tag, 'section headings: same font / weight / uppercase / letter-spacing / line-height', new Set(hr.map(r => r.headTypo.sig)).size === 1, [...new Set(hr.map(r => r.headTypo.sig))].join(' || '));
-  const fss = hr.map(r => r.headTypo.fs);
-  rec(tag, 'section headings: identical rendered size in all 5', Math.max(...fss) - Math.min(...fss) < 0.6, hr.map(r => `${r.name}:${r.headTypo.fs.toFixed(1)}`).join(' '));
-  const lhs = hr.map(r => r.headTypo.lineH);
-  rec(tag, 'section headings: identical RENDERED line height in all 5 (transforms cannot hide a smaller heading)', Math.max(...lhs) - Math.min(...lhs) < 0.6, hr.map(r => `${r.name}:${r.headTypo.lineH.toFixed(1)}`).join(' '));
+  // Készségek (>= 1024px) has a forced 2-line heading whose longer line must fit the gutters: it may be SMALLER than the common size, never larger (same line-height ratio)
+  const skR = hr.find(r => r.name === 'skills'), hr4 = hr.filter(r => r !== skR);
+  const fss = hr4.map(r => r.headTypo.fs);
+  rec(tag, 'section headings: identical rendered size in all 5 (Készségek: the common size or smaller, 2-line fit)', Math.max(...fss) - Math.min(...fss) < 0.6 && (!skR || (skR.headTypo.fs <= Math.min(...fss) + 0.6 && skR.headTypo.fs >= 0.9 * Math.min(...fss))), hr.map(r => `${r.name}:${r.headTypo.fs.toFixed(1)}`).join(' '));
+  const lhs = hr4.map(r => r.headTypo.lineH);
+  rec(tag, 'section headings: identical RENDERED line height in all 5 (transforms cannot hide a smaller heading)', Math.max(...lhs) - Math.min(...lhs) < 0.6 && (!skR || Math.abs(skR.headTypo.lineH / skR.headTypo.fs - lhs[0] / fss[0]) < 0.01), hr.map(r => `${r.name}:${r.headTypo.lineH.toFixed(1)}`).join(' '));
   rec(tag, 'section headings: split in letters, accent dot, aria-label', hr.length === 5 && hr.every(r => r.headTypo.split && r.headTypo.dots === 1 && r.headTypo.aria), hr.map(r => `${r.name}:${r.headTypo.split}/${r.headTypo.dots}/${r.headTypo.aria}`).join(' '));
   rec(tag, 'section headings: no word sticks out of the viewport', hr.every(r => r.headTypo.right <= r.clientW + 0.5), hr.map(r => `${r.name}:${Math.round(r.headTypo.right)}`).join(' '));
   const badHead = rows.filter(r => r.headLeft != null && Math.abs(r.headLeft - r.left) > 1.5).map(r => `${r.name}:${Math.round(r.headLeft)}`);

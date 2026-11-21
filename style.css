@@ -7863,3 +7863,12 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__eq i { display: block; inline-size: 2px; block-size: 100%; border-radius: 1px; background: #22c3d6; transform-origin: 50% 100%; transform: scaleY(0.4); }
 .hw__eq i:nth-child(2) { background: #6366f1; } .hw__eq i:nth-child(3) { background: #C026A3; }
 @media (prefers-reduced-motion: reduce) { .hw__dcur, .hw__dring, .hw__dstrip, .hw__np { display: none; } }
+
+/* Készségek: the heading is exactly two lines ("Modern technológiák" / "és precíz kivitelezés.", forced <br class="sk-br"> from 1024px). In uppercase Syne 800 (-0.02em) line 1 "MODERN TECHNOLÓGIÁK" is the wider one (21.69em; line 2 is 20.15em):
+   the size is the common heading size or, where that would not fit, the largest size whose widest line fits between the gutters (16px of scrollbar / margin kept, 21.95em budget). */
+.sk-br { display: none; }
+@media (min-width: 1024px) {
+    :root { --sk-heading-size: min(var(--section-heading-size), calc((100vw - 2 * var(--gutter) - 16px) / 21.95)); }
+    .sk-br { display: inline; }
+    #skills .section-heading { font-size: var(--sk-heading-size); white-space: nowrap; }
+}
