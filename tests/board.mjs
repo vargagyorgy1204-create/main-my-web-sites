@@ -83,8 +83,8 @@ async function shoot(vp) {
     } else if (sec === 'why') {
       const top = await topOf(p, '#why'); const pinned = await p.evaluate(() => document.getElementById('why').classList.contains('is-pinned'));
       const k = step === '1' ? 0 : 5;
-      if (pinned) await scrollTo(p, top + k * vp.h * 0.7 + 4);
-      else { await scrollTo(p, top); if (k) await p.evaluate(() => document.querySelectorAll('.why-panel')[5].querySelector('.why-panel__tab').click()); }
+      if (pinned) await scrollTo(p, top + (k + 0.7) * vp.h);
+      else { await scrollTo(p, top); if (k) await p.evaluate(() => { const e = document.querySelectorAll('.vw__item')[5]; window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 120); }); await sleep(1600); }
     } else if (sec === 'steps') {
       const pinned = await p.evaluate(() => { const s = document.getElementById('steps'); return getComputedStyle(s.querySelector('.steps-pin') || s).position === 'sticky'; });
       await scrollTo(p, (await topOf(p, '#steps')) + (pinned ? 40 : 0));

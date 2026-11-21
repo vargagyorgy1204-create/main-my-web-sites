@@ -89,7 +89,7 @@ const PROBES = [
   ['about', '#abt-eyebrow', 'visible'],
   ['skills', '#skills .skills-list > li:nth-child(5)', 'animated'],
   ['skills', '#skills .skills-head h2', 'animated'],
-  ['why', '#why .why-panel:nth-child(3)', 'animated'],
+  ['why', '#why .vw__item:nth-child(1) .vw__word', 'visible'],
   ['steps', '#steps .steps-title', 'visible'],
   ['services', '#services .svt-sub', 'visible'],
   ['portfolio', '#portfolio .section-heading', 'visible'],
@@ -285,23 +285,18 @@ async function hoverChecks(vp, coarse) {
     const inWhy = await p.evaluate(() => { const r = document.querySelector('#why').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; });
     rec(tag, 'Készségek preview: never visible after scrolling away (wheel, resting mouse)', leaked.length === 0 && pv3.op < 0.05 && pv3.vis === 'hidden', `leaked at steps ${leaked.join(',') || '-'}; end ${JSON.stringify(pv3)}; why in view ${inWhy}`);
   }
-  // Értékek & Garanciák: hovering a card does NOT open or preview anything (click opens it) and shows no cursor frame
+  // Értékek & Garanciák (big words): hovering the stage shows no cursor frame / link state (plain cursor) and changes nothing
+  await p.evaluate(() => { (window.VB = window.VB || {}).whyNoSnap = true; });
   await scrollTo(p, (await topOf(p, '#why')) + 20);
-  await until(p, () => document.querySelectorAll('.why-panel').length === 6 && document.querySelector('.why-panel').getBoundingClientRect().height > 100, null, 3000); await frames(p, 10);
-  const wact = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.classList.contains('is-active') ? 1 : 0).join(''));
-  const wgeo = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => Math.round(e.getBoundingClientRect().left) + ':' + Math.round(e.getBoundingClientRect().width)).join(','));
-  let g0 = await wgeo();
-  for (let k = 0; k < 20; k++) { await sleep(150); const g = await wgeo(); if (g === g0) break; g0 = g; }       // the open card may still be growing: take the settled geometry
-  const w0 = await wact(); const seq = [], why = [];
-  for (let i = 5; i >= 0; i--) {
-    const c = await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; }, i);
-    await move(c[0], c[1]); await frames(p, 20);
+  await until(p, () => document.querySelectorAll('.vw__item').length === 6 && document.querySelector('.vw__word').getBoundingClientRect().height > 40, null, 3000); await frames(p, 10); await sleep(1500);
+  const wst = () => p.evaluate(() => [...document.querySelectorAll('.vw__item')].map(e => e.style.getPropertyValue('--f') + '/' + e.style.visibility).join(','));
+  const w0 = await wst(); const seq = [];
+  for (const [fx, fy] of [[0.2, 0.5], [0.5, 0.5], [0.8, 0.7]]) {
+    await move(vp.w * fx, vp.h * fy); await frames(p, 20);
     const ring = await p.evaluate(() => document.querySelector('.cursor-ring').className);
-    const wa = await wact(), wg = await wgeo();
-    seq.push(wa === w0 && sameGeo(wg, g0) && !/is-frame|is-link-small|is-text/.test(ring));
-    if (!seq[seq.length - 1]) why.push(`card ${i + 1}: open ${wa === w0 ? 'same' : wa}, geometry ${sameGeo(wg, g0) ? 'same' : wg.slice(0, 40) + ' vs ' + g0.slice(0, 40)}, ring ${ring.slice(0, 40)}`);
+    seq.push(!/is-frame|is-link-small|is-text/.test(ring) && (await wst()) === w0);
   }
-  rec(tag, 'Értékek: hovering any card changes nothing (no open, no layout change), no cursor frame', seq.every(Boolean), `open ${w0}, ${seq.map(Boolean).join(',')} ${why[0] || ''}`);
+  rec(tag, 'Értékek: hovering the big words changes nothing and shows no cursor frame', seq.every(Boolean), `${seq.map(Boolean).join(',')} ${w0}`);
   if (FULL) {
     // frames still work on real targets (menu item)
     await scrollTo(p, 0); await frames(p, 6);
@@ -358,7 +353,6 @@ async function layoutChecks(vp) {
           if (e.closest('footer, .menu, #pf-deck, .pf-modal, .cookie-banner, .nav, .skills-preview, [aria-hidden="true"]')) return;
           const s = getComputedStyle(e); if (s.visibility === 'hidden' || +s.opacity < 0.05 || s.display === 'none') return;
           const r = e.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return;
-          if (e.matches('.why-panel') ) { /* clipped decorative panel edges are still cards */ }
           for (const b of boxes) if (r.left < b[2] && r.right > b[0] && r.top < b[3] && r.bottom > b[1]) out.push((e.className && String(e.className).slice(0, 28)) || e.tagName);
         });
       return out;
@@ -447,7 +441,7 @@ async function titleSystem(vp) {
     ['hero', 'index', '#hero', '.hero-eyebrow', '.hero-title', '.hero-sub', true],
     ['about', 'index', '#about', '.abt-eyebrow', null, '.about-photo-card', true],
     ['skills', 'index', '#skills', '#skills .section-eyebrow', '#skills .section-heading', '#skills .skills-list', true, '#skills .skills-list'],
-    ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .why-panels', true, '#why .why-panels'],
+    ['why', 'index', '#why', '#why .section-eyebrow', '#why .section-heading', '#why .vw__list', true, '#why .vw__list'],
     ['steps', 'index', '#steps', '#steps .steps-title', null, '#steps .process', true, '#steps .process'],   // Együttműködés: no eyebrow / section heading - its head is one large line (.steps-title), documented exception
     ['services', 'index', '#services', '.svt-eyebrow', '#services .section-heading', '.svt-row', true, '.svt-row'],
     ['portfolio', 'index', '#portfolio', '#portfolio .section-heading', '#portfolio .section-heading', '.pf__sub', true, null],   // Portfólió: no eyebrow, the heading sits on the anchor
@@ -556,125 +550,64 @@ async function headingFx(vp, mouse) {
   await ctx.close();
 }
 
-// ---------------------------------------------------------------- Értékek & Garanciák: pinned stage with scroll-driven cards (>= 1024px)
-const sameGeo = (a, b) => { const x = a.split(/[:,]/).map(Number), y = b.split(/[:,]/).map(Number); return x.length === y.length && x.every((v, i) => Math.abs(v - y[i]) <= 2); };   // card geometry, sub-pixel tolerant
+// ---------------------------------------------------------------- Értékek & Garanciák, variant A "big words": pinned stage (>= 1024px) / stacked
 async function whyPin(vp) {
   const tag = `whyPin ${vp.w}x${vp.h}`;
   const errs = [];
-  const ctx = await newCtx(vp, vp.w < 1024 ? { hasTouch: true } : {});       // tablets / phones: touch (tap)
+  const ctx = await newCtx(vp, vp.w < 1024 ? { hasTouch: true } : {});       // tablets / phones: touch
   const p = await open(ctx, 'index', tag, errs);
   await p.evaluate(() => { const b = document.querySelector('.cookie-banner'); if (b) b.style.display = 'none'; });
-  const pinnedWanted = vp.w >= 1024;
+  const pinnedWanted = vp.w >= 1024 && vp.h >= 520;
   const isPinned = await until(p, () => document.getElementById('why').classList.contains('is-pinned'), null, pinnedWanted ? 4000 : 800);
   rec(tag, pinnedWanted ? 'section pins (>= 1024px)' : 'section is not pinned (< 1024px)', isPinned === pinnedWanted, `is-pinned ${isPinned}`);
-  const info = await p.evaluate(() => { const s = document.getElementById('why'); return { top: s.getBoundingClientRect().top + scrollY, h: s.offsetHeight, pb: parseFloat(getComputedStyle(s).paddingBottom), vh: innerHeight }; });
-  const sb = Math.min(Math.max(48, 0.09 * vp.h), 104);                    // --section-bottom: clamp(48px, 9svh, 104px)
-  if (!pinnedWanted) {
-    rec(tag, 'not pinned: bottom padding = --section-bottom', Math.abs(info.pb - sb) <= 2, `padding-bottom ${info.pb.toFixed(1)} want ${sb.toFixed(1)}`);
-    if (vp.w < 768) {                                                                   // phones: stacked full cards, each opens when it enters the viewport; no bar, no tabs
-      const states = [];
-      for (let i = 0; i < 6; i++) {
-        await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i]; VB.lenis.scrollTo(e.getBoundingClientRect().top + scrollY - 120, { immediate: true }); }, i); await frames(p, 6);
-        await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), i, 2000);
-        states.push(await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i]; return e.classList.contains('is-active'); }, i));
-      }
-      const ui = await p.evaluate(() => ({ tab: getComputedStyle(document.querySelector('.why-panel__tab')).display, over: document.documentElement.scrollWidth > innerWidth }));
-      rec(tag, 'phones: every card opens in view, tabs hidden, no horizontal overflow', states.every(Boolean) && ui.tab === 'none' && !ui.over, `${states.join(',')} ${JSON.stringify(ui)}`);
-      rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
-      await ctx.close(); return;
-    }
-    // unpinned: a tap opens a card directly (one at a time), Enter opens too
-    await p.evaluate(y => VB.lenis.scrollTo(y, { immediate: true }), info.top); await frames(p, 8);
-    const openList = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map((e, i) => e.classList.contains('is-active') ? i + 1 : 0).filter(Boolean).join(','));
-    const tapTab = async i => { await p.evaluate(i => document.querySelectorAll('.why-panel')[i].querySelector('.why-panel__tab').scrollIntoView({ block: 'center' }), i); await frames(p, 4); await p.tap(`.why-panel:nth-child(${i + 1}) .why-panel__tab`); await frames(p, 8); };
-    await tapTab(2); const t1 = await openList();
-    await tapTab(4); const t2 = await openList();
-    const t3 = '';
-    await p.evaluate(() => document.querySelectorAll('.why-panel')[3].querySelector('.why-panel__tab').focus({ preventScroll: true })); await p.keyboard.press('Enter'); await frames(p, 8); const t4 = await openList();
-    const ex = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => e.querySelector('.why-panel__tab').getAttribute('aria-expanded') === String(e.classList.contains('is-active'))).every(Boolean));
-    rec(tag, 'tap opens a card (one at a time), Enter opens', t1 === '3' && t2 === '5' && t3 === '' && t4 === '4' && ex, `${t1} | ${t2} | ${t3 || '-'} | ${t4} | aria in sync ${ex}`);
-    rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
-    await ctx.close(); return;
+  const info = await p.evaluate(() => { const s = document.getElementById('why'); return { top: s.getBoundingClientRect().top + scrollY, h: s.offsetHeight, vh: innerHeight, gl: parseFloat(getComputedStyle(s).paddingLeft) }; });
+  // content: the six values as before (number, keyword, description), one-line keywords inside the gutters (every size)
+  const words = await p.evaluate(() => [...document.querySelectorAll('.vw__item')].map(e => { const o = e.querySelector('.vw__ol'), cs = getComputedStyle(o), fs = parseFloat(cs.fontSize), r = document.createRange(); r.selectNodeContents(o); const rr = r.getBoundingClientRect(); return { n: e.querySelector('.vw__no').textContent, w: o.textContent, fs, right: rr.right, lines: Math.round(o.getBoundingClientRect().height / (fs * 1.04)), text: e.querySelector('.vw__text').textContent.length }; }));
+  rec(tag, 'six values: 01-06, one-line keywords', words.length === 6 && words.every((x, i) => x.n === '0' + (i + 1) && x.lines === 1 && x.text > 80), JSON.stringify(words.map(x => x.n + ':' + x.w + ':' + x.lines)));
+  rec(tag, 'keywords stay inside the gutters (no overflow)', words.every(x => x.right <= vp.w - info.gl + 0.5), words.map(x => `${Math.round(x.right)}/${vp.w - info.gl}`).join(' '));
+  rec(tag, 'no horizontal page scroll', !(await p.evaluate(() => document.documentElement.scrollWidth > innerWidth)), '');
+  if (pinnedWanted) {
+    await p.evaluate(() => { (window.VB = window.VB || {}).whyNoSnap = true; });
+    const L = info.vh;
+    rec(tag, 'pinned run = 100svh + 5.85 x 100svh', Math.abs(info.h - L * 6.85) <= 3, `${info.h} want ${(L * 6.85).toFixed(0)}`);
+    const at = async pos => {
+      await p.evaluate(([y]) => (VB.lenis ? VB.lenis.scrollTo(y, { immediate: true }) : window.scrollTo(0, y)), [info.top + pos * L]); await frames(p, 8);
+      return p.evaluate(() => {
+        const v = [...document.querySelectorAll('.vw__item')].map((e, i) => ({ i, vis: e.style.visibility, f: +e.style.getPropertyValue('--f'), t: +e.style.getPropertyValue('--t'), y: e.style.getPropertyValue('--y') })).filter(x => x.vis === 'visible');
+        const it = document.querySelectorAll('.vw__item')[v[0] ? v[0].i : 0];
+        const tx = it.querySelector('.vw__text').getBoundingClientRect(), hd = document.querySelector('#why .section-heading').getBoundingClientRect(), wd = it.querySelector('.vw__ol').getBoundingClientRect();
+        return { v, cur: document.querySelector('.vw__cur').textContent, textInView: tx.bottom <= innerHeight && tx.top >= hd.bottom, wordBelowHead: wd.top >= hd.bottom - 2 };
+      });
+    };
+    const a = await at(0.04), b = await at(0.25), c = await at(0.6), d = await at(0.94), e2 = await at(1.6), f = await at(5.8);
+    rec(tag, 'value 01: outline first (fill ~0, no description)', a.v.length === 1 && a.v[0].i === 0 && a.v[0].f < 0.1 && a.v[0].t === 0, JSON.stringify(a.v));
+    rec(tag, 'value 01: half filled mid-scroll', b.v[0].f > 0.35 && b.v[0].f < 0.65 && b.v[0].t === 0, JSON.stringify(b.v));
+    rec(tag, 'value 01: filled, description shown inside the stage, below the heading', c.v[0].f === 1 && c.v[0].t > 0.95 && c.textInView && c.wordBelowHead, JSON.stringify({ v: c.v, inView: c.textInView, below: c.wordBelowHead }));
+    rec(tag, 'transition 01 -> 02: the filled word slides out while the next rises', d.v.length === 2 && d.v[0].y.startsWith('-') && !d.v[1].y.startsWith('-') && d.cur === '02', JSON.stringify(d.v) + ' ' + d.cur);
+    rec(tag, 'value 02 at 1.6 L', e2.v.length === 1 && e2.v[0].i === 1 && e2.cur === '02', JSON.stringify(e2.v));
+    rec(tag, 'last value (06) filled at the end of the run', f.v.length === 1 && f.v[0].i === 5 && f.v[0].f === 1 && f.v[0].t > 0.95 && f.cur === '06', JSON.stringify(f.v));
+    // snap: after the scroll stops the nearest value settles (word filled, description shown)
+    await p.evaluate(() => { VB.whyNoSnap = false; });
+    await p.evaluate(([y]) => VB.lenis.scrollTo(y, { immediate: true }), [info.top + 2.35 * L]); await frames(p, 6);
+    await sleep(1400);
+    const settle = await p.evaluate(([top]) => ({ rel: (VB.lenis ? VB.lenis.scroll : scrollY) - top }), [info.top]);
+    rec(tag, 'scroll stops -> settles on a value (filled + description)', Math.abs(settle.rel - 2.7 * L) <= 3, `rel ${settle.rel.toFixed(0)} want ${(2.7 * L).toFixed(0)}`);
+    await p.evaluate(() => { VB.whyNoSnap = true; });
+    const z = await at(0);
+    rec(tag, 'scroll back: value 01 again, outline', z.v.length === 1 && z.v[0].i === 0 && z.v[0].f === 0 && z.cur === '01', JSON.stringify(z.v));
+  } else {
+    // stacked: each word fills once when it scrolls into view; description under it
+    const st = await p.evaluate(() => ({ pos: getComputedStyle(document.querySelector('.vw__item')).position, vis: [...document.querySelectorAll('.vw__item')].map(e => e.style.visibility).join('') }));
+    rec(tag, 'stacked: normal flow, nothing hidden', st.pos === 'relative' && st.vis === '', JSON.stringify(st));
+    const idx = 3;
+    const before = await p.evaluate(i => document.querySelectorAll('.vw__item')[i].classList.contains('is-in'), idx);
+    await p.evaluate(i => { const e = document.querySelectorAll('.vw__item')[i]; const y = e.getBoundingClientRect().top + scrollY - 120; (VB.lenis ? VB.lenis.scrollTo(y, { immediate: true }) : window.scrollTo(0, y)); }, idx); await frames(p, 8);
+    await until(p, i => document.querySelectorAll('.vw__item')[i].classList.contains('is-in'), idx, 2500);
+    await sleep(1500);
+    const after = await p.evaluate(i => { const e = document.querySelectorAll('.vw__item')[i]; return { inn: e.classList.contains('is-in'), clip: getComputedStyle(e.querySelector('.vw__fl')).clipPath, op: +getComputedStyle(e.querySelector('.vw__text')).opacity }; }, idx);
+    rec(tag, 'stacked: the word fills once when scrolled into view (not before)', !before && after.inn && /inset\(0(px)?( 0(px)?){0,3}\)|none/.test(after.clip) && after.op > 0.95, `before ${before} ${JSON.stringify(after)}`);
   }
-  const L = vp.h * 0.7;
-  const active = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map((e, i) => e.classList.contains('is-active') ? i + 1 : 0).filter(Boolean).join(','));
-  const go = async rel => { await p.evaluate(y => VB.lenis.scrollTo(y, { immediate: true }), info.top + rel); await frames(p, 6); };
-  const atStep = async k => {
-    await go(k * L + 4);
-    await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active') && document.querySelectorAll('.why-panel.is-active').length === 1, k, 2500);
-    await until(p, i => { const a = document.querySelectorAll('.why-panel')[i].getBoundingClientRect().width, o = document.querySelectorAll('.why-panel')[(i + 1) % 6].getBoundingClientRect().width; return a > o * 3; }, k, 2500);
-    return active();
-  };
-  // pin length + geometry at step 1
-  rec(tag, 'pin length = 6 x 70svh (+ one 100svh stage)', Math.abs(info.h - info.vh - 4.2 * vp.h) <= 2, `run ${info.h - info.vh}px = ${((info.h - info.vh) / vp.h).toFixed(2)}svh`);
-  await atStep(0);
-  const g = await p.evaluate(() => { const s = document.getElementById('why'), r = s.querySelector('.why-inner').getBoundingClientRect(), pn = s.querySelector('.why-panels').getBoundingClientRect(), hd = s.querySelector('.section-heading').getBoundingClientRect(); return { top: r.top, h: r.height, cardsH: pn.height, bottomGap: innerHeight - pn.bottom, headGap: pn.top - hd.bottom }; });
-  rec(tag, 'stage sticks to the viewport and is exactly one viewport tall', Math.abs(g.top) <= 1 && Math.abs(g.h - vp.h) <= 1, JSON.stringify({ top: g.top, h: g.h }));
-  rec(tag, 'bottom gap (cards -> viewport bottom) = --section-bottom ±2px', Math.abs(g.bottomGap - sb) <= 2, `gap ${g.bottomGap.toFixed(1)} want ${sb.toFixed(1)}`);
-  const lab = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => { const l = e.querySelector('.why-panel__label').getBoundingClientRect(), n = e.querySelector('.why-panel__num').getBoundingClientRect(), r = e.getBoundingClientRect(); return { fs: getComputedStyle(e.querySelector('.why-panel__label')).fontSize, bottomPad: r.bottom - l.bottom, aboveNum: l.top - n.bottom, inside: l.left >= r.left - 0.5 && l.right <= r.right + 0.5 }; }));
-  rec(tag, 'vertical labels fit the collapsed cards (>= 16px bottom padding, below the number, one shared size)', lab.every(x => x.bottomPad >= 16 && x.aboveNum >= 4 && x.inside) && new Set(lab.map(x => x.fs)).size === 1, lab.map(x => `${x.fs}/${x.bottomPad.toFixed(0)}/${x.aboveNum.toFixed(0)}`).join(' '));
-  rec(tag, 'cards keep their minimum height', g.cardsH >= 240, `${Math.round(g.cardsH)}px`);
-  rec(tag, 'composition fits one viewport: cards end --section-bottom above the bottom edge, heading not shrunk', g.cardsH >= 240 ? Math.abs(g.bottomGap - sb) <= 2 : true, `bottom gap ${g.bottomGap.toFixed(1)} want ${sb.toFixed(1)}, cards ${Math.round(g.cardsH)}px`);
-  // scroll steps in order, then in reverse
-  const up = []; for (let k = 0; k < 6; k++) up.push(await atStep(k));
-  rec(tag, 'scrolling opens cards 01 -> 06 in order (one open at a time)', up.join('|') === '1|2|3|4|5|6', up.join('|'));
-  const down = []; for (let k = 5; k >= 0; k--) down.push(await atStep(k));
-  rec(tag, 'scrolling back opens cards 06 -> 01', down.join('|') === '6|5|4|3|2|1', down.join('|'));
-  await go(info.h - info.vh + 300); await until(p, () => document.querySelectorAll('.why-panel')[5].classList.contains('is-active'), null, 2000);
-  rec(tag, 'leaving the pin at the bottom: card 06 stays open', (await active()) === '6', await active());
-  await go(-300); await until(p, () => document.querySelectorAll('.why-panel')[0].classList.contains('is-active'), null, 2000);
-  rec(tag, 'leaving the pin at the top: card 01 is open', (await active()) === '1', await active());
-  // wheel + snap: never left between two steps, no half-open card
-  await go(0); await p.mouse.move(vp.w - 60, vp.h / 2);
-  const snaps = [];
-  for (const d of [380, 700]) {
-    await p.mouse.wheel(0, d);
-    await sleep(500);
-    await until(p, () => !VB.lenis.isScrolling, null, 3500);
-    await sleep(450);                                     // the settle (snap) starts 160ms after the scroll stops and lasts 0.4s
-    await until(p, () => !VB.lenis.isScrolling, null, 3000); await frames(p, 10);
-    const rel = (await p.evaluate(() => window.pageYOffset)) - info.top, near = Math.round(rel / L);
-    snaps.push([Math.abs(rel - near * L) <= 3, near, await active()]);
-  }
-  rec(tag, 'snap: a wheel scroll settles exactly on a step with that card open', snaps.every(s => s[0] && s[2] === String(s[1] + 1)), JSON.stringify(snaps));
-  const widths = await p.evaluate(() => { const w = [...document.querySelectorAll('.why-panel')].map(e => e.getBoundingClientRect().width); const a = document.querySelector('.why-panel.is-active').getBoundingClientRect().width; return { open: a, closed: w.filter(x => x !== a).map(Math.round) }; });
-  rec(tag, 'snap: no half-open card (all closed cards equally narrow)', Math.max(...widths.closed) - Math.min(...widths.closed) <= 2 && widths.open > 3 * Math.max(...widths.closed), JSON.stringify(widths));
-  // hover does nothing: moving over every card changes neither the open card nor the layout
-  const cur = await active();
-  const geo = () => p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => Math.round(e.getBoundingClientRect().left) + ':' + Math.round(e.getBoundingClientRect().width)).join(','));
-  let geo0 = await geo();
-  for (let k = 0; k < 20; k++) { await sleep(150); const g = await geo(); if (g === geo0) break; geo0 = g; }
-  let hoverOk = true, ringOk = true;
-  for (let i = 0; i < 6; i++) {
-    const pt = await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i].getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; }, i);
-    await p.mouse.move(pt[0] - 25, pt[1] + 5); await p.mouse.move(pt[0], pt[1], { steps: 4 }); await frames(p, 20);
-    if ((await active()) !== cur || !sameGeo(await geo(), geo0)) hoverOk = false;
-    if (/is-frame|is-link-small|is-text/.test(await p.evaluate(() => document.querySelector('.cursor-ring') ? document.querySelector('.cursor-ring').className : ''))) ringOk = false;
-  }
-  await p.mouse.move(vp.w / 2, 30, { steps: 4 }); await frames(p, 10);
-  rec(tag, 'hovering every card changes nothing (no open, no preview, no layout change, no cursor frame)', hoverOk && ringOk && (await active()) === cur, `open ${cur} -> ${await active()}, geometry same ${hoverOk}, ring ok ${ringOk}`);
-  // click scrolls to the step of that card
-  const tab = await p.evaluate(() => { const e = document.querySelectorAll('.why-panel')[4].querySelector('.why-panel__tab').getBoundingClientRect(); return [e.left + e.width / 2, e.top + e.height / 2]; });
-  await p.mouse.move(tab[0] - 30, tab[1]); await p.mouse.move(tab[0], tab[1], { steps: 4 });
-  await p.evaluate(() => document.querySelectorAll('.why-panel')[4].querySelector('.why-panel__tab').click());
-  await until(p, () => !VB.lenis.isScrolling && document.querySelectorAll('.why-panel')[4].classList.contains('is-active'), null, 4000); await frames(p, 8);
-  const relC = (await p.evaluate(() => window.pageYOffset)) - info.top;
-  rec(tag, 'clicking a card scrolls to the step of that card', Math.abs(relC - 4 * L) <= 3 && (await active()) === '5', `rel ${Math.round(relC)} want ${Math.round(4 * L)}, open ${await active()}`);
-  // Enter on a focused collapsed card does the same (keyboard)
-  await p.evaluate(() => document.querySelectorAll('.why-panel')[2].querySelector('.why-panel__tab').focus({ preventScroll: true }));
-  await p.keyboard.press('Enter');
-  await until(p, () => !VB.lenis.isScrolling && document.querySelectorAll('.why-panel')[2].classList.contains('is-active'), null, 4000); await frames(p, 8);
-  const relE = (await p.evaluate(() => window.pageYOffset)) - info.top;
-  rec(tag, 'Enter on a focused card scrolls to its step and opens it', Math.abs(relE - 2 * L) <= 3 && (await active()) === '3', `rel ${Math.round(relE)} want ${Math.round(2 * L)}, open ${await active()}`);
-  const aria = await p.evaluate(() => [...document.querySelectorAll('.why-panel')].map(e => { const t = e.querySelector('.why-panel__tab'); return t.tagName + ':' + t.getAttribute('aria-expanded') + ':' + !!document.getElementById(t.getAttribute('aria-controls')); }).join(' '));
-  rec(tag, 'cards are buttons with aria-expanded (only the open one true) and a valid aria-controls', /^(BUTTON:(true|false):true ?){6}$/.test(aria) && (aria.match(/:true:/g) || []).length === 1, aria);
-  // the next section starts normally after the pin
-  await p.evaluate(() => { VB.lenis.scrollTo(document.getElementById('steps').getBoundingClientRect().top + scrollY, { immediate: true }); });
-  await frames(p, 10);
-  const sx = await p.evaluate(() => { const s = document.getElementById('steps'), pin = s.querySelector('.steps-pin') || s, e = s.querySelector('.steps-title').getBoundingClientRect(); return { top: e.top - (getComputedStyle(pin).position === 'sticky' ? 0 : s.getBoundingClientRect().top) }; });
-  const expTop = (vp.w < 768 ? 76 : 92) + Math.min(20, Math.max(8, 0.016 * vp.h));            // tight anchor
-  rec(tag, 'next section (Együttműködés) starts at its normal anchor after the pin', Math.abs(sx.top - expTop) <= 2, `eyebrow ${sx.top.toFixed(1)} want ${expTop.toFixed(1)}`);
-  rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));
+  rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 2).join(' | '));
   await ctx.close();
 }
 
@@ -712,14 +645,14 @@ async function touchTapWhy() {
   const ctx = await newCtx({ w: 390, h: 844 });
   const p = await ctx.newPage(); await p.goto(`${BASE}/index.html`, { waitUntil: 'load' }); await p.evaluate(() => document.fonts.ready); await frames(p, 6);
   await scrollTo(p, (await topOf(p, '#why')) + 10);
-  await until(p, () => document.querySelectorAll('.why-panel').length === 6 && document.querySelector('.why-panel:nth-child(4)').getBoundingClientRect().height > 100, null, 3000); await frames(p, 8);
-  // phones: stacked full cards, no accordion: a card plays its open state (.is-active) when it enters the viewport (and not before)
+  await until(p, () => document.querySelectorAll('.vw__item').length === 6 && document.querySelector('.vw__item:nth-child(4)').getBoundingClientRect().height > 100, null, 3000); await frames(p, 8);
+  // phones: stacked values; a word fills when it enters the viewport (and not before)
   const idx = 3;
-  const before = await p.evaluate(i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), idx);
-  await p.evaluate(i => { const e = document.querySelectorAll('.why-panel')[i]; VB.lenis.scrollTo(e.getBoundingClientRect().top + scrollY - 120, { immediate: true }); }, idx); await frames(p, 6);
-  await until(p, i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), idx, 2000);
-  const open = await p.evaluate(i => document.querySelectorAll('.why-panel')[i].classList.contains('is-active'), idx);
-  rec('touch 390x844', 'Értékek: a card opens when it enters the viewport (not before)', open && !before, `before ${before}, in view ${open}`);
+  const before = await p.evaluate(i => document.querySelectorAll('.vw__item')[i].classList.contains('is-in'), idx);
+  await p.evaluate(i => { const e = document.querySelectorAll('.vw__item')[i]; VB.lenis.scrollTo(e.getBoundingClientRect().top + scrollY - 120, { immediate: true }); }, idx); await frames(p, 6);
+  await until(p, i => document.querySelectorAll('.vw__item')[i].classList.contains('is-in'), idx, 2000);
+  const open = await p.evaluate(i => document.querySelectorAll('.vw__item')[i].classList.contains('is-in'), idx);
+  rec('touch 390x844', 'Értékek: a word fills when it enters the viewport (not before)', open && !before, `before ${before}, in view ${open}`);
   await ctx.close();
 }
 

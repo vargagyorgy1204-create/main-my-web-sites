@@ -357,7 +357,6 @@ body.menu-open .nav { padding-inline-end: calc(32px + var(--sbw, 0px)); }
 
 .notranslate { unicode-bidi: isolate; }
 
-
 h1 { font-size: clamp(3.6rem, 11vw, 6.8rem); margin-bottom: 12px; line-height: 0.98; font-weight: 700; letter-spacing: -0.04em; text-shadow: 0 12px 34px rgba(0, 0, 0, 0.38); }
 
 .btn-main:not(.hero-cta),
@@ -435,8 +434,6 @@ h2 {
     color: rgba(0,0,0,0.62);
     font-weight: 400;
 }
-
-
 
 /* Contact Section Subtitle */
 #contact .section-subtitle {
@@ -969,7 +966,6 @@ html.has-cursor .service-modal-close:hover,
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / 11px 11px no-repeat;
 }
 
-/* decorative watermark of the card's icon, cropped by the card */
 .pricing-watermark {
     position: absolute;
     inset-inline-end: -28px;
@@ -1299,7 +1295,6 @@ body.service-modal-open { overflow: hidden; }
     cursor: pointer;
     transition: background 0.26s ease, color 0.26s ease, box-shadow 0.26s ease, transform 0.26s ease;
 }
-
 
 .contact-personal-panel {
     background: linear-gradient(160deg, #10192d 0%, #1a2336 100%);
@@ -1716,7 +1711,7 @@ footer {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-    
+
     .contact-wrapper { flex-direction: column; align-items: center; }
 }
 
@@ -1952,8 +1947,6 @@ body.contact-page {
     margin-top: 6px;
 }
 
-
-
 /* Mobile */
 @media (max-width: 680px) {
     .contact-card {
@@ -2076,7 +2069,6 @@ body.contact-page {
 /* ═══════════════════════════════════════════
    BENTO BOX GRID DESIGN SYSTEM
    ═══════════════════════════════════════════ */
-
 
 .bento-grid {
     display: grid;
@@ -2690,7 +2682,6 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
 }
 /* list layout: the signature sits below the button row, bottom-right (room reserved under the row) */
 .about-bio-foot { margin-bottom: calc(var(--sign-w) / 4.92 * 1.25 + 4px); }
-
 
 @media (max-width: 1024px) {
     .about-premium-grid {
@@ -3631,7 +3622,6 @@ html.hero-static .hero-live__txt { position: static; }
     }
 }
 
-
 /* .hl (Hogyan dolgozom intro phrases, js/approach.js) */
 .hl {
     display: inline-block;
@@ -3962,196 +3952,13 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     .skill-row__desc { grid-column: 2; font-size: 14px; }
 }
 
-/* Why (Miért válassz engem?) – expanding panels */
 #why { text-align: left; }
 .why-inner { max-width: var(--content-max); margin: 0 auto; }
 .why-head { margin: 0 0 56px; }
 
-.why-panels { display: flex; gap: 12px; height: 460px; }
-.why-panel {
-    position: relative;
-    flex: 1 1 0;
-    min-width: 0;
-    overflow: hidden;
-    border-radius: 24px;
-    background: #fff;
-    border: 1px solid rgba(17, 17, 17, 0.08);
-    box-shadow: 0 8px 24px rgba(17, 17, 17, 0.04);
-    transition: flex-grow 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.45s ease, border-color 0.3s ease, box-shadow 0.45s ease;
-}
-.why-panel::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--panel-bg);
-    opacity: 0;
-    transition: opacity 0.45s ease;
-}
-.why-panel.is-active {
-    flex-grow: 5;
-    border-color: transparent;
-    box-shadow: 0 24px 50px rgba(108, 99, 255, 0.22);
-}
-.why-panel.is-active::before { opacity: 1; }
-
-.why-panel__tab {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 28px 0 32px;
-    border: 0;
-    background: none;
-    cursor: pointer;
-    font: inherit;
-    color: inherit;
-    text-align: left;
-    transition: opacity 0.3s ease;
-}
-.why-panel__tab:focus-visible { outline: 2px solid #C026A3; outline-offset: -4px; border-radius: 24px; }
-.why-panel__num {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    color: #c850c0;
-}
-.why-panel__label {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: var(--why-label-fs, 20px);      /* shared by all 6, fitted to the card height by script.js */
-    letter-spacing: -0.01em;
-    color: #1a1a2e;
-    white-space: nowrap;
-}
-.why-panel__plus { display: none; }
-.why-panel.is-active .why-panel__tab { opacity: 0; pointer-events: none; }
-
-.why-panel__body {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    display: flex;
-    align-items: flex-end;
-    padding: 36px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.35s ease, visibility 0.35s ease;
-}
-.why-panel.is-active .why-panel__body { opacity: 1; visibility: visible; transition-delay: 0.25s; }
-.why-panel__content {
-    position: relative;
-    z-index: 1;
-    min-width: 320px;
-    max-width: 460px;
-    transform: translateY(16px);
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.why-panel.is-active .why-panel__content { transform: none; transition-delay: 0.25s; }
-.why-panel__icon {
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    margin-bottom: 22px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.18);
-    color: #fff;
-}
-.why-panel__icon .icon { width: 24px; height: 24px; }
-.why-panel__title {
-    margin: 0 0 12px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(26px, 2.4vw, 36px);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: #fff;
-}
-.why-panel__text {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.65;
-    color: rgba(255, 255, 255, 0.88);
-}
-.why-panel__big {
-    position: absolute;
-    top: 18px;
-    right: 26px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 120px;
-    line-height: 1;
-    color: rgba(255, 255, 255, 0.12);
-    pointer-events: none;
-}
-
-@media (max-width: 1024px) {
-    .why-panel__content { min-width: 260px; }
-}
-
 @media (max-width: 767px) {
     .why-head { margin-bottom: 32px; }
-    .why-panels { flex-direction: column; height: auto; gap: 10px; }
-    .why-panel { flex: none; border-radius: 20px; }
-    .why-panel__tab {
-        position: relative;
-        inset: auto;
-        width: 100%;
-        flex-direction: row;
-        justify-content: flex-start;
-        gap: 14px;
-        padding: 20px 22px;
-    }
-    .why-panel__label { writing-mode: horizontal-tb; transform: none; font-size: 18px; white-space: normal; flex: 1; }
-    .why-panel__plus {
-        display: block;
-        position: relative;
-        width: 14px;
-        height: 14px;
-        flex-shrink: 0;
-    }
-    .why-panel__plus::before, .why-panel__plus::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 6px;
-        width: 14px;
-        height: 2px;
-        border-radius: 2px;
-        background: #1a1a2e;
-        transition: transform 0.3s ease, background 0.3s ease;
-    }
-    .why-panel__plus::after { transform: rotate(90deg); }
-    .why-panel.is-active .why-panel__tab { opacity: 1; pointer-events: auto; }
-    .why-panel.is-active .why-panel__label,
-    .why-panel.is-active .why-panel__num { color: #fff; }
-    .why-panel.is-active .why-panel__plus::before,
-    .why-panel.is-active .why-panel__plus::after { background: #fff; }
-    .why-panel.is-active .why-panel__plus::after { transform: rotate(0deg); }
-    .why-panel__body {
-        position: relative;
-        inset: auto;
-        display: grid;
-        grid-template-rows: 0fr;
-        padding: 0 22px;
-        opacity: 1;
-        visibility: visible;
-        transition: grid-template-rows 0.45s cubic-bezier(0.16, 1, 0.3, 1), padding 0.45s ease;
-    }
-    .why-panel.is-active .why-panel__body { grid-template-rows: 1fr; padding: 0 22px 24px; transition-delay: 0s; }
-    .why-panel__content { min-width: 0; max-width: none; overflow: hidden; transform: none; }
-    .why-panel__icon, .why-panel__title, .why-panel__big { display: none; }
-    .why-panel__text { font-size: 15px; }
-}
 
-@media (prefers-reduced-motion: reduce) {
-    .why-panel, .why-panel::before, .why-panel__tab, .why-panel__body, .why-panel__content { transition: none !important; }
 }
 
 /* Steps (Együttműködés) – process line that draws on scroll */
@@ -4214,7 +4021,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     .process__body { margin-top: 4px; }
 }
 
-
 /* Steps – pinned (sticky) mode: section stays on screen while the line draws step by step */
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     /* section = the stage (its content + --section-top above + --section-bottom below, never more than one viewport) + 220svh of pin run; --stage-h is set by script.js */
@@ -4236,27 +4042,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
         transform-origin: left center;
     }
     .steps-head { margin-bottom: 44px; }
-}
-
-/* Why – fit the section to the viewport height (same proportions as the pinned Steps section) */
-@media (min-width: 768px) and (min-height: 520px) {
-    #why {
-        min-height: 100vh;
-        min-height: 100svh;
-        display: flex;
-        align-items: center;
-        padding: var(--section-top) 24px var(--sec-bottom) !important;
-        box-sizing: border-box;
-    }
-    #why .why-inner {
-        width: calc(min(1152px, 100vw - 48px) / var(--fit, 1));
-        max-width: none;
-        flex: 0 0 auto;
-        margin: 0 0 0 max(0px, calc((100vw - 1152px) / 2 - 24px));
-        height: var(--fit-h, auto);
-        transform: scale(var(--fit, 1));
-        transform-origin: left top;
-    }
 }
 
 /* ===== PORTFOLIO — STACKING CASES (ported from demovarbro) ===== */
@@ -4311,7 +4096,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 .pf-btn:focus-visible::before { opacity: 1; }
 .pf-btn:focus-visible { outline: 3px solid var(--pure-white); outline-offset: 3px; }
 
-
 /* Portfólió ends on its light background (normal section bottom padding); Kapcsolat starts directly with its own dark background (no blend) */
 #portfolio {
   padding-block: clamp(80px, 12vh, 140px) var(--section-bottom);
@@ -4325,8 +4109,6 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
 }
 
 .pf__head { margin-block-end: clamp(32px, 5vh, 56px); max-width: 720px; }
-
-
 
 .pf__sub {
   font-family: var(--font-body);
@@ -5019,7 +4801,6 @@ html.lenis, html.lenis body { height: auto; }
   border-block-start: 1px solid var(--svt-line);
 }
 
-
 /* The word: one real text node (outline). The aria-hidden duplicate sits on
    top, filled with the gradient and revealed left to right by JS. The size is
    fitted so WEBOLDAL (the longest) fills the content width and never overflows. */
@@ -5592,7 +5373,6 @@ footer {
 
 [tabindex="-1"]:focus { outline: none; }
 
-
 @media (max-width: 850px) {
     .footer-bottom-links { justify-content: center; }
 }
@@ -5615,16 +5395,9 @@ footer {
 .pf__head .section-heading { margin-block: 0 clamp(12px, 1.9svh, 20px); }
 .pf__sub { font-size: clamp(15px, min(1.25vw, 1.9svh), 18px); }
 
-/* Why: desktop panels scale with the window height (460px at >= 1080px) */
 @media (min-width: 768px) {
     .why-head { margin-bottom: clamp(24px, 5.2svh, 56px); }
-    .why-panels { height: clamp(300px, 42.6svh, 460px); }
-    .why-panel__tab { padding-block: clamp(18px, 2.6svh, 28px) clamp(20px, 3svh, 32px); }
-    .why-panel__body { padding: clamp(20px, 3.3svh, 36px); }
-    .why-panel__icon { width: clamp(40px, 4.8svh, 52px); height: clamp(40px, 4.8svh, 52px); margin-bottom: clamp(12px, 2svh, 22px); }
-    .why-panel__title { font-size: clamp(24px, min(2.4vw, 3.4svh), 36px); margin-bottom: clamp(8px, 1.1svh, 12px); }
-    .why-panel__text { font-size: clamp(14px, 1.5svh, 16px); line-height: 1.6; }
-    .why-panel__big { font-size: clamp(80px, 11svh, 120px); }
+
 }
 /* ===== /SECTION TOP OFFSETS ===== */
 
@@ -5788,10 +5561,7 @@ footer { padding-bottom: var(--cb-h, 0px); }
 }
 @media (min-width: 768px) and (min-height: 520px) {
     #why { padding-inline: var(--content-gutter) !important; }
-    #why .why-inner {
-        width: calc(min(var(--content-max), 100%) / var(--fit, 1));
-        margin: 0 0 0 max(0px, calc((100% - var(--content-max)) / 2));
-    }
+
 }
 @media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps { padding-inline: 0; }
@@ -5840,8 +5610,6 @@ footer { padding-bottom: var(--cb-h, 0px); }
 
 /* ===== Együttműködés: the head is one large line (.steps-title, see the block at the end of the file) ===== */
 /* pinned timeline: with the larger heading, the gaps give way first so the scaled block (--fit) stays as close to 1 as possible */
-@media (min-width: 768px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
-}
 
 /* ===== Szolgáltatások: eyebrow + title identical to Készségek / Rólam ===== */
 .svt-eyebrow { margin-bottom: var(--eyebrow-gap); }          /* eyebrow -> the section heading */
@@ -5930,78 +5698,12 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     #steps .steps-title { font-size: calc(min(var(--section-heading-size), var(--st-cap)) / var(--fit, 1)); }
 }
 
-/* ===== ÉRTÉKEK & GARANCIÁK — bottom gap, then the pinned stage with scroll-driven cards (js/why-pin.js) =====
-   Not pinned (< 1024px, short or reduced-motion windows): the usual stacked / fitted section, now with the common bottom gap. */
 #why { padding-bottom: var(--section-bottom) !important; }
 
 /* pinned: tall block = 100svh stage + 6 x 70svh of scrolling; the sticky stage is exactly one viewport:
    top = --section-top, eyebrow, heading, --head-gap, the cards (fill the rest), --section-bottom */
-#why.is-pinned {
-    --why-run: 420svh;
-    display: block;
-    min-height: 0;
-    height: calc(100vh + 420vh);
-    height: calc(100svh + var(--why-run));
-    padding: 0 var(--content-gutter) !important;
-}
-#why.is-pinned .why-inner {
-    position: sticky;
-    top: 0;
-    width: min(var(--content-max), 100%);
-    max-width: none;
-    height: 100vh;
-    height: 100svh;
-    margin: 0 0 0 max(0px, calc((100% - var(--content-max)) / 2));
-    padding: var(--section-top) 0 var(--section-bottom);
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    transform: none;
-}
-#why.is-pinned .why-head { flex: none; margin-bottom: var(--head-gap); }
+
 /* the cards take whatever is left under the heading (the heading, eyebrow and bottom gap never give way): low windows get shorter cards */
-#why.is-pinned .why-panels { flex: 1 1 0; height: auto; min-height: 240px; }
-/* ===== ÉRTÉKEK cards: zero layout shift, one openness per card =====
-   The row (>= 768px) has a fixed geometry: every card is absolutely positioned at left: 0 and slid with transform: translateX() to the x it has in the current state; only its width changes.
-   Closed card = (row - 5 gaps - 12px of borders) / 10 + 2px, open card = (row - 72px) / 2 + 2px (the old flex-grow 1 : 5 split). cqw = the row's width.
-   The geometry of every card is ONE function of the six openness numbers --o0..--o5 (0 closed .. 1 open, set on the row by script.js, each transitioned as a registered number):
-   width = wc + (wo - wc) * o_i, left = i * (wc + 12px) + (wo - wc) * (o_0 + ... + o_(i-1)). So left_(i+1) = left_i + width_i + 12px at EVERY frame, also when a transition is
-   interrupted and retargeted: the gap between neighbours is constant and no card can cover another.
-   Inner layers do not depend on the animated width: the closed label is centred in a fixed closed-width box, the open content lives in a fixed open-width box, the big number is anchored to the card's right edge. */
-@property --o0 { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --o1 { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --o2 { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --o3 { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --o4 { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --o5 { syntax: '<number>'; inherits: true; initial-value: 0; }
-@media (min-width: 768px) {
-    .why-panels {
-        display: block; position: relative; container-type: inline-size;
-        --o0: 1;                                           /* before script.js runs the first card is the open one */
-        transition: --o0 0.7s cubic-bezier(0.16, 1, 0.3, 1), --o1 0.7s cubic-bezier(0.16, 1, 0.3, 1), --o2 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-                    --o3 0.7s cubic-bezier(0.16, 1, 0.3, 1), --o4 0.7s cubic-bezier(0.16, 1, 0.3, 1), --o5 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .why-panel {
-        --wc: calc((100cqw - 72px) / 10 + 2px);
-        --wo: calc((100cqw - 72px) / 2 + 2px);
-        --oi: var(--o0); --before: 0;
-        position: absolute;
-        top: 0; bottom: 0; left: 0;
-        flex: none;
-        width: calc(var(--wc) + (var(--wo) - var(--wc)) * var(--oi));
-        transform: translateX(calc(var(--i, 0) * (var(--wc) + 12px) + (var(--wo) - var(--wc)) * var(--before)));
-        transition: background 0.45s ease, border-color 0.3s ease, box-shadow 0.45s ease;
-    }
-    .why-panel:nth-child(1) { --i: 0; --oi: var(--o0); --before: 0; }
-    .why-panel:nth-child(2) { --i: 1; --oi: var(--o1); --before: var(--o0); }
-    .why-panel:nth-child(3) { --i: 2; --oi: var(--o2); --before: calc(var(--o0) + var(--o1)); }
-    .why-panel:nth-child(4) { --i: 3; --oi: var(--o3); --before: calc(var(--o0) + var(--o1) + var(--o2)); }
-    .why-panel:nth-child(5) { --i: 4; --oi: var(--o4); --before: calc(var(--o0) + var(--o1) + var(--o2) + var(--o3)); }
-    .why-panel:nth-child(6) { --i: 5; --oi: var(--o5); --before: calc(var(--o0) + var(--o1) + var(--o2) + var(--o3) + var(--o4)); }
-    .why-panel__tab { right: auto; width: var(--wc); transition: opacity 0.3s ease; transform: translateX(calc((var(--wo) - var(--wc)) / 2 * var(--oi))); }
-    .why-panel__body { right: auto; width: var(--wo); }
-    .why-panel__content { width: min(460px, calc(var(--wo) - 72px)); }
-}
 
 /* ===== EGYÜTTMŰKÖDÉS: step rhythm ===== */
 .process__node { transform-origin: 0 50%; }             /* the active circle grows from its left edge: the title stays flush with it */
@@ -6899,9 +6601,6 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .svt-row.rv-moving .svt-tagline .rv-line, .svt-row.rv-moving .svt-list__n, .svt-row.rv-moving .svt-list__t { overflow: clip; }
 @media (prefers-reduced-motion: reduce) { .svt-row .rv-i, .svt-row .svt-actions > *, .svt-row .svt-list::before, .svt-row .svt-list li::after, .svt-row .svt-list__ni, .svt-row .svt-list__ti { transition: none; } }
 
-/* ===== service dialogs: the single-item view (a list row of Szolgáltatások opens one plan / one group; data-view="single" on the dialog, .is-item on the item; script.js) =====
-   Webfejlesztés / Dizájn: cardless - the dialog itself is the item's page, everything centred (icon, title, description, checklist block, link, divider, "Az összes ..." link, CTA row),
-   the item's watermark stays in the bottom-right corner behind the content. Extra: the chosen group keeps its cards, only the header / link placement are shared. */
 .service-modal__scroll { transition: opacity 0.15s ease; }
 .service-modal__scroll.is-fading { opacity: 0; }                  /* the crossfade of the switch to the full view: 0.15s out, the swap, the content back at 0.3s */
 .service-modal h3:focus { outline: none; }
@@ -7044,183 +6743,24 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .st-count.on > span:last-child::after { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .st-count > span:last-child, .st-count > span:last-child::after, .st-reel > span { transition: none !important; } }
 
-/* ===== ÉRTÉKEK & GARANCIÁK — values that unfold (js/why-pin.js + the Why block of script.js) =====
-   One brand palette for all six cards (--why-grad, no per-card accents). The open card: a gradient that expands from the bottom-left corner (clip-path circle),
-   the big outline number that fills bottom -> top, the icon that draws its strokes, title letters / description lines that rise from masks. All of it is plain
-   CSS keyed on .is-active (the geometry of the cards is untouched: zero layout shift). The progress bar is a scrubbed charge (--f per segment, set by why-pin.js).
-   Phones (< 768px): no accordion, every card is a full card that plays its open state when it enters the viewport (script.js adds .is-active). */
-.why-panel { --ac-lt: #e0d9ff; --ac-sh: rgba(75, 25, 86, 0.32); --panel-bg: var(--why-grad); }
-.why-panel.is-active { box-shadow: 0 24px 50px var(--ac-sh); }
-
 /* background reveal: the gradient grows from the bottom-left corner (150% of the reference radius covers the opposite corner), collapses back on close */
-.why-panel::before { z-index: 1; opacity: 0; transition: opacity 0.45s ease; }          /* the open card's gradient fades in over the water that has filled the card (the corner circle is gone) */
-.why-panel.is-active::before { opacity: 1; transition-duration: 0.6s; }
 
-/* collapsed number: solid, the colour / opacity rules of the vertical label (dark; white under the water via the white copy; the up-next card at full opacity, the others 55%,
-   passed cards 80%: dark text at 55% on the passed tint is only ~3.2:1, at 80% >= 5.7:1), ~65% of the former size and never wider than ~40% of the collapsed card */
-.why-panel__num {
-    position: relative; font-family: 'Syne', sans-serif; font-weight: 800; line-height: 1; letter-spacing: 0; color: #1a1a2e; -webkit-text-fill-color: currentColor; -webkit-text-stroke: 0;
-    font-size: clamp(12px, min(1.235vw, calc(var(--wc, 120px) * 0.403 / var(--num-em, 2.3))), 21px);
-}
 /* hand-off: the small number lifts and grows as the tab fades out while the big number starts filling */
-.why-panel__num { transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.why-panel.is-active .why-panel__num { transform: translateY(-6px) scale(1.35); }
-.why-panel__num, .why-panel__label { opacity: 0.55; transition: opacity 0.4s ease; }
-.why-panel.is-passed .why-panel__num, .why-panel.is-passed .why-panel__label { opacity: 1; }
-.why-panel.is-next .why-panel__num, .why-panel.is-next .why-panel__label { opacity: 1; }
 
 /* open card: the body keeps its fixed-width box; the number + icon balance the top, the content sits centred in the lower 55% */
-.why-panel__body { transition: opacity 0.3s ease, visibility 0.3s ease; }
-.why-panel.is-active .why-panel__body { transition-delay: 0s; }
-.why-panel__content, .why-panel.is-active .why-panel__content { transform: none; transition: none; }
-.why-panel__icon {
-    width: clamp(36px, 4.8svh, 52px); height: clamp(36px, 4.8svh, 52px); margin-bottom: clamp(10px, 1.8svh, 20px);
-    border-radius: 14px; background: rgb(255 255 255 / 0.16); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.26);
-}
-.why-panel__icon .icon { width: 55%; height: 55%; }
-.why-panel__icon svg[data-draw] * { stroke-dasharray: 1 2; stroke-dashoffset: 1.02; transition: stroke-dashoffset 0.25s ease; }
-.why-panel.is-active .why-panel__icon svg[data-draw] * { stroke-dashoffset: 0; transition: stroke-dashoffset 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s; }
-
-.why-panel__title .wm { display: inline-block; white-space: nowrap; }
-.why-panel__title .wk { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.14em; margin-bottom: -0.14em; }
-.why-panel__title .wk > span { display: inline-block; transform: translateY(115%); transition: transform 0.25s ease; }
-.why-panel.is-active .why-panel__title .wk > span { transform: none; transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.32s + var(--ci, 0) * 0.02s); }
-.why-panel__text .wl { display: block; overflow: hidden; padding-bottom: 0.12em; margin-bottom: -0.12em; }
-.why-panel__text .wl > span { display: block; transform: translateY(110%); opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease; }
-.why-panel.is-active .why-panel__text .wl > span { transform: none; opacity: 1; transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.5s + var(--li, 0) * 0.08s), opacity 0.4s ease calc(0.5s + var(--li, 0) * 0.08s); }
 
 /* the big number: white 35% outline, filled bottom -> top (white -> accent light) when the card opens, 0.8s */
-.why-panel__big {
-    top: clamp(10px, 2svh, 22px); right: clamp(16px, 2vw, 28px);
-    font-size: clamp(88px, 17svh, 170px); letter-spacing: -0.02em;
-    color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 2px rgb(255 255 255 / 0.35);
-}
-.why-panel__big-fill {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, #fff 0%, var(--ac-lt) 100%); -webkit-background-clip: text; background-clip: text;
-    color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 0;
-    clip-path: inset(100% 0 0 0); transition: clip-path 0.25s ease;
-}
-.why-panel.is-active .why-panel__big-fill { clip-path: inset(0); transition: clip-path 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.05s; }
-
-@media (min-width: 768px) {
-    .why-panel__body { display: grid; grid-template-rows: 45% 1fr; justify-content: start; align-items: center; padding: 0 36px clamp(10px, 3.2svh, 32px); }
-    .why-panel__content { grid-row: 2; align-self: center; }
-}
-
-/* phones: stacked full cards, no accordion */
-@media (max-width: 767px) {
-    .why-panel__tab { display: none; }
-    .why-panel .why-panel__body { position: relative; inset: auto; display: block; grid-template-rows: none; padding: 26px 22px 28px; opacity: 1; visibility: visible; transition: none; }
-    .why-panel.is-active .why-panel__body { grid-template-rows: none; padding: 26px 22px 28px; }
-    .why-panel__content { min-width: 0; max-width: none; overflow: visible; }
-    .why-panel__icon { display: grid; width: 44px; height: 44px; margin-bottom: 14px; }
-    .why-panel__title { display: block; font-size: min(26px, 5.6vw); overflow-wrap: anywhere; }          /* the longest word (Felhasználóbarát) fits a 390px card */
-    .why-panel__big { display: block; top: 10px; right: 16px; font-size: 72px; }
-    .why-panel__text { font-size: 15px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .why-panel::before { opacity: 0; transition: none; }
-    .why-panel.is-active::before { opacity: 1; }
-    .why-panel__big { -webkit-text-stroke: 0; }
-    .why-panel__big-fill { clip-path: none; transition: none; }
-    .why-panel__title .wk > span, .why-panel__text .wl > span { transform: none; opacity: 1; transition: none !important; }
-    .why-panel__icon svg[data-draw] * { stroke-dashoffset: 0; transition: none !important; }
-    .why-panel__label { transition: none; }
-    .why-panel__num { transition: none !important; }
-}
 
 /* ===== ÉRTÉKEK refinements ===== */
 /* heading = the Szolgáltatások reveal (shared .fx-* rules above), compressed like Együttműködés: letters land by ~0.9s, the dot has dropped by ~1.25s */
 #why .section-heading { --stg: 0.009s; --dd: 0.5s; }
 #why .section-heading .sh-char { transition: translate 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.4s ease var(--cd, 0s), scale 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s); }
 #why .section-heading .sh-dot { transition: none; }
-/* descriptions: one shared measure so all six set in 4 lines on desktop; no manual breaks, no splitting of e-mail-váltásra */
-.why-panel__text { max-width: var(--why-text-ch, 40ch); text-wrap: pretty; hyphens: none; }
-.why-panel:nth-child(5) .why-panel__text { --why-text-ch: 36ch; }      /* the shortest text (05) would set in 3 lines at the shared 40ch: its measure is 4ch narrower */
-.why-panel__text .nw { white-space: nowrap; }
-.why-panel__text .wl > span { white-space: nowrap; }
 
-/* ===== ÉRTÉKEK: water fills the next card (js/why-pin.js sets --lv per card; script.js the static states / phones) =====
-   --lv = the water level 0..1: passed cards sit at a calm 0.15, the NEXT card rises with the scroll progress to its step, the open card is at 1 (its gradient fades in over the
-   water, which fills the width as the card widens). The water is a gradient block moved with transform; two masked sine strips (amplitude 6px) slide sideways by exactly one period
-   (CSS animation, compositor only; paused while the section is off-screen). The collapsed number + label are white on the dark section, so one copy serves above and under the water. Level expression: surface (mean) y = (1 - lv) * (H + 14px) - 21px. */
-.why-panel__water {
-    position: absolute; inset: 0 0 -14px 0; z-index: 0; pointer-events: none; opacity: 0.94; will-change: transform;          /* 14px taller than the card: still covers the bottom at level 1 */
-    background: var(--panel-bg);          /* the open card's own gradient on the same box: water -> open card has no colour change */
-    transform: translateY(calc((1 - var(--lv, 0)) * 100% - 14px));          /* 100% = H + 14px: the level maths is unchanged */
-    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.6s ease, visibility 0s;
-}
-.why-panel.is-active .why-panel__water { opacity: 1; }          /* the filled card: fully opaque, so the open gradient fades in without any colour change */
-.why-panel.is-dry .why-panel__water { visibility: hidden; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s 0.3s; }
-.why-panel.is-passed .why-panel__water { opacity: 0.45; }
-.why-panel__wave {
-    position: absolute; left: 0; right: 0; top: -14px; height: 14px;
-    /* the crest strips carry the same gradient (sized to the card, taken from the card's top rows) plus a light veil: the surface is slightly lighter */
-    background-image: linear-gradient(rgb(255 255 255 / 0.24), rgb(255 255 255 / 0.24)), var(--panel-bg);
-    background-size: 100% 100%, var(--wc, calc(100vw - 40px)) var(--ph, 100%); background-repeat: no-repeat; background-position: 0 0;
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14' preserveAspectRatio='none'%3E%3Cpath d='M0 7Q30 -5 60 7T120 7V14H0Z'/%3E%3C/svg%3E") 0 0 / 120px 14px repeat-x;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14' preserveAspectRatio='none'%3E%3Cpath d='M0 7Q30 -5 60 7T120 7V14H0Z'/%3E%3C/svg%3E") 0 0 / 120px 14px repeat-x;
-}
-.why-panel__wave.wa { animation: whyWaveA 5s linear infinite; }
-.why-panel__wave.wb { opacity: 0.55; -webkit-mask-position: 60px 0; mask-position: 60px 0; animation: whyWaveB 8s linear infinite; }
-.why-panel.is-passed .why-panel__wave.wa { animation-duration: 14s; }
-.why-panel.is-passed .why-panel__wave.wb { animation-duration: 22s; }
-/* the crest strips stay put (their gradient is sized to the card); the wave slides through the mask, one period per loop (tiny 14px strips: negligible paint) */
-@keyframes whyWaveA { to { -webkit-mask-position: -120px 0; mask-position: -120px 0; } }
-@keyframes whyWaveB { from { -webkit-mask-position: -60px 0; mask-position: -60px 0; } to { -webkit-mask-position: 60px 0; mask-position: 60px 0; } }
-#why.is-off .why-panel__wave { animation-play-state: paused; }
-
-/* phones: the water fills the card once (1s) when it enters the view, then it opens */
-@media (max-width: 767px) { .why-panel__water { transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s; } }
-@media (prefers-reduced-motion: reduce) {
-    .why-panel__water { transition: none !important; }
-    .why-panel__wave { animation: none !important; }
-}
-/* lighter surface below the crest, fading out when the card opens */
-.why-panel__water::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 70px; background: linear-gradient(180deg, rgb(255 255 255 / 0.24), rgb(255 255 255 / 0)); transition: opacity 0.6s ease; }
-.why-panel.is-active .why-panel__water::after { opacity: 0; }
-
-/* ===== Értékek open card, height-aware (script.js fitOpen sets --fit-num / --fit-gap / --fit-icon on the row, and --why-r1 = where the content region starts) ===== */
-@media (min-width: 768px) {
-    .why-panel__big { font-size: calc(clamp(88px, 17svh, 170px) * var(--fit-num, 1)); }
-    .why-panel__body { grid-template-rows: var(--why-r1, 45%) 1fr; }
-    .why-panel__icon { width: calc(clamp(36px, 4.8svh, 52px) * var(--fit-icon, 1)); height: calc(clamp(36px, 4.8svh, 52px) * var(--fit-icon, 1)); margin-bottom: calc(clamp(10px, 1.8svh, 20px) * var(--fit-gap, 1)); }
-    .why-panel__title { margin-bottom: calc(clamp(8px, 1.1svh, 12px) * var(--fit-gap, 1)); font-size: calc(clamp(24px, min(2.4vw, 3.4svh), 36px) * var(--fit-title, 1)); }
-    .why-panel__text { line-height: var(--fit-lh, 1.6); }
-}
-
-/* ===== Értékek: clean card transitions =====
-   the big number is a child of the card (anchored to its right edge) and fades out before the card narrows; the open content shows early and leaves fast, so a large card is never empty */
-.why-panel__big { z-index: 2; opacity: 0; transition: opacity 0.07s linear; }
-.why-panel.is-active .why-panel__big { opacity: 1; transition: opacity 0.25s ease 0.08s; }
-.why-panel__body { transition: opacity 0.16s ease, visibility 0.16s ease; }
-.why-panel.is-active .why-panel__body { transition: opacity 0.2s ease, visibility 0s; }
-.why-panel.is-active .why-panel__icon svg[data-draw] * { transition: stroke-dashoffset 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.why-panel.is-active .why-panel__title .wk > span { transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--ci, 0) * 0.02s); }
-.why-panel.is-active .why-panel__text .wl > span { transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) calc(0.1s + var(--li, 0) * 0.08s), opacity 0.35s ease calc(0.1s + var(--li, 0) * 0.08s); }
-@media (prefers-reduced-motion: reduce) { .why-panels { transition: none; } .why-panel__big, .why-panel.is-active .why-panel__big { transition: none; } }
-
-/* ===== ÉRTÉKEK: dark section (data-theme="dark" on #why drives the header and the cursor) =====
-   --why-bg is a deep navy-violet; the section background ramps from / to the neighbours (Készségek #0f1629 above, Együttműködés #0f1629 below) over --why-ramp at its top and bottom
-   edge, so the page colour blends without a hard edge. Collapsed cards are dark glass, numbers / labels are white (one copy serves above and under the water), the open card glows in
-   the brand colours instead of casting a light shadow. */
 :root { --why-bg: #170f36; --why-ramp: clamp(140px, 24svh, 260px); }
 #why { background: linear-gradient(180deg, #0f1629 0, var(--why-bg) var(--why-ramp), var(--why-bg) calc(100% - var(--why-ramp)), #0f1629 100%); }
 #why .section-heading { --sh-color: #fff; }
 
-.why-panel { background: rgb(255 255 255 / 0.05); border-color: rgb(255 255 255 / 0.08); box-shadow: none; }
-.why-panel.is-active { border-color: transparent; box-shadow: 0 0 28px rgb(108 99 255 / 0.25), 0 0 60px rgb(200 80 192 / 0.14), 0 14px 40px -12px rgb(75 25 86 / 0.3); }
-.why-panel__tab:focus-visible { outline-color: #E36DD0; }          /* #E36DD0 on the dark card 5.8:1 (the magenta #C026A3 is 3.5:1) */
-.why-panel__num, .why-panel__label { color: #fff; }
-.why-panel__num, .why-panel__label { opacity: 0.7; }
-.why-panel.is-passed .why-panel__num, .why-panel.is-passed .why-panel__label,
-.why-panel.is-next .why-panel__num, .why-panel.is-next .why-panel__label { opacity: 1; }
-.why-panel.is-passed .why-panel__water { opacity: 0.4; }
-/* the water glows on the dark: a brighter surface (crest strips + the veil below the crest) */
-.why-panel__wave { background-image: linear-gradient(rgb(255 255 255 / 0.36), rgb(255 255 255 / 0.36)), var(--panel-bg); }
-.why-panel__water::after { background: linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0)); }
 
 /* ===== Készségek -> Értékek: one long, eased blend (~1 viewport): the lower max(35%, 50svh) of Készségek shifts #10172a toward the Értékek violet-navy, the top --why-ramp-top of Értékek finishes it
    (smoothstep over the whole span, 10 stops per part: no linear band). Készségek keeps its flat #10172a above the blend; the two parts meet at the same colour. */
@@ -7872,3 +7412,54 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
     .sk-br { display: inline; }
     #skills .section-heading { font-size: var(--sk-heading-size); white-space: nowrap; }
 }
+
+/* ===== ÉRTÉKEK & GARANCIÁK — EXPERIMENT, variant A "big words" (js/why-pin.js) =====
+   One value at a time: a big number, the keyword in Syne 800 (outline -> brand-gradient fill scrubbed with the scroll), the description fades in at ~60% fill.
+   >= 1024px (and >= 520px tall, motion allowed) the section pins (sticky stage, 100svh per value, snap per value); below: stacked, each word fills once when it scrolls into view.
+   Word size per value (--em = its measured width in em, Syne 800 -0.02em): min(clamp(80px, 12vw, 220px), the largest that keeps it on ONE line between the gutters, 26svh); phones: <= 64px. */
+:root {
+    --vw-avail: calc(100vw - 2 * var(--gutter) - 16px);                    /* between the gutters (16px kept for a classic scrollbar) */
+    --vw-grad: linear-gradient(90deg, #5b5bf0 0%, #9b3fd8 55%, #C026A3 100%);
+    --vw-run: 585svh;                                                      /* pinned scroll run: (6 - 1 + 0.85) x 100svh */
+}
+@media (max-width: 1023px) { :root { --vw-avail: calc(100vw - 2 * var(--gutter)); } }
+.vw { position: relative; }
+.vw__glow { position: absolute; z-index: 0; left: 0; top: 0; inline-size: 70vmin; block-size: 70vmin; translate: calc(var(--gx, 30%) - 50%) calc(var(--gy, 45%) - 50%); border-radius: 50%; background: radial-gradient(closest-side, rgb(108 99 255 / 0.2), rgb(155 63 216 / 0.09) 55%, transparent 100%); pointer-events: none; }
+.vw__prog { display: none; }
+.vw__list { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; }
+.vw__item { position: relative; padding-block: 28px; border-top: 1px solid rgb(255 255 255 / 0.1); }
+.vw__item { --fs: min(clamp(80px, 12vw, 220px), calc(var(--vw-avail) / var(--em, 12)), 26svh); }
+@media (max-width: 1023px) { .vw__item { --fs: min(64px, calc(var(--vw-avail) / var(--em, 12))); } }
+.vw__no { display: block; margin-block-end: 0.35em; font: 500 max(12px, calc(var(--fs) * 0.18))/1 'JetBrains Mono', 'Space Grotesk', ui-monospace, monospace; letter-spacing: 0.02em; color: rgb(255 255 255 / 0.5); }
+.vw__wm { overflow: hidden; padding-block: 0.12em; margin-block: -0.12em; }
+.vw__word { position: relative; margin: 0; font: 800 var(--fs)/1.04 'Syne', sans-serif; letter-spacing: -0.02em; white-space: nowrap; inline-size: max-content; }
+.vw__ol { display: block; color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.6); }
+.vw__fl { position: absolute; inset: 0; display: block; background: var(--vw-grad); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; clip-path: inset(0 100% 0 0); }
+.vw__text { margin: 0.9em 0 0; max-inline-size: 32ch; font: 400 clamp(15px, 1.39vw, 22px)/1.6 'Montserrat', sans-serif; color: rgb(255 255 255 / 0.8); text-wrap: pretty; opacity: 0; transform: translateY(14px); }
+.vw__text .nw { white-space: nowrap; }
+/* stacked (phones / tablets / short windows): each word fills once when scrolled into view */
+.vw__item.is-in .vw__fl { clip-path: inset(0); transition: clip-path 1.1s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.vw__item.is-in .vw__text { opacity: 1; transform: none; transition: opacity 0.7s ease 0.55s, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s; }
+/* pinned stage */
+#why.is-pinned { display: block; min-height: 0; height: calc(100svh + var(--vw-run)); padding: 0 var(--content-gutter) !important; }
+#why.is-pinned .why-inner { position: sticky; top: 0; max-width: none; height: 100svh; margin: 0; padding: var(--section-top) 0 var(--section-bottom); box-sizing: border-box; display: flex; flex-direction: column; }
+#why.is-pinned .why-head { flex: none; }
+#why.is-pinned .vw { flex: 1 1 0; min-height: 0; }
+#why.is-pinned .vw__list { position: absolute; inset: 0; }
+#why.is-pinned .vw__item { position: absolute; inset: 0; padding: 0; border: 0; display: flex; flex-direction: column; justify-content: center; visibility: hidden; opacity: var(--o, 1); }
+#why.is-pinned .vw__no { opacity: var(--n, 1); }
+#why.is-pinned .vw__word { transform: translateY(var(--y, 0%)); }
+#why.is-pinned .vw__fl { clip-path: inset(0 calc((1 - var(--f, 0)) * 100%) 0 0); transition: none; }
+#why.is-pinned .vw__text { align-self: flex-end; opacity: var(--t, 0); transform: translateY(calc((1 - var(--t, 0)) * 14px)); transition: none; }
+#why.is-pinned .vw__prog { display: flex; align-items: center; gap: 12px; position: absolute; z-index: 2; left: 0; bottom: 0; margin: 0; font: 500 12px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.5); }
+#why.is-pinned .vw__cur { font-weight: 500; color: #fff; }
+#why.is-pinned .vw__bar { display: block; inline-size: clamp(90px, 10vw, 160px); block-size: 1px; background: rgb(255 255 255 / 0.2); }
+#why.is-pinned .vw__bar u { display: block; inline-size: 100%; block-size: 100%; background: var(--vw-grad); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
+@media (prefers-reduced-motion: reduce) {
+    .vw__fl { clip-path: none; }
+    .vw__text { opacity: 1; transform: none; }
+    .vw__item { opacity: 0; transition: opacity 0.6s ease; }
+    .vw__item.is-in { opacity: 1; }
+    .vw__item.is-in .vw__fl, .vw__item.is-in .vw__text { transition: none; }
+}
+
