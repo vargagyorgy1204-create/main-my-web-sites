@@ -297,6 +297,9 @@ async function hoverChecks(vp, coarse) {
     seq.push(!/is-frame|is-link-small|is-text/.test(ring) && (await wst()) === w0);
   }
   rec(tag, 'Értékek: hovering the cards changes nothing and shows no cursor frame', seq.every(Boolean), `${seq.map(Boolean).join(',')} ${w0.slice(0, 60)}`);
+  await move(vp.w * 0.5, vp.h * 0.55); await frames(p, 20); await sleep(500);
+  const spotOp = await p.evaluate(([x, y]) => { const c = document.elementFromPoint(x, y); const card = c && c.closest && c.closest('.hs__card'); return card ? +getComputedStyle(card, '::before').opacity : -1; }, [vp.w * 0.5, vp.h * 0.55]);
+  rec(tag, 'Értékek: the hovered card shows the cursor-follow spotlight on its border (real mouse)', spotOp > 0.9, `opacity ${spotOp}`);
   if (FULL) {
     // frames still work on real targets (menu item)
     await scrollTo(p, 0); await frames(p, 6);
@@ -354,7 +357,7 @@ async function layoutChecks(vp) {
           const s = getComputedStyle(e); if (s.visibility === 'hidden' || +s.opacity < 0.05 || s.display === 'none') return;
           let r = e.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return;
           const vwin = e.closest('.hs__view');            // Értékek strip: the track is clipped by its view (what is clipped is not visible)
-          if (vwin) { const v = vwin.getBoundingClientRect(); r = { left: Math.max(r.left, v.left), right: Math.min(r.right, v.right), top: Math.max(r.top, v.top), bottom: Math.min(r.bottom, v.bottom) }; if (r.right - r.left < 2) return; }
+          if (vwin) { const v = vwin.getBoundingClientRect(), gg = parseFloat(getComputedStyle(document.getElementById('why')).paddingLeft) || 0; r = { left: Math.max(r.left, v.left + gg), right: Math.min(r.right, v.right - gg), top: Math.max(r.top, v.top), bottom: Math.min(r.bottom, v.bottom) }; if (r.right - r.left < 2) return; }      // the strip fades out in the outer gutters (mask): only the part between the gutter lines is visible text
           for (const b of boxes) if (r.left < b[2] && r.right > b[0] && r.top < b[3] && r.bottom > b[1]) out.push((e.className && String(e.className).slice(0, 28)) || e.tagName);
         });
       return out;
@@ -568,7 +571,13 @@ async function whyPin(vp) {
   rec(tag, 'six cards 01-06 with icon, title, description', cards.length === 6 && cards.every((c, i) => c.n === '0' + (i + 1) && c.icon && c.text > 80), JSON.stringify(cards.map(c => c.n + ':' + c.t)));
   rec(tag, 'no text overflow inside the cards', cards.every(c => !c.over), JSON.stringify(cards.map(c => c.over)));
   rec(tag, 'no horizontal page scroll', !(await p.evaluate(() => document.documentElement.scrollWidth > innerWidth)), '');
+  // titles: no soft hyphens, ONE size for all six, every single-word title on one line (also on the phones)
+  const tt = await p.evaluate(() => [...document.querySelectorAll('.hs__title')].map(e => { const fs = parseFloat(getComputedStyle(e).fontSize); return { t: e.textContent, fs, lines: Math.round(e.offsetHeight / (fs * 1.1)), words: e.textContent.trim().split(/\s+/).length }; }));
+  rec(tag, 'card titles: no soft hyphens, one size for all six, single words on one line', tt.every(x => !/\u00ad/.test(x.t) && Math.abs(x.fs - tt[0].fs) < 0.05 && (x.words > 1 || x.lines === 1)), JSON.stringify(tt.map(x => `${x.t}:${x.fs.toFixed(1)}:${x.lines}`)));
   if (pinnedWanted) {
+    const mk = await p.evaluate(() => ({ mask: getComputedStyle(document.querySelector('.hs__view')).maskImage || getComputedStyle(document.querySelector('.hs__view')).webkitMaskImage, blobs: document.querySelectorAll('.hs__blob').length, grain: !!document.querySelector('.hs__grain'), bgDisplay: getComputedStyle(document.querySelector('.hs__bg')).display, vbg: getComputedStyle(document.querySelector('.hs__view')).backgroundColor }));
+    rec(tag, 'strip viewport: soft fade mask, no background of its own', /linear-gradient/.test(mk.mask) && /rgba\(0, 0, 0, 0\)|transparent/.test(mk.vbg), JSON.stringify(mk));
+    rec(tag, 'living background: 3 drifting blobs + grain', mk.blobs === 3 && mk.grain && mk.bgDisplay === 'block', JSON.stringify(mk));
     await p.evaluate(() => { (window.VB = window.VB || {}).whyNoSnap = true; });
     const L = info.vh, run = 3.3 * L;
     rec(tag, 'pinned run = 100svh + 330svh', Math.abs(info.h - L * 4.3) <= 3, `${info.h} want ${(L * 4.3).toFixed(0)}`);
@@ -576,19 +585,33 @@ async function whyPin(vp) {
       await p.evaluate(([y]) => (VB.lenis ? VB.lenis.scrollTo(y, { immediate: true }) : window.scrollTo(0, y)), [info.top + pos * run]); await frames(p, 8);
       return p.evaluate(() => { const cs = [...document.querySelectorAll('.hs__card')], R = e => e.getBoundingClientRect(); return { active: cs.findIndex(c => c.classList.contains('is-active')), l0: R(cs[0]).left, r5: R(cs[5]).right, cur: document.querySelector('.hs__cur').textContent, bar: +getComputedStyle(document.querySelector('.hs__bar u')).transform.split(',')[0].replace('matrix(', ''), op: cs.map(c => +c.style.opacity), sc: cs.map(c => +c.style.transform.replace(/[^0-9.]/g, '')), inView: [...cs].every(c => R(c).top >= 0 && R(c).bottom <= innerHeight) }; });
     };
+    await at(0); await sleep(1700);        // the entrance (cards slide in with a stagger) is over
     const a = await at(0), b = await at(0.5), c = await at(0.6), e2 = await at(1);
+    const pg = await p.evaluate(() => { const cs = [...document.querySelectorAll('.hs__card')], pr = document.querySelector('.hs__prog').getBoundingClientRect(); return { left: pr.left, gap: pr.top - Math.max(...cs.map(c => c.getBoundingClientRect().bottom)) }; });
     const line = info.cw - info.gl;
     rec(tag, 'start: card 01 active, on the left gutter line', a.active === 0 && Math.abs(a.l0 - info.gl) <= 1.5 && a.cur === '01' && a.bar < 0.01, JSON.stringify({ active: a.active, l0: a.l0, gl: info.gl, cur: a.cur }));
     rec(tag, 'start: the other cards scaled .94 / 55% opacity, the active one 1.0 / 100%', a.sc[0] === 1 && a.op[0] === 1 && a.op.slice(1).every(o => o >= 0.54 && o < 0.8) && a.sc.slice(1).every(x => x >= 0.94 && x < 1), JSON.stringify({ sc: a.sc, op: a.op }));
     rec(tag, 'middle: card 03 / 04 active, progress bar and "0n / 06" follow', (b.active === 2 || b.active === 3) && b.cur === '0' + (b.active + 1) && b.bar > 0.45 && b.bar < 0.65 && (c.active === 3), JSON.stringify({ b: b.active, c: c.active, cur: b.cur, bar: b.bar }));
     rec(tag, 'end: card 06 active, on the right gutter line, progress full', e2.active === 5 && Math.abs(e2.r5 - line) <= 1.5 && e2.bar > 0.99 && e2.cur === '06', JSON.stringify({ active: e2.active, r5: e2.r5, line, bar: e2.bar }));
     rec(tag, 'cards stay inside the viewport vertically', a.inView && e2.inView, '');
+    await at(0);
+    const pg0 = await p.evaluate(() => { const cs = [...document.querySelectorAll('.hs__card')], pr = document.querySelector('.hs__prog').getBoundingClientRect(); return { left: pr.left, gap: pr.top - Math.max(...cs.map(c => c.getBoundingClientRect().bottom)) }; });
+    rec(tag, 'progress ("01 / 06" + bar) below the track, on the left gutter line, ~32px under the cards', Math.abs(pg0.left - info.gl) <= 1.5 && pg0.gap >= 26 && pg0.gap <= 40, JSON.stringify(pg0));
+    const ring = await p.evaluate(() => { const c = document.querySelector('.hs__card.is-active'); return { a: +getComputedStyle(c, '::after').opacity, anim: getComputedStyle(c, '::after').animationName }; });
+    rec(tag, 'active card: slowly turning gradient border', ring.a > 0.8 && /hsSpin/.test(ring.anim), JSON.stringify(ring));
     // snap: after the scroll stops the nearest card centres (p = i / 5)
     await p.evaluate(() => { VB.whyNoSnap = false; });
     await p.evaluate(([y]) => VB.lenis.scrollTo(y, { immediate: true }), [info.top + 0.43 * run]); await frames(p, 6);
-    await sleep(1500);
+    await sleep(1600);
     const settle = await p.evaluate(([top]) => ({ rel: (VB.lenis ? VB.lenis.scroll : scrollY) - top }), [info.top]);
-    rec(tag, 'scroll stops -> settles on a card centre (p = i / 5)', Math.abs(settle.rel - 0.4 * run) <= 3, `rel ${settle.rel.toFixed(0)} want ${(0.4 * run).toFixed(0)}`);
+    const want = (0.04 + 0.88 * 0.4) * run;
+    rec(tag, 'scroll stops near an inner card -> settles on its centre', Math.abs(settle.rel - want) <= 3, `rel ${settle.rel.toFixed(0)} want ${want.toFixed(0)}`);
+    // the boundaries never snap (no pull at the pin start / end)
+    for (const f of [0.02, 0.97]) {
+      await p.evaluate(([y]) => VB.lenis.scrollTo(y, { immediate: true }), [info.top + f * run]); await frames(p, 6); await sleep(1400);
+      const r2 = await p.evaluate(([top]) => (VB.lenis ? VB.lenis.scroll : scrollY) - top, [info.top]);
+      rec(tag, `no snap at the boundary (${f} of the run stays)`, Math.abs(r2 - f * run) <= 2, `rel ${r2.toFixed(0)} want ${(f * run).toFixed(0)}`);
+    }
     await p.evaluate(() => { VB.whyNoSnap = true; });
     const z = await at(0);
     rec(tag, 'scroll back: card 01 active again', z.active === 0 && z.cur === '01', JSON.stringify({ active: z.active }));

@@ -3163,7 +3163,7 @@ html.has-cursor .ap-row:hover .ap-row__body h3 { translate: 6px 0; }
 @keyframes blobDriftB { to { transform: translate(-12vmax, -9vmax) scale(1.12); } }
 @keyframes blobDriftC { to { transform: translate(-16vmax, 8vmax) scale(0.88); } }
 /* fine film grain (SVG noise) + the bottom fade into the next (dark) section */
-.hero-grain {
+.hero-grain, .hs__grain {
     position: absolute;
     inset: 0;
     opacity: 0.09;
@@ -7415,18 +7415,20 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 
 /* ===== ÉRTÉKEK & GARANCIÁK — EXPERIMENT, variant B "horizontal strip" (js/why-pin.js) =====
    Six dark glass cards on one horizontal track. >= 1024px (and >= 520px tall, motion allowed) the section pins (sticky stage, --hs-run of scrolling) and the vertical scroll moves the track
-   right -> left: card 01 starts on the left gutter, card 06 ends on the right gutter. The card nearest to a focus point that glides from card 01's centre to card 06's centre is
-   "active" (scale 1, full opacity; the others .94 / .55, scrubbed). < 1024px: native swipe carousel (scroll-snap) + dots; reduced motion / no pin on desktop: a static 3 x 2 grid. */
+   right -> left: card 01 starts on the left gutter line, card 06 ends on the right gutter line (a short dwell at both ends). The card nearest to a focus point that glides from card 01's centre
+   to card 06's centre is "active" (scale 1, opacity 1; the others .94 / .55, scrubbed). The track viewport fades softly to the screen edges (the fade ends ON the gutter lines).
+   < 1024px: native swipe carousel (scroll-snap) + dots; reduced motion / no pin on desktop: a static 3 x 2 grid. */
 :root {
     --hs-w: clamp(320px, 30vw, 520px);                                     /* card width */
     --hs-gap: 32px;
-    --hs-bleed: 16px;                                                      /* how far the strip's clip reaches outside the gutter lines */
     --hs-pad: clamp(22px, 2.2vw, 36px);                                    /* card padding, left / right */
     --hs-pady: clamp(18px, 3svh, 36px);                                    /* top / bottom (height-aware: the card must fit the stage on short windows) */
     --hs-run: 330svh;                                                      /* pinned scroll run */
+    --hs-title-em: 13.95;                                                  /* width of the longest single-word title ("Felhasználóbarát") in em, Syne 800 -0.01em */
+    --hs-tfs: min(clamp(22px, min(2.5vw, 4svh), 40px), calc((var(--hs-w) - 2 * var(--hs-pad) - 2px) / var(--hs-title-em)));      /* ONE title size for all six: the longest word fits on one line in the card's text width */
 }
 .hs { position: relative; }
-.hs__prog, .hs__dots { display: none; }
+.hs__prog, .hs__dots, .hs__bg { display: none; }
 .hs__view { position: relative; }
 .hs__glow { display: none; }
 .hs__track { list-style: none; margin: 0; padding: 0; }
@@ -7435,12 +7437,12 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
     padding: var(--hs-pady) var(--hs-pad); border-radius: 24px; overflow: hidden;
     background: rgb(22 17 44 / 0.72); border: 1px solid rgb(255 255 255 / 0.14);
     -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    box-shadow: 0 24px 60px rgb(0 0 0 / 0.4), 0 4px 14px rgb(0 0 0 / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.06);
+    box-shadow: 0 20px 44px rgb(0 0 0 / 0.36), 0 4px 14px rgb(0 0 0 / 0.22), inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
 .hs__ic { display: grid; place-items: center; flex: none; inline-size: 56px; block-size: 56px; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.35); background: var(--g); color: #fff; box-shadow: 0 8px 20px rgb(0 0 0 / 0.3); }
 .hs__ic svg { inline-size: 26px; block-size: 26px; stroke-width: 1.75; }
 .hs__no { margin-block-start: clamp(14px, 2.4svh, 26px); font: 500 14px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.45); }
-.hs__title { margin: clamp(8px, 1.4svh, 14px) 0 0; font: 800 clamp(22px, min(2.5vw, 4svh), 40px)/1.08 'Syne', sans-serif; letter-spacing: -0.01em; color: #fff; hyphens: manual; overflow-wrap: normal; }
+.hs__title { margin: clamp(8px, 1.4svh, 14px) 0 0; font: 800 var(--hs-tfs)/1.1 'Syne', sans-serif; letter-spacing: -0.01em; color: #fff; hyphens: manual; overflow-wrap: normal; }
 .hs__text { margin: clamp(10px, 1.8svh, 18px) 0 0; max-inline-size: 36ch; font: 400 clamp(13px, min(1.25vw, 2.2svh), 20px)/1.55 'Montserrat', sans-serif; color: rgb(255 255 255 / 0.75); text-wrap: pretty; }
 .hs__text .nw { white-space: nowrap; }
 /* desktop without the pin (reduced motion, short windows, no GSAP): static 3 x 2 grid */
@@ -7451,34 +7453,70 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 }
 /* phones / tablets: native swipe carousel, the next card peeks */
 @media (max-width: 1023px) {
+    :root { --hs-tfs: calc((min(82vw, 420px) - 44px - 2px) / var(--hs-title-em)); }
     .hs__view { margin-inline: calc(-1 * var(--gutter)); }
     .hs__track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px var(--gutter) 22px; scroll-padding-inline: var(--gutter); -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .hs__track::-webkit-scrollbar { display: none; }
     .hs__card { flex: 0 0 82vw; max-inline-size: 420px; scroll-snap-align: start; --hs-pad: 22px; --hs-pady: 22px; }
-    .hs__title { font-size: clamp(24px, 6.6vw, 32px); }
     .hs__text { font-size: 15px; max-inline-size: none; }
     .hs__dots { display: flex; justify-content: center; gap: 10px; }
     .hs__dot { inline-size: 8px; block-size: 8px; padding: 0; border: 0; border-radius: 50%; background: rgb(255 255 255 / 0.28); cursor: pointer; transition: background 0.3s ease, transform 0.3s ease; }
     .hs__dot.is-on { background: #9b3fd8; transform: scale(1.4); }
 }
-/* pinned stage */
+/* ---- pinned stage ---- */
 #why.is-pinned { display: block; min-height: 0; height: calc(100svh + var(--hs-run)); padding: 0 var(--content-gutter) !important; }
 #why.is-pinned .why-inner { position: sticky; top: 0; max-width: none; height: 100svh; margin: 0; padding: var(--section-top) 0 var(--section-bottom); box-sizing: border-box; display: flex; flex-direction: column; }
 #why.is-pinned .why-head { flex: none; position: relative; }
-#why.is-pinned .hs { flex: 1 1 0; min-height: 0; }
-#why.is-pinned .hs__view { position: absolute; inset: 0 calc(-1 * var(--hs-bleed)); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--hs-bleed), #000 calc(100% - var(--hs-bleed)), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 var(--hs-bleed), #000 calc(100% - var(--hs-bleed)), transparent 100%); }          /* clipped 16px outside the gutter lines (a 16px fade): the cards never slide under the logo / burger */
-#why.is-pinned .hs__track { position: absolute; inset: 0 auto 0 var(--hs-bleed); display: grid; grid-auto-flow: column; grid-auto-columns: var(--hs-w); grid-template-rows: minmax(0, auto); align-content: center; align-items: stretch; gap: var(--hs-gap); inline-size: max-content; will-change: transform; }
-#why.is-pinned .hs__card { inline-size: var(--hs-w); max-block-size: min(60svh, 100%); transition: none; will-change: transform, opacity; }
-#why.is-pinned .hs__glow { display: block; position: absolute; z-index: 0; left: 0; block-size: 100%; aspect-ratio: 1; inline-size: auto; top: 0; translate: calc(var(--gx, 30%) - 50%) 0; border-radius: 50%; background: radial-gradient(closest-side, rgb(108 99 255 / 0.22), rgb(155 63 216 / 0.1) 55%, transparent 100%); pointer-events: none; }
-#why.is-pinned .hs__track { z-index: 1; }
-#why.is-pinned .hs__prog { display: flex; align-items: center; gap: 12px; position: absolute; right: 0; top: 0; margin: 0; font: 500 12px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.5); }
+/* the stage: strip + progress, centred under the heading */
+#why.is-pinned .hs { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+/* the track viewport spans the whole window; it fades to transparent at both screen edges, the fade ENDS on the gutter lines (card 01 at the start / card 06 at the end are fully visible).
+   Its 90px of vertical padding (cancelled by the negative margin) keep the card shadows from being clipped: nothing but the section background under the strip. */
+#why.is-pinned .hs__view { margin: -90px calc(-1 * var(--content-gutter)); padding-block: 90px; overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--content-gutter), #000 calc(100% - var(--content-gutter)), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 var(--content-gutter), #000 calc(100% - var(--content-gutter)), transparent 100%); }
+#why.is-pinned .hs__track { position: relative; z-index: 1; margin-inline-start: var(--content-gutter); display: grid; grid-auto-flow: column; grid-auto-columns: var(--hs-w); align-items: stretch; gap: var(--hs-gap); inline-size: max-content; will-change: transform; }
+#why.is-pinned .hs__card { inline-size: var(--hs-w); max-block-size: 60svh; transition: none; will-change: transform, opacity; }
+#why.is-pinned .hs__glow { display: block; position: absolute; z-index: 0; left: 0; top: 0; block-size: 100%; aspect-ratio: 1; inline-size: auto; translate: calc(var(--gx, 30%) - 50%) 0; border-radius: 50%; background: radial-gradient(closest-side, rgb(108 99 255 / 0.2), rgb(155 63 216 / 0.09) 55%, transparent 100%); pointer-events: none; }
+/* progress: below the strip, on the left gutter line, 32px under the cards */
+#why.is-pinned .hs__prog { display: flex; align-items: center; gap: 12px; margin: 32px 0 0; font: 500 12px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.06em; color: rgb(255 255 255 / 0.5); }
 #why.is-pinned .hs__cur { font-weight: 500; color: #fff; }
-#why.is-pinned .hs__bar { display: block; inline-size: clamp(90px, 10vw, 160px); block-size: 2px; border-radius: 1px; background: rgb(255 255 255 / 0.18); overflow: hidden; }
+#why.is-pinned .hs__bar { display: block; inline-size: clamp(120px, 14vw, 220px); block-size: 2px; border-radius: 1px; background: rgb(255 255 255 / 0.18); overflow: hidden; }
 #why.is-pinned .hs__bar u { display: block; inline-size: 100%; block-size: 100%; background: linear-gradient(90deg, #5b5bf0, #9b3fd8, #C026A3); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
-#why.is-pinned .hs__card.is-active .hs__ic { animation: hsPulse 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 1; }
+/* ---- living details (pinned stage only; paused off-screen via #why.is-off; none with reduced motion) ---- */
+#why.is-pinned .hs__bg { display: block; position: absolute; inset: 0 calc(-1 * var(--content-gutter)); z-index: 0; overflow: hidden; pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 22%, #000 78%, transparent 100%); }      /* the layer fades out at the section's top / bottom: no visible edge into the neighbours */
+#why.is-pinned .why-head, #why.is-pinned .hs { position: relative; z-index: 1; }
+#why.is-pinned .why-head { position: relative; }
+.hs__blob { position: absolute; inline-size: 52vmax; block-size: 52vmax; border-radius: 50%; will-change: transform; animation: hsDrift 26s ease-in-out infinite alternate; }
+.hs__blob:nth-child(1) { left: -12%; top: -10%; background: radial-gradient(closest-side, rgb(91 91 240 / 0.14), transparent 70%); }
+.hs__blob:nth-child(2) { right: -16%; top: 12%; background: radial-gradient(closest-side, rgb(155 63 216 / 0.12), transparent 70%); animation-duration: 30s; animation-delay: -9s; }
+.hs__blob:nth-child(3) { left: 24%; bottom: -26%; background: radial-gradient(closest-side, rgb(192 38 163 / 0.1), transparent 70%); animation-duration: 22s; animation-delay: -15s; }
+@keyframes hsDrift { from { transform: translate3d(-4%, -3%, 0) scale(1); } to { transform: translate3d(7%, 5%, 0) scale(1.14); } }
+.hs__grain { opacity: 0.045; }
+/* icons: a gentle idle float (the `translate` property, so the active card's pulse keeps the `transform`) */
+#why.is-pinned .hs__ic { animation: hsFloat 5s ease-in-out infinite; }
+#why.is-pinned .hs__card:nth-child(2) .hs__ic { animation-duration: 4.4s; animation-delay: -1.2s; }
+#why.is-pinned .hs__card:nth-child(3) .hs__ic { animation-duration: 5.6s; animation-delay: -2.4s; }
+#why.is-pinned .hs__card:nth-child(4) .hs__ic { animation-duration: 4.8s; animation-delay: -3.1s; }
+#why.is-pinned .hs__card:nth-child(5) .hs__ic { animation-duration: 5.2s; animation-delay: -0.6s; }
+#why.is-pinned .hs__card:nth-child(6) .hs__ic { animation-duration: 4.2s; animation-delay: -1.9s; }
+@keyframes hsFloat { 0%, 100% { translate: 0 -3px; } 50% { translate: 0 3px; } }
+#why.is-pinned .hs__card.is-active .hs__ic { animation: hsFloat 5s ease-in-out infinite, hsPulse 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 1; }
 @keyframes hsPulse { 0% { transform: scale(1); box-shadow: 0 8px 20px rgb(0 0 0 / 0.3), 0 0 0 0 rgb(155 63 216 / 0.55); } 45% { transform: scale(1.14); box-shadow: 0 8px 20px rgb(0 0 0 / 0.3), 0 0 0 12px rgb(155 63 216 / 0); } 100% { transform: scale(1); box-shadow: 0 8px 20px rgb(0 0 0 / 0.3), 0 0 0 0 rgb(155 63 216 / 0); } }
+/* card borders: a 1px ring layer (mask-composite) - the active card carries a brand-gradient ring that slowly turns (conic, 8s); a hovered card (real mouse only) gets a ~180px cursor-follow spotlight */
+@property --hs-ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+#why.is-pinned .hs__card::before, #why.is-pinned .hs__card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0; transition: opacity 0.5s ease;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+#why.is-pinned .hs__card::before { background: radial-gradient(180px circle at var(--mx, 50%) var(--my, 50%), #b66cff, rgb(155 63 216 / 0) 70%); }
+#why.is-pinned .hs__card::after { background: conic-gradient(from var(--hs-ang), #5b5bf0, #9b3fd8, #C026A3, #9b3fd8, #5b5bf0); }
+#why.is-pinned .hs__card.is-active::after { opacity: 0.9; animation: hsSpin 8s linear infinite; }
+@keyframes hsSpin { to { --hs-ang: 360deg; } }
+html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-duration: 0.2s; }
+#why.is-off *, #why.is-off *::before, #why.is-off *::after { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) {
     .hs__card.is-pre { opacity: 0; }
     .hs__card.is-pre.is-in { opacity: 1; }
     .hs__track { scroll-behavior: auto; }
+    .hs__bg { display: none !important; }
+    .hs__ic, .hs__card::before, .hs__card::after, .hs__card.is-active .hs__ic { animation: none !important; }
 }
