@@ -899,12 +899,16 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     function fit() {
         var inner = section.querySelector('.steps-inner');
         if (!inner) return;
-        if (!pinQuery.matches) { section.style.removeProperty('--fit'); return; }
+        if (!pinQuery.matches) { section.style.removeProperty('--fit'); section.classList.remove('steps-center'); return; }
         var pin = section.querySelector('.steps-pin') || section;
         var pcs = window.getComputedStyle(pin);
         var avail = window.innerHeight - parseFloat(pcs.paddingTop) - parseFloat(pcs.paddingBottom);
         section.style.setProperty('--fit', '1');
         var natural = inner.offsetHeight;
+        /* centre the block in the pinned viewport (>= 800px tall) only while the space above / below it is >= the header height + 24px */
+        var hdrH = parseFloat(window.getComputedStyle(document.documentElement).getPropertyValue('--hdr-h')) || 92;
+        section.classList.toggle('steps-center', window.innerHeight >= 800 && (window.innerHeight - natural) / 2 >= hdrH + 24);
+        pcs = window.getComputedStyle(pin); avail = window.innerHeight - parseFloat(pcs.paddingTop) - parseFloat(pcs.paddingBottom);
         /* the head line (and the label / subheading) are laid out at size / fit, so they always render at the common size: only the rest scales */
         var hd = inner.querySelector('.steps-title');
         var fixedH = hd ? hd.offsetHeight : 0;

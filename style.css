@@ -7507,9 +7507,10 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
 }
 /* the KAPCSOLAT pill: width auto, horizontal padding = 1.5 x its visual vertical padding (the Hero button's proportion), same height / type / glow / alignment to the right gutter */
 #steps-cta .cta-row__btn .hbtn { min-width: 0; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); }
-/* tall screens: the whole block (label -> CTA row) is centred inside the pinned viewport */
-@media (min-width: 900px) and (min-height: 1000px) and (prefers-reduced-motion: no-preference) {
-    .steps-pin { height: 100svh; max-height: none; align-items: center; padding-block: var(--hdr-h); }
+/* viewports >= 800px tall: the whole block (label -> CTA row) is centred inside the pinned viewport, as long as the space above / below it is >= --hdr-h + 24px
+   (script.js fit() sets .steps-center on the section); otherwise it stays top-aligned under the anchor */
+@media (min-width: 900px) and (min-height: 800px) and (prefers-reduced-motion: no-preference) {
+    #steps.steps-center .steps-pin { height: 100svh; max-height: none; align-items: center; padding-block: var(--hdr-h); }
 }
 /* Együttműködés: the gap between the divider and the CTA text equals the gap between the descriptions and the divider (--step-desc-divider; no extra lift) */
 #steps .cta-row { --divider-cta: calc(var(--step-desc-divider) - 2px); --cta-lift: 0px; }

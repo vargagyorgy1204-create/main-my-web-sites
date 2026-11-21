@@ -536,7 +536,7 @@ async function titleSystem(vp) {
   const badLeft = wide.filter(r => Math.abs(r.left - expLeft) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
   rec(tag, `wide anchor: eyebrow left = ${Math.round(expLeft)}px`, badLeft.length === 0, badLeft.join(' '));
   const heroLift = Math.min(16, Math.max(8, 0.0178 * vp.h));   // --hero-lift: the hero label sits higher than the other eyebrows
-  const badTopT = tight.filter(r => Math.abs(r.top - (r.name === 'hero' ? expTopT - heroLift : expTopT)) > 1.5).map(r => `${r.name}:${Math.round(r.top)}`);
+  const badTopT = tight.filter(r => !(r.name === 'steps' && vp.h >= 800 && r.top >= expTopT - 1.5) && Math.abs(r.top - (r.name === 'hero' ? expTopT - heroLift : expTopT)) > 1.5)      // Együttműködés: from 800px tall the pinned block may be centred (never above the anchor).map(r => `${r.name}:${Math.round(r.top)}`);
   rec(tag, `tight anchor: eyebrow top = section top + ${expTopT.toFixed(1)}px (hero: -${heroLift.toFixed(1)}px --hero-lift) in all seven sections`, badTopT.length === 0, badTopT.join(' '));
   const badLeftT = tight.filter(r => Math.abs(r.left - expLeftT) > 1.5).map(r => `${r.name}:${Math.round(r.left)}`);
   rec(tag, `tight anchor: eyebrow left = ${expLeftT}px in all seven sections`, badLeftT.length === 0, badLeftT.join(' '));
