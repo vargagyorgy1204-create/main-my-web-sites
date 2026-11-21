@@ -38,7 +38,7 @@ One system, one place: every size on the site is a **fluid token** derived from 
 | `--section-heading-size` | `clamp(18px, min(4.277vw, 6.84svh), 69.12px)`; < 768px: `clamp(22px, (100vw − 40px) / 13.9, 34px)` | 25.2 | 52.5 | 61.5 | 45.8 | 59.1 | 69.1 |
 | `--section-heading-lh` | `1.12`; ≥ 900px: `1.06` | 1.12 | 1.06 | 1.06 | 1.06 | 1.06 | 1.06 |
 | `--about-heading-size` | `clamp(30px, 8.2vw, 42px)` (Rólam, list layout) | 32 | 42 | 42 | 42 | 42 | 42 |
-| `--about-heading-size-pinned` | `clamp(30px, min(4.6vw, 6.6svh), 64px)` (Rólam, pinned story ≥ 900px) | 30 | 50.7 | 59.4 | 44.2 | 57 | 64 |
+| `--about-heading-size-pinned` | `clamp(30px, min(5.29vw, 7.59svh), 74px)` (Rólam, pinned story ≥ 900px; +15% of the former `min(4.6vw, 6.6svh)`, 64px) | 30 | 58.3 | 68.3 | 50.9 | 65.6 | 74 |
 
 ### Two anchors
 

@@ -85,7 +85,7 @@
     --section-heading-size: clamp(18px, min(4.277vw, 6.84svh), 69.12px);   /* the 6 unified .section-heading */
     --section-heading-lh: 1.12;
     --about-heading-size: clamp(30px, 8.2vw, 42px);                        /* Rólam, list layout */
-    --about-heading-size-pinned: clamp(30px, min(4.6vw, 6.6svh), 64px);    /* Rólam, pinned story (>= 900px) */
+    --about-heading-size-pinned: clamp(30px, min(5.29vw, 7.59svh), 74px);   /* Rólam, pinned story (>= 900px; +15% of the former min(4.6vw, 6.6svh), 64px) */
     /* Portfólió project cards: ONE spacing logic (see DESIGN-SYSTEM.md) */
     --pf-card-pad: clamp(20px, 4vw, 64px);                                 /* the card's padding, equal on all four sides */
     --pf-gap-col: clamp(24px, 3.3vw, 56px);                                /* text column <-> video column */
