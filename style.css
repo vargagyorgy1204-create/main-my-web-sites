@@ -3698,6 +3698,7 @@ html.has-cursor .contact-field input:not([type="checkbox"]):not([type="radio"]):
     box-shadow: 0 0 0 4px rgba(200, 80, 192, 0.07), 0 6px 18px rgba(192, 38, 163, 0.12);
 }
 .cursor-ring.is-frame + .cursor-dot { opacity: 0.9; transform-origin: center; }
+.cursor-ring.is-frame.is-hdr + .cursor-dot { opacity: 0; }          /* header logo / burger: the frame alone, no dot inside */
 .cursor-ring.is-link-small::before {
     width: 46px; height: 46px; margin: -23px 0 0 -23px;
     border-color: rgba(192, 38, 163, 0.7);
