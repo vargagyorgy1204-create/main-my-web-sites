@@ -92,6 +92,8 @@
        grows down out of the dot, splits above the cards (desktop) or runs card to card (<1024px) and traces each card's outline; the glass surface fades in and
        the content plays. Everything is transform / opacity / stroke (no layout), the GSAP timelines are reversible (scroll back above the section = reverse, ~1s).
        Rest state = the plain CSS: every inline style / helper class is removed when the timelines complete. */
+    /* the whole entrance chain plays at 0.8 of its old durations / delays (forward only: the reverse keeps its ~1s); the CSS side (#contact heading letters, dot, lead text) is scaled to match */
+    var ENTRY = 0.8, FWD = 1 / ENTRY;
     var formCard = section.querySelector('.contact-form-panel');
     var personal = section.querySelector('.contact-personal-panel');
     var eyebrow = section.querySelector('.ctc-eyebrow');
@@ -100,7 +102,7 @@
     var hd = false;
     var playHead = function () {
       if (hd) return; hd = true;
-      if (eyebrow) gsap.to(eyebrow, { opacity: 1, y: 0, duration: 0.7, ease: EASE, delay: 0.5, onComplete: function () { gsap.set(eyebrow, { clearProps: 'opacity,transform' }); } });
+      if (eyebrow) gsap.to(eyebrow, { opacity: 1, y: 0, duration: 0.7 * ENTRY, ease: EASE, delay: 0.5 * ENTRY, onComplete: function () { gsap.set(eyebrow, { clearProps: 'opacity,transform' }); } });
     };
     if (eyebrow) gsap.set(eyebrow, { opacity: 0, y: 20 });
 
@@ -377,14 +379,14 @@
         var pr = u.tl.progress();
         if (u.call) return;
         if (pr === 1) return;
-        if (pr > 0) { u.tl.timeScale(1).play(); return; }            /* partly reversed: continue forward */
+        if (pr > 0) { u.tl.timeScale(FWD).play(); return; }            /* partly reversed: continue forward */
         var wait = i === 0 ? delay : 0;
         if (u.gate) {
           var prev = units[i - 1];
           if (!u.vis || prev.tl.progress() === 0) return;
-          wait = Math.max(0, u.gateAt - prev.tl.time());             /* the second card's line leaves the first card's closing outline */
+          wait = Math.max(0, (u.gateAt - prev.tl.time()) / FWD);             /* the second card's line leaves the first card's closing outline */
         }
-        u.tl.timeScale(1);
+        u.tl.timeScale(FWD);
         if (wait > 0) u.call = gsap.delayedCall(wait, function () { u.call = null; u.tl.play(); tryStarts(0); });
         else u.tl.play();
       });
@@ -408,7 +410,7 @@
       landed = true;
       if (!sg) return;
       if (units.length && units.every(function (u) { return u.tl.progress() === 0; })) build();     /* fresh geometry / durations */
-      tryStarts(0.1);
+      tryStarts(0.1 * ENTRY);
     }
     [formCard, personal].forEach(function (c) {
       if (!c) return;
@@ -421,7 +423,7 @@
         units.forEach(function (u) { if (u.gate === personal) u.vis = on; });
         if (!on) return;
         if (!entered && !landed && word && word.getBoundingClientRect().bottom < 0 && units.length && units[0].tl.progress() === 0) { entered = true; landed = true; subOn(true); }      /* the heading was flung past: the cards start the choreography */
-        tryStarts(units.length && units[0].tl.progress() === 0 ? 0.3 : 0);
+        tryStarts(units.length && units[0].tl.progress() === 0 ? 0.3 * ENTRY : 0);
       }, { threshold: 0.12 }).observe(personal);
     }
     var sgRt;
@@ -446,7 +448,7 @@
       if (h3 && !h3.querySelector('.rv-i')) { var i = document.createElement('span'); i.className = 'rv-i'; while (h3.firstChild) i.appendChild(h3.firstChild); h3.appendChild(i); }
       sg = makeSignal(); ring = makeRing();
       build();
-      if (landed) tryStarts(0.1);
+      if (landed) tryStarts(0.1 * ENTRY);
     });
 
     /* ---------------------------------------------------------- the giant word

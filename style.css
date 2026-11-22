@@ -6474,7 +6474,15 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
 html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
 /* KAPCSOLAT only: the dot starts its drop 0.18s (was 0.8s) after the last letter began to rise, i.e. while that letter is still settling (the drop itself is unchanged); the signal chain follows the drop's end */
-#contact .section-heading { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.18s); }
+/* KAPCSOLAT entrance chain x 0.8 (forward only; the out / reverse state keeps its timings): letter stagger 0.05 -> 0.04s, letter transitions 0.8 / 0.5 / 0.55 -> 0.64 / 0.4 / 0.44s, the dot's start
+   offset and drop 0.73 -> 0.584s, the ring, the lead-text lines (0.7 / 0.45 -> 0.56 / 0.36s, steps 0.07 -> 0.056s). JS (js/contact-footer.js ENTRY) scales the signal / cards timelines the same. */
+#contact .section-heading.fx-in { --stg: 0.04s; }
+#contact .section-heading { --dd: calc((var(--cn, 8) - 2) * 0.04s + 0.144s); }
+#contact .section-heading.fx-prep.fx-in .sh-char { transition: translate 0.64s cubic-bezier(0.2, 0.7, 0.2, 1) var(--cd, 0s), opacity 0.4s ease var(--cd, 0s), scale 0.44s cubic-bezier(0.34, 1.56, 0.64, 1) var(--cd, 0s); }
+#contact .section-heading.fx-prep.fx-in .sh-dot { transition: none; animation: ctcDotDrop 0.584s linear var(--dd) both; }
+#contact .section-heading.fx-prep.fx-in.fx-done .sh-dot { animation: none; }
+#contact .section-heading.fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.48s ease-out calc(var(--dd) + 0.28s) forwards; }
+#contact .ctc-sub.rv-prep.rv-in .rv-i { transition: transform 0.56s cubic-bezier(0.2, 0.7, 0.2, 1) var(--rd, 0s), opacity 0.36s ease var(--rd, 0s); --rd: calc(0.12s + var(--ri, 0) * 0.056s); }
 @keyframes ctcDotDrop {
     0%   { translate: 0 -120%; scale: 1 1; opacity: 0; animation-timing-function: ease-in; }
     4%   { opacity: 1; }
