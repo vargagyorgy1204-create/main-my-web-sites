@@ -103,7 +103,9 @@ const AUDIT = (opts) => {
     if (c.r.right > vw + 1 || c.r.left < -1) out.outside.push(`${sel(c.e)} ${Math.round(c.r.left)}..${Math.round(c.r.right)} (vw ${vw})`);
     if (c.own && parseFloat(c.cs.fontSize) < 12 - 0.01) out.small.push(`${sel(c.e)} ${parseFloat(c.cs.fontSize).toFixed(1)}px "${c.own.slice(0, 24)}"`);
     if (c.inter) {
-      const b = c.e.getBoundingClientRect();
+      /* a checkbox / radio inside a <label>: the label is the tap target */
+      const lab = /^(checkbox|radio)$/.test(c.e.type || '') ? c.e.closest('label') : null;
+      const b = (lab || c.e).getBoundingClientRect();
       /* an inline link inside running text (the paragraph has other text around it) is exempt */
       const inline = c.e.tagName === 'A' && c.e.parentElement && getComputedStyle(c.e).display === 'inline' && txt(c.e.parentElement).length > 0;
       if (!inline && (b.width < 44 - 0.5 || b.height < 44 - 0.5)) out.tap.push(`${sel(c.e)} ${Math.round(b.width)}×${Math.round(b.height)} "${(c.e.getAttribute('aria-label') || c.e.textContent || c.e.getAttribute('data-lucide') || '').trim().replace(/\s+/g, ' ').slice(0, 22)}"`);

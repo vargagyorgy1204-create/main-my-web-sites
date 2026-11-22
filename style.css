@@ -27,7 +27,7 @@
     --section-top: calc(var(--hdr-h) + clamp(24px, 4svh, 56px));           /* section top -> eyebrow */
     --section-bottom: clamp(48px, 9svh, 104px);                            /* last content block -> section / viewport bottom */
     --sec-bottom: clamp(20px, 3svh, 28px);                                 /* pinned Együttműködés bottom padding (legacy, tighter) */
-    --eyebrow-size: clamp(11px, 8px + 0.28vw, 13px);
+    --eyebrow-size: clamp(12px, 8px + 0.28vw, 13px);
     --eyebrow-gap: clamp(12px, 1.6svh, 20px);                              /* generic eyebrow -> next block */
     --eyebrow-head-gap: 10px;                                              /* eyebrow -> heading of the unified sections */
     --head-gap: clamp(28px, 4svh, 56px);                                   /* heading -> first content block */
@@ -222,8 +222,12 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
 .burger {
     display: grid;
     gap: 6px;
-    inline-size: 24px;
-    padding: 10px 0;
+    align-content: center;
+    justify-items: center;
+    inline-size: 44px;
+    block-size: 44px;
+    margin-inline-end: -10px;                 /* the 24px lines keep their place: the 44px tap box reaches 10px past them */
+    padding: 0;
     border: 0;
     background: none;
     cursor: pointer;
@@ -310,7 +314,7 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
 }
 
 /* socials: the footer's .social-links component (see the FOOTER social icons block: bare glyphs, gradient fill + lift on hover, circle cursor); here only the layout and the staggered entrance (end of file) */
-.menu__social { justify-content: center; margin: 0; flex: none; }
+.menu__social { justify-content: center; gap: 11px; margin: 0; flex: none; }
 
 /* short windows: tighter type and gaps */
 @media (max-height: 600px) {
@@ -1766,6 +1770,8 @@ footer {
     text-underline-offset: 3px;
 }
 
+@media (pointer: coarse) { .policy-section li > a[href^="tel:"], .policy-section li > a[href^="mailto:"], .policy-section li > a[target="_blank"] { display: inline-flex; align-items: center; min-height: 44px; } }
+
 .policy-actions {
     margin-top: 28px;
     text-align: center;
@@ -2962,7 +2968,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
 .ap-wrap { max-width: 1100px; margin: 0 auto; }
 .ap-back {
     display: inline-flex; align-items: center; gap: 8px;
-    margin-bottom: 28px;
+    padding-block: 12px; margin-block: -12px 16px;           /* 44px tall tap box; the visual place is the old one */
     font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
     color: #6b6b80; text-decoration: none; transition: color .2s ease;
 }
@@ -4117,8 +4123,8 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   padding: 0 12px;
   font-family: var(--font-accent);
   font-weight: 500;
-  font-size: 11px;
-  letter-spacing: 0.8px;
+  font-size: 12px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
   line-height: 1;
   color: var(--pure-white);
@@ -4405,7 +4411,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   }
 
   .pf-case__block p { font-size: clamp(12.5px, 1.05vw, 16px); }
-  .pf-case__chips li { padding: 4px 12px; font-size: clamp(11.5px, 0.95vw, 13px); }
+  .pf-case__chips li { padding: 4px 12px; font-size: clamp(12px, 0.95vw, 13px); }
 
   .pf-case__btn {
     inline-size: auto;
@@ -4436,7 +4442,7 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
   }
   .pf-case__name { font-size: clamp(24px, calc(3.2svh + 1vw), 40px); }
   .pf-case__block p { font-size: 13px; line-height: 1.45; }
-  .pf-case__chips li { padding: 3px 10px; font-size: 11.5px; }
+  .pf-case__chips li { padding: 3px 10px; font-size: 12px; }
 }
 
 @media (min-width: 900px) and (max-height: 559px) {
@@ -4791,7 +4797,7 @@ html.lenis, html.lenis body { height: auto; }
   margin: 0 0 clamp(20px, 4svh, 40px);
   font-family: 'Syne', sans-serif;
   font-weight: 800;
-  font-size: min(calc((100vw - 32px) / 9.75), 125px);
+  font-size: min(calc(var(--content-max) / 9.75), 125px);       /* WEBOLDAL (9.75em) fits the space between the gutters */
   line-height: 1.1;
   letter-spacing: -0.02em;
   white-space: nowrap;
@@ -4802,7 +4808,7 @@ html.lenis, html.lenis body { height: auto; }
   text-align: left;
 }
 @media (min-width: 768px) {
-  .svt-word { font-size: min(calc((100vw - 64px) / 9.75), 125px); }
+  .svt-word { font-size: min(calc(var(--content-max) / 9.75), 125px); }
 }
 .svt-word__fill {
   position: absolute;
@@ -4916,7 +4922,7 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
   .svt-sub { margin-block-start: clamp(8px, 2svh, 22px); font-size: clamp(15px, min(1.25vw, 1.67svh), 18px); }
   .svt-row { padding-block: clamp(28px, 7svh, 96px); }
   .svt-word {
-    font-size: min(calc((100vw - 64px) / 9.75), 125px, 11.6svh);
+    font-size: min(calc(var(--content-max) / 9.75), 125px, 11.6svh);
     margin: 0 0 clamp(14px, 3.4svh, 40px);
   }
   .svt-details { gap: clamp(18px, 3svh, 32px); }
@@ -5039,9 +5045,15 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 @media (max-width: 850px) {
     .footer-section ul li { margin-bottom: 2px; }
     .footer-section ul li a,
-    .footer-section p a { display: inline-flex; align-items: center; min-height: 36px; }
+    .footer-section p a { display: inline-flex; align-items: center; min-height: 44px; }
     .footer-bottom-links { gap: 6px 18px; }
-    .footer-bottom-links .cookie-settings-link { display: inline-flex; align-items: center; min-height: 36px; padding: 0 4px; }
+    .footer-bottom-links .cookie-settings-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
+}
+@media (pointer: coarse) and (min-width: 851px) {
+    .footer-section ul li { margin-bottom: 0; }
+    .footer-section ul li a,
+    .footer-section p a { display: inline-flex; align-items: center; min-height: 44px; }
+    .footer-bottom-links .cookie-settings-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
 }
 /* ===== /FOOTER ===== */
 
@@ -5519,7 +5531,7 @@ footer {
     }
     .footer-legal::before { display: none; }
     .footer-legal .footer-bottom-links { justify-content: center; }
-    .footer-legal .cookie-settings-link { min-height: 36px; display: inline-flex; align-items: center; padding: 0 4px; }
+    .footer-legal .cookie-settings-link { min-height: 44px; display: inline-flex; align-items: center; padding: 0 4px; }
 }
 footer { padding-bottom: var(--cb-h, 0px); }
 /* ===== /FOOTER FLOOR ===== */
@@ -5654,7 +5666,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 .ap { padding-top: var(--section-top); padding-inline: var(--content-gutter); }
 .ap-wrap { max-width: var(--content-max); }
 .ap-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 24px; margin-bottom: var(--head-gap); }
-.ap-top .ap-back { margin: 0; }
+.ap-top .ap-back { margin: -12px 0; }
 .ap-top .ap-eyebrow { margin: 0; }
 
 /* ===== SECTION HEADINGS (.section-heading) — one look for every section title, reference: "ÜZENJEN." =====
@@ -6252,8 +6264,8 @@ html.has-cursor .privacy-card__x:hover, .privacy-card__x:focus-visible { backgro
 
 /* footer copyright = home link: exactly the "Adatkezelési tájékoztató" link (.cookie-settings-link: colour, underline wipe, transition, cursor target);
    the 6px padding that gives the underline its offset is cancelled by a negative margin, so the legal row keeps its layout */
-.footer-legal p .cookie-settings-link { position: relative; display: inline-block; min-height: 0; padding: 6px 0; margin: -6px 0; transition: color 0.3s ease; }
-.footer-legal p .cookie-settings-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 2px; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.3s ease; }
+.footer-legal p .cookie-settings-link { position: relative; display: inline-block; min-height: 0; padding: 12px 0; margin: -12px 0; transition: color 0.3s ease; }      /* 44px tall tap box (+ the 20px line); the visual place is the old one */
+.footer-legal p .cookie-settings-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 2px; background: var(--card-primary); transform: scaleX(0); transform-origin: left center; transition: transform 0.3s ease; }
 .footer-legal p .cookie-settings-link:hover::after,
 .footer-legal p .cookie-settings-link:focus-visible::after { transform: scaleX(1); }
 
@@ -6348,18 +6360,18 @@ html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .
 /* Elérhetőség column: the nav column's rows - the same type (16px / 1.6) and the same row step (the nav item margin), so row n of the contact column
    sits level with item n of Navigáció. The working hours are ONE item that spans the last two rows: label | two value lines (the 2nd line left-aligned under "H–P") */
 .footer-section--contact p { font-size: var(--footer-link-fs); line-height: var(--footer-link-lh); margin-bottom: calc(var(--footer-row-gap) - var(--footer-row-shrink)); }
-@media (max-width: 850px) { .footer-section--contact p { margin-bottom: 2px; } .footer-section--contact p:not(:has(a)) { margin-bottom: calc(2px - var(--footer-row-shrink)); } }   /* rows with a link are 36px tall (tap target): their step does not depend on the line-height */
+@media (max-width: 850px), (pointer: coarse) { .footer-section--contact p { margin-bottom: 2px; } .footer-section--contact p:not(:has(a)) { margin-bottom: calc(2px - var(--footer-row-shrink)); } }   /* rows with a link are 44px tall (tap target): their step does not depend on the line-height */
 .footer-section--contact .footer-hours { display: grid; grid-template-columns: auto 1fr; column-gap: 0.28em; align-items: start; }
 .footer-section--contact .footer-hours__v > span { display: block; }
 .footer-section--contact .footer-hours__v > span + span { margin-top: calc(var(--footer-row-gap) - var(--footer-row-shrink)); }     /* the row step between the two lines */
 @media (max-width: 850px) { .footer-section--contact .footer-hours__v > span + span { margin-top: calc(2px - var(--footer-row-shrink)); } }
 
 /* ===== FOOTER social icons: bare glyphs, gradient fill + lift on hover, staggered reveal (shared with the burger menu's icons row) ===== */
-.footer-section .social-links { gap: 4px; margin: 24px 0 0 -9px; }                       /* 40px hit boxes 4px apart = 22px between the 22px glyphs; -9px: the first glyph sits on the column edge */
+.footer-section .social-links { gap: 0; margin: 22px 0 0 -11px; }                       /* 40px hit boxes 4px apart = 22px between the 22px glyphs; -9px: the first glyph sits on the column edge */
 :is(.footer-section .social-links, .menu__social) a {
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     background: none;
     border-radius: 50%;
     color: rgb(255 255 255 / 0.75);
@@ -7053,15 +7065,15 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__view { transition: filter 0.3s ease; }
 .hw.is-hold .hw__view { filter: blur(3px) brightness(0.6); }
 .hw__dock { position: absolute; left: 50%; bottom: 10px; z-index: 7; translate: -50% 0; display: flex; gap: 10px; padding: 8px 12px; border-radius: 24px; background: rgb(255 255 255 / 0.14); border: 1px solid rgb(255 255 255 / 0.3); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 10px 30px rgb(0 0 0 / 0.35); }
-.hw__app { position: relative; inline-size: 40px; block-size: 40px; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.35); color: #fff; display: grid; place-items: center; padding: 0; cursor: pointer; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease; }
+.hw__app { position: relative; inline-size: 44px; block-size: 44px; border-radius: 50%; border: 2px solid transparent; background-clip: padding-box; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35); color: #fff; display: grid; place-items: center; padding: 0; cursor: pointer; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease; }
 .hw__app svg { inline-size: 20px; block-size: 20px; stroke-width: 1.75; }
 .hw__app--music { background: linear-gradient(135deg, #6366f1, #9b3fd8); }
 .hw__app--palette { background: linear-gradient(135deg, #9b3fd8, #C026A3); }
 .hw__app--mood { background: linear-gradient(135deg, #0e8fa3, #22c3d6); }
 .hw__app--msg { background: linear-gradient(135deg, #C026A3, #f97316); }
-.hw__app:hover, .hw__app:focus-visible { transform: scale(1.2) translateY(-2px); box-shadow: 0 8px 18px rgb(0 0 0 / 0.4); outline: none; }
-.hw__app[aria-pressed="true"] { box-shadow: 0 0 0 2px #fff; }
-.hw__app::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 10px); left: 50%; translate: -50% 4px; padding: 3px 8px; border-radius: 6px; background: rgb(15 11 28 / 0.92); color: #fff; font: 500 11px/1.2 'Inter', sans-serif; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, translate 0.15s ease; }
+.hw__app:hover, .hw__app:focus-visible { transform: scale(1.2) translateY(-2px); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35), 0 8px 18px rgb(0 0 0 / 0.4); outline: none; }
+.hw__app[aria-pressed="true"] { border-color: #fff; }
+.hw__app::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 8px); left: 50%; translate: -50% 4px; padding: 3px 8px; border-radius: 6px; background: rgb(15 11 28 / 0.92); color: #fff; font: 500 12px/1.2 'Inter', sans-serif; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, translate 0.15s ease; }
 .hw__app:hover::after, .hw__app:focus-visible::after { opacity: 1; translate: -50% 0; }
 .hw__pw { position: absolute; right: 100%; bottom: 0; z-index: 3; padding-right: 14px; visibility: hidden; pointer-events: none; inline-size: 274px; }
 .hw__pw.is-open { visibility: visible; pointer-events: auto; }
@@ -7087,7 +7099,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 @media (prefers-reduced-motion: reduce) { .hw__view, .hw__app, .hw__toast { transition: none; } }
 
 /* mini OS polish: dock dot (open panel / music playing), top-bar equalizer, one-time nudge */
-.hw__app::before { content: ""; position: absolute; left: 50%; bottom: -8px; inline-size: 4px; block-size: 4px; margin-left: -2px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity 0.2s ease; }
+.hw__app::before { content: ""; position: absolute; left: 50%; bottom: -6px; inline-size: 4px; block-size: 4px; margin-left: -2px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity 0.2s ease; }
 .hw__app[aria-pressed="true"]::before, .hw.is-music .hw__app--music::before { opacity: 1; }
 .hw__dock { padding-bottom: 14px; }
 .hw__mini { display: none; align-items: flex-end; gap: 2px; block-size: 10px; margin-inline-start: auto; padding: 0; border: 0; background: none; cursor: pointer; }
@@ -7106,11 +7118,11 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .mp__art svg { inline-size: 18px; block-size: 18px; stroke-width: 1.75; }
 .mp__meta { min-inline-size: 0; flex: 1 1 auto; }
 .mp__title { margin: 0; font: 700 15px/1.25 'Space Grotesk', 'Segoe UI', sans-serif; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mp__artist { margin: 0; font: 400 11px/1.3 'Inter', 'Segoe UI', sans-serif; color: rgb(255 255 255 / 0.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mp__artist { margin: 0; font: 400 12px/1.3 'Inter', 'Segoe UI', sans-serif; color: rgb(255 255 255 / 0.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mp__eq { flex: none; display: flex; align-items: flex-end; gap: 2px; block-size: 32px; }
 .mp__eqb { inline-size: 3px; block-size: 4px; border-radius: 2px; background: var(--mp-grad); }
 .mp__prog { display: flex; align-items: center; gap: 10px; }
-.mp__time { flex: none; font: 400 11px/1 'Inter', 'Segoe UI', sans-serif; color: rgb(255 255 255 / 0.45); font-variant-numeric: tabular-nums; min-inline-size: 3.2ch; }
+.mp__time { flex: none; font: 400 12px/1 'Inter', 'Segoe UI', sans-serif; color: rgb(255 255 255 / 0.45); font-variant-numeric: tabular-nums; min-inline-size: 3.2ch; }
 .mp__rem { text-align: end; }
 .mp__bar { position: relative; flex: 1 1 auto; block-size: 24px; display: flex; align-items: center; cursor: pointer; touch-action: pan-y; }
 .mp__bar[aria-disabled="true"] { cursor: default; }
@@ -7247,8 +7259,8 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .pl__side { block-size: 0; align-content: center; overflow: visible; }
 
 /* Dock: icons centred in the pill (equal padding all round); the active dot is absolute, inside the bottom padding, and reserves no space */
-.hw__dock { padding: 10px; gap: 10px; }
-.hw__app::before { bottom: -7px; }
+.hw__dock { padding: 8px; gap: 6px; }       /* 44px tap boxes: the same 50px pitch and the same dock size as the 40px icons with a 10px gap */
+.hw__app::before { bottom: -5px; }
 
 /* ═══ Mini OS Hangulat: three atmosphere cards (js/hero-os.js buildMood). One layer draws the panel; animations only while the panel is open (is-run) ═══ */
 .hw__panel.is-mood { padding: 14px 12px; min-block-size: 0; border: 0; background: rgb(22 17 44 / 0.94); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 24px 60px rgb(0 0 0 / 0.45); }
@@ -7261,7 +7273,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hm__card[aria-checked="true"] .hm__scene { transform: scale(1.04); outline-color: rgb(255 255 255 / 0.7); }
 .hm__card[aria-checked="true"]:hover .hm__scene, .hm__card[aria-checked="true"]:focus-visible .hm__scene { transform: translateY(-3px) scale(1.04); }
 .hm__card:focus-visible .hm__scene { outline-color: rgb(255 255 255 / 0.7); }
-.hm__lb { text-align: center; font: 500 10px/12px 'Space Grotesk', sans-serif; color: rgb(255 255 255 / 0.8); }
+.hm__lb { text-align: center; font: 500 12px/14px 'Space Grotesk', sans-serif; color: rgb(255 255 255 / 0.8); }
 .hm__chk { position: absolute; z-index: 3; inset-block-start: 6px; inset-inline-end: 6px; inline-size: 16px; block-size: 16px; border-radius: 50%; background: #fff; color: #14101c; display: grid; place-items: center; opacity: 0; transform: scale(0.6); transition: opacity 0.2s ease, transform 0.25s ease; }
 .hm__chk svg { inline-size: 10px; block-size: 10px; stroke-width: 2.5; }
 .hm__card[aria-checked="true"] .hm__chk { opacity: 1; transform: none; }
@@ -7294,7 +7306,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .mc__hd { display: flex; align-items: center; gap: 9px; }
 .mc__av { inline-size: 28px; block-size: 28px; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 1.5px rgb(255 255 255 / 0.25); }
 .mc__nm { margin: 0; font: 600 12px/14px 'Space Grotesk', sans-serif; color: #fff; }
-.mc__stt { margin: 2px 0 0; display: flex; align-items: center; gap: 5px; font: 400 10px/12px 'Inter', sans-serif; color: rgb(255 255 255 / 0.65); }
+.mc__stt { margin: 2px 0 0; display: flex; align-items: center; gap: 5px; font: 400 12px/14px 'Inter', sans-serif; color: rgb(255 255 255 / 0.65); }
 .mc__dot { inline-size: 6px; block-size: 6px; border-radius: 50%; background: #2dd4bf; flex: none; }
 .mc__log { display: flex; flex-direction: column; gap: 6px; min-block-size: 24px; max-block-size: 80px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.25) transparent; }
 .mc__b { max-inline-size: 86%; padding: 7px 10px; font: 400 12px/1.4 'Inter', sans-serif; color: #fff; overflow-wrap: anywhere; animation: mcIn 0.3s ease both; }
@@ -7318,7 +7330,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .mc__send:disabled, .mc__comp textarea:disabled { opacity: 0.55; cursor: progress; }
 .mc__comp.is-shake { animation: mcShake 0.35s ease; }
 .mc__hp { position: absolute; inset-inline-start: -9999px; }
-.mc__note { margin: 6px 0 0; font: 400 9px/1.35 'Inter', sans-serif; color: rgb(255 255 255 / 0.6); } .mc__note a { color: #c4b5fd; }
+.mc__note { margin: 6px 0 0; font: 400 12px/1.35 'Inter', sans-serif; color: rgb(255 255 255 / 0.6); } .mc__note a { color: #c4b5fd; }
 @keyframes mcIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes mcFly { from { opacity: 0; transform: translateY(26px) scale(0.92); } to { opacity: 1; transform: none; } }
 @keyframes mcDot { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
@@ -7339,7 +7351,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff;
 .hw__dring { position: absolute; z-index: 8; inline-size: 30px; block-size: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 2px solid rgb(255 255 255 / 0.85); pointer-events: none; visibility: hidden; opacity: 0; }
 .hw__dstrip { position: absolute; z-index: 8; left: 0; right: 0; margin-inline: auto; inline-size: max-content; display: flex; gap: 6px; padding: 7px; border-radius: 16px; background: rgb(255 255 255 / 0.14); border: 1px solid rgb(255 255 255 / 0.3); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 10px 24px rgb(0 0 0 / 0.35); pointer-events: none; visibility: hidden; opacity: 0; }
 .hw__dstrip i { display: block; inline-size: 15px; block-size: 34px; border-radius: 8px; border: 1px solid rgb(255 255 255 / 0.4); }
-.hw__app.is-dpress { transform: scale(0.88); box-shadow: 0 0 0 2px #fff; }
+.hw__app.is-dpress { transform: scale(0.88); border-color: #fff; }
 .hw__np { display: inline-flex; align-items: center; gap: 6px; margin-inline-start: auto; padding: 3px 9px 3px 7px; border-radius: 999px; background: rgb(255 255 255 / 0.12); border: 1px solid rgb(255 255 255 / 0.2); color: rgb(255 255 255 / 0.9); font: 600 9px/1 'Inter', sans-serif; letter-spacing: 0.02em; white-space: nowrap; visibility: hidden; opacity: 0; pointer-events: none; }
 .hw__eq { display: inline-flex; align-items: flex-end; gap: 2px; block-size: 10px; }
 .hw__eq i { display: block; inline-size: 2px; block-size: 100%; border-radius: 1px; background: #22c3d6; transform-origin: 50% 100%; transform: scaleY(0.4); }
@@ -7599,4 +7611,11 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 .ap .ap-back:hover { color: #4B1956; }
 /* closing back link under the CTA card */
 .ap-back-end { margin-top: 32px; text-align: center; }
-.ap-back-end .ap-back { margin: 0; }
+.ap-back-end .ap-back { margin: -12px 0; }
+
+/* touch: 44px tap boxes that change the visual size (the cookie buttons, the consent row: the whole row is the tap target, the box 22px); everything else keeps its look (padding / negative margin / transparent border) */
+@media (pointer: coarse) {
+    :root { --cf-check: 22px; }
+    .cookie-btn { min-height: 44px; }
+    .contact-consent { min-height: 44px; align-items: center; }
+}
