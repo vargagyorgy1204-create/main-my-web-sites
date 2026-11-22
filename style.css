@@ -6473,6 +6473,8 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 }
 :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-prep.fx-in .sh-dot::before { animation: ctcDotRing 0.6s ease-out calc(var(--dd) + 0.35s) forwards; }
 html.has-cursor :is(#contact .section-heading, #services .section-heading, #steps .steps-title, #why .section-heading, #skills .section-heading, #portfolio .section-heading).fx-done:has(.sh-word:hover) .sh-dot { animation: ctcDotHop 0.45s ease-out; }
+/* KAPCSOLAT only: the dot starts its drop 0.18s (was 0.8s) after the last letter began to rise, i.e. while that letter is still settling (the drop itself is unchanged); the signal chain follows the drop's end */
+#contact .section-heading { --dd: calc((var(--cn, 8) - 2) * 0.05s + 0.18s); }
 @keyframes ctcDotDrop {
     0%   { translate: 0 -120%; scale: 1 1; opacity: 0; animation-timing-function: ease-in; }
     4%   { opacity: 1; }
