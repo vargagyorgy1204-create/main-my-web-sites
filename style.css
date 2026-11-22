@@ -44,6 +44,8 @@
     --btn-px: 34px;
     --btn-h: calc(2 * var(--btn-pad-y) + 1.2 * var(--btn-fs) + 4px);       /* 2 x padding + line-height 1.2 + 2 x 2px border */
 
+    --svc-row-top: clamp(40px, 9.3svh, 100px);                             /* Szolgáltatások: divider above a row -> the big word (about half of the old centred slack) */
+    --svc-row-bottom: clamp(48px, 11.1svh, 120px);                         /* Szolgáltatások: the lowest content of a row -> the divider under it */
     --svc-desc-btn-gap: clamp(36px, 5svh, 60px);                           /* service description -> Részletek / Ajánlatot kérek buttons (same in all three blocks) */
 
     --cf-fs: 16px;                                                         /* text / placeholder of inputs, select, textarea on phones / tablets (>= 16px: no iOS zoom); 13.5px from 1024px */
@@ -4909,10 +4911,10 @@ html.lenis, html.lenis body { height: auto; }
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.svt-btn:hover,
-.svt-btn:focus-visible { color: #fff; border-color: transparent; }
-.svt-btn:hover::before,
-.svt-btn:focus-visible::before { opacity: 1; }
+.svt-btn:focus-visible,
+html.has-cursor .svt-btn:hover { color: #fff; border-color: transparent; }
+.svt-btn:focus-visible::before,
+html.has-cursor .svt-btn:hover::before { opacity: 1; }
 .svt-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 /* ---------- narrow and short windows ---------- */
 @media (max-width: 1023px) {
@@ -4948,6 +4950,15 @@ html.lenis, html.lenis body { height: auto; }
 @media (max-width: 1023px) { .svt-row { padding-block-end: calc(72px + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); } }
 @media (max-height: 559px) { .svt-row { padding-block-end: 32px; } }
 #services.svt { padding-block-end: var(--section-bottom); }
+/* rows hug their content (no min-height slack): divider -> word = --svc-row-top, content -> next divider = --svc-row-bottom, the same in all three panels */
+@media (min-width: 768px) and (min-height: 560px) { .svt-row { min-block-size: 0; padding-block-start: var(--svc-row-top); padding-block-end: var(--svc-row-bottom); } }
+/* "Részletek" = the KAPCSOLAT pill (.hbtn--primary, no arrow: width auto, padding-inline 1.5 x its visual vertical padding); "Ajánlatot kérek" = the outline pill of the same height / padding proportion */
+.svt-actions .cta-row__btn .hbtn { min-width: 0; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); justify-content: center; }
+.svt-btn--ghost {
+  display: inline-flex; align-items: center; justify-content: center;
+  box-sizing: border-box; height: var(--btn-h); padding: 0 calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2);
+  white-space: nowrap;
+}
 /* ===== /SERVICES ===== */
 
 /* ===== CONTACT FORM — labels, select, consent, honeypot, status ===== */
@@ -5817,7 +5828,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 @media (prefers-reduced-motion: reduce) { .text-link__label, .text-link__label::before, .text-link__arrow { transition: none; } .text-link:focus-visible .text-link__arrow, html.has-cursor .text-link:hover .text-link__arrow { animation: none; } }
 /* the dark sections: white text and base underline */
 #services .text-link { --tl-color: #fff; }
-.svt-actions { column-gap: 28px; align-items: center; }
+.svt-actions { gap: 16px; align-items: center; }
 
 /* ===== KAPCSOLAT buttons: the photo card's WhatsApp / e-mail buttons are the submit button's component (--btn-* tokens, Space Grotesk 500, 2px border, 50px radius,
    transparent), each in its own colour; hover / focus-visible (a real pointer only: html.has-cursor): the button's own colour fades in as the fill (0.3s) and the
