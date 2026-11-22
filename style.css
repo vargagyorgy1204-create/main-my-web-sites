@@ -2958,7 +2958,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
 }
 
 /* ── Hogyan dolgozom (myapproach.html) – About-style editorial split ── */
-.ap { background: #f8f7ff; padding: var(--section-top) 20px 90px; }
+.ap { --ap-bg: #E4E0EE; background: var(--ap-bg); padding: var(--section-top) 20px 90px; }      /* EXPERIMENT: a medium page tone; one line to revert (#f8f7ff) */
 .ap-wrap { max-width: 1100px; margin: 0 auto; }
 .ap-back {
     display: inline-flex; align-items: center; gap: 8px;
@@ -3042,7 +3042,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
 }
 .ap-row__icon { position: relative; transform-origin: center; transition: scale .3s ease; }
 .ap-row__icon::after {
-    content: ""; position: absolute; inset: -2px; border-radius: 14px; padding: 2px;
+    content: ""; position: absolute; inset: -2px; border-radius: 50%; padding: 2px;
     background: var(--card-primary);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude;
@@ -3056,17 +3056,9 @@ html.has-cursor .ap-row:hover .ap-row__icon::after { opacity: 1; }
     background: var(--card-primary); -webkit-background-clip: text; background-clip: text;
     color: transparent; -webkit-text-fill-color: transparent;
 }
-/* the Értékek tile on a light card: translucent accent tint + 1px inner ring, the icon in the accent (violet / magenta / teal per row) */
-.ap-row { --ac: #6c63ff; --ac-n: #6c63ff; }
-.ap-row:nth-child(2) { --ac: #C026A3; --ac-n: #C026A3; }
-.ap-row:nth-child(3) { --ac: #1a8fa3; --ac-n: #137f93; }
-.ap-row:nth-child(4) { --ac: #E0662F; --ac-n: #c2501a; }
-.ap-row__icon {
-    width: 44px; height: 44px; border-radius: 14px;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: color-mix(in srgb, var(--ac) 13%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ac) 30%, transparent); color: var(--ac-n);
-}
-.ap-row__icon .icon { width: 55%; height: 55%; }
+/* the page's icon tiles are the mini OS dock icons (.os-ic, see the end of the file) */
+.ap-row__icon { width: 44px; height: 44px; }
+.ap-row__icon .icon { width: 50%; height: 50%; }
 .ap-row__body h3 { margin: 0 0 4px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: #1a1a2e; }
 .ap-row__body p { margin: 0; color: #3d3d5c; font-size: .92rem; line-height: 1.65; }
 .ap-closing { margin-top: 4px; }
@@ -4940,7 +4932,7 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 /* rows hug their content (no min-height slack): divider -> word = --svc-row-top, content -> next divider = --svc-row-bottom, the same in all three panels */
 @media (min-width: 768px) and (min-height: 560px) { .svt-row { min-block-size: 0; padding-block-start: var(--svc-row-top); padding-block-end: var(--svc-row-bottom); } }
 /* "Részletek" = the KAPCSOLAT pill (.hbtn--primary, no arrow: width auto, padding-inline 1.5 x its visual vertical padding); "Ajánlatot kérek" = the outline pill of the same height / padding proportion */
-.svt-actions .cta-row__btn .hbtn { min-width: 0; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); justify-content: center; }
+.svt-actions .cta-row__btn .hbtn, .about-bio-foot .cta-row__btn .hbtn, .ap-cta__actions .cta-row__btn .hbtn { min-width: 0; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); justify-content: center; }
 .svt-btn--ghost {
   display: inline-flex; align-items: center; justify-content: center;
   box-sizing: border-box; height: var(--btn-h); padding: 0 calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2);
@@ -7544,15 +7536,9 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
 .ap-have__grid, .ap-need__list { list-style: none; margin: clamp(28px, 4svh, 48px) 0 0; padding: 0; display: grid; gap: 20px; }
 .ap-have__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .ap-have__card {
-    --ac: #6c63ff; --ac-n: #6c63ff;
     display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
     padding: 28px; background: #fff; border: 1px solid rgba(108,99,255,.12); border-radius: 20px; box-shadow: 0 8px 32px rgba(108,99,255,.08);
 }
-.ap-have__card:nth-child(6n+2) { --ac: #C026A3; --ac-n: #C026A3; }
-.ap-have__card:nth-child(6n+3) { --ac: #1a8fa3; --ac-n: #137f93; }
-.ap-have__card:nth-child(6n+4) { --ac: #E0662F; --ac-n: #c2501a; }
-.ap-have__card:nth-child(6n+5) { --ac: #6c63ff; --ac-n: #6c63ff; }
-.ap-have__card:nth-child(6n+6) { --ac: #C026A3; --ac-n: #C026A3; }
 .ap-have__card h3 { margin: 6px 0 0; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: #1a1a2e; }
 .ap-have__card p { margin: 0; color: #3d3d5c; font-size: .95rem; line-height: 1.65; }
 .ap-need__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 24px; }
@@ -7561,9 +7547,9 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
     padding: 16px 20px; background: #fff; border: 1px solid rgba(108,99,255,.12); border-radius: 16px; color: #1a1a2e; line-height: 1.55; font-size: 1rem;
 }
 .ap-need__ic {
-    flex: none; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-    background: color-mix(in srgb, #1a8fa3 13%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, #1a8fa3 30%, transparent); color: #137f93;
+    flex: none; width: 28px; height: 28px;
 }
+.ap-need__ic .icon { width: 14px; height: 14px; }
 .ap-faq__list { margin-top: clamp(28px, 4svh, 48px); border-top: 1px solid rgba(26,26,46,.1); max-width: 860px; }
 .ap-faq__item { border-bottom: 1px solid rgba(26,26,46,.1); }
 .ap-faq__item summary {
@@ -7592,3 +7578,25 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .ap-faq__a p { padding-right: 4px; }
 }
 @media (prefers-reduced-motion: reduce) { .ap-faq__ic::before, .ap-faq__ic::after { transition: none; } }
+
+/* ===== mini OS dock icon tile (the hero dock: .hw__app) as a shared class: round tile, 1px white 35% border, brand gradient (the four dock palettes), white glyph with stroke 1.75, soft shadow.
+   Used by the Hogyan dolgozom page (principles, cards, checklist); the hero's own rules are untouched. ===== */
+.os-ic {
+    --g: linear-gradient(135deg, #6366f1, #9b3fd8);
+    display: inline-grid; place-items: center; box-sizing: border-box;
+    border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.35);
+    background: var(--g); color: #fff; box-shadow: 0 8px 20px rgb(0 0 0 / 0.3);
+}
+.os-ic svg { stroke-width: 1.75; }
+.os-ic--1 { --g: linear-gradient(135deg, #6366f1, #9b3fd8); }
+.os-ic--2 { --g: linear-gradient(135deg, #9b3fd8, #C026A3); }
+.os-ic--3 { --g: linear-gradient(135deg, #0e8fa3, #22c3d6); }
+.os-ic--4 { --g: linear-gradient(135deg, #C026A3, #f97316); }
+.ap-need__ic.os-ic { box-shadow: 0 4px 10px rgb(0 0 0 / 0.22); }
+/* contrast (WCAG AA) on the darker --ap-bg: the eyebrow and the back links are darker than on the old #f8f7ff */
+.ap .section-eyebrow { --eyebrow-color: rgb(26 26 46 / 0.78); }
+.ap .ap-back { color: #52526a; }
+.ap .ap-back:hover { color: #4B1956; }
+/* closing back link under the CTA card */
+.ap-back-end { margin-top: 32px; text-align: center; }
+.ap-back-end .ap-back { margin: 0; }
