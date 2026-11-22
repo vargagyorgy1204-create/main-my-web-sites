@@ -527,6 +527,8 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     const acceptBtn = document.getElementById('cookie-accept');
     const declineBtn = document.getElementById('cookie-decline');
     const settingsBtn = document.getElementById('cookie-settings-trigger');
+    /* the "Cookie beállítások" buttons inside the privacy policy text (page and modal) open the same settings as the footer trigger */
+    document.addEventListener('click', (e) => { if (e.target.closest('[data-open-cookie-settings]') && settingsBtn) { e.preventDefault(); settingsBtn.click(); } });
 
     /* while the banner is open the footer gets room underneath, so the legal links are never hidden behind it */
     const reserveSpace = () => {

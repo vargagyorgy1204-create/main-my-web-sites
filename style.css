@@ -1743,6 +1743,11 @@ footer {
     margin-bottom: 12px;
 }
 
+.policy-section h3 { margin: 18px 0 8px; font-size: 1.04rem; color: #2e2670; }
+.policy-section h3:first-of-type { margin-top: 4px; }
+.policy-section p + ul, .policy-section ul + p { margin-top: 10px; }
+.policy-section p + p { margin-top: 8px; }
+.policy-section .policy-cookie-link { padding: 0; border: 0; background: none; font: inherit; color: #5b4ad7; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .policy-section p,
 .policy-section li {
     color: #374151;
