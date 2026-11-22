@@ -148,9 +148,15 @@
             var cd = 44;
             l = b.l + b.w / 2 - cd / 2; t = b.t + b.h / 2 - cd / 2; w = cd; h = cd; rad = cd / 2;
         } else if (f.kind === 'pill') {
-            var px = btnPx();
-            l = b.l - px; t = b.t; w = b.w + 2 * px; h = b.h;     /* the link is --btn-h tall: the frame is exactly a CTA pill */
-            rad = h / 2;
+            var pbw = parseFloat(cs.borderTopWidth) || 0, pbr = parseFloat(cs.borderTopLeftRadius) || 0;
+            if (pbw > 0 && pbr > 0) {      /* the target is itself an outlined pill button (end CTA): the frame hugs it with an even 4px gap, outer radius = inner radius + gap */
+                l = b.l - 4; t = b.t - 4; w = b.w + 8; h = b.h + 8;
+                rad = Math.min(pbr, b.h / 2) + 4;
+            } else {
+                var px = btnPx();
+                l = b.l - px; t = b.t; w = b.w + 2 * px; h = b.h;     /* the link is --btn-h tall: the frame is exactly a CTA pill */
+                rad = h / 2;
+            }
         } else {
             var br = parseFloat(cs.borderTopLeftRadius) || 0;
             l = b.l - 4; t = b.t - 4; w = b.w + 8; h = b.h + 8;
