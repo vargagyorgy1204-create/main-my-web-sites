@@ -44,6 +44,7 @@
        static (no drift towards the pointer), the dot follows the pointer, no text capsule, no native I-beam, no hidden cursor; the
        field's own caret still blinks. Every other text field keeps the native text cursor. */
     var FORMFIELD = '.contact-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), .contact-field textarea';
+    var MENUL = '.menu__link';            /* burger menu items: pill frame, no dot */
     var HDR = '.nav__logo, .burger';      /* the header's frame targets: identical square frames, no dot inside */
     var FRAMELOCK = FORMFIELD + ', .cs__trigger';
     var MARGIN = 12;            /* the frame never gets closer than this to the viewport edge */
@@ -141,10 +142,11 @@
             var fs = parseFloat(cs.fontSize) || 16;
             var pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0;
             var pt = parseFloat(cs.paddingTop) || 0, pb = parseFloat(cs.paddingBottom) || 0;
-            var padV = Math.max(4, 0.18 * fs), padH = Math.max(8, 0.35 * fs);
+            var padV = Math.max(4, 0.18 * fs), padH = Math.max(8, 0.35 * fs), pillRad = 20;
+            if (el.matches(MENUL)) { padV = 0.35 * fs; padH = 0.6 * fs; pillRad = 999; }      /* burger menu items: a fully rounded pill, 0.35em / 0.6em around the text box */
             l = b.l + pl - padH; t = b.t + pt - padV;
             w = b.w - pl - pr + 2 * padH; h = b.h - pt - pb + 2 * padV;
-            rad = Math.min(20, h / 2);
+            rad = Math.min(pillRad, h / 2);
         } else if (f.kind === 'circle') {
             var cd = 44;
             l = b.l + b.w / 2 - cd / 2; t = b.t + b.h / 2 - cd / 2; w = cd; h = cd; rad = cd / 2;
@@ -195,7 +197,7 @@
             if (!frame) return;
             frame = null;
             if (ro) ro.disconnect();
-            ring.classList.remove('is-frame', 'is-pill', 'is-hdr');
+            ring.classList.remove('is-frame', 'is-pill', 'is-hdr', 'is-nodot');
             return;
         }
         if (frame && frame.el === el && frame.kind === kind) return;
@@ -203,6 +205,7 @@
         computeBox(frame);
         ring.classList.add('is-frame');
         ring.classList.toggle('is-hdr', el.matches(HDR));
+        ring.classList.toggle('is-nodot', el.matches(HDR) || el.matches(MENUL));
         ring.classList.toggle('is-pill', kind === 'pill' || kind === 'circle');     /* the circle shares the pill's gradient ring styling */
         if (window.ResizeObserver) {
             if (!ro) ro = new ResizeObserver(function () { if (frame) measure(); });

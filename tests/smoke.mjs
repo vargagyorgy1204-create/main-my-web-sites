@@ -180,13 +180,13 @@ async function indexChecks(vp) {
     rec(tag, 'cursor: has-cursor + ring after mouse move', cur.has && cur.ring && cur.shown, JSON.stringify(cur));
   }
 
-  // menu: 5 items in order, 4 socials, each scrolls to its section
+  // menu: 6 items in order, 4 socials, each scrolls to its section
   const menuOk = [];
   await scrollTo(p, 0); await frames(p, 6);
-  const links = [['Rólam', '#about'], ['Értékek & Garanciák', '#why'], ['Szolgáltatások', '#services'], ['Portfólió', '#portfolio'], ['Kapcsolat', '#contact']];
+  const links = [['Rólam', '#about'], ['Értékek', '#why'], ['Folyamat', '#steps'], ['Szolgáltatások', '#services'], ['Portfólió', '#portfolio'], ['Kapcsolat', '#contact']];
   await p.click('#burger'); await until(p, () => document.querySelector('#menu').classList.contains('is-open') && document.querySelectorAll('#menu .menu__link').length > 0, null, 3000); await frames(p, 6);
   const menu = await p.evaluate(() => ({ items: [...document.querySelectorAll('#menu .menu__link')].map(a => a.textContent.trim()), hrefs: [...document.querySelectorAll('#menu .menu__link')].map(a => a.getAttribute('href')), socials: document.querySelectorAll('#menu .menu__social a').length }));
-  rec(tag, 'menu: five items in order', JSON.stringify(menu.items.map(s => s.toLowerCase())) === JSON.stringify(links.map(l => l[0].toLowerCase())), menu.items.join(' | '));
+  rec(tag, 'menu: six items in order', JSON.stringify(menu.items.map(s => s.toLowerCase())) === JSON.stringify(links.map(l => l[0].toLowerCase())), menu.items.join(' | '));
   rec(tag, 'menu: social icons', menu.socials === 4, `${menu.socials}`);
   await p.keyboard.press('Escape'); await until(p, () => !document.querySelector('#menu').classList.contains('is-open'), null, 2000);
   if (FULL) for (const [label, hash] of links) {

@@ -284,6 +284,7 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
 .menu.is-open .menu__item:nth-child(3) { transition-delay: 0.27s; }
 .menu.is-open .menu__item:nth-child(4) { transition-delay: 0.33s; }
 .menu.is-open .menu__item:nth-child(5) { transition-delay: 0.39s; }
+.menu.is-open .menu__item:nth-child(6) { transition-delay: 0.45s; }
 
 .menu__link {
     display: inline-block;
@@ -291,7 +292,7 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
     font-family: 'Syne', sans-serif;
     font-weight: 800;
 
-    font-size: clamp(28px, min(6vw, 7.6svh), 64px);
+    font-size: clamp(28px, min(6vw, 7.6svh, calc(11svh - 26px)), 64px);     /* the third term: six items + the icons row fit one window (1518x670, 1280x720) without scrolling */
     line-height: 1.3;
     text-wrap: balance;
     max-inline-size: 100%;
@@ -308,27 +309,8 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
     -webkit-text-fill-color: transparent;
 }
 
-/* socials: the footer's .social-links markup, tuned for the dark overlay */
-.menu__social { justify-content: center; gap: 12px; margin: 0; flex: none; }
-.menu__social a {
-    width: 44px;
-    height: 44px;
-    color: rgb(255 255 255 / 0.7);
-    background: rgb(255 255 255 / 0.06);
-    opacity: 0;
-    transform: translateY(16px);
-    transition: color 0.3s ease, background 0.3s ease, opacity 0.2s ease, transform 0.2s ease;
-}
-.menu.is-open .menu__social a {
-    opacity: 1;
-    transform: none;
-    transition: color 0.3s ease, background 0.3s ease, opacity 0.4s var(--nav-ease) 0.47s, transform 0.4s var(--nav-ease) 0.47s;
-}
-.menu.is-open .menu__social a:nth-child(2) { transition-delay: 0s, 0s, 0.51s, 0.51s; }
-.menu.is-open .menu__social a:nth-child(3) { transition-delay: 0s, 0s, 0.55s, 0.55s; }
-.menu.is-open .menu__social a:nth-child(4) { transition-delay: 0s, 0s, 0.59s, 0.59s; }
-.menu.is-open .menu__social a:hover,
-.menu.is-open .menu__social a:focus-visible { color: #fff; transform: translateY(-3px); }
+/* socials: the footer's .social-links component (see the FOOTER social icons block: bare glyphs, gradient fill + lift on hover, circle cursor); here only the layout and the staggered entrance (end of file) */
+.menu__social { justify-content: center; margin: 0; flex: none; }
 
 /* short windows: tighter type and gaps */
 @media (max-height: 600px) {
@@ -3698,7 +3680,7 @@ html.has-cursor .contact-field input:not([type="checkbox"]):not([type="radio"]):
     box-shadow: 0 0 0 4px rgba(200, 80, 192, 0.07), 0 6px 18px rgba(192, 38, 163, 0.12);
 }
 .cursor-ring.is-frame + .cursor-dot { opacity: 0.9; transform-origin: center; }
-.cursor-ring.is-frame.is-hdr + .cursor-dot { opacity: 0; }          /* header logo / burger: the frame alone, no dot inside */
+.cursor-ring.is-frame.is-nodot + .cursor-dot { opacity: 0; }          /* header logo / burger and the menu items: the frame alone, no dot inside */
 .cursor-ring.is-link-small::before {
     width: 46px; height: 46px; margin: -23px 0 0 -23px;
     border-color: rgba(192, 38, 163, 0.7);
@@ -6376,9 +6358,9 @@ html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .
 .footer-section--contact .footer-hours__v > span + span { margin-top: calc(var(--footer-row-gap) - var(--footer-row-shrink)); }     /* the row step between the two lines */
 @media (max-width: 850px) { .footer-section--contact .footer-hours__v > span + span { margin-top: calc(2px - var(--footer-row-shrink)); } }
 
-/* ===== FOOTER social icons: bare glyphs, gradient fill + lift on hover, staggered reveal (footer only: the menu overlay keeps its own .social-links) ===== */
+/* ===== FOOTER social icons: bare glyphs, gradient fill + lift on hover, staggered reveal (shared with the burger menu's icons row) ===== */
 .footer-section .social-links { gap: 4px; margin: 24px 0 0 -9px; }                       /* 40px hit boxes 4px apart = 22px between the 22px glyphs; -9px: the first glyph sits on the column edge */
-.footer-section .social-links a {
+:is(.footer-section .social-links, .menu__social) a {
     position: relative;
     width: 40px;
     height: 40px;
@@ -6390,8 +6372,8 @@ html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .
     transition: opacity 0.3s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), translate 0.3s ease;
     transition-delay: var(--rd, 0s), var(--rd, 0s), 0s;
 }
-.footer-section .social-links a::before { content: none; }
-.footer-section .social-links a i {
+:is(.footer-section .social-links, .menu__social) a::before { content: none; }
+:is(.footer-section .social-links, .menu__social) a i {
     display: inline-block;
     font-size: 22px;
     line-height: 1;
@@ -6402,11 +6384,11 @@ html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .
     background-clip: text;
     transition: background-size 0.3s ease;
 }
-html.has-cursor .footer-section .social-links a:hover,
-.footer-section .social-links a:focus-visible { background: none; transform: none; translate: 0 -2px; }
-html.has-cursor .footer-section .social-links a:hover i,
-.footer-section .social-links a:focus-visible i { background-size: 100% 100%, 100% 100%; }
-.footer-section .social-links a:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+html.has-cursor :is(.footer-section .social-links, .menu__social) a:hover,
+:is(.footer-section .social-links, .menu__social) a:focus-visible { background: none; transform: none; translate: 0 -2px; }
+html.has-cursor :is(.footer-section .social-links, .menu__social) a:hover i,
+:is(.footer-section .social-links, .menu__social) a:focus-visible i { background-size: 100% 100%, 100% 100%; }
+:is(.footer-section .social-links, .menu__social) a:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
 /* reveal: with the line (js/footer.js adds .fs-prep, then .fs-in when the footer is in view); 0.2s after the line starts, 0.08s apart; reverse order on the way out */
 .footer-section .social-links a:nth-child(1) { --i: 0; }
 .footer-section .social-links a:nth-child(2) { --i: 1; }
@@ -6414,7 +6396,7 @@ html.has-cursor .footer-section .social-links a:hover i,
 .footer-section .social-links a:nth-child(4) { --i: 3; }
 footer.fs-prep .footer-section .social-links a { opacity: 0; transform: translateY(60%) scale(0.6) rotate(-12deg); pointer-events: none; --rd: calc((3 - var(--i)) * 0.08s); }
 footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: none; pointer-events: auto; --rd: calc(0.2s + var(--i) * 0.08s); }
-@media (prefers-reduced-motion: reduce) { .footer-section .social-links a, .footer-section .social-links a i { transition: none; } }
+@media (prefers-reduced-motion: reduce) { :is(.footer-section .social-links, .menu__social) a, :is(.footer-section .social-links, .menu__social) a i { transition: none; } }
 
 /* ===== FOOTER back-to-top badge below 1024px (phones + tablets): a static tap target at the line's right end - no magnet, no hover, no cursor logic;
    it emerges from the line (same reveal), then the text rotates; the line sits closer to the columns and the badge has room below ===== */
@@ -7536,3 +7518,12 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
 }
 /* Együttműködés: the gap between the divider and the CTA text equals the gap between the descriptions and the divider (--step-desc-divider; no extra lift) */
 #steps .cta-row { --divider-cta: calc(var(--step-desc-divider) - 2px); --cta-lift: 0px; }
+
+/* burger menu icons row: hidden until the menu opens, then the staggered entrance (opacity + transform, after the items); the footer component's hover (translate + gradient glyph) is kept */
+.menu .menu__social a { opacity: 0; transform: translateY(16px); transition: opacity 0.2s ease, transform 0.2s ease, translate 0.3s ease; transition-delay: 0s; }
+.menu.is-open .menu__social a { opacity: 1; transform: none; transition: opacity 0.4s var(--nav-ease), transform 0.4s var(--nav-ease), translate 0.3s ease; }
+.menu.is-open .menu__social a:nth-child(1) { transition-delay: 0.53s, 0.53s, 0s; }
+.menu.is-open .menu__social a:nth-child(2) { transition-delay: 0.57s, 0.57s, 0s; }
+.menu.is-open .menu__social a:nth-child(3) { transition-delay: 0.61s, 0.61s, 0s; }
+.menu.is-open .menu__social a:nth-child(4) { transition-delay: 0.65s, 0.65s, 0s; }
+@media (prefers-reduced-motion: reduce) { .menu .menu__social a, .menu.is-open .menu__social a { transition: none; } .menu.is-open .menu__social a:nth-child(n) { transition-delay: 0s; } }
