@@ -3009,7 +3009,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
     margin: 0;
     font-family: 'Syne', sans-serif; font-weight: 800;
     font-size: clamp(20px, 2vw, 27px); overflow-wrap: break-word; hyphens: manual; line-height: 1.12; letter-spacing: -0.02em;
-    color: #1a1a2e; -webkit-text-fill-color: #1a1a2e; background: none; text-align: left;
+    color: #1a1a2e; -webkit-text-fill-color: #1a1a2e; background: none; text-align: left; text-shadow: none;   /* now the page's h1: the global h1 shadow must not apply */
 }
 .ap-text { margin: 0; color: #3d3d5c; line-height: 1.8; font-size: 1rem; }
 .ap-label {
