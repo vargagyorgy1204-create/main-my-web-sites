@@ -5828,7 +5828,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 @media (prefers-reduced-motion: reduce) { .text-link__label, .text-link__label::before, .text-link__arrow { transition: none; } .text-link:focus-visible .text-link__arrow, html.has-cursor .text-link:hover .text-link__arrow { animation: none; } }
 /* the dark sections: white text and base underline */
 #services .text-link { --tl-color: #fff; }
-.svt-actions { gap: 16px; align-items: center; }
+.svt-actions { column-gap: 28px; align-items: center; }
 
 /* ===== KAPCSOLAT buttons: the photo card's WhatsApp / e-mail buttons are the submit button's component (--btn-* tokens, Space Grotesk 500, 2px border, 50px radius,
    transparent), each in its own colour; hover / focus-visible (a real pointer only: html.has-cursor): the button's own colour fades in as the fill (0.3s) and the
