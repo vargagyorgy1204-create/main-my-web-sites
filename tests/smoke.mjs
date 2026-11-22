@@ -233,7 +233,7 @@ async function otherPage(page, vp) {
     legal: !!document.querySelector('.footer-legal a, .page-legal a'),
     menu: document.querySelectorAll('#menu .menu__link').length,
   }));
-  rec(tag, 'renders (h1, menu, legal footer)', info.h1 && info.menu === 5 && info.legal, JSON.stringify(info));
+  rec(tag, 'renders (h1, menu, legal footer)', info.h1 && info.menu === 6 && info.legal, JSON.stringify(info));
   rec(tag, 'nothing stuck at opacity 0', info.stuck === 0, `${info.stuck}`);
   rec(tag, 'no horizontal overflow', info.ov <= 0, `${info.ov}px`);
   rec(tag, 'no console errors / failed requests', errs.length === 0, errs.slice(0, 3).join(' | '));

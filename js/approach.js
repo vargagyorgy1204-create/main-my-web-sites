@@ -50,6 +50,16 @@
   gsap.set([photo, card].filter(Boolean), { y: 40, scale: 0.98 });
   root.classList.remove('ap-pre');
 
+  /* ---- the sections below the photo + card block (deliverables, checklist, FAQ, closing CTA): each .ap-rv rises + fades in once, items entering together are staggered ---- */
+  var rv = arr('.ap-rv');
+  if (rv.length) {
+    gsap.set(rv, { opacity: 0, y: 28 });
+    ST.batch(rv, {
+      start: 'top 88%', once: true,
+      onEnter: function (batch) { gsap.to(batch, { opacity: 1, y: 0, duration: 0.8, ease: EASE, stagger: 0.08, overwrite: true, clearProps: 'opacity,transform' }); }
+    });
+  }
+
   /* ---------------------------------------------------------- 1) entrance (runs once) */
   var eSplit = null, tSplit = null;
   function entrance() {
