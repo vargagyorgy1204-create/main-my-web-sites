@@ -3867,12 +3867,13 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
 
 /* hover effects follow REAL mouse input (html.has-cursor is set by cursor.js on the first mouse move), not the
    hover / pointer media queries, which are false on touch-screen laptops */
-html.has-cursor .skills-list:hover .skill-row:not(:hover) { opacity: 0.45; }
-html.has-cursor .skill-row:hover::before { transform: scaleY(1); opacity: 1; will-change: transform, opacity; }
-html.has-cursor .skill-row:hover .skill-row__name { transform: translateX(14px); }
+html.has-cursor .skills-list:hover .skill-row:not(:hover), .skills-list:has(.skill-row.is-active) .skill-row:not(.is-active) { opacity: 0.45; }
+html.has-cursor .skill-row:hover::before, .skill-row.is-active::before { transform: scaleY(1); opacity: 1; will-change: transform, opacity; }
+html.has-cursor .skill-row:hover .skill-row__name, .skill-row.is-active .skill-row__name { transform: translateX(14px); }
 html.has-cursor .skill-row:hover .skill-row__desc,
-html.has-cursor .skill-row:hover .skill-row__num { color: #fff; }
-html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 255, 0.18); }
+html.has-cursor .skill-row:hover .skill-row__num,
+.skill-row.is-active .skill-row__desc, .skill-row.is-active .skill-row__num { color: #fff; }
+html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-row__logo { background: rgba(255, 255, 255, 0.18); }
 
 .skills-preview {
     position: fixed;
@@ -3929,14 +3930,16 @@ html.has-cursor .skill-row:hover .skill-row__logo { background: rgba(255, 255, 2
     .skills-head { margin-bottom: 36px; }
     .skill-row {
         grid-template-columns: 44px minmax(0, 1fr);
+        grid-template-rows: minmax(44px, auto) auto;
         column-gap: 16px;
-        row-gap: 6px;
+        row-gap: 0;
         padding: 20px 0;
     }
-    .skill-row__logo { grid-row: 1 / span 3; align-self: start; }
-    .skill-row__num { grid-column: 2; }
-    .skill-row__name { grid-column: 2; font-size: 28px; }
-    .skill-row__desc { grid-column: 2; font-size: 14px; }
+    .skill-row__logo { grid-column: 1; grid-row: 1; align-self: start; }
+    .skill-row__num { grid-column: 1; grid-row: 2; justify-self: start; align-self: start; inline-size: clamp(34px, 4.1svh, 44px); margin-top: 10px; text-align: center; }          /* as wide as the icon tile and centred under it, 10px below it */
+    .sk-n2 { inset-inline: 0; text-align: center; }
+    .skill-row__name { grid-column: 2; grid-row: 1; align-self: center; font-size: 28px; }
+    .skill-row__desc { grid-column: 2; grid-row: 2; font-size: 14px; margin-top: 2px; }
 }
 
 #why { text-align: left; }
@@ -6757,21 +6760,21 @@ section#skills { background: linear-gradient(180deg, rgb(23 12 38) calc(max(35%,
 .skills-list.sk-prep .skill-row__num { display: inline-block; position: relative; overflow: clip; line-height: 1.5; }
 .sk-n { display: block; transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0s, transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
 .sk-n2 { position: absolute; left: 0; top: 0; color: #fff; transform: translateY(125%); }
-html.has-cursor .skill-row:hover .sk-n:not(.sk-n2) { transform: translateY(-125%); }
-html.has-cursor .skill-row:hover .sk-n2 { transform: translateY(0); }
+html.has-cursor .skill-row:hover .sk-n:not(.sk-n2), .skill-row.is-active .sk-n:not(.sk-n2) { transform: translateY(-125%); }
+html.has-cursor .skill-row:hover .sk-n2, .skill-row.is-active .sk-n2 { transform: translateY(0); }
 
 /* name: letters in masks; the hover wave runs once per hover (translateY -3px, 0.015s per letter) */
 .sk-w { display: inline-block; white-space: nowrap; }
 .sk-lm { display: inline-block; vertical-align: top; padding-block: 0.14em; margin-block: -0.14em; }
 .sk-lc { display: inline-block; transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) 0s; }
-html.has-cursor .skill-row:hover .sk-lc { animation: skWave 0.5s ease calc(var(--ci, 0) * 0.015s) 1 both; }
+html.has-cursor .skill-row:hover .sk-lc, .skill-row.is-active .sk-lc { animation: skWave 0.5s ease calc(var(--ci, 0) * 0.015s) 1 both; }
 @keyframes skWave { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-3px); } }
 
 /* description: one block per line, risen from its own mask; on hover it turns white and moves 6px toward the preview card */
 .sk-ln { display: block; padding-block: 0.12em; margin-block: -0.12em; }
 .sk-li { display: block; white-space: nowrap; transition: translate 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) 0s, opacity 0.35s ease 0s; }
 .skill-row__desc { transition: color 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
-html.has-cursor .skill-row:hover .skill-row__desc { transform: translateX(-6px); }
+html.has-cursor .skill-row:hover .skill-row__desc, .skill-row.is-active .skill-row__desc { transform: translateX(-6px); }
 
 /* the build: hidden until .sk-in (set per row by the script); the masks clip until .sk-done (the end of the build), so the hover wave is never cut */
 .skills-list.sk-prep .skill-row { border-top-color: transparent; }
@@ -6796,7 +6799,7 @@ html.has-cursor .skill-row:hover .skill-row__desc { transform: translateX(-6px);
 /* Lenis row: no official licensed mark exists, so the tile and the preview card use the Lucide "mouse" icon in the brand gradient (defined once in the .vb-svg-defs svg) */
 .vb-svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 .skill-row__logo svg.icon--grad, .skills-preview__inner svg.icon--grad { stroke: url(#vbCardGrad); }
-html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad { stroke: #fff; }
+html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-active .skill-row__logo svg.icon--grad { stroke: #fff; }
 
 /* ===== Portfólió case-study dialog: ringless controls (close X, gallery arrows) =====
    Only the Lucide icon is visible (a little larger); the 56 x 56px hit area stays (negative margin: the layout keeps its old 44px footprint).
@@ -7673,3 +7676,13 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 .about-tap-hint.is-gone { opacity: 0; scale: 0.85; }
 @keyframes abtTapPulse { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.9); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .about-tap-hint.is-pulse::after { animation: none; } .about-tap-hint { transition: none; } }
+
+/* ===== Készségek on touch (js/skills-tap.js): rows are tappable / focusable; the row hover effects above also follow .is-active ===== */
+@media (pointer: coarse) {
+    .skill-row { cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    .skill-row:focus-visible { outline: 2px solid #b4acff; outline-offset: -2px; border-radius: 18px; }
+}
+@media (pointer: coarse) and (prefers-reduced-motion: reduce) {
+    .skill-row, .skill-row::before, .skill-row__name, .skill-row__desc, .skill-row__num, .skill-row__logo, .sk-n { transition: none !important; }
+    .skill-row.is-active .sk-lc { animation: none; }
+}
