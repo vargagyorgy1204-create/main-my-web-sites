@@ -7641,9 +7641,9 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     /* portfolio dialog dots: 8px dots in 44px cells (no overlap: the cells touch), the row keeps its old height */
     .pf-dots { margin-block: -10px; }
     .pf-dot { inline-size: 44px; block-size: 44px; }
-    /* Értékek dots (clickable): 8px dots in 44px cells, the row keeps its old height */
+    /* Értékek dots (clickable): a compact row, 8px dots every 22px, 44px tall cells, the row keeps its old height */
     .hs__dots { gap: 0; margin-block: -18px; }
-    .hs__dot { position: relative; inline-size: 44px; block-size: 44px; background: none; transform: none; }
+    .hs__dot { position: relative; inline-size: 22px; block-size: 44px; background: none; transform: none; }          /* 8px dot + 14px gap = the 22px step; 44px tall hit areas that do not overlap (the cards are swipeable too) */
     .hs__dot::before { content: ""; position: absolute; inset: 0; margin: auto; inline-size: 8px; block-size: 8px; border-radius: 50%; background: rgb(255 255 255 / 0.28); transition: background 0.3s ease, transform 0.3s ease; }
     .hs__dot.is-on { background: none; transform: none; }
     .hs__dot.is-on::before { background: #9b3fd8; transform: scale(1.4); }
@@ -7685,4 +7685,9 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 @media (pointer: coarse) and (prefers-reduced-motion: reduce) {
     .skill-row, .skill-row::before, .skill-row__name, .skill-row__desc, .skill-row__num, .skill-row__logo, .sk-n { transition: none !important; }
     .skill-row.is-active .sk-lc { animation: none; }
+}
+
+/* ===== Értékek on phones / tablets (not pinned): the fade into Együttműködés sits BELOW the cards and dots (as on a laptop, where the pinned stage is on the flat colour and the ramp follows), not behind them ===== */
+@media (max-width: 1023px) {
+    #why { --why-ramp: 110px; padding-bottom: 110px !important; }
 }
