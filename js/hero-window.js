@@ -94,7 +94,7 @@
       '</div>' +
     '</div></div>' +
     '<div class="hw__nudge" aria-hidden="true">Próbálja ki <i data-lucide="arrow-down"></i></div>' +
-    '<div class="hw__pw" aria-live="polite"><button type="button" class="hw__sheet-x" aria-label="Bezárás"><i data-lucide="x"></i></button><div class="hw__panel" role="dialog" aria-modal="false" tabindex="-1"></div></div>';
+    '<div class="hw__pw" aria-live="polite"><div class="hw__panel" role="dialog" aria-modal="false" tabindex="-1"></div></div>';
   w.querySelector('.hw__view').appendChild(abEl);
   hero.appendChild(w);
   var icons = function () { if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } } };
@@ -458,7 +458,7 @@
       window.HeroOS.open(name, api);
       var mob = mode === 'mobile';
       pw.classList.toggle('is-mobile', mob);
-      var sheet = mob && fit && fit.flow;                                                  /* phones: a bottom sheet over the window (full window width, above the dock, 44px close button) */
+      var sheet = mob && fit && fit.flow;                                                  /* phones: a bottom sheet over the window (full window width, above the dock; closed by the dock icon, a tap outside, Esc) */
       pw.classList.toggle('is-sheet', !!sheet);
       if (sheet) { pw.style.left = '0'; pw.style.width = '100%'; pw.style.right = 'auto'; pw.style.bottom = ''; }
       else if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
@@ -520,7 +520,6 @@
     if (!silent) { var b = apps.filter(function (x) { return x.dataset.app === name; })[0]; if (b) b.focus(); }
   }
   gsap.set(panel, { autoAlpha: 0 });
-  pw.querySelector('.hw__sheet-x').addEventListener('click', function () { closePanel(); });
   var mini = $('.hw__mini'), nudge = $('.hw__nudge'), everHovered = false;
   document.addEventListener('hero:music', function (e) { w.classList.toggle('is-music', !!(e.detail && e.detail.playing)); });
   mini.addEventListener('click', function () { if (!held) holdOn(); openPanel('music'); });
