@@ -7633,3 +7633,28 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .hw__pw.is-sheet .hw__sheet-x svg { inline-size: 16px; block-size: 16px; stroke-width: 1.75; }
     .hw-fm { left: auto !important; right: 20px; margin-bottom: env(safe-area-inset-bottom, 0px); }
 }
+
+/* ===== Mobile batch 2: remaining tap targets >= 44x44 on touch (pointer: coarse); the visuals stay (transparent border + padding-box background / pseudo-element dots). Desktop untouched. ===== */
+@media (pointer: coarse) {
+    /* service modal close: the X lines stay centred where they were */
+    .service-modal-close { width: 44px; height: 44px; top: calc(var(--sm-r) + 0.766 * var(--sm-fs) - 22px); right: calc(var(--sm-px) - 16px); }
+    /* portfolio dialog dots: 8px dots in 44px cells (no overlap: the cells touch), the row keeps its old height */
+    .pf-dots { margin-block: -10px; }
+    .pf-dot { inline-size: 44px; block-size: 44px; }
+    /* Értékek dots (clickable): 8px dots in 44px cells, the row keeps its old height */
+    .hs__dots { gap: 0; margin-block: -18px; }
+    .hs__dot { position: relative; inline-size: 44px; block-size: 44px; background: none; transform: none; }
+    .hs__dot::before { content: ""; position: absolute; inset: 0; margin: auto; inline-size: 8px; block-size: 8px; border-radius: 50%; background: rgb(255 255 255 / 0.28); transition: background 0.3s ease, transform 0.3s ease; }
+    .hs__dot.is-on { background: none; transform: none; }
+    .hs__dot.is-on::before { background: #9b3fd8; transform: scale(1.4); }
+    /* mini OS player */
+    .mp__skip, .mp__play { inline-size: calc(44px / var(--mp-z, 1)); block-size: calc(44px / var(--mp-z, 1)); }          /* the player is zoomed 0.88 from 900px: the zoom is compensated */
+    /* mini OS Paletta: swatch columns >= 44px wide (the caps keep their size: padding instead of gap), side buttons 44px boxes with the old visual disc */
+    .pl__caps { gap: 0; }
+    .pl__col { box-sizing: border-box; padding-inline: 3px; }
+    .pl__side .pl__btn, .pl__side .pl__reset { box-sizing: border-box; inline-size: 44px; block-size: 44px; border: 8px solid transparent; background-clip: padding-box; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pl-b, #fff) 55%, transparent); }
+    /* mini OS chat: >= 44px field with 16px text (no iOS zoom on focus), 44px send button with the old 34px disc */
+    .mc__comp { align-items: center; }
+    .mc__comp textarea { min-block-size: 44px; max-block-size: 84px; padding: 11px 14px; border-radius: 22px; font-size: 16px; line-height: 20px; }
+    .mc__send { box-sizing: border-box; inline-size: 44px; block-size: 44px; border: 5px solid transparent; background: linear-gradient(135deg, #6366f1, #C026A3) padding-box; }
+}
