@@ -7691,3 +7691,8 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 @media (max-width: 1023px) {
     #why { --why-ramp: 110px; padding-bottom: 110px !important; }
 }
+
+/* ===== Együttműködés on phones: each step title's cap-height centre sits on the horizontal line through its circle (the 10px dot / 48px icon centre); the description stays under the title ===== */
+@media (max-width: 640px) {
+    .process__title { margin-top: 11.8px; }          /* (48px node centre 24px) - (half the 26.4px line box 13.2px) + 1.8px: the cap-height centre of Syne 800 at 24px sits 1.8px above the line-box centre */
+}
