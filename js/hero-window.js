@@ -94,7 +94,7 @@
       '</div>' +
     '</div></div>' +
     '<div class="hw__nudge" aria-hidden="true">Próbálja ki <i data-lucide="arrow-down"></i></div>' +
-    '<div class="hw__pw" aria-live="polite"><div class="hw__panel" role="dialog" aria-modal="false" tabindex="-1"></div></div>';
+    '<div class="hw__pw" aria-live="polite"><button type="button" class="hw__sheet-x" aria-label="Bezárás"><i data-lucide="x"></i></button><div class="hw__panel" role="dialog" aria-modal="false" tabindex="-1"></div></div>';
   w.querySelector('.hw__view').appendChild(abEl);
   hero.appendChild(w);
   var icons = function () { if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } } };
@@ -343,12 +343,18 @@
     var st = hero.querySelector('.hero-status'); if (st) add(st.getBoundingClientRect());
     return out;
   }
-  var BAR = 30, BASE = 360;                                          /* BASE: the layout width at the 1440 reference; wider windows are scaled from it */
+  var FLOW_MAX = 640;                                                /* <= 640px: the window sits in the flow (subheading -> window -> buttons) */
+  var BAR = 30, BASE = 360;                                         /* BASE: the layout width at the 1440 reference; wider windows are scaled from it */
   function place() {
     var hr = hero.getBoundingClientRect(), inner = hero.querySelector('.hero-inner').getBoundingClientRect();
     var obs = obstacles(hr), Lft = inner.left - hr.left;
     var st = hero.querySelector('.hero-status').getBoundingClientRect();
     var res = null;
+    if (window.innerWidth <= FLOW_MAX) {
+      /* phones: the window is part of the flow, between the subheading and the buttons (layout() moves it there): the full content width, no tilt, no crop */
+      var iw = inner.width;
+      return { flow: true, left: 0, top: 0, W: iw, H: BAR + iw * 0.625 };
+    }
     if (window.innerWidth >= 900) {
       /* anchored bottom-right: right edge = the right gutter line (the hero content's right edge; the tilt is corrected in layout()), bottom = the status line's bottom (>= 32px above the hero bottom);
          width clamp(300px, 25vw, 720px) (360px at 1440), scaled down (min 220px) only if it would come within 40px of the headline / subheading / buttons / status line;
@@ -379,10 +385,19 @@
     if (!fit) { mode = 'off'; w.classList.remove('is-on'); gsap.set(w, { opacity: 0 }); return false; }
     mode = window.innerWidth >= 900 ? 'desktop' : 'mobile';
     fit.S = mode === 'desktop' && fit.W > BASE ? fit.W / BASE : 1;                    /* the window keeps its BASE layout and is scaled (dock, panels, text: one ratio) */
-    w.style.left = Math.round(fit.left) + 'px'; w.style.top = Math.round(fit.top) + 'px'; w.style.width = Math.round(fit.S > 1 ? BASE : fit.W) + 'px';
+    var ib = hero.querySelector('.hero-inner');
+    if (fit.flow) {                                                                    /* phones: in the flow, right before the buttons */
+      var ctas = ib.querySelector('.hero-ctas');
+      if (w.parentNode !== ib || w.nextElementSibling !== ctas) ib.insertBefore(w, ctas);
+      w.classList.add('is-flow'); w.style.left = ''; w.style.top = ''; w.style.width = '';
+    } else {
+      if (w.parentNode !== hero) hero.appendChild(w);
+      w.classList.remove('is-flow');
+      w.style.left = Math.round(fit.left) + 'px'; w.style.top = Math.round(fit.top) + 'px'; w.style.width = Math.round(fit.S > 1 ? BASE : fit.W) + 'px';
+    }
     gsap.set(w, { scale: fit.S, transformOrigin: '0% 0%' });
     var sw = 1.5 * 1000 / view.clientWidth; w.style.setProperty('--hw-sw', sw.toFixed(2));
-    dock.style.left = mode === 'mobile' ? Math.round((window.innerWidth - fit.left) / 2 - 8) + 'px' : '';                       /* phones: the dock sits in the visible part of the peeking window */
+    dock.style.left = mode === 'mobile' && !fit.flow ? Math.round((window.innerWidth - fit.left) / 2 - 8) + 'px' : '';         /* the peeking window (641-899px): the dock sits in its visible part */
     var rest = restTilt();
     gsap.set(tilt, { rotationY: rest.y, rotationX: rest.x, rotationZ: rest.z });
     if (mode === 'desktop') {                                                           /* the tilted window's visual right edge sits on the gutter line */
@@ -391,7 +406,7 @@
     }
     return true;
   }
-  function restTilt() { return window.innerWidth >= 900 ? { y: -14, x: 6, z: 1 } : { y: -12, x: 0, z: -3 }; }
+  function restTilt() { return window.innerWidth >= 900 ? { y: -14, x: 6, z: 1 } : window.innerWidth <= FLOW_MAX ? { y: 0, x: 0, z: 0 } : { y: -12, x: 0, z: -3 }; }
 
   /* ------------------------------------------------ tilt with the pointer (html.has-cursor), idle float */
   var qy = gsap.quickTo(tilt, 'rotationY', { duration: 0.6, ease: 'power3' }), qx = gsap.quickTo(tilt, 'rotationX', { duration: 0.6, ease: 'power3' });
@@ -443,10 +458,14 @@
       window.HeroOS.open(name, api);
       var mob = mode === 'mobile';
       pw.classList.toggle('is-mobile', mob);
-      if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
+      var sheet = mob && fit && fit.flow;                                                  /* phones: a bottom sheet over the window (full window width, above the dock, 44px close button) */
+      pw.classList.toggle('is-sheet', !!sheet);
+      if (sheet) { pw.style.left = '0'; pw.style.width = '100%'; pw.style.right = 'auto'; pw.style.bottom = ''; }
+      else if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
       else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }
       pw.classList.add('is-open'); w.classList.add('has-panel');
       placePanel();
+      if (sheet) { setTimeout(function () { keepInView(pw); }, reduce ? 30 : 460); }
       gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true, clearProps: 'transform' });   /* no leftover identity transform layer on the panel */
     });
   }
@@ -475,6 +494,23 @@
     if (PW !== pref) { pw.style.transformOrigin = 'right bottom'; pw.style.transform = 'scale(' + (PW / pref).toFixed(3) + ')'; }    /* c: a proportional scale-down */
     pw.dataset.place = PW === pref ? 'b' : 'c';
   }
+  /* phones: keep an element fully inside the visible viewport (under the fixed header, above the on-screen keyboard): scrolls the page by the missing distance (programmatic: does not end the hold) */
+  var scrollGuard = 0;
+  function keepInView(el) {
+    if (!el || mode !== 'mobile') return;
+    var vv = window.visualViewport, top0 = vv ? vv.offsetTop : 0, h = vv ? vv.height : window.innerHeight;
+    var nav = document.querySelector('.nav'), hb = nav ? Math.round(nav.getBoundingClientRect().bottom) : 0;
+    var ck = document.getElementById('cookie-consent-banner'), cr = ck && ck.getAttribute('aria-hidden') !== 'true' ? ck.getBoundingClientRect() : null;
+    var bot = top0 + h - 8; if (cr && cr.height > 0) bot = Math.min(bot, cr.top - 8);                 /* the cookie banner (fixed, bottom) also covers the lower part */
+    var r = el.getBoundingClientRect(), d = 0;
+    if (r.top < top0 + Math.max(hb, 0) + 8) d = r.top - (top0 + Math.max(hb, 0) + 8);
+    else if (r.bottom > bot) d = Math.min(r.bottom - bot, r.top - (top0 + Math.max(hb, 0) + 8));
+    if (Math.abs(d) < 1) return;
+    scrollGuard = performance.now() + 900;
+    if (VB.lenis && VB.lenis.scrollTo) VB.lenis.scrollTo(window.scrollY + d, { immediate: true, force: true }); else window.scrollBy(0, d);
+  }
+  w.addEventListener('focusin', function (e) { if (mode === 'mobile' && e.target.matches && e.target.matches('textarea, input')) setTimeout(function () { keepInView(e.target.closest('.mc') || e.target); keepInView(e.target); }, 350); });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', function () { var a = document.activeElement; if (mode === 'mobile' && a && w.contains(a) && a.matches('textarea, input')) setTimeout(function () { keepInView(a); }, 60); });
   function closePanel(silent) {
     if (!osApp) return;
     var name = osApp; osApp = null;
@@ -484,6 +520,7 @@
     if (!silent) { var b = apps.filter(function (x) { return x.dataset.app === name; })[0]; if (b) b.focus(); }
   }
   gsap.set(panel, { autoAlpha: 0 });
+  pw.querySelector('.hw__sheet-x').addEventListener('click', function () { closePanel(); });
   var mini = $('.hw__mini'), nudge = $('.hw__nudge'), everHovered = false;
   document.addEventListener('hero:music', function (e) { w.classList.toggle('is-music', !!(e.detail && e.detail.playing)); });
   mini.addEventListener('click', function () { if (!held) holdOn(); openPanel('music'); });
@@ -505,7 +542,7 @@
   win.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') { touchMode = true; if (!held) holdOn(); } });                       /* tap */
   document.addEventListener('pointerdown', function (e) { if (held && !w.contains(e.target)) holdOff(); });                           /* tap / click outside */
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && held) { if (osApp) closePanel(); else { holdOff(); if (document.activeElement && w.contains(document.activeElement)) document.activeElement.blur(); } } });
-  window.addEventListener('scroll', function () { if (held && mode === 'mobile') holdOff(); }, { passive: true });
+  window.addEventListener('scroll', function () { if (!held || mode !== 'mobile') return; var a = document.activeElement; if (performance.now() < scrollGuard || (a && w.contains(a) && a.matches('textarea, input'))) return; holdOff(); }, { passive: true });
 
   /* ------------------------------------------------ entrance: after load, after the headline lines */
   var rt = 0;
