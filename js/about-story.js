@@ -15,7 +15,9 @@
 
   var VB = window.VB || {};
   var section = document.getElementById('about');
-  if (!section || !VB.gsap || !VB.hasST || !VB.hasSplit || VB.reduceMotion) return;
+  if (!section || !VB.gsap) return;
+  var FULL = !!(VB.hasST && VB.hasSplit && !VB.reduceMotion);              /* the chapters story / list animations; without them only the touch photo switch below runs */
+  var COARSE = window.matchMedia('(pointer: coarse)').matches;          /* touch: no scroll-driven story, the photo changes on tap */
 
   var gsap = VB.gsap, ST = window.ScrollTrigger, Split = window.SplitText;
   var INK = 'rgba(255, 255, 255, 0.8)';          /* dark section: the neutral heading word is white 80% */
@@ -31,6 +33,12 @@
     var s = Split.create(el, opts);
     splits.push(s);
     return s;
+  }
+  /* the photo change (shared): the incoming photo rises bottom -> top while scaling 1.08 -> 1, the outgoing one dims. The scrolled story adds it to its scrubbed timeline, the touch tap plays it as a short timeline. */
+  function photoStep(tl, layerIn, imgIn, layerOut, at, dur) {
+    tl.fromTo(layerIn, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: dur }, at)
+      .fromTo(imgIn, { scale: 1.08 }, { scale: 1, duration: dur }, at)
+      .fromTo(layerOut, { filter: 'brightness(1)' }, { filter: 'brightness(0.7)', duration: dur }, at);   /* real filter values: a custom property restored as 0 on rewind painted the layers black */
   }
   function killAnim(k) { if (anims[k]) { anims[k].kill(); anims[k] = null; } }
 
@@ -170,9 +178,9 @@
      A chapter photo stays invisible (opacity 0) until img.decode() has resolved, then fades in:
      a half-downloaded / half-decoded image can never be painted. Until then the outgoing photo
      simply stays visible under the reveal (the stack background is the photos' dark tone). */
-  var photosStarted = false;
+  var photosStarted = false, photosReady = null;
   function startPhotos() {
-    if (photosStarted) return;
+    if (photosStarted) return photosReady;
     photosStarted = true;
     var jobs = qa('.about-layer').slice(1).map(function (layer) {
       var img = layer.querySelector('img'), src = layer.querySelector('source');
@@ -182,12 +190,14 @@
       var ready = img.decode ? img.decode() : new Promise(function (res, rej) { img.onload = res; img.onerror = rej; });
       return ready.then(function () { img.classList.add('is-decoded'); }, function () { throw img; });
     });
-    Promise.allSettled(jobs).then(function (res) {
+    photosReady = Promise.allSettled(jobs);
+    photosReady.then(function (res) {
       if (res.some(function (r) { return r.status === 'rejected'; }) && !warned) {
         warned = true;
         console.warn('[VarBro] An About photo failed to load; its chapter keeps showing the previous photo.');
       }
     });
+    return photosReady;
   }
   function watchPhotos() {
     if (photosStarted) return;
@@ -265,9 +275,7 @@
       tl.fromTo(card, { '--about-accent': prevAccent }, { '--about-accent': t.accent, duration: 30 }, S);
       prevAccent = t.accent;
       /* photo: incoming rises bottom -> top while scaling 1.08 -> 1; outgoing dims */
-      tl.fromTo(layers[i + 1], { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 30 }, S)
-        .fromTo(imgs[i + 1], { scale: 1.08 }, { scale: 1, duration: 30 }, S)
-        .fromTo(layers[i], { filter: 'brightness(1)' }, { filter: 'brightness(0.7)', duration: 30 }, S);   /* real filter values: a custom property restored as 0 on rewind painted the layers black */
+      photoStep(tl, layers[i + 1], imgs[i + 1], layers[i], S, 30);
       /* text: outgoing lines up + fade, incoming lines rise from their masks */
       if (i > 0) tl.to(chapters[i], { '--bar': 0, duration: 14 }, S);
       tl.fromTo(chapters[i + 1], { '--bar': 0 }, { '--bar': 1, duration: 20 }, S + 9);
@@ -365,11 +373,12 @@
     ctx = gsap.context(function () {
       /* Hero (light) -> Rólam (dark): the section colour is scrubbed with the scroll while the section rises into view, finished when its top is at 30% of the viewport */
       gsap.fromTo(section, { '--about-bg': '#170c26' }, { '--about-bg': '#170c26', ease: 'power1.out', scrollTrigger: { trigger: section, start: 'top 100%', end: 'top 30%', scrub: true, invalidateOnRefresh: true } });
-      if (window.innerWidth >= 900) buildStory(); else buildList();
+      if (window.innerWidth >= 900 && !COARSE) buildStory(); else buildList();
     }, section);
   }
   var rt = 0;
   window.addEventListener('resize', function () {
+    if (!FULL) return;
     clearTimeout(rt);
     rt = setTimeout(function () {
       if (window.innerWidth === lastW && window.innerHeight === lastH) return;
@@ -378,6 +387,61 @@
     }, 250);
   });
 
-  function init() { mount(); }
+  /* ------------------------------------------------------------ touch: tap the photo to change it (the scroll story is off on touch)
+     Photos 1-4 cycle (1 -> 2 -> 3 -> 4 -> 1 ...), each change plays the story's photo transition (photoStep) as a short timeline; a tap during a change is ignored.
+     The photo is a button (Enter / Space too); a small glass badge hints at it, pulses once when the photo enters the viewport and goes away after the first tap.
+     Reduced motion: a plain crossfade. Set up once (not part of the resize re-mount: the photo you changed stays). */
+  function initTouchPhoto() {
+    var card = q('.about-photo-card'), stack = q('.about-photo-stack');
+    if (!card || !stack) return;
+    var layers = [1, 2, 3, 4].map(function (n) { return q('.about-layer--' + n); });
+    var imgs = layers.map(function (l) { return l.querySelector('img'); });
+    var cur = 0, busy = false, zTop = 3, reduced = !!VB.reduceMotion;
+    section.classList.add('is-tap');
+    card.setAttribute('role', 'button'); card.setAttribute('tabindex', '0'); card.setAttribute('aria-label', 'Fotó váltása');
+    var hint = document.createElement('span');
+    hint.className = 'about-tap-hint'; hint.setAttribute('aria-hidden', 'true'); hint.innerHTML = '<i data-lucide="pointer"></i>';
+    stack.appendChild(hint);
+    if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } }
+    gsap.set(layers[0], { zIndex: 2 });
+    watchPhotos();
+
+    if ('IntersectionObserver' in window) {
+      var pio = new IntersectionObserver(function (es) {
+        if (!es[0].isIntersecting) return;
+        pio.disconnect(); hint.classList.add('is-pulse');
+      }, { threshold: 0.5 });
+      pio.observe(card);
+    } else hint.classList.add('is-pulse');
+
+    function change() {
+      if (busy) return;
+      busy = true; hint.classList.add('is-gone');
+      var go = function () {
+        var out = cur, nxt = (cur + 1) % layers.length;
+        gsap.set(layers[nxt], { zIndex: zTop });
+        var done = function () {
+          gsap.set(layers[out], { clipPath: 'inset(100% 0% 0% 0%)', filter: 'brightness(1)', zIndex: 1 });
+          gsap.set(layers[nxt], { zIndex: 2 });
+          cur = nxt; busy = false;
+        };
+        if (reduced) {
+          gsap.set(layers[nxt], { clipPath: 'inset(0% 0% 0% 0%)', opacity: 0 });
+          gsap.set(imgs[nxt], { scale: 1 });
+          gsap.to(layers[nxt], { opacity: 1, duration: 0.4, ease: 'none', onComplete: done });
+        } else {
+          gsap.set(layers[nxt], { opacity: 1 });
+          var tl = gsap.timeline({ defaults: { ease: 'power2.inOut' }, onComplete: done });
+          photoStep(tl, layers[nxt], imgs[nxt], layers[out], 0, 0.9);
+        }
+      };
+      var ready = startPhotos();                                       /* make sure photos 2-4 are loading; wait (briefly) for the decode so the reveal never shows an empty frame */
+      if (ready && !imgs.every(function (im) { return im.classList.contains('is-decoded'); })) Promise.race([ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(go); else go();
+    }
+    card.addEventListener('click', change);
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); change(); } });
+  }
+
+  function init() { if (FULL) mount(); if (COARSE) initTouchPhoto(); }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(init); else init();
 })();
