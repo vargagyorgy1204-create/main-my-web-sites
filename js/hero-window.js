@@ -343,6 +343,7 @@
     var st = hero.querySelector('.hero-status'); if (st) add(st.getBoundingClientRect());
     return out;
   }
+  var COARSE = window.matchMedia('(pointer: coarse)');                /* touch: phones AND touch tablets (<= 1366px) use the bottom sheet instead of the placePanel modes */
   var FLOW_MAX = 640;                                                /* <= 640px: the window sits in the flow (subheading -> window -> buttons) */
   var BAR = 30, BASE = 360;                                         /* BASE: the layout width at the 1440 reference; wider windows are scaled from it */
   function place() {
@@ -456,15 +457,23 @@
     loadOS(function () {
       if (osApp !== name || !window.HeroOS) return;
       window.HeroOS.open(name, api);
-      var mob = mode === 'mobile';
+      var sheet = !!fit && (fit.flow || (COARSE.matches && window.innerWidth <= 1366));       /* phones and touch tablets: a bottom sheet over the window (window width, above the dock; closed by the dock icon, a tap outside, Esc) */
+      var mob = mode === 'mobile' || sheet;
       pw.classList.toggle('is-mobile', mob);
-      var sheet = mob && fit && fit.flow;                                                  /* phones: a bottom sheet over the window (full window width, above the dock; closed by the dock icon, a tap outside, Esc) */
-      pw.classList.toggle('is-sheet', !!sheet);
-      if (sheet) { pw.style.left = '0'; pw.style.width = '100%'; pw.style.right = 'auto'; pw.style.bottom = ''; }
+      pw.classList.toggle('is-sheet', sheet);
+      if (sheet) {
+        var lw = fit.S > 1 ? BASE : fit.W, sw = Math.min(lw, 360, window.innerWidth - 40), sl = 0;
+        if (fit.flow) { pw.style.left = '0'; pw.style.width = '100%'; }
+        else {
+          if (window.innerWidth < 900) { sl = Math.max(20 - fit.left, (window.innerWidth - fit.left) / 2 - sw / 2); sl = Math.min(sl, window.innerWidth - 20 - fit.left - sw); }      /* the peeking window: the sheet sits on its visible part */
+          pw.style.left = Math.round(sl) + 'px'; pw.style.width = Math.round(sw) + 'px';
+        }
+        pw.style.right = 'auto'; pw.style.bottom = '';
+      }
       else if (mob) { var vwid = window.innerWidth, pwid = Math.min(320, vwid - 40); pw.style.left = (20 - fit.left) + 'px'; pw.style.width = pwid + 'px'; pw.style.right = 'auto'; pw.style.bottom = '64px'; }      /* above the dock */
       else { pw.style.left = ''; pw.style.width = ''; pw.style.right = ''; pw.style.bottom = ''; }
       pw.classList.add('is-open'); w.classList.add('has-panel');
-      placePanel();
+      if (sheet) { pw.classList.remove('is-above', 'is-over'); pw.style.paddingRight = ''; pw.style.inlineSize = ''; pw.style.transform = ''; pw.dataset.place = 's'; } else placePanel();
       if (sheet) { setTimeout(function () { keepInView(pw); }, reduce ? 30 : 460); }
       gsap.fromTo(panel, mob ? { y: 30, autoAlpha: 0 } : { x: 30, autoAlpha: 0 }, { x: 0, y: 0, autoAlpha: 1, duration: reduce ? 0 : 0.4, ease: 'power3.out', overwrite: true, clearProps: 'transform' });   /* no leftover identity transform layer on the panel */
     });
@@ -497,7 +506,7 @@
   /* phones: keep an element fully inside the visible viewport (under the fixed header, above the on-screen keyboard): scrolls the page by the missing distance (programmatic: does not end the hold) */
   var scrollGuard = 0;
   function keepInView(el) {
-    if (!el || mode !== 'mobile') return;
+    if (!el || !pw.classList.contains('is-sheet')) return;
     var vv = window.visualViewport, top0 = vv ? vv.offsetTop : 0, h = vv ? vv.height : window.innerHeight;
     var nav = document.querySelector('.nav'), hb = nav ? Math.round(nav.getBoundingClientRect().bottom) : 0;
     var ck = document.getElementById('cookie-consent-banner'), cr = ck && ck.getAttribute('aria-hidden') !== 'true' ? ck.getBoundingClientRect() : null;
@@ -509,8 +518,8 @@
     scrollGuard = performance.now() + 900;
     if (VB.lenis && VB.lenis.scrollTo) VB.lenis.scrollTo(window.scrollY + d, { immediate: true, force: true }); else window.scrollBy(0, d);
   }
-  w.addEventListener('focusin', function (e) { if (mode === 'mobile' && e.target.matches && e.target.matches('textarea, input')) setTimeout(function () { keepInView(e.target.closest('.mc') || e.target); keepInView(e.target); }, 350); });
-  if (window.visualViewport) window.visualViewport.addEventListener('resize', function () { var a = document.activeElement; if (mode === 'mobile' && a && w.contains(a) && a.matches('textarea, input')) setTimeout(function () { keepInView(a); }, 60); });
+  w.addEventListener('focusin', function (e) { if (pw.classList.contains('is-sheet') && e.target.matches && e.target.matches('textarea, input')) setTimeout(function () { keepInView(e.target.closest('.mc') || e.target); keepInView(e.target); }, 350); });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', function () { var a = document.activeElement; if (pw.classList.contains('is-sheet') && a && w.contains(a) && a.matches('textarea, input')) setTimeout(function () { keepInView(a); }, 60); });
   function closePanel(silent) {
     if (!osApp) return;
     var name = osApp; osApp = null;

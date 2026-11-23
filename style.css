@@ -7622,12 +7622,12 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 
 /* ===== Hero on phones (<= 640px): eyebrow -> headline -> subheading -> mini OS window -> buttons -> status line. The window (one DOM, js/hero-window.js moves it before .hero-ctas) is in the flow: full content width, no tilt;
    the panels open as a bottom sheet over it (no close button: the dock icon, a tap outside or Esc close it). Until the window exists its space is reserved on the subheading (no layout jump). The floating music button moves to the bottom right (never over the status line). ===== */
+.hw__pw.is-sheet { left: 0; right: auto; bottom: 78px; inline-size: 100%; padding: 0; z-index: 8; }          /* phones + touch tablets: the panel as a sheet over the window, above the dock */
 @media (max-width: 640px) {
     .hero-sub { margin-bottom: calc(28px + var(--content-max) * 0.625 + 32px + 28px); }          /* window height: 30px bar + 16:10 view + borders; + the 28px gaps */
     .hero-inner:has(> .hw.is-flow) .hero-sub { margin-bottom: 0; }
     .hw.is-flow { position: relative; left: auto; top: auto; inline-size: 100%; margin: 28px 0; flex: none; }
     .hw.is-flow .hw__glow { inset: 14% -3% -12% -3%; }
-    .hw__pw.is-sheet { left: 0; right: auto; bottom: 78px; inline-size: 100%; padding: 0; z-index: 8; }
     .hw-fm { left: auto !important; right: 20px; margin-bottom: env(safe-area-inset-bottom, 0px); }
 }
 
@@ -7654,4 +7654,10 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .mc__comp { align-items: center; }
     .mc__comp textarea { min-block-size: 44px; max-block-size: 84px; padding: 11px 14px; border-radius: 22px; font-size: 16px; line-height: 20px; }
     .mc__send { box-sizing: border-box; inline-size: 44px; block-size: 44px; border: 5px solid transparent; background: linear-gradient(135deg, #6366f1, #C026A3) padding-box; }
+}
+
+/* ===== Mobile batch 3 (touch only): form fields and buttons >= 44px ===== */
+@media (pointer: coarse) {
+    :root { --cf-h: 44px; }
+    .hbtn { min-height: 44px; margin-block: min(0px, calc((var(--btn-h) - 44px) / 2)); }
 }
