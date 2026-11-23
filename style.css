@@ -3447,6 +3447,7 @@ html.hero-static .hero-live__txt { position: static; }
 
 /* primary: black pill with a living gradient ring */
 .hbtn--primary { color: #fff; background: transparent; box-shadow: 0 12px 30px rgba(17, 17, 17, 0.16); }
+button.hbtn { border: 2px solid transparent; }          /* a <button> pill keeps its 2px UA border box (same size) but not the grey 'outset' look: only the brand-colour ring shows */
 .hbtn--primary::before,
 .hbtn__glow {
     content: "";

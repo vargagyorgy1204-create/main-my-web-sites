@@ -346,3 +346,5 @@ Built by `js/hero-window.js` (markup, scenes), CSS block "Hero living window" at
 - **Értékek on phones / tablets (<= 1023px, not pinned):** `#why` gets `--why-ramp: 110px` and a matching padding-bottom, so the fade into Együttműködés sits below the cards and dots (the cards were on the middle of the 200px fade: a bluer-looking block). Touch dots: 8px dot every 22px (14px gap), 44px tall, no overlapping hit areas, centred.
 
 - **Együttműködés on phones (<= 640px):** `.process__title { margin-top: 11.8px }` puts the cap-height centre of each step title on the line through its circle centre (measured 0.0px at 390 for all 4 steps; the title stays 24px there). Track / fill / badge are measured from the node boxes and unchanged.
+
+- **Buttons:** a `<button class="hbtn">` (the three Részletek buttons) showed the UA grey `outset` border as a light segment of the running ring; `button.hbtn { border: 2px solid transparent }` keeps its size and leaves only the brand-colour ring + glow. Phone gap Együttműködés CTA -> Szolgáltatások eyebrow measured 169-178px (same as the other section transitions, 167-190px); no change made.
