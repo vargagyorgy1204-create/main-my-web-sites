@@ -90,12 +90,73 @@ const form = document.querySelector('.contact-form-ui, .contact-form');
 if (form) {
     const status = form.querySelector('.contact-form-status');
     const submitBtn = form.querySelector('[type="submit"]');
+    /* our own validation (Hungarian, formal): a message under the field, aria-invalid + aria-describedby on the control. Without JS the browser's own validation stays. */
     const MESSAGES = {
-        name: 'Kérjük, adja meg a nevét.',
-        email: 'Kérjük, adja meg az e-mail-címét.',
-        service: 'Kérjük, válasszon a listából.',
-        message: 'Kérjük, írja le röviden a projektet.',
-        consent: 'A küldéshez kérjük, fogadja el az Adatkezelési tájékoztatót.'
+        name: 'Kérem, adja meg a nevét.',
+        email: 'Kérem, érvényes e-mail-címet adjon meg.',
+        service: 'Kérem, válasszon a listából.',
+        message: 'Kérem, írjon néhány szót a projektjéről.',
+        consent: 'Kérem, fogadja el az adatkezelési tájékoztatót.'
+    };
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const CHECKED = ['name', 'email', 'service', 'message', 'consent'];
+    form.noValidate = true;
+    const errorText = (el) => {
+        if (el.type === 'checkbox') return el.checked ? '' : MESSAGES[el.name];
+        const v = el.value.trim();
+        if (!v) return MESSAGES[el.name];
+        return el.type === 'email' && !EMAIL_RE.test(v) ? MESSAGES.email : '';
+    };
+    const errorBox = (el) => {
+        const id = 'cf-err-' + el.name;
+        let p = form.querySelector('#' + id);
+        if (!p) {
+            p = document.createElement('p');
+            p.className = 'contact-field__err';
+            p.id = id;
+            p.hidden = true;
+            const field = el.closest('.contact-field');
+            (field || el.closest('.contact-consent')).insertAdjacentElement('afterend', p);          // under the field, not inside it: the field's own box (select, focus line) stays as it was
+        }
+        return p;
+    };
+    const controls = (el) => {                                     // the select may be covered by the custom dropdown: its button gets the same attributes
+        const field = el.closest('.contact-field');
+        const custom = el.tagName === 'SELECT' && field ? field.querySelector('.cs__trigger') : null;
+        return custom ? [el, custom] : [el];
+    };
+    const showError = (el, text) => {
+        const p = errorBox(el);
+        p.textContent = text;
+        p.hidden = !text;
+        controls(el).forEach((c) => {
+            if (text) { c.setAttribute('aria-invalid', 'true'); c.setAttribute('aria-describedby', p.id); }
+            else { c.removeAttribute('aria-invalid'); c.removeAttribute('aria-describedby'); }
+        });
+        const field = el.closest('.contact-field');
+        if (field) field.classList.toggle('is-invalid', !!text);
+    };
+    const shake = (el) => {
+        const f = el.closest('.contact-field');
+        if (!f) return;
+        f.classList.remove('is-shake');
+        requestAnimationFrame(() => f.classList.add('is-shake'));
+        f.addEventListener('animationend', () => f.classList.remove('is-shake'), { once: true });
+    };
+    const validate = () => {
+        const bad = CHECKED.map((n) => form.elements[n]).filter((el) => {
+            if (!el) return false;
+            const text = errorText(el);
+            showError(el, text);
+            return !!text;
+        });
+        bad.forEach(shake);
+        if (bad.length) {
+            const first = controls(bad[0]);
+            const target = first[1] && first[1].offsetParent ? first[1] : first[0];
+            target.focus();
+        }
+        return !bad.length;
     };
     const setStatus = (text, kind) => {
         if (!status) return;
@@ -109,21 +170,8 @@ if (form) {
         if (f) f.classList.toggle('is-filled', el.value !== '');
     };
     form.querySelectorAll('input, select, textarea').forEach((el) => {
-        el.addEventListener('invalid', () => {
-            let msg = '';
-            if (el.validity.valueMissing) msg = MESSAGES[el.name] || 'Kérjük, töltse ki ezt a mezőt.';
-            else if (el.validity.typeMismatch) msg = 'Kérjük, érvényes e-mail-címet adjon meg.';
-            el.setCustomValidity(msg);
-            const f = el.closest('.contact-field');
-            if (f) {                       // small shake on the offending field
-                f.classList.remove('is-shake');
-                void f.offsetWidth;
-                f.classList.add('is-shake');
-                f.addEventListener('animationend', () => f.classList.remove('is-shake'), { once: true });
-            }
-        });
         const clear = () => {
-            el.setCustomValidity('');
+            if (CHECKED.includes(el.name) && el.getAttribute('aria-invalid') === 'true') showError(el, errorText(el));
             syncField(el);
             if (status && status.classList.contains('is-error')) setStatus('', '');
         };
@@ -174,6 +222,7 @@ if (form) {
     form.onsubmit = async (e) => {
         e.preventDefault();
         if (submitBtn && submitBtn.disabled) return;
+        if (!validate()) { setStatus('', ''); return; }
         const hp = form.querySelector('[name="_gotcha"]');
         if (hp && hp.value) {            // bot: pretend success, send nothing
             form.reset();
@@ -516,7 +565,22 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
         }
     };
 
+    /* decline / withdrawal: remove Google Analytics' cookies (_ga, _ga_*) on every path and on the host and its parent domains, and switch the property off */
+    const clearGaCookies = () => {
+        const names = document.cookie.split(';').map((c) => c.split('=')[0].trim()).filter((n) => /^_ga($|_)/.test(n));
+        if (!names.length) return;
+        const host = window.location.hostname, parts = host.split('.');
+        const domains = ['', host, '.' + host];
+        for (let i = 1; i < parts.length - 1; i++) domains.push('.' + parts.slice(i).join('.'));
+        const paths = ['/'];
+        window.location.pathname.split('/').filter(Boolean).reduce((base, seg) => { paths.push(base + '/' + seg, base + '/' + seg + '/'); return base + '/' + seg; }, '');
+        names.forEach((n) => domains.forEach((d) => paths.forEach((path) => {
+            document.cookie = n + '=; Max-Age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=' + path + (d ? '; domain=' + d : '');
+        })));
+    };
+
     const loadGa4 = () => {
+        window['ga-disable-' + GA_MEASUREMENT_ID] = false;
         if (gaLoaded || window.gtag) return;
 
         window.dataLayer = window.dataLayer || [];
@@ -542,8 +606,12 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     document.addEventListener('click', (e) => { if (e.target.closest('[data-open-cookie-settings]') && settingsBtn) { e.preventDefault(); settingsBtn.click(); } });
 
     /* while the banner is open the footer gets room underneath, so the legal links are never hidden behind it */
-    const reserveSpace = () => {
-        document.documentElement.style.setProperty('--cb-h', banner && banner.classList.contains('is-visible') ? (banner.offsetHeight + 24) + 'px' : '0px');
+    let reserveRaf = 0;
+    const reserveSpace = () => {                                       // measured in the next frame: reading the height right after the class change forced a layout
+        cancelAnimationFrame(reserveRaf);
+        reserveRaf = requestAnimationFrame(() => {
+            document.documentElement.style.setProperty('--cb-h', banner && banner.classList.contains('is-visible') ? (banner.offsetHeight + 24) + 'px' : '0px');
+        });
     };
 
     const hideBanner = () => {
@@ -579,6 +647,8 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     declineBtn.addEventListener('click', () => {
         saveConsent(CONSENT_DECLINED);
+        window['ga-disable-' + GA_MEASUREMENT_ID] = true;
+        clearGaCookies();
         hideBanner();
     });
 
@@ -591,6 +661,8 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     }
 
     if (consent === CONSENT_DECLINED) {
+        window['ga-disable-' + GA_MEASUREMENT_ID] = true;
+        clearGaCookies();
         hideBanner();
         return;
     }
@@ -1051,9 +1123,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     if ('ResizeObserver' in window) new ResizeObserver(function () { measure(); onScroll(); }).observe(process);
     window.addEventListener('load', function () { measure(); update(); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(); measure(); update(); });
-    fit();
-    measure();
-    update();
+    requestAnimationFrame(function () { fit(); measure(); update(); });
 })();
 
 // Footer: back to top (the badge on the divider): Lenis scrollTo(0) ~1.2s when present, native smooth otherwise; the focus moves to the header logo
@@ -1067,4 +1137,17 @@ document.querySelectorAll('[data-back-top]').forEach((btn) => {
         if (!target.hasAttribute('tabindex') && !/^(A|BUTTON)$/.test(target.tagName)) target.setAttribute('tabindex', '-1');
         target.focus({ preventScroll: true });
     });
+});
+
+// Skip link: the browser's own jump does not move focus through the smooth scroller, so do both here
+document.querySelectorAll('.skip-link').forEach((link) => {
+    link.addEventListener('click', (e) => {
+        const main = document.getElementById('main');
+        if (!main) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (window.VB && VB.lenis) VB.lenis.scrollTo(main, { immediate: true, force: true });
+        else main.scrollIntoView();
+        main.focus({ preventScroll: true });
+    }, true);
 });

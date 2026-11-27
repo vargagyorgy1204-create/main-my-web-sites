@@ -232,7 +232,7 @@
       var els = qa('.abt-lead, .abt-body', ch);
       var out = [];
       els.forEach(function (el) {
-        out = out.concat(split(el, { type: 'lines', mask: 'lines', linesClass: 'abt-line' }).lines);
+        out = out.concat(split(el, { type: 'lines', mask: 'lines', linesClass: 'abt-line', aria: 'none' }).lines);          /* whole words in lines read fine; aria-label is not allowed on <p> */
       });
       return out;
     });

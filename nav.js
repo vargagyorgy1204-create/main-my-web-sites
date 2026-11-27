@@ -76,7 +76,7 @@
     window.addEventListener('load', function () { applyTheme(); setTimeout(applyTheme, 300); });
     window.addEventListener('pageshow', applyTheme);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyTheme);
-    applyTheme();
+    requestAnimationFrame(applyTheme);          /* not synchronously: it reads layout while other scripts are still writing styles */
 
     /* ---------- Fullscreen menu ---------- */
     function lockPage() {

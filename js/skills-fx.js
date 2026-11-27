@@ -45,9 +45,8 @@
     if (!n || n.querySelector('.sk-n')) return;
     var t = n.textContent.trim();
     n.textContent = '';
-    n.setAttribute('aria-label', t);
     var a = el('span', 'sk-n', t), b = el('span', 'sk-n sk-n2', t);
-    a.setAttribute('aria-hidden', 'true'); b.setAttribute('aria-hidden', 'true');
+    b.setAttribute('aria-hidden', 'true');                              /* the first copy is the one screen readers get */
     n.appendChild(a); n.appendChild(b);                                 /* odometer: the second copy (white) rolls in on hover */
   }
 
@@ -74,7 +73,7 @@
     var p = row.querySelector('.skill-row__desc');
     if (!p) return;
     var src = p.getAttribute('data-sk-html');
-    if (src === null) { src = p.innerHTML; p.setAttribute('data-sk-html', src); p.setAttribute('aria-label', p.textContent.replace(/\s+/g, ' ').trim()); }
+    if (src === null) { src = p.innerHTML; p.setAttribute('data-sk-html', src); }
     p.textContent = '';
     var li = 0;
     src.split(/<br\s*\/?>/i).forEach(function (seg) {
@@ -92,7 +91,6 @@
       p.removeChild(probe);
       lines.forEach(function (ws) {
         var l = el('span', 'sk-ln'), x = el('span', 'sk-li', ws.join(' '));
-        l.setAttribute('aria-hidden', 'true');
         x.style.setProperty('--li', li++);
         l.appendChild(x); p.appendChild(l);
       });

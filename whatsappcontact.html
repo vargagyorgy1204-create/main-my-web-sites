@@ -27,7 +27,7 @@
         "serviceType": "Web Design"
     }
     </script>
-    <link rel="stylesheet" href="style.css?v=cr190">
+    <link rel="stylesheet" href="style.css?v=cr191">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -36,6 +36,7 @@
     <meta name="theme-color" content="#0f1629">
 </head>
 <body class="contact-page" data-theme="light">
+<a class="skip-link" href="#main">Ugrás a tartalomra</a>
 
 <header class="nav nav--on-light" id="nav">
     <a class="nav__logo" href="index.html" aria-label="VarBro - vissza a főoldalra">
@@ -70,7 +71,7 @@
     </nav>
 </div>
 
-<main class="contact-page-wrapper">
+<main id="main" tabindex="-1" class="contact-page-wrapper">
     <div class="contact-card">
 
         <!-- Left Column -->
@@ -142,7 +143,7 @@
         <div class="footer-divider">
             <span class="footer-divider__line" aria-hidden="true"></span>
             <div class="footer-divider__badge">
-                <a class="stamp footer-stamp" href="#" data-back-top aria-label="Vissza a tetejére">
+                <a class="stamp footer-stamp" href="#main" data-back-top aria-label="Vissza a tetejére">
                 <span class="stamp__body" data-magnet-inner>
                         <svg class="stamp__ring" viewBox="0 0 200 200" aria-hidden="true">
                             <defs>
@@ -163,7 +164,7 @@
         <div class="footer-floor">
             <div class="footer-wordmark" aria-hidden="true"><span>VARBRO</span></div>
             <div class="footer-legal">
-                <p><a href="index.html" class="cookie-settings-link" aria-label="VarBro – kezdőoldal">&copy; 2026 Varga György – <span class="notranslate" translate="no">VarBro</span>. Minden jog fenntartva.</a></p>
+                <p><a href="index.html" class="cookie-settings-link">&copy; 2026 Varga György – <span class="notranslate" translate="no">VarBro</span>. Minden jog fenntartva.</a></p>
                 <div class="footer-bottom-links">
                     <a href="adatvedelem.html" class="cookie-settings-link">Adatkezelési tájékoztató</a>
                     <button id="cookie-settings-trigger" class="cookie-settings-link" type="button">Cookie beállítások</button>
@@ -181,10 +182,10 @@
     </div>
 </div>
 
-<script src="https://unpkg.com/lucide@1.66.0/dist/umd/lucide.js"></script>
-<script src="script.js?v=89"></script>
-<script src="nav.js?v=9" defer></script>
+<script src="https://unpkg.com/lucide@1.66.0/dist/umd/lucide.js" defer></script>
+<script src="script.js?v=90" defer></script>
+<script src="nav.js?v=10" defer></script>
 <script>/* custom cursor: mouse devices only. With a coarse primary pointer (touch) cursor.js is not loaded; it is fetched only if a real mouse moves (touch-screen laptops) */(function(){var done=false;function load(){if(done)return;done=true;var s=document.createElement('script');s.src='cursor.js?v=34';document.body.appendChild(s);}if(!window.matchMedia('(pointer: coarse)').matches){load();return;}addEventListener('pointermove',function f(e){if(e.pointerType==='mouse'){removeEventListener('pointermove',f);load();}},{passive:true});})();</script>
-<script src="js/footer.js?v=18" defer></script>
+<script src="js/footer.js?v=19" defer></script>
 </body>
 </html>

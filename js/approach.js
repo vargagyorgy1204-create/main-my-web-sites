@@ -61,7 +61,7 @@
   }
 
   /* ---------------------------------------------------------- 1) entrance (runs once) */
-  var eSplit = null, tSplit = null;
+  var eSplit = null, tSplit = null, eText = '';
   function entrance() {
     var tl = gsap.timeline({ defaults: { ease: EASE } });
     if (back) tl.to(back, { opacity: 1, y: 0, duration: 0.6 }, 0);
@@ -70,7 +70,11 @@
     if (eyebrow && window.matchMedia('(max-width: 640px)').matches) {          /* phones: a plain fade. Split letters / widened tracking wrapped the line and pushed the page down and back (CLS) */
       tl.fromTo(eyebrow, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'none' }, 0.45);
     } else if (eyebrow) {
-      eSplit = SplitText.create(eyebrow, { type: 'chars', aria: 'auto' });
+      /* split letters would be read one by one, and aria-label is not allowed on a <p>: screen readers get a hidden copy, the visible one is split */
+      eText = eyebrow.textContent.trim();
+      eyebrow.innerHTML = '<span class="sr-only"></span><span class="sr-vis" aria-hidden="true"></span>';
+      eyebrow.firstChild.textContent = eyebrow.lastChild.textContent = eText;
+      eSplit = SplitText.create(eyebrow.lastChild, { type: 'chars', aria: 'none' });
       gsap.set(eSplit.chars, { opacity: 0 });
       gsap.set(eyebrow, { letterSpacing: '0.6em' });
       tl.to(eyebrow, { letterSpacing: '0.2em', duration: 0.6, ease: 'power3.out' }, 0.45);
@@ -83,7 +87,7 @@
     }
     tl.add(function () {
       /* give the text back to the browser: plain, selectable, re-wraps on resize */
-      if (eSplit) { eSplit.revert(); eyebrow.style.letterSpacing = ''; }
+      if (eSplit) { eSplit.revert(); eyebrow.textContent = eText; eyebrow.style.letterSpacing = ''; }
       if (tSplit) tSplit.revert();
       /* the cards were offset (y / scale) while the triggers were measured: measure again, now at rest */
       rebuild();
@@ -107,12 +111,10 @@
 
       /* 4) intro: scroll-linked word highlight + gradient underlines on the key phrases */
       if (intro) {
-        var text = intro.textContent.replace(/\s+/g, ' ').trim();
         var iSplit = SplitText.create(intro, { type: 'words', aria: 'none' });
-        intro.setAttribute('aria-label', text);
         var words = iSplit.words, EACH = 0.1, DUR = 0.3;
         words.forEach(function (w) { w.style.display = 'inline'; });          /* only their opacity animates: inline keeps the paragraph's own line breaks */
-        gsap.set(words, { opacity: 0.3 });
+        gsap.set(words, { opacity: 0.74 });          /* 0.74 = the dimmest step that still reaches 4.5:1 on the card */
         var tl = gsap.timeline({
           defaults: { ease: 'none', immediateRender: false },
           scrollTrigger: { trigger: intro, start: 'top 80%', end: 'bottom 45%', scrub: 0.5 }

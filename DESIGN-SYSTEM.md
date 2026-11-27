@@ -389,3 +389,11 @@ Condition: `(min-width: 641px) and (max-width: 1100px) and (orientation: portrai
 - The hero heading is never hidden while fonts load (inline subset; 'Montserrat Fallback' for body text and the subheading); phones get a 0.4s entrance without clipping.
 - `cursor.js` is loaded by a small inline loader: not on coarse-pointer devices (unless a real mouse moves).
 - Hero background (all devices): a CPU-drawn picture of the shader's first frame first (`.hero-ph`, inline script after the hero background in index.html: keep its maths and mood colours in step with js/hero-gl.js), WebGL set up lazily (first scroll/touch/key, or load + 1s + idle) and crossfaded in over 0.6s; render at 0.3x (< 900px wide) or 0.45x CSS px, 30fps, paused off-screen / hidden tab, none with reduced motion. `PHONE_CSS_BG` (off) in js/hero-gl.js swaps phones to CSS blobs.
+
+## Accessibility (Stage 3 C)
+- Every page: skip link first (`.skip-link` -> `<main id="main" tabindex="-1">`). New sections go inside `<main>`.
+- No `aria-label` on `<p>` / `<div>` / `<span>` without a role. SplitText: `aria: 'none'` for lines / words; for split letters give screen readers a `.sr-only` copy and split an `aria-hidden` one.
+- Anything hidden until revealed on scroll must show on `:focus-within`.
+- Text >= 4.5:1: inactive Együttműködés step body opacity 0.72 (reached 0.86), myapproach intro words dim to 0.74. Tap targets >= 24px (carousel dots 24x44).
+- Form errors: our own Hungarian messages (Ön), `.contact-field__err` under the field / `.mc__err` in the chat, with aria-invalid + aria-describedby.
+- Cookie decline / withdrawal deletes `_ga*` and sets `ga-disable-<id>`.

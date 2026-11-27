@@ -197,7 +197,6 @@
     rootEl.setAttribute('aria-label', 'Munkáim');
     deck.insertBefore(rootEl, deck.firstChild);
     cases.forEach(function (c, i) {
-      c.setAttribute('role', 'group');
       c.setAttribute('aria-roledescription', 'slide');
       c.setAttribute('aria-label', (i + 1) + ' / ' + N + ': ' + data[i].name);
       rootEl.appendChild(c);
@@ -430,7 +429,7 @@
       if (hasSplit && !plain && stackOn) {
         textBits.forEach(function (el) {
           var target = el.tagName === 'DIV' ? el.querySelector('p') : el;
-          var sp = SplitText.create(target, { type: 'lines', linesClass: 'pf-line' });
+          var sp = SplitText.create(target, { type: 'lines', linesClass: 'pf-line', aria: 'none' });          /* whole words in lines: no aria-label needed (not allowed on <p>) */
           r.lines = r.lines.concat(sp.lines);
           el._split = sp;
         });

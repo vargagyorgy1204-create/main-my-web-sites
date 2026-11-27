@@ -406,17 +406,27 @@
     b.innerHTML = '<div class="mc__hd"><img class="mc__av" src="assets/avatar-vg.webp" width="28" height="28" alt="" decoding="async"><div class="mc__who"><p class="mc__nm">Varga György</p><p class="mc__stt"><i class="mc__dot"></i>Általában 24 órán belül válaszol</p></div></div>' +
       '<div class="mc__log" role="log" aria-live="polite"></div>' +
       '<form class="mc__form" novalidate><div class="mc__comp"><textarea name="message" rows="1" placeholder="' + PH1 + '" aria-label="Üzenet"></textarea><button type="submit" class="mc__send" aria-label="Küldés"><i data-lucide="send"></i></button></div>' +
+      '<p class="mc__err" id="mc-err" role="alert" hidden></p>' +
       '<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="mc__hp" aria-hidden="true">' +
       '<p class="mc__note">A küldéssel elfogadja az <a href="adatvedelem.html" target="_blank" rel="noopener">Adatkezelési tájékoztatót</a>.</p>' +
       '<button type="button" class="mc__new" data-new hidden>Új üzenet</button></form>';
     var log = b.querySelector('.mc__log'), f = b.querySelector('.mc__form'), ta = f.querySelector('textarea'), go = f.querySelector('.mc__send'), comp = f.querySelector('.mc__comp'), note = f.querySelector('.mc__note'), nw = f.querySelector('.mc__new'), hp = f.querySelector('.mc__hp');
+    var err = f.querySelector('.mc__err'), ERR_MSG = 'Kérem, írjon néhány szót a projektjéről.', ERR_CONTACT = 'Kérem, adjon meg egy e-mail-címet vagy telefonszámot.';
+    function fail(text) {                                          /* the message under the field (and no bubble: the text stays editable) */
+      err.textContent = text; err.hidden = !text;
+      if (text) { ta.setAttribute('aria-invalid', 'true'); ta.setAttribute('aria-describedby', 'mc-err'); comp.classList.remove('is-shake'); requestAnimationFrame(function () { comp.classList.add('is-shake'); }); ta.focus(); }
+      else { ta.removeAttribute('aria-invalid'); ta.removeAttribute('aria-describedby'); }
+    }
     var busy = false, stage = 'msg', msgText = '', payload = null;      /* stage: msg -> contact -> done */
     function later(fn, ms) { return setTimeout(fn, reduce ? 0 : ms); }
     function down() { log.scrollTop = log.scrollHeight; }
     function bubble(side, html) { var d = el('div', 'mc__b mc__b--' + side, html); log.appendChild(d); down(); return d; }
     function typing() { var d = el('div', 'mc__b mc__b--l mc__typing', '<i></i><i></i><i></i>'); d.setAttribute('aria-label', 'Gépel…'); log.appendChild(d); down(); return d; }
     function reply(html, after) { lock(true); var t = typing(); later(function () { t.remove(); var d = bubble('l', html); lock(false); if (after) after(d); }, 800); }
-    function lock(on) { busy = on; ta.disabled = on; go.disabled = on; }
+    function lock(on) {                                              /* while the bot types: read-only, not disabled. A disabled field drops the focus, which closed the panel for keyboard users */
+      busy = on; ta.readOnly = on;
+      if (on) go.setAttribute('aria-disabled', 'true'); else { go.removeAttribute('aria-disabled'); ta.disabled = false; go.disabled = false; }
+    }
     function grow() { ta.style.blockSize = 'auto'; ta.style.blockSize = Math.min(ta.scrollHeight, 64) + 'px'; }
     function setStage(s) { stage = s; ta.placeholder = s === 'contact' ? PH2 : PH1; ta.setAttribute('aria-label', s === 'contact' ? PH2 : 'Üzenet'); ta.setAttribute('inputmode', s === 'contact' ? 'email' : 'text'); }
     function contactType(v) {
@@ -432,7 +442,7 @@
     function run(p) {
       lock(true); var t = typing();
       post(p).then(function () {
-        t.remove(); payload = null; busy = false; setStage('done'); ta.value = ''; grow(); ta.placeholder = 'Üzenet elküldve'; ta.disabled = true; go.disabled = true; nw.hidden = false; note.hidden = true;
+        t.remove(); payload = null; busy = false; setStage('done'); ta.value = ''; grow(); ta.placeholder = 'Üzenet elküldve'; var had = f.contains(document.activeElement); nw.hidden = false; note.hidden = true; if (had) nw.focus(); ta.disabled = true; go.disabled = true;
         var t2 = typing(); later(function () { t2.remove(); bubble('l', 'Köszönöm! Hamarosan jelentkezem. Szép napot! ✓✓'); }, 800);
       }).catch(function () {
         t.remove(); lock(false); payload = p;
@@ -442,18 +452,20 @@
     function send() {
       if (busy || stage === 'done') return;
       var text = ta.value.trim();
-      if (!text) { comp.classList.remove('is-shake'); void comp.offsetWidth; comp.classList.add('is-shake'); ta.focus(); return; }
       if (stage === 'msg') {
+        if (!text) { fail(ERR_MSG); return; }
+        fail('');
         msgText = text; bubble('r', '').textContent = text; log.lastChild.classList.add('is-new'); ta.value = ''; grow();
         setStage('contact'); reply('Köszönöm! Hol válaszolhatok Önnek? Kérem, adja meg e-mail-címét vagy telefonszámát.', function () { ta.focus(); });
         return;
       }
       var type = contactType(text);
+      if (!type) { fail(ERR_CONTACT); return; }
+      fail('');
       bubble('r', '').textContent = text; log.lastChild.classList.add('is-new'); ta.value = ''; grow();
-      if (!type) { reply('Ez nem tűnik érvényes e-mail-címnek vagy telefonszámnak. Kérem, ellenőrizze.', function () { ta.focus(); }); return; }
       run({ message: msgText, contact: text, type: type });
     }
-    ta.addEventListener('input', grow);
+    ta.addEventListener('input', function () { grow(); if (!err.hidden) fail(''); });
     ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); } });
     f.addEventListener('submit', function (e) { e.preventDefault(); send(); });
     log.addEventListener('click', function (e) {
@@ -462,7 +474,7 @@
     });
     function intro() { lock(true); var t = typing(); later(function () { t.remove(); bubble('l', 'Üdvözlöm! 👋 Miben segíthetek?').classList.add('mc__b--one'); lock(false); }, 800); }
     nw.addEventListener('click', function () {
-      log.innerHTML = ''; msgText = ''; payload = null; nw.hidden = true; note.hidden = false; setStage('msg'); lock(false); ta.value = ''; grow(); intro(); ta.focus();
+      log.innerHTML = ''; fail(''); msgText = ''; payload = null; nw.hidden = true; note.hidden = false; setStage('msg'); lock(false); ta.value = ''; grow(); intro(); ta.focus();
     });
     return { el: b, focus: ta, onOpen: function () {
       grow();

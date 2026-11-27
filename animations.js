@@ -1,5 +1,6 @@
 (function () {
     if (!window.IntersectionObserver) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;          /* reduced motion: nothing is hidden or moved, the content is simply there */
 
     var T = 'opacity 1s cubic-bezier(0.16,1,0.3,1),transform 1s cubic-bezier(0.16,1,0.3,1)';
 

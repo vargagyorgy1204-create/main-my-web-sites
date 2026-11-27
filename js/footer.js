@@ -258,8 +258,9 @@
   }
   function later() { clearTimeout(timer); timer = setTimeout(place, 120); }
   window.addEventListener('resize', later);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(place); else place();
-  window.addEventListener('load', place);
+  function placeSoon() { requestAnimationFrame(place); }          /* in a frame: no forced layout between other scripts' style writes */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeSoon); else placeSoon();
+  window.addEventListener('load', placeSoon);
   if (window.ResizeObserver) new ResizeObserver(later).observe(document.querySelector('.footer-content'));
 })();
 

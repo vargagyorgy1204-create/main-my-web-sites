@@ -34,7 +34,6 @@
       [0, 1, 3, 4].forEach(function (k) { var ch = str.charAt(k); if (cells[k].textContent !== ch) { if (first) cells[k].textContent = ch; else flip(cells[k], ch); } });
       first = false;
       time.setAttribute('datetime', d.toISOString());
-      time.setAttribute('aria-label', str);
       setTimeout(tick, 60000 - (d.getSeconds() * 1000 + d.getMilliseconds()) + 50);          /* aligned to the next full minute */
     };
     tick();
