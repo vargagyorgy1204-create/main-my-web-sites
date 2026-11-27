@@ -7877,3 +7877,19 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 @media (pointer: coarse) {
     .pf-ig__qr { display: none !important; }
 }
+
+/* ===== Footer bottom row: the three items are built the same way, so they share one baseline: a 20px line, 44px hit area from equal 12px top / bottom padding taken back by the margin (the text does not move) ===== */
+footer .footer-legal, footer .footer-legal .footer-bottom-links { align-items: baseline; }
+footer .footer-legal p { line-height: 20px; }
+footer .footer-legal .cookie-settings-link { position: relative; display: inline-block; box-sizing: border-box; min-height: 0; margin: -12px 0; padding-block: 12px; line-height: 20px; vertical-align: baseline; }
+footer .footer-legal .footer-bottom-links .cookie-settings-link { padding-inline: 4px; margin-inline: -4px; }
+footer .footer-legal .cookie-settings-link::after { bottom: 9px; }
+footer .footer-legal { padding-block: 6px; }          /* the row keeps its old height, so the text keeps its place */
+@media (pointer: coarse) {
+    footer .footer-legal { padding-block: 12px; }
+}
+@media (max-width: 850px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
+    footer .footer-legal { padding-block: 0; align-items: center; }
+    footer .footer-legal .footer-bottom-links { padding-block: 7px 17px; }          /* the links row stays where it was under the © line */
+    footer .footer-legal .footer-bottom-links .cookie-settings-link { margin-inline: 0; }
+}

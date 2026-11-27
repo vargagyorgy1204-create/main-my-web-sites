@@ -375,3 +375,5 @@ Condition: `(min-width: 641px) and (max-width: 1100px) and (orientation: portrai
 - **Értékek on tablets:** portrait: a card shadow that fits inside the swipe row (the 64px shadow was cut after 22px, a dark rectangle), `padding-bottom = --why-ramp + 18px` so the dots sit on the flat colour; landscape touch: `--why-ramp: 13svh`, below the pinned cards and counter. The 22x44 `.hs__dot` is an expected tap size in tests/board-mobile.mjs (no flag).
 
 - **Instagram card on landscape touch tablets (1024-1366px):** the laptop card (the Instagram media queries and portfolio.js `sizePanel` also match it), fitted to `100svh - header - 32`, handle -> text -> button; no QR on any touch device (`pointer: coarse`). Portrait tablets / phones keep the stacked card.
+
+- **Footer bottom row:** the three items share one baseline (20px line, 44px hit area = 12px padding taken back by -12px margin, so the text does not move).
