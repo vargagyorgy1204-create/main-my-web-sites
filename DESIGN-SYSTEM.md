@@ -365,3 +365,5 @@ Condition: `(min-width: 641px) and (max-width: 1100px) and (orientation: portrai
 - **Együttműködés on landscape touch tablets (pointer: coarse, 1024-1366px):** the 2x2 grid on every size with one progress line per row (script.js clones the track: `.process--2row`, `--p1` / `--p2`; row 1 fills over 0-0.4 of the run, step 3 at 0.6, row 2 over 0.6-1). Mouse laptops keep 4 in a row.
 
 - **Service modals on portrait tablets:** a centred dialog (`min(92vw, 620px)`, max-height 88svh) with the backdrop around it; title and the 44px close X stay at the top, cards scroll (the phone modal rules). Phones, landscape tablets and laptops unchanged.
+
+- **Portfólió carousel on touch tablets:** phones, portrait tablets and every touch tablet (`(pointer: coarse) and (min-width: 641px) and (max-width: 1366px)`, landscape too) use the swipe carousel and the phone case-study dialog; the portfolio laptop media queries carry `(pointer: fine)` or `(min-width: 1367px)` (portfolio.js `deskQ` / `TOUCH_TAB` must match). Landscape tablets: vertical card, 62% of the content width, screen sized to the viewport, dialog max 900px, Instagram panel max 620px.

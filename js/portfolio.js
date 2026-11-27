@@ -179,7 +179,10 @@
      The six cards move into one native scroll-snap row (no scroll hijacking); counter + dots under it; only the visible card's video plays; "A feladat" / "A megoldás" leave the card
      and are shown in the case-study dialog instead. TO REVERT: set PF_CAROUSEL to false (the old phone layout is the untouched default code). */
   var PF_CAROUSEL = true;
-  var carMq = window.matchMedia(window.VB.PHONE);
+  /* phones, portrait tablets and every touch tablet (landscape too); the laptop stack is for a mouse or >= 1367px. Keep in step with the media queries in style.css */
+  var TOUCH_TAB = '(pointer: coarse) and (min-width: 641px) and (max-width: 1366px)';
+  var deskQ = function (x) { x = x ? ' and ' + x : ''; return '(min-width: 900px) and (orientation: landscape) and (pointer: fine)' + x + ', (min-width: 1101px) and (pointer: fine)' + x + ', (min-width: 1367px)' + x; };
+  var carMq = window.matchMedia(window.VB.PHONE + ', ' + TOUCH_TAB);
   var carouselOn = false, car = null;
 
   function carMount() {
@@ -341,7 +344,7 @@
   /* -------------------------------------------------------- stacking + parallax */
   if (hasGsap) {
     var mm = gsap.matchMedia();
-    mm.add(window.VB.desk(900, '(prefers-reduced-motion: no-preference)'), function () {
+    mm.add(deskQ('(prefers-reduced-motion: no-preference)'), function () {
       stackOn = true;
       scheduleActive();
 
@@ -586,7 +589,7 @@
     var nameEl = igCard.querySelector('.pf-case__name');
     /* desktop: the panel is shorter than the phone, so the phone overflows it by --pf-ig-ov at the top and bottom (but never less tall than its own copy) */
     var panel = igCard.querySelector('.pf-ig__panel'), copy = igCard.querySelector('.pf-ig__copy'), wrap = igCard.querySelector('.pf-phone-wrap');
-    var deskMq = window.matchMedia(window.VB.desk(900));
+    var deskMq = window.matchMedia(deskQ());
     function sizePanel() {
       panel.style.removeProperty('--pf-ig-panel-h');
       igCard.style.removeProperty('--pf-ig-slot-h');

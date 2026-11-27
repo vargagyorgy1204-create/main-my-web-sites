@@ -4366,7 +4366,7 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
    browser window fills it keeping its 16:9 ratio, so the video's right edge sits on the padding exactly like the text's left edge. The text column is as tall as the window:
    the title starts at the frame's top edge, the button ends at its bottom edge, and the blocks / chips spread evenly in between (space-between = equal gaps). The whole
    block (meta row + stage) is centred vertically in the card, so any spare height is split equally above and below. */
-@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {
+@media (min-width: 900px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (min-width: 1367px), (min-width: 1101px) and (pointer: fine), (min-width: 1101px) and (min-width: 1367px) {
   .pf-case {
     --u: clamp(5px, 0.9svh, 8px);
     border-radius: 32px;
@@ -4433,13 +4433,13 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
 
 /* 900-1099px wide windows: the title is 26-30px here and the glyph rows snap to whole pixels, which left the capitals up to 1.6px above the dot line; 0.8px puts them within 1px
    (>= 1100px is untouched) */
-@media (min-width: 900px) and (max-width: 1099px) and (orientation: landscape) { .pf-case { --pf-cap-nudge: 0.8px; } }
+@media (min-width: 900px) and (max-width: 1099px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (max-width: 1099px) and (min-width: 1367px) { .pf-case { --pf-cap-nudge: 0.8px; } }
 
 /* ---------- Compact tiers: SHORT desktop windows ----------
    Width alone decides the layout (>= 900px = desktop + stacking). A short
    window (e.g. a non-fullscreen browser, ~1097x480) only shrinks or hides
    things - the alignment grid itself never changes. */
-@media (min-width: 900px) and (max-height: 699px) and (orientation: landscape), (min-width: 1101px) and (max-height: 699px) {
+@media (min-width: 900px) and (max-height: 699px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (max-height: 699px) and (min-width: 1367px), (min-width: 1101px) and (max-height: 699px) and (pointer: fine), (min-width: 1101px) and (max-height: 699px) and (min-width: 1367px) {
   .pf-case {
     --u: clamp(3.5px, 0.85svh, 6px);
     --pf-meta-h: 28px;
@@ -4449,19 +4449,19 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
   .pf-case__chips li { padding: 3px 10px; font-size: 12px; }
 }
 
-@media (min-width: 900px) and (max-height: 559px) and (orientation: landscape), (min-width: 1101px) and (max-height: 559px) {
+@media (min-width: 900px) and (max-height: 559px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (max-height: 559px) and (min-width: 1367px), (min-width: 1101px) and (max-height: 559px) and (pointer: fine), (min-width: 1101px) and (max-height: 559px) and (min-width: 1367px) {
   /* the three feature chips stay in the case-study dialog */
   .pf-case__chips { display: none; }
   .pf-case__text { gap: var(--s1); }
 }
 
-@media (min-width: 900px) and (max-height: 439px) and (orientation: landscape), (min-width: 1101px) and (max-height: 439px) {
+@media (min-width: 900px) and (max-height: 439px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (max-height: 439px) and (min-width: 1367px), (min-width: 1101px) and (max-height: 439px) and (pointer: fine), (min-width: 1101px) and (max-height: 439px) and (min-width: 1367px) {
   /* keep "A feladat" + the button */
   .pf-case__mid .pf-case__block:nth-child(2) { display: none; }
 }
 
 /* ---------- Stacking: sticky cards, dwell, hold ---------- */
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (orientation: landscape), (min-width: 1101px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (prefers-reduced-motion: no-preference) and (min-width: 1367px), (min-width: 1101px) and (prefers-reduced-motion: no-preference) and (pointer: fine), (min-width: 1101px) and (prefers-reduced-motion: no-preference) and (min-width: 1367px) {
   .pf-deck { gap: 0; }
 
   .pf-case {
@@ -4686,7 +4686,7 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
 
 /* Wide: two columns — gallery | text — and nothing scrolls. 1024px, not 1100,
    so a 1097px laptop gets the two-column dialog too. */
-@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
+@media (min-width: 1024px) and (orientation: landscape) and (pointer: fine), (min-width: 1024px) and (min-width: 1367px), (min-width: 1101px) and (pointer: fine), (min-width: 1101px) and (min-width: 1367px) {
   .pf-modal__head { padding-inline: 32px; }
 
   .pf-modal__body {
@@ -4718,7 +4718,7 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
   .pf-modal__title { font-size: clamp(20px, 2.2vw, 28px); }
 }
 
-@media (min-width: 1024px) and (max-height: 599px) and (orientation: landscape), (min-width: 1101px) and (max-height: 599px) {
+@media (min-width: 1024px) and (max-height: 599px) and (orientation: landscape) and (pointer: fine), (min-width: 1024px) and (max-height: 599px) and (min-width: 1367px), (min-width: 1101px) and (max-height: 599px) and (pointer: fine), (min-width: 1101px) and (max-height: 599px) and (min-width: 1367px) {
   .pf-modal__body { padding: 0 24px 16px; gap: 24px; }
   .pf-modal__story { gap: 12px; }
   .pf-story__block h4 { margin-block-end: 4px; }
@@ -4729,7 +4729,7 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
 .pf-modal.pf-modal--fade { opacity: 0; transition: opacity 0.3s ease; }
 .pf-modal.pf-modal--fade.is-open { opacity: 1; }
 
-@media (max-width: 639px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
+@media (max-width: 639px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) and (min-width: 641px) and (max-width: 1366px) {
   .pf__inner { padding-inline: 16px; }
   .pf-deck { padding-inline: 16px; }
   .pf-modal__panel { inset: 12px; border-radius: 20px; }
@@ -6918,7 +6918,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 
 @media (prefers-reduced-motion: reduce) { .pf-phone__track { will-change: auto; } }
 
-@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {
+@media (min-width: 900px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (min-width: 1367px), (min-width: 1101px) and (pointer: fine), (min-width: 1101px) and (min-width: 1367px) {
   .pf-ig { --pf-ig-r: 24px; --pf-ig-clear: 24px; --pf-ig-ov: 50px; }      /* clear = phone <-> card edge (>= 24px to the header / neighbours); ov = how far the phone overflows the panel */
   .pf-ig .pf-case__inner { display: flex; align-items: center; padding-block: 0; }
   .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
@@ -6948,7 +6948,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
   .pf-phone { transform: rotateY(calc(18deg + var(--ty, 0deg))) rotateX(calc(6deg + var(--tx, 0deg))) rotateZ(-2deg); }
   /* upper-right: between the phone and the copy, fully outside the phone body (never over the profile header); lower-left: at the phone's lower-left */
 }
-@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .pf-ig { --pf-ig-card-w: 100%; --pf-ig-inset: 12px; --pf-ig-pad: 20px; --pf-ig-r: 18px; } }
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) and (min-width: 641px) and (max-width: 1366px) { .pf-ig { --pf-ig-card-w: 100%; --pf-ig-inset: 12px; --pf-ig-pad: 20px; --pf-ig-r: 18px; } }
 
 /* ===== Header blur (< 1024px): a REAL progressive blur: 5 stacked layers (js/nav.js builds .nav__blur), each with its own backdrop-filter and gradient mask on the SAME element ===== */
 .nav__blur { display: none; }
@@ -6985,7 +6985,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 #portfolio { padding-block-end: calc(var(--section-bottom) + var(--ctc-r)); }
 
 /* Instagram card, mobile: phone first, then title, text, button (full-width-ish like the other mobile CTAs) */
-@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) and (min-width: 641px) and (max-width: 1366px) {
   .pf-ig__stage { order: -1; }
   .pf-ig__btnwrap { align-self: stretch; order: 6; }
   .pf-ig__btnwrap .hbtn { inline-size: 100%; }
@@ -6994,7 +6994,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 /* the handwriting font of the Instagram QR label (self-hosted, Caveat 600, latin + latin-ext) */
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@media (min-width: 900px) and (max-width: 1199px) and (orientation: landscape), (min-width: 1101px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
+@media (min-width: 900px) and (max-width: 1199px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (max-width: 1199px) and (min-width: 1367px), (min-width: 1101px) and (max-width: 1199px) and (pointer: fine), (min-width: 1101px) and (max-width: 1199px) and (min-width: 1367px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
 
 /* ═══ Hero living window (EXPERIMENT; js/hero-window.js builds the markup; delete this block + the script tag + js/hero-window.js + the mono font to remove it) ═══
    A floating, tilted browser window (decoration only: an abstract brand-coloured mini website made of CSS shapes) in the hero's bottom-right corner; its scene follows the living word
@@ -7737,7 +7737,7 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 .pf--carousel .pf-ig__btnwrap .hbtn { inline-size: auto; min-width: 0; justify-content: center; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); }
 
 /* ===== Portfólió case-study dialog on phones (<= 640px): everything on one screen where it can; only the text part scrolls if it cannot. One short swipe = one screenshot (js/portfolio.js) ===== */
-@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) and (min-width: 641px) and (max-width: 1366px) {
     #pf-modal { --pf-bar-h: 24px; }
     .pf-modal__head { min-block-size: 0; padding: 8px 12px 6px 20px; }
     .pf-modal__title { font-size: clamp(18px, 5.4vw, 22px); white-space: nowrap; }
@@ -7818,4 +7818,19 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .process--2row .process__track--2 .process__tip { transform: translateX(calc(var(--len) * var(--p2, 0))); opacity: 0; }
     .process--2row.on-row2 .process__tip { opacity: 0; }
     .process--2row.is-running.on-row2 .process__track--2 .process__tip { opacity: 1; }
+}
+
+/* ===== Portfólió on LANDSCAPE touch tablets (and any touch tablet): the phone swipe carousel (js/portfolio.js). The laptop card / stack / two-column dialog blocks above exclude touch tablets
+   ("(pointer: fine)" or >= 1367px). The vertical phone card is kept (two columns would leave a ~270px video at 1024x768), its screen sized so the card fits the viewport. ===== */
+@media (pointer: coarse) and (min-width: 641px) and (max-width: 1366px) and (orientation: landscape) {
+    .pf--carousel .pf-car { gap: 20px; padding-inline: var(--gutter) max(var(--gutter), calc(100vw - var(--gutter) - var(--content-max) * 0.62)); scroll-padding-inline: var(--gutter); }
+    .pf--carousel .pf-car > .pf-case { flex-basis: calc(var(--content-max) * 0.62); max-block-size: calc(100svh - var(--hdr-h) - 32px); }
+    .pf--carousel .pf-case__inner { padding: 24px; gap: 12px; }
+    .pf--carousel .pf-case__media { inline-size: min(100%, calc((100svh - var(--hdr-h) - 32px - 270px) * 1.6)); margin-inline: auto; }
+    .pf--carousel .pf-case__name { font-size: 28px; }
+    .pf--carousel .pf-case.pf-ig { margin-block-start: 8px; }
+    .pf--carousel .pf-ig__panel { inline-size: min(100% - 2 * var(--gutter), 620px); }
+    .pf-modal__panel { max-inline-size: 900px; }
+    .pf-modal__body { max-inline-size: 840px; inline-size: 100%; margin-inline: auto; box-sizing: border-box; }
+    .pf-gallery__track { block-size: min(46svh, calc((min(100vw, 900px) - 66px) / 1.6 + var(--pf-bar-h) + 8px)); }
 }
