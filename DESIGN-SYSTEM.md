@@ -367,3 +367,5 @@ Condition: `(min-width: 641px) and (max-width: 1100px) and (orientation: portrai
 - **Service modals on portrait tablets:** a centred dialog (`min(92vw, 620px)`, max-height 88svh) with the backdrop around it; title and the 44px close X stay at the top, cards scroll (the phone modal rules). Phones, landscape tablets and laptops unchanged.
 
 - **Portfólió carousel on touch tablets:** phones, portrait tablets and every touch tablet (`(pointer: coarse) and (min-width: 641px) and (max-width: 1366px)`, landscape too) use the swipe carousel and the phone case-study dialog; the portfolio laptop media queries carry `(pointer: fine)` or `(min-width: 1367px)` (portfolio.js `deskQ` / `TOUCH_TAB` must match). Landscape tablets: vertical card, 62% of the content width, screen sized to the viewport, dialog max 900px, Instagram panel max 620px.
+
+- **Footer on landscape touch tablets:** `.footer-floor` margin-top = half the back-to-top badge + 24px, so the line and the badge sit above the wordmark. Portrait tablets / phones had ~100px already. Mouse laptops unchanged (the badge still reaches 4-6px into the wordmark there).

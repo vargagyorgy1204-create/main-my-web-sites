@@ -7837,3 +7837,9 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .pf-modal__body { max-inline-size: 840px; inline-size: 100%; margin-inline: auto; box-sizing: border-box; }
     .pf-gallery__track { block-size: min(46svh, calc((min(100vw, 900px) - 66px) / 1.6 + var(--pf-bar-h) + 8px)); }
 }
+
+/* ===== Footer on landscape touch tablets: the divider line and the back-to-top badge (centred on it) sit clearly above the wordmark, 24px between the badge and the capitals
+   (portrait tablets and phones already have ~100px there: the legal row sits between them) ===== */
+@media (pointer: coarse) and (orientation: landscape) and (min-width: 641px) and (max-width: 1366px) {
+    .footer-floor { margin-top: calc(var(--footer-stamp-d) / 2 + 24px); }
+}
