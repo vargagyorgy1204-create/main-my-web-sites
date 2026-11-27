@@ -7622,6 +7622,8 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     :root { --cf-check: 22px; }
     .cookie-btn { min-height: 44px; }
     .contact-consent { min-height: 44px; align-items: center; }
+    /* the checked fill is painted from the BORDER box: with a (transparent) border the default padding-box origin tiled the gradient into the border ring (wrong colours on the edges, a cut look) */
+    .ctc .contact-consent input:checked { background: var(--card-primary) border-box; background-repeat: no-repeat; }
 }
 
 /* ===== Hero on phones (<= 640px): eyebrow -> headline -> subheading -> mini OS window -> buttons -> status line. The window (one DOM, js/hero-window.js moves it before .hero-ctas) is in the flow: full content width, no tilt;
