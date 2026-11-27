@@ -175,6 +175,92 @@
 
   var cases = Array.prototype.slice.call(deck.querySelectorAll('.pf-case:not(.pf-ig)'));
   var igCard = document.getElementById('pf-ig');
+  /* ------------------------------------------------- phones (<= 640px): EXPERIMENT, a swipe carousel instead of the long stack
+     The six cards move into one native scroll-snap row (no scroll hijacking); counter + dots under it; only the visible card's video plays; "A feladat" / "A megoldás" leave the card
+     and are shown in the case-study dialog instead. TO REVERT: set PF_CAROUSEL to false (the old phone layout is the untouched default code). */
+  var PF_CAROUSEL = true;
+  var carMq = window.matchMedia('(max-width: 640px)');
+  var carouselOn = false, car = null;
+
+  function carMount() {
+    if (carouselOn) return;
+    carouselOn = true;
+    section.classList.add('pf--carousel');
+    var rootEl = document.createElement('div'), nav = document.createElement('div');
+    rootEl.className = 'pf-car';
+    rootEl.setAttribute('tabindex', '0');
+    rootEl.setAttribute('role', 'region');
+    rootEl.setAttribute('aria-roledescription', 'carousel');
+    rootEl.setAttribute('aria-label', 'Munkáim');
+    deck.insertBefore(rootEl, deck.firstChild);
+    cases.forEach(function (c, i) {
+      c.setAttribute('role', 'group');
+      c.setAttribute('aria-roledescription', 'slide');
+      c.setAttribute('aria-label', (i + 1) + ' / ' + N + ': ' + data[i].name);
+      rootEl.appendChild(c);
+    });
+    nav.className = 'pf-car__nav';
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    nav.innerHTML = '<span class="pf-car__count" aria-live="polite"></span><div class="pf-car__dots">' +
+      data.map(function (p, i) { return '<button type="button" class="pf-car__dot" aria-label="' + (i + 1) + '. projekt: ' + esc(p.name) + '"></button>'; }).join('') + '</div>';
+    deck.insertBefore(nav, rootEl.nextSibling);
+    var dots = Array.prototype.slice.call(nav.querySelectorAll('.pf-car__dot')), count = nav.querySelector('.pf-car__count');
+    var cur = -1;
+    function left(i) { return cases[i].offsetLeft - cases[0].offsetLeft; }
+    function nearest() {
+      var x = rootEl.scrollLeft, best = 0, d = Infinity;
+      cases.forEach(function (c, i) { var k = Math.abs(left(i) - x); if (k < d) { d = k; best = i; } });
+      return best;
+    }
+    function paint(i) {
+      if (i === cur) return;
+      cur = i;
+      count.textContent = pad(i + 1) + ' / ' + pad(N);
+      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); if (k === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+    }
+    function goTo(i) {
+      i = Math.max(0, Math.min(N - 1, i));
+      rootEl.scrollTo({ left: left(i), behavior: reduce ? 'auto' : 'smooth' });
+    }
+    rootEl.addEventListener('scroll', function () { paint(nearest()); }, { passive: true });
+    dots.forEach(function (d, k) { d.addEventListener('click', function () { goTo(k); }); });
+    rootEl.addEventListener('keydown', function (e) {
+      if (e.target !== rootEl || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+      e.preventDefault();
+      goTo(nearest() + (e.key === 'ArrowRight' ? 1 : -1));
+    });
+    paint(0);
+
+    /* only the visible card's video plays (the intersection is clipped by the carousel, so off-screen cards count as hidden) */
+    var ratios = cases.map(function () { return 0; }), io = null;
+    if (!reduce && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(function (es) {
+        es.forEach(function (en) { ratios[cases.indexOf(en.target)] = en.isIntersecting ? en.intersectionRatio : 0; });
+        var best = -1, r = 0.6;
+        ratios.forEach(function (v, i) { if (v >= r) { r = v; best = i; } });
+        setActive(best);
+      }, { threshold: [0, 0.3, 0.6, 0.8, 0.95] });
+      cases.forEach(function (c) { io.observe(c); });
+    }
+    var theme = deck.getAttribute('data-theme');
+    deck.removeAttribute('data-theme');                        /* the header reads the theme of the cards themselves: the row under them is light */
+    car = { root: rootEl, nav: nav, io: io, theme: theme };
+  }
+  function carUnmount() {
+    if (!carouselOn) return;
+    carouselOn = false;
+    if (car.io) car.io.disconnect();
+    var last = deck.querySelector('.pf-last');
+    cases.forEach(function (c, i) {
+      c.removeAttribute('role'); c.removeAttribute('aria-roledescription'); c.removeAttribute('aria-label');
+      if (i === N - 1) last.appendChild(c); else deck.insertBefore(c, last);
+    });
+    car.root.remove(); car.nav.remove();
+    if (car.theme) deck.setAttribute('data-theme', car.theme);
+    section.classList.remove('pf--carousel');
+    car = null;
+  }
+
   /* the liquid fill origin + ripple of script.js for the pill that was just rendered */
   if (igCard && window.VB && VB.bindHbtn) igCard.querySelectorAll('.hbtn').forEach(VB.bindHbtn);
 
@@ -217,7 +303,7 @@
   var tick = 0;
   function updateActive() {
     tick = 0;
-    if (reduce) return;
+    if (reduce || carouselOn) return;
     var vh = window.innerHeight, best = -1, bestFrac = 0.5;
     cases.forEach(function (c, i) {
       var r = c.getBoundingClientRect();
@@ -238,6 +324,12 @@
     window.addEventListener('scroll', scheduleActive, { passive: true });
     window.addEventListener('resize', scheduleActive);
     updateActive();
+  }
+
+  if (PF_CAROUSEL) {
+    var carApply = function () { if (carMq.matches) carMount(); else { carUnmount(); scheduleActive(); } };
+    if (carMq.matches) carMount();
+    if (carMq.addEventListener) carMq.addEventListener('change', carApply); else carMq.addListener(carApply);
   }
 
   /* -------------------------------------------------------- stacking + parallax */
@@ -690,6 +782,23 @@
       }
     }
 
+    /* phones (carousel): the card no longer shows "A feladat" / "A megoldás", so the dialog does (the same texts) */
+    var cardBlocks = null;
+    function cardTexts(p) {
+      if (!cardBlocks) {
+        cardBlocks = [['A feladat', 'task'], ['A megoldás', 'solution']].map(function (d) {
+          var sec = document.createElement('section');
+          sec.className = 'pf-story__block pf-story__block--card';
+          sec.innerHTML = '<h4>' + d[0] + '</h4><p></p>';
+          sec.dataset.key = d[1];
+          return sec;
+        });
+        var first = storyEl.firstElementChild;
+        cardBlocks.forEach(function (sec) { storyEl.insertBefore(sec, first); });
+      }
+      cardBlocks.forEach(function (sec) { sec.hidden = !carouselOn; sec.querySelector('p').textContent = p[sec.dataset.key]; });
+    }
+
     /* --- fill from the data file --- */
     function fill(i) {
       var p = data[i];
@@ -698,6 +807,7 @@
       stStart.textContent = p.caseStudy.start;
       stSol.textContent = p.caseStudy.solution;
       stRes.textContent = p.caseStudy.result;
+      cardTexts(p);
       shotsOf(p).forEach(function (src, k) {
         imgs[k].src = src;
         imgs[k].alt = p.name + ' — ' + (k + 1) + '. kép';
