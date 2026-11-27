@@ -3137,7 +3137,7 @@ html.has-cursor .ap-row:hover .ap-row__icon::after { opacity: 1; }
         radial-gradient(60% 70% at 55% 95%, rgb(192 38 163 / 0.34), transparent 70%),
         #0f0b1c;
 }
-.hero-gl { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
+.hero-gl { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; display: block; opacity: 0; transition: opacity 0.6s ease; }
 .hero-bg.is-gl .hero-gl { opacity: 1; }
 .hero-css { position: absolute; inset: 0; display: none; }
 .hero-bg.is-css .hero-css { display: block; }

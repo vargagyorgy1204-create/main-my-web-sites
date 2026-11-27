@@ -1,6 +1,7 @@
 /* hero-gl.js — the hero background: a slow, living brand gradient (blue #5b5bf0 -> violet #9b3fd8 -> pink #C026A3 on #0f0b1c) flowing like liquid under frosted glass.
    One full-screen plane, a small simplex-noise fragment shader (WebGL 1), rendered at reduced resolution and capped at ~30fps. The blobs drift toward the pointer within a small
-   radius (real mouse only). Starts after window.load (the headline paints first); pauses off-screen and in a hidden tab.
+   radius (real mouse only). Lazy start: the static CSS gradient paints first; the shader is set up on the first scroll / touch / key, or ~1s after window.load when the browser is idle (whichever is first),
+   then crossfades in over 0.6s. Pauses off-screen and in a hidden tab.
    Fallback (no WebGL / low-power / save-data): the CSS blobs (.hero-css, class .is-css). Reduced motion: the static CSS gradient only. */
 (function () {
   'use strict';
@@ -26,8 +27,8 @@
   function fallback() { bg.classList.add('is-css'); }
   if (lowPower) { fallback(); return; }
 
-  /* EXPERIMENT: phones show the CSS blobs instead of WebGL (speed). Revert: set PHONE_CSS_BG to false. Tablets and laptops keep WebGL. The Hangulat moods recolour the blobs. */
-  var PHONE_CSS_BG = true;
+  /* Switch (off): true = phones show the CSS blobs instead of WebGL. Tried in Perf B, looked worse; kept as an easy switch. The Hangulat moods recolour the blobs. */
+  var PHONE_CSS_BG = false;
   if (PHONE_CSS_BG && window.matchMedia('(max-width: 640px)').matches) {
     fallback();
     var blobs = bg.querySelectorAll('.hero-css i');
@@ -40,6 +41,10 @@
     return;
   }
 
+  var faded = false, wake = function () {};                      /* js/hero-bg-pin.js: the background has faded out completely (Rólam pinned). Listened from the start, the shader may not exist yet */
+  document.addEventListener('hero:bgfade', function (e) { faded = !!(e.detail && e.detail.faded); if (!faded) wake(); });
+
+  function start() {                                              /* everything that costs: context, shader compile, the render loop (called once, lazily: see the end of the file) */
   var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   var FRAG = [
     'precision mediump float;',
@@ -130,8 +135,6 @@
   var cc = [[91, 91, 240], [155, 63, 216], [192, 38, 163]].map(function (a) { return a.slice(); }), ct = cc.map(function (a) { return a.slice(); });
   try { var sm = window.sessionStorage.getItem('vb-hero-mood'); if (sm && window.HERO_THEMES[sm]) { ct = window.HERO_THEMES[sm].shader.map(function (a) { return a.slice(); }); cc = ct.map(function (a) { return a.slice(); }); } } catch (e0) { /* ignore */ }
   document.addEventListener('hero:theme', function (e) { var t = e.detail && window.HERO_THEMES[e.detail.name]; if (t) { ct = t.shader.map(function (a) { return a.slice(); }); run(); } });
-  var faded = false;                                                /* js/hero-bg-pin.js: the background has faded out completely (Rólam pinned) */
-  document.addEventListener('hero:bgfade', function (e) { faded = !!(e.detail && e.detail.faded); if (!faded) run(); });
   function frame(now) {
     raf = 0;
     if (!visible || document.hidden || faded) return;
@@ -159,6 +162,19 @@
   document.addEventListener('visibilitychange', run);
   canvas.addEventListener('webglcontextlost', function (e) { e.preventDefault(); bg.classList.remove('is-gl'); fallback(); cancelAnimationFrame(raf); });
 
-  /* start after load: the headline is already painted */
-  if (document.readyState === 'complete') run(); else window.addEventListener('load', function () { setTimeout(run, 60); });
+  wake = run;
+  run();
+  }
+
+  /* lazy start: first real interaction, or ~1s after load once the browser is idle. 'scroll' counts only when the page has really moved (layout scripts fire it at 0 too) */
+  var booted = false, timer = 0, EVTS = ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'];
+  function boot(e) {
+    if (booted || (e && e.type === 'scroll' && window.scrollY < 2)) return;
+    booted = true; clearTimeout(timer);
+    EVTS.forEach(function (n) { window.removeEventListener(n, boot, true); });
+    start();
+  }
+  EVTS.forEach(function (n) { window.addEventListener(n, boot, { capture: true, passive: true }); });
+  function later() { timer = setTimeout(function () { if (window.requestIdleCallback) window.requestIdleCallback(function () { boot(); }, { timeout: 1000 }); else boot(); }, 1000); }
+  if (document.readyState === 'complete') later(); else window.addEventListener('load', later);
 })();
