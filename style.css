@@ -7791,8 +7791,11 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .pf--carousel .pf-case__inner { padding: 28px; }
     .pf--carousel .pf-ig .pf-case__inner { padding: 12px var(--gutter); }
 
-    /* Kapcsolat info card and the footer: two columns where one column left half the width empty */
-    .ctc .contact-personal-panel { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; column-gap: 28px; }
+    /* Kapcsolat profile card: the phone layout (one centred column: photo, title, status lines, then the two buttons stacked, same width), as wide as the form card above */
+    .ctc .contact-personal-panel { padding: 32px 24px; }
+    #contact .contact-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    #contact .contact-actions .btn-wa-cta, #contact .contact-actions .btn-email-cta { inline-size: min(100%, 280px); block-size: auto; min-block-size: 48px; }
+    /* the footer: two columns where one column left half the width empty */
     .footer-content { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; max-width: var(--content-max); margin-inline: auto; }
     .footer-content > .footer-section:first-child { grid-column: 1 / -1; }
 
