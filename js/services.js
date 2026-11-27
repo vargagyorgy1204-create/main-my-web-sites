@@ -15,7 +15,7 @@
   /* ---- the focus-row hover (>= 1024px): .is-hot on the <li> for a real pointer and for keyboard focus-visible; .has-hot on the list dims the others.
      No GSAP needed: style.css does every effect (band, odometer, wave, teaser, arrow). Here: the state, the title letters (split only while hot, so the
      rest state keeps its kerning) and the arrow's stroke setup. Touch: nothing. */
-  var hotMq = window.matchMedia ? window.matchMedia('(min-width: 1024px)') : { matches: false };
+  var hotMq = window.matchMedia ? window.matchMedia(window.VB.desk(1024)) : { matches: false };
   function hotLists() { return Array.prototype.slice.call(document.querySelectorAll('#services .svt-list')); }
   function splitTitle(li) {
     var tt = li.querySelector('.svt-list__tt');
@@ -262,7 +262,7 @@
       prepRow(row);
       window.ScrollTrigger.create({
         trigger: row, end: 'max',
-        start: function () { return window.innerWidth >= 1024 ? 'top 61.5%' : 'top 85%'; },
+        start: function () { return window.matchMedia(window.VB.desk(1024)).matches ? 'top 61.5%' : 'top 85%'; },
         onEnter: function () { setIn(row, i, true); },
         onLeaveBack: function () { setIn(row, i, false); }
       });

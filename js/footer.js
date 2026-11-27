@@ -151,7 +151,7 @@
   function cancelEnd() { if (endFn) { icon.removeEventListener('animationiteration', endFn); endFn = null; } clearTimeout(endTimer); endTimer = 0; }
   if (stamp && icon && !reduce) {
     stamp.addEventListener('pointerenter', function (e) {
-      if (e.pointerType === 'touch' || !document.documentElement.classList.contains('has-cursor') || !window.matchMedia('(min-width: 1024px)').matches) return;
+      if (e.pointerType === 'touch' || !document.documentElement.classList.contains('has-cursor') || !window.matchMedia(window.VB.desk(1024)).matches) return;
       cancelEnd();
       stamp.classList.add('is-hover');
     });
@@ -176,7 +176,7 @@
     goal = g;
     if (!raf) raf = requestAnimationFrame(step);
   }
-  stamp.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch' && window.matchMedia('(min-width: 1024px)').matches) to(5); });
+  stamp.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch' && window.matchMedia(window.VB.desk(1024)).matches) to(5); });
   stamp.addEventListener('pointerleave', function () { to(1); });
 })();
 
@@ -196,7 +196,7 @@
     }
     return best;
   }
-  var wide = window.matchMedia('(min-width: 1024px)');                       /* below 1024px the badge is static at the line's right end */
+  var wide = window.matchMedia(window.VB.desk(1024));                       /* below 1024px the badge is static at the line's right end */
   function layoutDy(el) {                                                  /* the entrance transforms (column / row reveal) are not part of the layout */
     var ty = 0;
     for (var e = el; e && e !== document.body; e = e.parentElement) {

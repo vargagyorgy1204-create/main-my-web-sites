@@ -149,10 +149,10 @@
        Starts only when the dot has landed and settled (its last animationend + 0.1s). Two SVG overlays share the geometry: .ctc-signal--under (z-index 0, behind the
        lead text) carries the trunk, .ctc-signal (above the cards) the branches that run into the card outlines. Every path is drawn at one constant speed (SPEED px/s,
        stroke-dashoffset on pathLength 1) with a glowing head at its tip; the lead-text letters the trunk crosses light up (aria-hidden copies, the real text is untouched). */
-    var desk = window.matchMedia('(min-width: 1024px)');
+    var desk = window.matchMedia(window.VB.desk(1024));
     var NS = 'http://www.w3.org/2000/svg';
     var SPEED = 1400;
-    var sg = null, ring = null, units = [], entered = false, landed = false, pendingOff = 0;
+    var sg = null, ring = null, units = [], entered = false, landed = false, pendingOff = 0, personalSeen = false;          /* kept outside build(): a rebuild must not forget that the second card is already on screen */
 
     function el(name, attrs, parent) {
       var n = document.createElementNS(NS, name);
@@ -367,7 +367,7 @@
         B.fromTo(O.P.br2, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: 'none' }, d3);
         cardTween(B, personal, d3);
         photoContent(B, d3);
-        units = [{ tl: A, gate: null }, { tl: B, gate: personal, vis: false, gateAt: te1 }];
+        units = [{ tl: A, gate: null }, { tl: B, gate: personal, vis: personalSeen, gateAt: te1 }];
       }
       units.forEach(function (u) { u.tl.progress(0); });
     }
@@ -383,7 +383,11 @@
         var wait = i === 0 ? delay : 0;
         if (u.gate) {
           var prev = units[i - 1];
-          if (!u.vis || prev.tl.progress() === 0) return;
+          if (!u.vis) return;
+          if (prev.tl.progress() === 0) {                      /* both cards on screen at once (tall tablets): the first one is only just starting, look again shortly */
+            if (prev.call || !prev.tl.paused()) u.call = gsap.delayedCall(0.25, function () { u.call = null; tryStarts(0); });
+            return;
+          }
           wait = Math.max(0, (u.gateAt - prev.tl.time()) / FWD);             /* the second card's line leaves the first card's closing outline */
         }
         u.tl.timeScale(FWD);
@@ -420,6 +424,7 @@
     if (personal && 'IntersectionObserver' in window) {
       new IntersectionObserver(function (es) {
         var on = es[es.length - 1].isIntersecting;
+        personalSeen = on;
         units.forEach(function (u) { if (u.gate === personal) u.vis = on; });
         if (!on) return;
         if (!entered && !landed && word && word.getBoundingClientRect().bottom < 0 && units.length && units[0].tl.progress() === 0) { entered = true; landed = true; subOn(true); }      /* the heading was flung past: the cards start the choreography */

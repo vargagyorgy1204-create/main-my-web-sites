@@ -345,15 +345,17 @@
   }
   var COARSE = window.matchMedia('(pointer: coarse)');                /* touch: phones AND touch tablets (<= 1366px) use the bottom sheet instead of the placePanel modes */
   var FLOW_MAX = 640;                                                /* <= 640px: the window sits in the flow (subheading -> window -> buttons) */
+  var isFlow = function () { return window.innerWidth <= FLOW_MAX || window.VB.mqPT.matches; };      /* phones and portrait tablets: the window is in the flow */
+  var FLOW_W = 720;
   var BAR = 30, BASE = 360;                                         /* BASE: the layout width at the 1440 reference; wider windows are scaled from it */
   function place() {
     var hr = hero.getBoundingClientRect(), inner = hero.querySelector('.hero-inner').getBoundingClientRect();
     var obs = obstacles(hr), Lft = inner.left - hr.left;
     var st = hero.querySelector('.hero-status').getBoundingClientRect();
     var res = null;
-    if (window.innerWidth <= FLOW_MAX) {
+    if (isFlow()) {
       /* phones: the window is part of the flow, between the subheading and the buttons (layout() moves it there): the full content width, no tilt, no crop */
-      var iw = inner.width;
+      var iw = Math.min(inner.width, FLOW_W);
       return { flow: true, left: 0, top: 0, W: iw, H: BAR + iw * 0.625 };
     }
     if (window.innerWidth >= 900) {
@@ -384,7 +386,7 @@
   function layout() {
     fit = place();
     if (!fit) { mode = 'off'; w.classList.remove('is-on'); gsap.set(w, { opacity: 0 }); return false; }
-    mode = window.innerWidth >= 900 ? 'desktop' : 'mobile';
+    mode = !fit.flow && window.innerWidth >= 900 ? 'desktop' : 'mobile';
     fit.S = mode === 'desktop' && fit.W > BASE ? fit.W / BASE : 1;                    /* the window keeps its BASE layout and is scaled (dock, panels, text: one ratio) */
     var ib = hero.querySelector('.hero-inner');
     if (fit.flow) {                                                                    /* phones: in the flow, right before the buttons */
@@ -407,7 +409,7 @@
     }
     return true;
   }
-  function restTilt() { return window.innerWidth >= 900 ? { y: -14, x: 6, z: 1 } : window.innerWidth <= FLOW_MAX ? { y: 0, x: 0, z: 0 } : { y: -12, x: 0, z: -3 }; }
+  function restTilt() { return isFlow() ? { y: 0, x: 0, z: 0 } : window.innerWidth >= 900 ? { y: -14, x: 6, z: 1 } : { y: -12, x: 0, z: -3 }; }
 
   /* ------------------------------------------------ tilt with the pointer (html.has-cursor), idle float */
   var qy = gsap.quickTo(tilt, 'rotationY', { duration: 0.6, ease: 'power3' }), qx = gsap.quickTo(tilt, 'rotationX', { duration: 0.6, ease: 'power3' });
@@ -463,7 +465,7 @@
       pw.classList.toggle('is-sheet', sheet);
       if (sheet) {
         var lw = fit.S > 1 ? BASE : fit.W, sw = Math.min(lw, 360, window.innerWidth - 40), sl = 0;
-        if (fit.flow) { pw.style.left = '0'; pw.style.width = '100%'; }
+        if (fit.flow) { if (fit.W > 480) { pw.style.left = Math.round((fit.W - 420) / 2) + 'px'; pw.style.width = '420px'; } else { pw.style.left = '0'; pw.style.width = '100%'; } }
         else {
           if (window.innerWidth < 900) { sl = Math.max(20 - fit.left, (window.innerWidth - fit.left) / 2 - sw / 2); sl = Math.min(sl, window.innerWidth - 20 - fit.left - sw); }      /* the peeking window: the sheet sits on its visible part */
           pw.style.left = Math.round(sl) + 'px'; pw.style.width = Math.round(sw) + 'px';
@@ -554,7 +556,7 @@
 
   /* ------------------------------------------------ entrance: after load, after the headline lines */
   var rt = 0;
-  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { var was = mode !== 'off'; layout(); if (mode !== 'off') { if (!was) { w.classList.add('is-on'); gsap.to(w, { opacity: 1, duration: 0.4 }); } else gsap.set(w, { opacity: 1 }); } }, 150); });
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { var was = mode !== 'off', f0 = !!(fit && fit.flow), m0 = mode; layout(); if (held && (f0 !== !!(fit && fit.flow) || m0 !== mode)) holdOff();     /* a rotation that switches the layout closes the open panel (a keyboard resize does not) */ if (mode !== 'off') { if (!was) { w.classList.add('is-on'); gsap.to(w, { opacity: 1, duration: 0.4 }); } else gsap.set(w, { opacity: 1 }); } }, 150); });
   var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
   fontsReady.then(function () {
     var wait = Math.max(0.35, (1700 - performance.now()) / 1000);                      /* ~0.3s after the last headline line */
@@ -566,7 +568,7 @@
         wireReset(true); siteReset(); layers('build', true); gsap.set(L.wire, { autoAlpha: 1 }); gsap.set(w, { opacity: 1 }); return;
       }
       gsap.fromTo(w, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' });
-      var fa = window.innerWidth >= 900 ? 6 : 4;                                          /* a gentle float (smaller on phones) */
+      var fa = window.innerWidth >= 900 && !isFlow() ? 6 : 4;                                          /* a gentle float (smaller on phones) */
       gsap.fromTo(float, { y: -fa }, { y: fa, duration: 3.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
       go(last || 0);                                                                  /* the first scene follows the word shown now */
       if (last) log.push({ word: last, scene: scene, t: Math.round(performance.now()), init: true });

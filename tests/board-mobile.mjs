@@ -164,7 +164,7 @@ async function shoot(vp) {
   const tap = async sel => {                                                  /* a real touch tap; an element outside the viewport is scrolled to the middle first (a fixed element stays where it is) */
     let r = await rectOf(p, sel); if (!r) throw new Error('missing ' + sel);
     let y = r.cy;                                                            /* viewport coordinates */
-    if (y < 60 || y > vp.h - 30) { if (!(await p.evaluate(s => getComputedStyle(document.querySelector(s)).position === 'fixed', sel))) { await scrollTo(p, (await p.evaluate(() => scrollY)) + r.cy - vp.h / 2); await sleep(500); y = vp.h / 2; } }
+    if (y < 60 || y > vp.h - 30) { if (!(await p.evaluate(s => { for (let e = document.querySelector(s); e; e = e.parentElement) if (getComputedStyle(e).position === 'fixed') return true; return false; }, sel))) {          /* the burger sits in the fixed header: tap it where it is */ await scrollTo(p, (await p.evaluate(() => scrollY)) + r.cy - vp.h / 2); await sleep(500); y = vp.h / 2; } }
     await p.touchscreen.tap(r.cx, y);
   };
   /* a tall section: up to `max` slices through its scroll range (a pinned story steps through its states) */
@@ -186,7 +186,7 @@ async function shoot(vp) {
       if (id === 'cookie') continue;
       if (c[3]) { await run(id, async () => slices(({ hero: '#hero', about: '#about', skills: '#skills', why: '#why', steps: '#steps', services: '#services', contact: '#contact', footer: 'footer' })[id], c[4])); continue; }
       if (id === 'header') await run(id, async () => { await scrollTo(p, 0); await settle(600); await shot({ clip: 140 }); });
-      else if (id === 'menu') await run(id, async () => { await scrollTo(p, 0); await settle(600); await tap('#burger'); await sleep(1600); await shot({ menu: true }); await tap('#burger'); await sleep(900); });
+      else if (id === 'menu') await run(id, async () => { await scrollTo(p, 0); await settle(600); await tap('#burger'); await p.waitForFunction(() => document.getElementById('burger').getAttribute('aria-expanded') === 'true', null, { timeout: 3000 }); await sleep(1800); await shot({ menu: true }); await tap('#burger'); await sleep(900); });
       else if (id.startsWith('os-')) {
         await run(id, async () => {
           const app = { 'os-music': 'music', 'os-palette': 'palette', 'os-mood': 'mood', 'os-msg': 'msg' }[id], sel = `.hw__app--${app}`;
@@ -202,7 +202,14 @@ async function shoot(vp) {
       } else if (id === 'svc-modal') {
         await run(id, async () => { await scrollTo(p, (await rectOf(p, '#services')).top); await settle(900); await tap('.service-modal-trigger'); await sleep(1500); await shot(); await p.keyboard.press('Escape'); await sleep(900); });
       } else if (id === 'pf-head') await run(id, async () => { await scrollTo(p, (await rectOf(p, '#portfolio')).top); await settle(); await shot(); });
-      else if (/^pf-\d$/.test(id)) await run(id, async () => { await scrollTo(p, (await pfTops())[+id.slice(3) - 1]); await settle(); await shot(); });
+      else if (/^pf-\d$/.test(id)) await run(id, async () => {
+        const i = +id.slice(3) - 1;
+        if (await p.evaluate(() => !!document.querySelector('.pf-car'))) {                      /* the swipe carousel (phones, portrait tablets): swipe it to card i */
+          await scrollTo(p, (await rectOf(p, '.pf-car')).top - 80); await sleep(300);
+          await p.evaluate(k => { const car = document.querySelector('.pf-car'), c = car.children; car.scrollTo({ left: c[k].offsetLeft - c[0].offsetLeft, behavior: 'instant' }); }, i);
+        } else await scrollTo(p, (await pfTops())[i]);
+        await settle(); await shot();
+      });
       else if (id === 'pf-ig') await run(id, async () => { await scrollTo(p, (await pfTops())[6]); await settle(); await shot(); });
       else if (id === 'pf-dialog') await run(id, async () => { await scrollTo(p, (await pfTops())[0]); await settle(); await p.evaluate(() => document.querySelector('#pf-deck .pf-case__btn').click()); await sleep(2200); await shot(); await p.keyboard.press('Escape'); await sleep(1200); });
     }

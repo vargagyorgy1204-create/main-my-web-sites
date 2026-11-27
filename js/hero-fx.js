@@ -265,7 +265,7 @@
         }
       };
       hero.addEventListener('pointermove', function (e) {
-        if (!armed || e.pointerType !== 'mouse' || !root.classList.contains('has-cursor') || window.innerWidth < 900) return;
+        if (!armed || e.pointerType !== 'mouse' || !root.classList.contains('has-cursor') || window.innerWidth < 900 || window.VB.mqPT.matches) return;
         var on = over(e);
         if (on && !hot) setHot(true, e);
         else if (!on && hot) setHot(false, e);

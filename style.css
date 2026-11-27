@@ -101,13 +101,13 @@
     --hero-sub-fs: clamp(18px, min(1.93vw, 2.7svh), 26px);                 /* subheading size >= 900px (was clamp(15.4px, min(1.65vw, 2.31svh), 22px), +17%) */
     --hero-sub-w: 36em;                                                    /* wide enough for two balanced lines, too narrow for one */
 }
-@media (max-width: 1023px) { :root { --footer-stamp-d: 76px; } }
-@media (max-width: 767px) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
-@media (min-width: 900px) { :root { --section-heading-lh: 1.06; --pf-card-pad: clamp(52px, 4vw, 64px); } }   /* >= 900px: the pad also clears the fixed logo (meta row top >= 16 + 52) */
-@media (min-width: 768px) { :root { --btn-fs: clamp(13px, 1.45svh, 15px); --btn-pad-y: clamp(10px, 1.6svh, 15px); --btn-px: clamp(24px, 3.4svh, 34px); } }
-@media (min-width: 1024px) { :root { --cf-photo-d: clamp(150px, 19svh, 176px); } }
-@media (min-width: 1024px) { :root { --cf-fs: 13.5px; --cf-h: clamp(39.6px, 5.04svh, 43.2px); --cf-label-scale: 0.78; --cf-label-top: 4.5px; } }
-@media (min-width: 1024px) { :root { --gutter: 96px; } }   /* = logo right edge 76px + 20px */
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { :root { --footer-stamp-d: 76px; } }
+@media (max-width: 767px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { :root { --hdr-h: 76px; --section-heading-size: clamp(22px, calc((100vw - 40px) / 13.9), 34px); } }   /* phones: fits "TECHNOLÓGIÁK" (13.6em) between the gutters */
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) { :root { --section-heading-lh: 1.06; --pf-card-pad: clamp(52px, 4vw, 64px); } }   /* >= 900px: the pad also clears the fixed logo (meta row top >= 16 + 52) */
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) { :root { --btn-fs: clamp(13px, 1.45svh, 15px); --btn-pad-y: clamp(10px, 1.6svh, 15px); --btn-px: clamp(24px, 3.4svh, 34px); } }
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) { :root { --cf-photo-d: clamp(150px, 19svh, 176px); } }
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) { :root { --cf-fs: 13.5px; --cf-h: clamp(39.6px, 5.04svh, 43.2px); --cf-label-scale: 0.78; --cf-label-top: 4.5px; } }
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) { :root { --gutter: 96px; } }   /* = logo right edge 76px + 20px */
 
 /* ===== TIGHT ANCHOR — the standard of Készségek, Értékek, Együttműködés, Szolgáltatások, Portfólió, Kapcsolat (class .section--tight) =====
    Hero, Rólam, the footer and the other pages keep the wide anchor above. */
@@ -116,7 +116,7 @@
     --content-gutter: var(--content-gutter-tight);
     --content-max: var(--content-max-tight);
 }
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
 
     #skills .skill-row { grid-template-columns: 4.96% 4.26% minmax(0, 1fr) minmax(0, 33.7%); }
 }
@@ -325,7 +325,7 @@ body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; ove
 body.menu-open { overflow: hidden; padding-right: var(--sbw, 0px); }
 body.menu-open .nav { padding-inline-end: calc(32px + var(--sbw, 0px)); }
 
-@media (max-width: 767px) {
+@media (max-width: 767px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .nav { padding: 16px 20px; }
     body.menu-open .nav { padding-inline-end: calc(20px + var(--sbw, 0px)); }
 }
@@ -451,7 +451,7 @@ h2 {
     transition: transform 0.35s ease, opacity 0.35s ease;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1100px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .skills-container {
         max-width: 100%;
     }
@@ -1038,7 +1038,7 @@ button.text-link { padding: 0; border: 0; background: none; }
 .modal-group__grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .modal-group__grid--2 { grid-template-columns: repeat(2, calc((100% - 2 * var(--pg-gap, 16px)) / 3)); justify-content: center; }      /* the width of one column of the 3-column groups, centred (<= 900px: two equal columns, below) */
 .br-desk { display: none; }                           /* a desktop-only line break (>= 1024px): every Extra description reads in two lines */
-@media (min-width: 1024px) { .br-desk { display: inline; } }
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) { .br-desk { display: inline; } }
 
 body.service-modal-open { overflow: hidden; }
 
@@ -1062,7 +1062,7 @@ body.service-modal-open { overflow: hidden; }
 }
 
 /* ---------- short desktop windows: tighter cards so the two 3-card modals fit ---------- */
-@media (min-width: 901px) and (max-height: 800px) {
+@media (min-width: 901px) and (max-height: 800px) and (orientation: landscape), (min-width: 1101px) and (max-height: 800px) {
     .service-modal { --sm-px: 24px; --sm-fs: 1.35rem; }
     .service-modal h3 { margin-bottom: 12px; font-size: 1.35rem; }
     .service-pricing-grid { --pg-gap: 12px; }
@@ -1080,7 +1080,7 @@ body.service-modal-open { overflow: hidden; }
     .service-modal .modal-cta { --cta-fs: 15px; }
     .service-modal .modal-cta .cta-row__text { font-size: 15px; }
 }
-@media (min-width: 901px) and (max-height: 560px) {
+@media (min-width: 901px) and (max-height: 560px) and (orientation: landscape), (min-width: 1101px) and (max-height: 560px) {
     .service-modal-overlay { padding: 10px; }
     .service-modal { --sm-r: 22px; --sm-px: 18px; --sm-fs: 1.15rem; max-height: calc(100vh - 20px); }
     .service-modal h3 { margin: 0 40px 10px 0; font-size: 1.15rem; }
@@ -1102,12 +1102,12 @@ body.service-modal-open { overflow: hidden; }
     .modal-quote-link.text-link { height: 34px; }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .service-pricing-grid { grid-template-columns: minmax(0, 1fr); }
     .modal-group__grid--3,
     .modal-group__grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 680px) {
+@media (max-width: 680px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .service-modal-overlay { padding: 12px; }
     .service-modal { --sm-r: 22px; --sm-px: 16px; --sm-fs: 1.3rem; max-height: calc(100vh - 24px); }
     .service-modal h3 { font-size: 1.3rem; }
@@ -1117,7 +1117,7 @@ body.service-modal-open { overflow: hidden; }
     .modal-group__grid--2 { grid-template-columns: minmax(0, 1fr); }
 }
 /* ---------- bottom CTA row, >= 1024px: exactly two text lines + the pill on the right (never wraps below); both lines are short and never wrap ---------- */
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
     .service-modal .modal-cta { flex-wrap: nowrap; align-items: center; padding-top: calc(var(--sm-txt) + var(--cta-lift)); }      /* pill + text side by side: the same extra divider gap as the closing rows */
     .service-modal .modal-cta .cta-row__text { flex: 1 1 auto; min-width: 0; }
     .service-modal .modal-cta .cta-l1 { white-space: nowrap; }
@@ -1138,7 +1138,7 @@ body.service-modal-open { overflow: hidden; }
     color: #2f3d66;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 980px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .service-card .service-list {
         min-height: 0;
     }
@@ -1402,7 +1402,7 @@ body.service-modal-open { overflow: hidden; }
     box-shadow: 0 16px 30px rgba(108, 92, 231, 0.42);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .contact-grid {
         grid-template-columns: 1fr;
     }
@@ -1694,7 +1694,7 @@ footer {
     opacity: 1;
 }
 
-@media (max-width: 850px) {
+@media (max-width: 850px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .footer-content {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -1777,7 +1777,7 @@ footer {
     text-align: center;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 700px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .policy-main {
         padding-top: 110px;
         padding-bottom: 60px;
@@ -1943,7 +1943,7 @@ body.contact-page {
 }
 
 /* Mobile */
-@media (max-width: 680px) {
+@media (max-width: 680px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .contact-card {
         flex-direction: column;
         border-radius: 20px;
@@ -2042,7 +2042,7 @@ body.contact-page {
     box-shadow: 0 8px 20px rgba(79, 70, 229, 0.32);
 }
 
-@media (max-width: 740px) {
+@media (max-width: 740px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .cookie-banner {
         flex-direction: column;
         align-items: flex-start;
@@ -2261,7 +2261,7 @@ body.contact-page {
     color: rgba(255,255,255,0.92);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .bento-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -2269,7 +2269,7 @@ body.contact-page {
     .bento-card--row2  { grid-row: span 1; }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .bento-grid {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -2450,11 +2450,11 @@ body.contact-page {
 .ski--orange:hover { box-shadow: 0 12px 28px rgba(255, 130, 52, 0.35); }
 .ski--gradient:hover { box-shadow: 0 12px 32px rgba(108, 99, 255, 0.40); }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .skills-cards-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .skills-cards-grid { grid-template-columns: 1fr; gap: 12px; }
     .ski--wide { grid-column: span 1; }
     .ski { padding: 22px 20px; }
@@ -2528,10 +2528,10 @@ body.contact-page {
 .sk-gradient   { background: linear-gradient(135deg, #6c63ff, #c850c0); }
 .sk-gradient h4 { color: #fff; }
 .sk-gradient p  { color: rgba(255, 255, 255, .88); }
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     #skills-bento { grid-template-columns: repeat(2, 1fr); }
 }
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     #skills-bento { grid-template-columns: 1fr; gap: 12px; }
     .sk-card--wide { grid-column: span 1; }
 }
@@ -2678,7 +2678,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
 /* list layout: the signature sits below the button row, bottom-right (room reserved under the row) */
 .about-bio-foot { margin-bottom: calc(var(--sign-w) / 4.92 * 1.25 + 4px); }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .about-premium-grid {
         grid-template-columns: 1fr;
         min-height: 0;
@@ -2695,7 +2695,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .about-bio-card {
         padding: 28px 24px;
     }
@@ -2724,7 +2724,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
     border-radius: 20px;
     overflow: hidden;
 }
-@media (max-width: 767px) {
+@media (max-width: 767px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .about-photo-card {
         padding: 4px;
         box-shadow:
@@ -2925,13 +2925,13 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
 #about.is-pinned .abt-progress b { position: absolute; inset: 0; background: var(--about-accent); transform: scaleX(0); transform-origin: left center; }
 
 /* compact tiers by height (same idea as the Portfolio deck) */
-@media (min-width: 900px) and (max-height: 699px) {
+@media (min-width: 900px) and (max-height: 699px) and (orientation: landscape), (min-width: 1101px) and (max-height: 699px) {
     #about.is-pinned .about-bio-card { --bio-pad: 24px; }
     #about.is-pinned .abt-body { line-height: 1.5; }
     #about.is-pinned .abt-progress { margin-top: 20px; }
     #about.is-pinned .about-bio-foot { margin-top: 16px; }
 }
-@media (min-width: 900px) and (max-height: 559px) {
+@media (min-width: 900px) and (max-height: 559px) and (orientation: landscape), (min-width: 1101px) and (max-height: 559px) {
     #about.is-pinned .about-bio-card { --bio-pad: 16px; }
     #about.is-pinned .abt-lead::after { margin-top: 8px; margin-bottom: 8px; height: 2px; }
     #about.is-pinned .abt-progress { margin-top: 12px; }
@@ -2998,7 +2998,7 @@ html.has-cursor .btn-about:hover::before { opacity: 1; }
 @property --ap-ang { syntax: '<angle>'; inherits: false; initial-value: 135deg; }
 @keyframes apBreath { from { --ap-ang: 120deg; } to { --ap-ang: 170deg; } }
 .ap-photo.is-paused { animation-play-state: paused; }
-@media (min-width: 900px) {
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {
     .ap-photo { position: sticky; top: calc(92px + var(--ap-gap)); }
 }
 .ap-photo .about-photo-stack { background: #141a2e; }   /* dark fallback while the photo loads (not the About blur) */
@@ -3095,13 +3095,13 @@ html.has-cursor .ap-row:hover .ap-row__icon::after { opacity: 1; }
 }
 .ap-card .about-bio-foot { margin-top: 2px; }
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .ap { padding: 104px 20px 72px; }
     .ap-grid { grid-template-columns: minmax(0, 1fr); }
     .ap-photo { position: relative; top: 0; aspect-ratio: auto; height: min(420px, 100vw); max-width: none; max-height: none; }
     .ap-card { padding: 32px 28px; }
 }
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .ap-card { padding: 28px 22px; }
     .ap-row { grid-template-columns: 40px minmax(0, 1fr); }
     .ap-row__num { display: none; }
@@ -3265,10 +3265,10 @@ html.hero-static .hero-live__txt { position: static; }
 }
 #hero .text-link { --tl-color: #fff; }
 .hero-title ~ .hero-ctas { margin-bottom: auto; padding-bottom: clamp(8px, 3svh, 40px); }
-@media (min-width: 900px) {          /* subheading: exactly two balanced lines (+17% size, wide enough for two lines, never for one) */
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {          /* subheading: exactly two balanced lines (+17% size, wide enough for two lines, never for one) */
     .hero-sub { font-size: var(--hero-sub-fs); max-width: var(--hero-sub-w); }
 }
-@media (min-width: 900px) {          /* the buttons row sits exactly midway between the subheading's bottom and the status line's top */
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {          /* the buttons row sits exactly midway between the subheading's bottom and the status line's top */
     .hero-sub { margin-bottom: 0; }
     .hero-title ~ .hero-ctas { margin: auto 0; padding-block: clamp(12px, 2.4svh, 28px); }
 }
@@ -3294,7 +3294,7 @@ html.hero-static .hero-live__txt { position: static; }
 .hero-time .cl { animation: heroColon 1s steps(1) infinite; }
 @keyframes heroColon { 50% { opacity: 0.25; } }
 
-@media (max-width: 899px) {
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .hero-live { --hero-sw: 1px; }
     .hero-title { font-size: min(clamp(30px, 11.02vw, 68px), calc((100vw - 2 * var(--content-gutter)) / 10.75)); }          /* same three lines, smaller */
     .hero-line__in { white-space: normal; }
@@ -3793,7 +3793,7 @@ html.cursor-on-field .cursor-ring, html.cursor-on-field .cursor-dot { opacity: 0
 
 /* Desktop: the eyebrow clears the fixed header (92px) by a height-aware gap; bottom padding scales too.
    (An older #skills rule sets the padding with !important, hence the higher-specificity selector.) */
-@media (min-width: 641px) {
+@media (min-width: 641px) and (orientation: landscape), (min-width: 1101px) {
     section#skills { padding: calc(92px + clamp(24px, 4svh, 56px)) 24px clamp(64px, 11svh, 120px) !important; }
 }
 
@@ -3908,25 +3908,25 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
 .skills-preview.is-visible .skills-preview__inner { scale: 1; }
 .skills-preview__inner svg, .skills-preview__inner img { width: 96px; height: 96px; display: block; object-fit: contain; }
 
-@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+@media (max-width: 900px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (prefers-reduced-motion: reduce) {
     .skills-preview { display: none; }
 }
 
-@media (min-width: 641px) and (max-height: 699px) {
+@media (min-width: 641px) and (max-height: 699px) and (orientation: landscape), (min-width: 1101px) and (max-height: 699px) {
     .skill-row { grid-template-columns: 48px 40px minmax(0, 1fr) minmax(0, 340px); }
     .skill-row__desc { line-height: 1.5; }
 }
-@media (min-width: 641px) and (max-height: 559px) {
+@media (min-width: 641px) and (max-height: 559px) and (orientation: landscape), (min-width: 1101px) and (max-height: 559px) {
     .skills-head { margin-bottom: 22px; }
     .skill-row { padding-block: 12px; gap: 12px; }
     .skill-row__name { font-size: clamp(26px, min(4vw, 5.2svh), 40px); }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .skill-row { grid-template-columns: 40px 44px minmax(0, 1fr); }
     .skill-row__desc { grid-column: 3; }
 }
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     #skills { padding: 88px 20px; }
     .skills-head { margin-bottom: 36px; }
     .skill-row {
@@ -3947,7 +3947,7 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
 .why-inner { max-width: var(--content-max); margin: 0 auto; }
 .why-head { margin: 0 0 56px; }
 
-@media (max-width: 767px) {
+@media (max-width: 767px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .why-head { margin-bottom: 32px; }
 
 }
@@ -3985,11 +3985,11 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
     text-shadow: none;
 }
 /* four columns: smaller titles that may wrap to two lines; the reserved height keeps every paragraph on the same y */
-@media (min-width: 900px) {
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {
     .process__title { font-size: clamp(17.1px, 1.71vw, 22.5px); overflow-wrap: break-word; }   /* one-word titles: no reserved second line */
     .process__text { max-width: none; }
 }
-@media (min-width: 768px) and (max-width: 1199px) {
+@media (min-width: 768px) and (max-width: 1199px) and (orientation: landscape), (min-width: 1101px) and (max-width: 1199px) {
     .process { --n: 2; grid-template-columns: repeat(2, 1fr); row-gap: 48px; }
 }
 .process__text {
@@ -4001,7 +4001,7 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
     color: rgba(255, 255, 255, 0.65);
 }
 
-@media (max-width: 899px) {
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     #steps { padding: 88px 20px; }
     .steps-head { margin-bottom: 44px; }
     .process { grid-template-columns: 1fr; gap: 40px; }
@@ -4011,7 +4011,7 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
 }
 
 /* Steps – pinned (sticky) mode: section stays on screen while the line draws step by step */
-@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) and (orientation: landscape), (min-width: 1101px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
 
     #steps { height: calc(100vh + 220vh); height: calc(100svh + 240svh); height: calc(var(--stage-h, 100svh) + 240svh); padding: 0; }
     .steps-pin {
@@ -4366,7 +4366,7 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
    browser window fills it keeping its 16:9 ratio, so the video's right edge sits on the padding exactly like the text's left edge. The text column is as tall as the window:
    the title starts at the frame's top edge, the button ends at its bottom edge, and the blocks / chips spread evenly in between (space-between = equal gaps). The whole
    block (meta row + stage) is centred vertically in the card, so any spare height is split equally above and below. */
-@media (min-width: 900px) {
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {
   .pf-case {
     --u: clamp(5px, 0.9svh, 8px);
     border-radius: 32px;
@@ -4433,13 +4433,13 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
 
 /* 900-1099px wide windows: the title is 26-30px here and the glyph rows snap to whole pixels, which left the capitals up to 1.6px above the dot line; 0.8px puts them within 1px
    (>= 1100px is untouched) */
-@media (min-width: 900px) and (max-width: 1099px) { .pf-case { --pf-cap-nudge: 0.8px; } }
+@media (min-width: 900px) and (max-width: 1099px) and (orientation: landscape) { .pf-case { --pf-cap-nudge: 0.8px; } }
 
 /* ---------- Compact tiers: SHORT desktop windows ----------
    Width alone decides the layout (>= 900px = desktop + stacking). A short
    window (e.g. a non-fullscreen browser, ~1097x480) only shrinks or hides
    things - the alignment grid itself never changes. */
-@media (min-width: 900px) and (max-height: 699px) {
+@media (min-width: 900px) and (max-height: 699px) and (orientation: landscape), (min-width: 1101px) and (max-height: 699px) {
   .pf-case {
     --u: clamp(3.5px, 0.85svh, 6px);
     --pf-meta-h: 28px;
@@ -4449,19 +4449,19 @@ html.has-cursor .skill-row:hover .skill-row__logo, .skill-row.is-active .skill-r
   .pf-case__chips li { padding: 3px 10px; font-size: 12px; }
 }
 
-@media (min-width: 900px) and (max-height: 559px) {
+@media (min-width: 900px) and (max-height: 559px) and (orientation: landscape), (min-width: 1101px) and (max-height: 559px) {
   /* the three feature chips stay in the case-study dialog */
   .pf-case__chips { display: none; }
   .pf-case__text { gap: var(--s1); }
 }
 
-@media (min-width: 900px) and (max-height: 439px) {
+@media (min-width: 900px) and (max-height: 439px) and (orientation: landscape), (min-width: 1101px) and (max-height: 439px) {
   /* keep "A feladat" + the button */
   .pf-case__mid .pf-case__block:nth-child(2) { display: none; }
 }
 
 /* ---------- Stacking: sticky cards, dwell, hold ---------- */
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (orientation: landscape), (min-width: 1101px) and (prefers-reduced-motion: no-preference) {
   .pf-deck { gap: 0; }
 
   .pf-case {
@@ -4686,7 +4686,7 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
 
 /* Wide: two columns — gallery | text — and nothing scrolls. 1024px, not 1100,
    so a 1097px laptop gets the two-column dialog too. */
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
   .pf-modal__head { padding-inline: 32px; }
 
   .pf-modal__body {
@@ -4718,7 +4718,7 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
   .pf-modal__title { font-size: clamp(20px, 2.2vw, 28px); }
 }
 
-@media (min-width: 1024px) and (max-height: 599px) {
+@media (min-width: 1024px) and (max-height: 599px) and (orientation: landscape), (min-width: 1101px) and (max-height: 599px) {
   .pf-modal__body { padding: 0 24px 16px; gap: 24px; }
   .pf-modal__story { gap: 12px; }
   .pf-story__block h4 { margin-block-end: 4px; }
@@ -4729,7 +4729,7 @@ html.pf-lock .nav { padding-inline-end: calc(32px + var(--pf-sbw, 0px)); }
 .pf-modal.pf-modal--fade { opacity: 0; transition: opacity 0.3s ease; }
 .pf-modal.pf-modal--fade.is-open { opacity: 1; }
 
-@media (max-width: 639px) {
+@media (max-width: 639px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
   .pf__inner { padding-inline: 16px; }
   .pf-deck { padding-inline: 16px; }
   .pf-modal__panel { inset: 12px; border-radius: 20px; }
@@ -4767,7 +4767,7 @@ html.lenis, html.lenis body { height: auto; }
   margin-inline: auto;
   padding-inline: 16px;
 }
-@media (min-width: 768px) { .svt__inner { padding-inline: 32px; } }
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) { .svt__inner { padding-inline: 32px; } }
 
 /* ---------- intro ---------- */
 .svt-intro { margin-block-end: clamp(32px, 6svh, 64px); }
@@ -4811,7 +4811,7 @@ html.lenis, html.lenis body { height: auto; }
   background: none;
   text-align: left;
 }
-@media (min-width: 768px) {
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
   .svt-word { font-size: min(calc(var(--content-max) / 9.75), 125px); }
 }
 .svt-word__fill {
@@ -4827,7 +4827,7 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 .svt-details { display: grid; gap: 32px; }
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
   .svt-details {
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);        /* text : list ~ 1.2 : 1 (the description is 42ch wide, the rest of the column is air) */
     gap: 64px;
@@ -4906,7 +4906,7 @@ html.has-cursor .svt-btn:hover { color: #fff; border-color: transparent; }
 html.has-cursor .svt-btn:hover::before { opacity: 1; }
 .svt-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 /* ---------- narrow and short windows ---------- */
-@media (max-width: 1023px) {
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
   .svt-row { min-block-size: auto; padding-block: 72px; }
 }
 @media (max-height: 559px) {
@@ -4920,7 +4920,7 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 /* ---------- height-aware proportions (desktop >= 768px) ----------
    Reference look at >= 1080px tall; scales down smoothly in shorter windows.
    Top padding = header (92px) + a height-aware gap, so the eyebrow always clears the header. */
-@media (min-width: 768px) {
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
   #services.svt { padding-block: calc(92px + clamp(24px, 4svh, 56px)) var(--section-bottom); }
   .svt-intro { margin-block-end: clamp(24px, 5svh, 64px); }
   .svt-sub { margin-block-start: clamp(8px, 2svh, 22px); font-size: clamp(15px, min(1.25vw, 1.67svh), 18px); }
@@ -4935,12 +4935,12 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 }
 /* the labels above the giant titles are gone: the bottom padding grows by their height so each block keeps its place (the title sits where the label was) */
 .svt-row { padding-block-end: calc(clamp(40px, 8svh, 96px) + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); }
-@media (min-width: 768px) { .svt-row { padding-block-end: calc(clamp(28px, 7svh, 96px) + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); } }
-@media (max-width: 1023px) { .svt-row { padding-block-end: calc(72px + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); } }
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) { .svt-row { padding-block-end: calc(clamp(28px, 7svh, 96px) + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); } }
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .svt-row { padding-block-end: calc(72px + 1.6 * 12px + clamp(8px, 1.5svh, 16px)); } }
 @media (max-height: 559px) { .svt-row { padding-block-end: 32px; } }
 #services.svt { padding-block-end: var(--section-bottom); }
 /* rows hug their content (no min-height slack): divider -> word = --svc-row-top, content -> next divider = --svc-row-bottom, the same in all three panels */
-@media (min-width: 768px) and (min-height: 560px) { .svt-row { min-block-size: 0; padding-block-start: var(--svc-row-top); padding-block-end: var(--svc-row-bottom); } }
+@media (min-width: 768px) and (min-height: 560px) and (orientation: landscape), (min-width: 1101px) and (min-height: 560px) { .svt-row { min-block-size: 0; padding-block-start: var(--svc-row-top); padding-block-end: var(--svc-row-bottom); } }
 /* "Részletek" = the KAPCSOLAT pill (.hbtn--primary, no arrow: width auto, padding-inline 1.5 x its visual vertical padding); "Ajánlatot kérek" = the outline pill of the same height / padding proportion */
 .svt-actions .cta-row__btn .hbtn, .about-bio-foot .cta-row__btn .hbtn, .ap-cta__actions .cta-row__btn .hbtn { min-width: 0; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); justify-content: center; }
 .svt-btn--ghost {
@@ -5030,7 +5030,7 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 .btn-wa-cta:focus-visible,
 .btn-email-cta:focus-visible { outline: 3px solid #b4acff; outline-offset: 3px; }
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .contact-form-panel, .contact-personal-panel { padding: 24px 20px; }
     .btn-submit-message { width: 100%; }
 }
@@ -5046,14 +5046,14 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 .contact-card__more a { color: #6c5ce7; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .contact-card__more a:hover { color: #C026A3; }
 .contact-card__more a:focus-visible { outline: 2px solid #6c5ce7; outline-offset: 3px; border-radius: 4px; }
-@media (max-width: 850px) {
+@media (max-width: 850px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .footer-section ul li { margin-bottom: 2px; }
     .footer-section ul li a,
     .footer-section p a { display: inline-flex; align-items: center; min-height: 44px; }
     .footer-bottom-links { gap: 6px 18px; }
     .footer-bottom-links .cookie-settings-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
 }
-@media (pointer: coarse) and (min-width: 851px) {
+@media (pointer: coarse) and (min-width: 851px) and (orientation: landscape), (pointer: coarse) and (min-width: 1101px) {
     .footer-section ul li { margin-bottom: 0; }
     .footer-section ul li a,
     .footer-section p a { display: inline-flex; align-items: center; min-height: 44px; }
@@ -5072,7 +5072,7 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 }
 .ctc > .container { position: relative; z-index: 1; max-width: 1100px; padding-inline: 16px; }
 .ctc__head { position: relative; z-index: 1; max-width: 1280px; margin-inline: auto; padding-inline: 16px; }
-@media (min-width: 768px) { .ctc__head { padding-inline: 32px; } .ctc > .container { padding-inline: 32px; } }
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) { .ctc__head { padding-inline: 32px; } .ctc > .container { padding-inline: 32px; } }
 
 /* slow drifting glows (radial gradients, no blur filter); paused off-screen by JS */
 .ctc__glow {
@@ -5270,7 +5270,7 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 .ctc .status-dot { animation-duration: 2.4s; }
 .ctc .contact-personal-panel h4 { color: #fff; }
 .ctc .contact-status { color: rgb(255 255 255 / 0.75); }
-@media (max-width: 899px) { .ctc .contact-photo-square { width: 160px; } }
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .ctc .contact-photo-square { width: 160px; } }
 @media (prefers-reduced-motion: reduce) { .ctc .contact-photo-square { transition: none; } .ctc .status-dot { animation: none; } }
 
 /* compact tier: short windowed browsers (e.g. 1097x480) */
@@ -5281,7 +5281,7 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
     .ctc .contact-form-ui { gap: 8px; }
     .ctc .contact-grid { gap: 20px; }
 }
-@media (max-height: 560px) and (min-width: 900px) { .ctc .contact-photo-square { width: 150px; } }
+@media (max-height: 560px) and (min-width: 900px) and (orientation: landscape), (max-height: 560px) and (min-width: 1101px) { .ctc .contact-photo-square { width: 150px; } }
 
 /* ---------- height-aware proportions ----------
    Reference look at >= 1080px tall; everything scales down with the window height (~78% at 840).
@@ -5291,7 +5291,7 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
     margin-block: clamp(8px, 2svh, 22px) clamp(20px, 5.2svh, 56px);
     font-size: clamp(15px, min(1.25vw, 1.67svh), 18px);
 }
-@media (min-width: 900px) {
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {
     .ctc .contact-form-panel,
     .ctc .contact-personal-panel { padding: clamp(20px, 2.8svh, 30px); }
 }
@@ -5304,12 +5304,12 @@ html.has-cursor .svt-btn:hover::before { opacity: 1; }
 .ctc .contact-field textarea { padding-top: clamp(23px, 2.5svh, 27px); min-height: clamp(88px, 11.1svh, 120px); }
 .ctc .btn-submit-message { margin-top: clamp(2px, 0.55svh, 6px); padding-block: clamp(9px, 1svh, 11px); }
 .ctc .contact-personal-panel { gap: clamp(14px, 2.2svh, 24px); }
-@media (min-width: 900px) { .ctc .contact-photo-square { width: clamp(150px, 20.4svh, 220px); } }
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) { .ctc .contact-photo-square { width: clamp(150px, 20.4svh, 220px); } }
 .ctc .contact-profile-header { gap: clamp(10px, 1.3svh, 14px); }
 .ctc .contact-personal-panel h4 { font-size: clamp(1.12rem, 2svh, 1.36rem); }
 .ctc .contact-actions { gap: clamp(8px, 1.1svh, 12px); }
 /* compact tier for short windows (e.g. 1366x768) */
-@media (min-width: 900px) and (max-height: 799px) {
+@media (min-width: 900px) and (max-height: 799px) and (orientation: landscape), (min-width: 1101px) and (max-height: 799px) {
     .ctc .contact-field textarea { min-height: 88px; }
     .ctc .contact-grid { gap: 24px; }
 }
@@ -5377,12 +5377,12 @@ footer {
 
 [tabindex="-1"]:focus { outline: none; }
 
-@media (max-width: 850px) {
+@media (max-width: 850px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .footer-bottom-links { justify-content: center; }
 }
 
 /* height-aware spacing (desktop): 1080 is the reference, shorter windows tighten the gaps */
-@media (min-width: 851px) {
+@media (min-width: 851px) and (orientation: landscape), (min-width: 1101px) {
     footer { padding-top: clamp(36px, 6svh, 64px); }
     .footer-content { margin-bottom: clamp(24px, 3.7svh, 40px); }
     .footer-section h3,
@@ -5399,7 +5399,7 @@ footer {
 .pf__head .section-heading { margin-block: 0 clamp(12px, 1.9svh, 20px); }
 .pf__sub { font-size: clamp(15px, min(1.25vw, 1.9svh), 18px); }
 
-@media (min-width: 768px) {
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
     .why-head { margin-bottom: clamp(24px, 5.2svh, 56px); }
 
 }
@@ -5523,7 +5523,7 @@ footer {
 .footer-legal .cookie-settings-link:focus-visible { color: #fff; }
 .footer-legal .cookie-settings-link:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
 
-@media (max-width: 850px) {
+@media (max-width: 850px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .footer-floor { display: flex; flex-direction: column-reverse; }
     .footer-legal {
         position: static;
@@ -5545,7 +5545,7 @@ footer { padding-bottom: var(--cb-h, 0px); }
    --content-gutter = logo offset + logo width + 32px air (= 108px), inner containers max 1152px centred.
    Left/right content lines are therefore identical in every section and on every page. Exceptions: the Portfólió
    case cards (full width) and the footer (untouched). Below 1024px the header auto-hides instead (nav.js). */
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
     #hero { padding-inline: var(--content-gutter); }
     section#skills { padding-inline: var(--content-gutter) !important; }
     #services.svt { padding-inline: var(--content-gutter); }
@@ -5563,11 +5563,11 @@ footer { padding-bottom: var(--cb-h, 0px); }
     .policy-container { max-width: var(--content-max); padding-inline: 0; }
     #steps { padding-inline: var(--content-gutter); }
 }
-@media (min-width: 768px) and (min-height: 520px) {
+@media (min-width: 768px) and (min-height: 520px) and (orientation: landscape), (min-width: 1101px) and (min-height: 520px) {
     #why { padding-inline: var(--content-gutter) !important; }
 
 }
-@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) and (orientation: landscape), (min-width: 1101px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps { padding-inline: 0; }
     .steps-pin { padding-inline: var(--content-gutter); }
 
@@ -5581,7 +5581,7 @@ footer { padding-bottom: var(--cb-h, 0px); }
 /* ===== MOBILE / TABLET (< 1024px): always-visible header, transparent at the top, frosted blur once the page scrolls =====
    Background layer (::before): light tint of the current section + backdrop blur, soft bottom fade (no hard edge, no shadow,
    no solid background). Fades in after 8px of scroll; logo and burger stay crisp on top. Never over the open menu. */
-@media (max-width: 1023px) {
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .nav::before {
         inset: 0 0 -18px 0;
         background: rgba(14, 16, 32, 0.25);
@@ -5596,7 +5596,7 @@ footer { padding-bottom: var(--cb-h, 0px); }
     .nav--on-light::before { background: rgba(255, 255, 255, 0.35); }
     .nav--scrolled::before { opacity: 1; }
 }
-@media (max-width: 1023px) {
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
 
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
         .nav::before { background: rgba(14, 16, 32, 0.6); }
@@ -5654,8 +5654,8 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
     margin-bottom: calc(var(--eyebrow-head-gap) / var(--fit, 1));
     width: fit-content;
 }
-@media (min-width: 768px) and (min-height: 520px) { #why { align-items: flex-start !important; } }
-@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 768px) and (min-height: 520px) and (orientation: landscape), (min-width: 1101px) and (min-height: 520px) { #why { align-items: flex-start !important; } }
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) and (orientation: landscape), (min-width: 1101px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps { padding: 0; }                       /* the pinned stage carries the padding */
     .steps-pin { align-items: flex-start; padding-inline: var(--content-gutter); }
     .steps-pin .steps-inner { transform-origin: left top; }
@@ -5695,10 +5695,10 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 #skills .section-heading, #steps .section-heading, #services .section-heading, #contact .section-heading { --sh-color: #fff; }
 #portfolio .section-heading { --sh-color: var(--card-secondary); }
 /* the pinned blocks are scaled by --fit: the heading is laid out at size / fit so it renders at exactly the common size */
-@media (min-width: 768px) and (min-height: 520px) {
+@media (min-width: 768px) and (min-height: 520px) and (orientation: landscape), (min-width: 1101px) and (min-height: 520px) {
     #why .section-heading { font-size: calc(var(--section-heading-size) / var(--fit, 1)); }
 }
-@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) and (orientation: landscape), (min-width: 1101px) and (min-height: 520px) and (prefers-reduced-motion: no-preference) {
     #steps .steps-title { font-size: calc(min(var(--section-heading-size), var(--st-cap)) / var(--fit, 1)); }
 }
 
@@ -5711,7 +5711,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 
 /* ===== EGYÜTTMŰKÖDÉS: step rhythm ===== */
 
-@media (min-width: 768px) {
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
     .process__body { margin-top: var(--step-circle-title); }
     .process__title { margin-bottom: var(--step-title-desc); }
     .process__text { max-width: 32ch; }
@@ -5760,7 +5760,7 @@ section#skills { padding-top: var(--section-top) !important; padding-inline: var
 .cta-row__btn--no-arrow .hbtn { padding: 0 calc(var(--btn-px) + 2px); }
 .cta-row__btn--no-arrow .hbtn__icon { display: none; }
 .cta-row .cta-l2 { display: block; font-weight: 400; }
-@media (max-width: 767px) {
+@media (max-width: 767px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .cta-row { flex-direction: column; align-items: flex-start; margin-top: 56px; padding-top: 32px; }      /* the pill below the text: spacing as before */
     .cta-row .cta-row__text { font-size: var(--cta-line-fs); }
 }
@@ -6054,7 +6054,7 @@ html.has-cursor .modal-close-btn:hover::before, .modal-close-btn:focus-visible::
 .ctc .contact-field:focus-within > label,
 .ctc .contact-field--select > label { transform: translateY(calc(var(--cf-label-top) - var(--cf-rest-top))) scale(var(--cf-label-scale)); }   /* small label (~11.7px) sits --cf-label-top below the top edge */
 .ctc .btn-submit-message { margin-top: max(0px, calc(var(--cf-btn-gap) - var(--cf-gap))); }
-@media (min-width: 900px) and (max-height: 799px) { .ctc .contact-field textarea { min-height: var(--cf-ta-h); } }
+@media (min-width: 900px) and (max-height: 799px) and (orientation: landscape), (min-width: 1101px) and (max-height: 799px) { .ctc .contact-field textarea { min-height: var(--cf-ta-h); } }
 
 /* ===== KAPCSOLAT photo card: aligned with the form card (>= 1024px), 2-line centred heading, note styled like the form's ===== */
 /* bottom padding as the form card's (--cf-bottom-pad): the e-mail button's bottom lines up with the submit button's; the same value is the gap between the last info
@@ -6276,7 +6276,7 @@ html.has-cursor .privacy-card__x:hover, .privacy-card__x:focus-visible { backgro
 /* ===== FOOTER: socials under the text, five-item navigation, divider line with the back-to-top badge ===== */
 .footer-section .social-links { margin-top: 24px; gap: 12px; }
 .footer-content { margin-bottom: 0; }
-@media (max-width: 1023px) { .footer-content { grid-template-columns: 1fr; gap: 30px; } }
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .footer-content { grid-template-columns: 1fr; gap: 30px; } }
 .footer-divider { position: relative; height: 1px; margin-top: var(--footer-pad-y); z-index: 3; }
 footer { padding-top: var(--footer-pad-y); }
 .footer-section ul li:last-child, .footer-section:last-child p:last-child { margin-bottom: 0; }   /* the gap above the divider is measured from the last text line */
@@ -6364,11 +6364,11 @@ html.has-cursor .footer-stamp:hover .stamp__inner, .footer-stamp:focus-visible .
 /* Elérhetőség column: the nav column's rows - the same type (16px / 1.6) and the same row step (the nav item margin), so row n of the contact column
    sits level with item n of Navigáció. The working hours are ONE item that spans the last two rows: label | two value lines (the 2nd line left-aligned under "H–P") */
 .footer-section--contact p { font-size: var(--footer-link-fs); line-height: var(--footer-link-lh); margin-bottom: calc(var(--footer-row-gap) - var(--footer-row-shrink)); }
-@media (max-width: 850px), (pointer: coarse) { .footer-section--contact p { margin-bottom: 2px; } .footer-section--contact p:not(:has(a)) { margin-bottom: calc(2px - var(--footer-row-shrink)); } }   /* rows with a link are 44px tall (tap target): their step does not depend on the line-height */
+@media (max-width: 850px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) { .footer-section--contact p { margin-bottom: 2px; } .footer-section--contact p:not(:has(a)) { margin-bottom: calc(2px - var(--footer-row-shrink)); } }   /* rows with a link are 44px tall (tap target): their step does not depend on the line-height */
 .footer-section--contact .footer-hours { display: grid; grid-template-columns: auto 1fr; column-gap: 0.28em; align-items: start; }
 .footer-section--contact .footer-hours__v > span { display: block; }
 .footer-section--contact .footer-hours__v > span + span { margin-top: calc(var(--footer-row-gap) - var(--footer-row-shrink)); }     /* the row step between the two lines */
-@media (max-width: 850px) { .footer-section--contact .footer-hours__v > span + span { margin-top: calc(2px - var(--footer-row-shrink)); } }
+@media (max-width: 850px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .footer-section--contact .footer-hours__v > span + span { margin-top: calc(2px - var(--footer-row-shrink)); } }
 
 /* ===== FOOTER social icons: bare glyphs, gradient fill + lift on hover, staggered reveal (shared with the burger menu's icons row) ===== */
 .footer-section .social-links { gap: 0; margin: 22px 0 0 -11px; }                       /* 40px hit boxes 4px apart = 22px between the 22px glyphs; -9px: the first glyph sits on the column edge */
@@ -6412,7 +6412,7 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
 
 /* ===== FOOTER back-to-top badge below 1024px (phones + tablets): a static tap target at the line's right end - no magnet, no hover, no cursor logic;
    it emerges from the line (same reveal), then the text rotates; the line sits closer to the columns and the badge has room below ===== */
-@media (max-width: 1023px) {
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .footer-divider { margin-top: calc(clamp(28px, 4svh, 40px) + var(--fs-above, 0px)); }      /* --fs-above: js/footer.js adds what the 12px clearance from the text above needs */
     .footer-floor { margin-top: max(var(--footer-divider-bottom), calc(var(--footer-stamp-d) / 2 + 16px)); }
     .footer-divider:not(.is-in) .footer-stamp .stamp__ring { animation-play-state: paused; }           /* the rotation starts with the reveal */
@@ -6425,7 +6425,7 @@ footer.fs-prep.fs-in .footer-section .social-links a { opacity: 1; transform: no
    extra line-height, so the row step, the column heights and the nav <-> contact row alignment are exactly as before */
 .footer-section:first-child > p { font-size: var(--footer-desc-fs); line-height: 1.6; }
 .footer-section ul li { font-size: var(--footer-link-fs); line-height: var(--footer-link-lh); }
-@media (min-width: 851px) { .footer-section ul li { margin-bottom: calc(var(--footer-row-gap) - var(--footer-row-shrink)); } }
+@media (min-width: 851px) and (orientation: landscape), (min-width: 1101px) { .footer-section ul li { margin-bottom: calc(var(--footer-row-gap) - var(--footer-row-shrink)); } }
 
 /* ===== footer text reveal (js/footer.js): rows rise out of their own masks; .fr-prep = hidden state, .fr-in = revealed ===== */
 .fr-line { display: block; white-space: nowrap; }
@@ -6542,10 +6542,10 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
   text-align: left;
   cursor: pointer;
 }
-@media (min-width: 768px) { .svt-list__row { padding-block: clamp(8px, 1.4svh, 14px); } }
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) { .svt-list__row { padding-block: clamp(8px, 1.4svh, 14px); } }
 @media (max-height: 559px) { .svt-list__row { padding-block: 9px; } }
-@media (min-width: 1024px) { .svt-list__row { padding-block: calc(clamp(8px, 1.4svh, 14px) + 3px); } }       /* + 3px (static): room for the title + the teaser inside the row, so nothing shifts on hover */
-@media (min-width: 1024px) and (max-height: 559px) { .svt-list__row { padding-block: 12px; } }
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) { .svt-list__row { padding-block: calc(clamp(8px, 1.4svh, 14px) + 3px); } }       /* + 3px (static): room for the title + the teaser inside the row, so nothing shifts on hover */
+@media (min-width: 1024px) and (max-height: 559px) and (orientation: landscape), (min-width: 1101px) and (max-height: 559px) { .svt-list__row { padding-block: 12px; } }
 .svt-list__row:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
 .svt-list__n { display: block; font-variant-numeric: tabular-nums; clip-path: inset(0 -4px); }
 .svt-list__ni, .svt-list__ti { display: block; }
@@ -6553,7 +6553,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .svt-list__t { display: block; min-width: 0; transition: translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
 /* the teaser under the title: one line; >= 1024px it sits inside the row's height and appears on hover, below 1024px it is always shown */
 .svt-list__tz { display: block; margin-top: 2px; font-family: 'Montserrat', sans-serif; font-size: 13.5px; font-weight: 400; line-height: 1.3; letter-spacing: 0; white-space: nowrap; color: rgb(255 255 255 / 0.7); }
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
   .svt-list__tz { position: absolute; left: 0; top: 100%; margin: 0; opacity: 0; translate: 0 6px; transition: opacity 0.35s ease, translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
 }
 /* the arrow: drawn with its stroke (pathLength 1, set in JS), slides out to the right on leave */
@@ -6579,7 +6579,7 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .svt-list li.is-hot::before, .svt-list li.is-hot .svt-list__row::before { clip-path: inset(0 0 0 0 round 12px); }
 .svt-list li.is-hot .od-t:not(.od-t2) { translate: 0 -115%; }
 .svt-list li.is-hot .od-t2 { translate: 0 0; }
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
   .svt-list li.is-hot .svt-list__t { translate: 0 -7px; }
   .svt-list li.is-hot .svt-list__tz { opacity: 1; translate: 0 0; }
 }
@@ -6673,11 +6673,11 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 
 @keyframes pnRipple { from { transform: scale(1); opacity: 0.7; } to { transform: scale(2.3); opacity: 0; } }
 
-@media (min-width: 900px) { .process__text { max-width: min(100%, 30ch); text-wrap: balance; } }
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) { .process__text { max-width: min(100%, 30ch); text-wrap: balance; } }
 .process__text { font-size: calc(var(--cta-line-fs) * 0.9); line-height: 1.45; }
 
 @media (prefers-reduced-motion: reduce) { .st-reel > span { transition: none !important; } }
-@media (max-width: 767px) { .steps-title { font-size: min(var(--section-heading-size), calc((100vw - 40px) / 16)); } }      /* "EGYÜTTMŰKÖDÉS" (15.7em) must fit between the phone gutters */
+@media (max-width: 767px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .steps-title { font-size: min(var(--section-heading-size), calc((100vw - 40px) / 16)); } }      /* "EGYÜTTMŰKÖDÉS" (15.7em) must fit between the phone gutters */
 #steps-cta .hbtn { justify-content: center; }
 
 /* ===== EGYÜTTMŰKÖDÉS refinements ===== */
@@ -6685,9 +6685,9 @@ html.has-cursor :is(#contact .section-heading, #services .section-heading, #step
 .st-nb { display: inline-block; white-space: nowrap; margin-left: 0.35em; }          /* the counter and its dot never part; 0.35em after the text */
 #steps .steps-head { margin-bottom: var(--head-steps-gap); }
 
-@media (max-width: 767px) { :root { --cta-line-fs: 16px; } }
+@media (max-width: 767px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { :root { --cta-line-fs: 16px; } }
 @media (min-width: 1200px) { .process__text { max-width: none; width: calc(100% + 20px); } }      /* four columns: the description may reach 20px into the column gap (12px stay free) so it keeps two lines at 1366 too */
-@media (min-width: 900px) and (max-width: 1319px) { :root { --cta-line-fs: 16px; } }      /* the narrowest desktop columns (1280): the shared line size is 16px, so the descriptions keep two lines */
+@media (min-width: 900px) and (max-width: 1319px) and (orientation: landscape), (min-width: 1101px) and (max-width: 1319px) { :root { --cta-line-fs: 16px; } }      /* the narrowest desktop columns (1280): the shared line size is 16px, so the descriptions keep two lines */
 
 /* ===== EGYÜTTMŰKÖDÉS: services-style heading reveal (shared .fx-* rules above), counter synced to the steps ===== */
 /* heading: shared reveal, compressed to <= 1.3s (letters 0.01s apart, 0.55s each, the dot drops at 0.45s); the counter is NOT part of it (script.js: driven by the step state only) */
@@ -6918,7 +6918,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 
 @media (prefers-reduced-motion: reduce) { .pf-phone__track { will-change: auto; } }
 
-@media (min-width: 900px) {
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) {
   .pf-ig { --pf-ig-r: 24px; --pf-ig-clear: 24px; --pf-ig-ov: 50px; }      /* clear = phone <-> card edge (>= 24px to the header / neighbours); ov = how far the phone overflows the panel */
   .pf-ig .pf-case__inner { display: flex; align-items: center; padding-block: 0; }
   .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
@@ -6948,11 +6948,11 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
   .pf-phone { transform: rotateY(calc(18deg + var(--ty, 0deg))) rotateX(calc(6deg + var(--tx, 0deg))) rotateZ(-2deg); }
   /* upper-right: between the phone and the copy, fully outside the phone body (never over the profile header); lower-left: at the phone's lower-left */
 }
-@media (max-width: 899px) { .pf-ig { --pf-ig-card-w: 100%; --pf-ig-inset: 12px; --pf-ig-pad: 20px; --pf-ig-r: 18px; } }
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .pf-ig { --pf-ig-card-w: 100%; --pf-ig-inset: 12px; --pf-ig-pad: 20px; --pf-ig-r: 18px; } }
 
 /* ===== Header blur (< 1024px): a REAL progressive blur: 5 stacked layers (js/nav.js builds .nav__blur), each with its own backdrop-filter and gradient mask on the SAME element ===== */
 .nav__blur { display: none; }
-@media (max-width: 1023px) {
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .nav::before { display: none; }                      /* replaced by the layers below (one layer + one mask = a hard edge on some Android Chrome builds) */
     .nav { --nb-tint: rgb(14 16 32 / 0.05); }
     .nav--on-light { --nb-tint: rgb(255 255 255 / 0.08); }
@@ -6980,12 +6980,12 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 
 /* ===== Kapcsolat: rounded top corners (the project cards' radius: 24px, 32px from 900px) ===== */
 :root { --ctc-r: 24px; }
-@media (min-width: 900px) { :root { --ctc-r: 32px; } }
+@media (min-width: 900px) and (orientation: landscape), (min-width: 1101px) { :root { --ctc-r: 32px; } }
 #contact.ctc { border-radius: var(--ctc-r) var(--ctc-r) 0 0; margin-top: calc(var(--ctc-r) * -1); }          /* pulled up over the light Portfólió, whose bottom padding grows by the same amount: the light shows in the corners */
 #portfolio { padding-block-end: calc(var(--section-bottom) + var(--ctc-r)); }
 
 /* Instagram card, mobile: phone first, then title, text, button (full-width-ish like the other mobile CTAs) */
-@media (max-width: 899px) {
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
   .pf-ig__stage { order: -1; }
   .pf-ig__btnwrap { align-self: stretch; order: 6; }
   .pf-ig__btnwrap .hbtn { inline-size: 100%; }
@@ -6994,7 +6994,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 /* the handwriting font of the Instagram QR label (self-hosted, Caveat 600, latin + latin-ext) */
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@media (min-width: 900px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
+@media (min-width: 900px) and (max-width: 1199px) and (orientation: landscape), (min-width: 1101px) and (max-width: 1199px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
 
 /* ═══ Hero living window (EXPERIMENT; js/hero-window.js builds the markup; delete this block + the script tag + js/hero-window.js + the mono font to remove it) ═══
    A floating, tilted browser window (decoration only: an abstract brand-coloured mini website made of CSS shapes) in the hero's bottom-right corner; its scene follows the living word
@@ -7365,7 +7365,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 /* Készségek: the heading is exactly two lines ("Modern technológiák" / "és precíz kivitelezés.", forced <br class="sk-br"> from 1024px). In uppercase Syne 800 (-0.02em) line 1 "MODERN TECHNOLÓGIÁK" is the wider one (21.69em; line 2 is 20.15em):
    the size is the common heading size or, where that would not fit, the largest size whose widest line fits between the gutters (16px of scrollbar / margin kept, 21.95em budget). */
 .sk-br { display: none; }
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
     :root { --sk-heading-size: min(var(--section-heading-size), calc((100vw - 2 * var(--gutter) - 16px) / 21.95)); }
     .sk-br { display: inline; }
     #skills .section-heading { font-size: var(--sk-heading-size); white-space: nowrap; }
@@ -7404,13 +7404,13 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 .hs__text { margin: clamp(10px, 1.8svh, 18px) 0 0; max-inline-size: 36ch; font: 400 clamp(13px, min(1.25vw, 2.2svh), 20px)/1.55 'Montserrat', sans-serif; color: rgb(255 255 255 / 0.75); text-wrap: pretty; }
 .hs__text .nw { white-space: nowrap; }
 /* desktop without the pin (reduced motion, short windows, no GSAP): static 3 x 2 grid */
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (orientation: landscape), (min-width: 1101px) {
     .hs__track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hs-gap); }
     .hs__card { transition: opacity 0.6s ease; }
     .hs__text { max-inline-size: 36ch; }
 }
 /* phones / tablets: native swipe carousel, the next card peeks */
-@media (max-width: 1023px) {
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     :root { --hs-tfs: calc((min(82vw, 420px) - 44px - 2px) / var(--hs-title-em)); }
     .hs__view { margin-inline: calc(-1 * var(--gutter)); }
     .hs__track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px var(--gutter) 22px; scroll-padding-inline: var(--gutter); -webkit-overflow-scrolling: touch; scrollbar-width: none; }
@@ -7490,7 +7490,7 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
     max-inline-size: var(--hero-sub-w);
     text-wrap: balance;
 }
-@media (max-width: 899px) { .steps-sub { font-size: 15.4px; max-inline-size: none; } }
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .steps-sub { font-size: 15.4px; max-inline-size: none; } }
 .process { --p: 0; --len: 0px; }
 .process__track { position: absolute; z-index: 0; left: 24px; top: 23px; inline-size: var(--len); block-size: 2px; border-radius: 1px; background: rgb(255 255 255 / 0.12); pointer-events: none; }
 .process__fill { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(90deg, #5b5bf0, #9b3fd8 55%, #C026A3); transform-origin: 0 50%; transform: scaleX(var(--p)); }
@@ -7511,7 +7511,7 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
 .process__body { opacity: 0.45; transition: opacity 0.4s ease; }
 .process__step.is-active .process__body { opacity: 0.75; }
 .process__step.is-current .process__body { opacity: 1; }
-@media (max-width: 899px) {                                                    /* stacked: a vertical track through the node centres */
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {                                                    /* stacked: a vertical track through the node centres */
     .process__track { left: 23px; top: 24px; inline-size: 2px; block-size: var(--len); }
     .process__fill { background: linear-gradient(180deg, #5b5bf0, #9b3fd8 55%, #C026A3); transform-origin: 50% 0; transform: scaleY(var(--p)); }
     .process__tip { left: -5px; top: -6px; transform: translateY(calc(var(--len) * var(--p))); }
@@ -7525,7 +7525,7 @@ html.has-cursor #why.is-pinned .hs__card:hover::before { opacity: 1; transition-
 #steps-cta .cta-row__btn .hbtn { min-width: 0; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); }
 /* viewports >= 800px tall: the whole block (label -> CTA row) is centred inside the pinned viewport, as long as the space above / below it is >= --hdr-h + 24px
    (script.js fit() sets .steps-center on the section); otherwise it stays top-aligned under the anchor */
-@media (min-width: 900px) and (min-height: 800px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (min-height: 800px) and (prefers-reduced-motion: no-preference) and (orientation: landscape), (min-width: 1101px) and (min-height: 800px) and (prefers-reduced-motion: no-preference) {
     #steps.steps-center .steps-pin { height: 100svh; max-height: none; align-items: center; padding-block: var(--hdr-h); }
 }
 /* Együttműködés: the gap between the divider and the CTA text equals the gap between the descriptions and the divider (--step-desc-divider; no extra lift) */
@@ -7588,8 +7588,8 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 .ap-cta .ap-h2, .ap-cta .ap-sub { text-align: center; margin-inline: auto; }
 .ap-cta__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 32px; margin-top: clamp(24px, 3.4svh, 36px); }
 .ap-cta .text-link { --tl-color: #1a1a2e; }
-@media (max-width: 1024px) { .ap-have__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 640px) {
+@media (max-width: 1024px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) { .ap-have__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .ap-have__grid, .ap-need__list { grid-template-columns: minmax(0, 1fr); }
     .ap-faq__a p { padding-right: 4px; }
 }
@@ -7629,10 +7629,10 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 /* ===== Hero on phones (<= 640px): eyebrow -> headline -> subheading -> mini OS window -> buttons -> status line. The window (one DOM, js/hero-window.js moves it before .hero-ctas) is in the flow: full content width, no tilt;
    the panels open as a bottom sheet over it (no close button: the dock icon, a tap outside or Esc close it). Until the window exists its space is reserved on the subheading (no layout jump). The floating music button moves to the bottom right (never over the status line). ===== */
 .hw__pw.is-sheet { left: 0; right: auto; bottom: 78px; inline-size: 100%; padding: 0; z-index: 8; }          /* phones + touch tablets: the panel as a sheet over the window, above the dock */
-@media (max-width: 640px) {
-    .hero-sub { margin-bottom: calc(28px + var(--content-max) * 0.625 + 32px + 28px); }          /* window height: 30px bar + 16:10 view + borders; + the 28px gaps */
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
+    .hero-sub { margin-bottom: calc(28px + min(var(--content-max), 720px) * 0.625 + 32px + 28px); }          /* window height: 30px bar + 16:10 view + borders; + the 28px gaps */
     .hero-inner:has(> .hw.is-flow) .hero-sub { margin-bottom: 0; }
-    .hw.is-flow { position: relative; left: auto; top: auto; inline-size: 100%; margin: 28px 0; flex: none; }
+    .hw.is-flow { position: relative; left: auto; top: auto; inline-size: min(100%, 720px); align-self: center; margin: 28px 0; flex: none; }
     .hw.is-flow .hw__glow { inset: 14% -3% -12% -3%; }
     .hw-fm { left: auto !important; right: 20px; margin-bottom: env(safe-area-inset-bottom, 0px); }
 }
@@ -7691,18 +7691,18 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 }
 
 /* ===== Értékek on phones / tablets (not pinned): the fade into Együttműködés sits BELOW the cards and dots (as on a laptop, where the pinned stage is on the flat colour and the ramp follows), not behind them ===== */
-@media (max-width: 1023px) {
+@media (max-width: 1023px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     #why { --why-ramp: 110px; padding-bottom: 110px !important; }
 }
 
 /* ===== Együttműködés on phones: each step title's cap-height centre sits on the horizontal line through its circle (the 10px dot / 48px icon centre); the description stays under the title ===== */
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .process__title { margin-top: 11.8px; }          /* (48px node centre 24px) - (half the 26.4px line box 13.2px) + 1.8px: the cap-height centre of Syne 800 at 24px sits 1.8px above the line-box centre */
 }
 
 /* ===== Service modals on phones: the dialog is sized by the VISIBLE viewport (dvh + safe areas), never by 100vh (taller than the screen while the browser bar shows: the centred dialog was cut at the top);
    in the full view the title stays put (absolute in the shell, next to the close X) and only the cards scroll under it ===== */
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     .service-modal-overlay { height: 100vh; height: 100dvh; box-sizing: border-box; align-items: safe center; padding: calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px)); }
     .service-modal { max-height: 100%; min-height: 0; --sm-fs: 1.2rem; }
     .service-modal:not([data-view="single"]) h3 { position: absolute; top: var(--sm-r); left: var(--sm-px); right: 52px; margin: 0; font-size: var(--sm-fs); line-height: 1.3; }
@@ -7737,7 +7737,7 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 .pf--carousel .pf-ig__btnwrap .hbtn { inline-size: auto; min-width: 0; justify-content: center; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); }
 
 /* ===== Portfólió case-study dialog on phones (<= 640px): everything on one screen where it can; only the text part scrolls if it cannot. One short swipe = one screenshot (js/portfolio.js) ===== */
-@media (max-width: 640px) {
+@media (max-width: 640px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
     #pf-modal { --pf-bar-h: 24px; }
     .pf-modal__head { min-block-size: 0; padding: 8px 12px 6px 20px; }
     .pf-modal__title { font-size: clamp(18px, 5.4vw, 22px); white-space: nowrap; }
@@ -7750,4 +7750,46 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .pf-modal__story::-webkit-scrollbar { display: none; }
     .pf-story__block h4 { margin-block-end: 4px; font-size: 12px; }
     .pf-story__block p { font-size: 15px; line-height: 1.5; }
+}
+
+/* =====================================================================================================================================
+   PORTRAIT TABLETS (641-1100px, portrait: 768x1024, 820x1180, 834x1194, 1024x1366). They get the PHONE layouts: every phone media query above also lists this
+   condition and every >= 641px laptop / tablet query excludes it (scripts: window.VB.mqPT / VB.PHONE / VB.desk(), set in the <head>). Only the sizes are adapted here:
+   a centred content column (max 760px, gutter >= 40px) and wider cards. Keep the condition identical to V.PT in the HTML files.
+   ===================================================================================================================================== */
+@media (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
+    :root { --gutter: max(40px, calc((100vw - 760px) / 2)); }
+    #skills, #steps { padding-inline: var(--gutter); }
+    #why { padding-inline: var(--gutter) !important; }
+    .ap, .policy-main { padding-inline: var(--gutter); }
+    .ap-wrap, .policy-container { max-width: var(--content-max); margin-inline: auto; }
+    .policy-container { padding-inline: 0; }
+    .about-premium-grid { max-width: var(--content-max); margin-inline: auto; }
+    /* Rólam photo: a portrait frame in the column (a full-width landscape crop cut the face) */
+    .about-photo-card { flex: none; aspect-ratio: 4 / 5; inline-size: min(100%, 520px); max-height: none; margin-inline: auto; }
+    .sk-br { display: inline; }          /* Készségek heading: its two designed lines (joined on one line the words lost their space) */
+
+    /* Értékek: wider swipe cards (~70%), the next one peeks */
+    :root { --hs-tfs: calc((min(70vw, 540px) - 44px - 2px) / var(--hs-title-em)); }
+    .hs__card { flex: 0 0 70vw; max-inline-size: 540px; }
+
+    /* Szolgáltatások modals and the case-study dialog: the phone frame, as wide as the column */
+    .service-modal { max-width: 760px; }
+    .pf-modal__panel { max-inline-size: 820px; inset-block: max(12px, calc((100svh - 1040px) / 2)); }          /* not taller than its content needs (a 1366px tall screen left the lower half empty) */
+    .pf-modal__body { max-inline-size: 760px; inline-size: 100%; margin-inline: auto; box-sizing: border-box; }
+    .pf-gallery__track { block-size: min(40svh, calc((min(100vw, 820px) - 66px) / 1.6 + var(--pf-bar-h) + 8px)); }
+
+    /* Portfólió: the swipe carousel with ~72% cards; the Instagram card in the column */
+    .pf--carousel .pf-car { gap: 20px; padding-inline: var(--gutter) max(var(--gutter), calc(100vw - var(--gutter) - min(72vw, 660px))); scroll-padding-inline: var(--gutter); }
+    .pf--carousel .pf-car > .pf-case { flex-basis: min(72vw, 660px); }
+    .pf--carousel .pf-case__inner { padding: 28px; }
+    .pf--carousel .pf-ig .pf-case__inner { padding: 12px var(--gutter); }
+
+    /* Kapcsolat info card and the footer: two columns where one column left half the width empty */
+    .ctc .contact-personal-panel { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; column-gap: 28px; }
+    .footer-content { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; max-width: var(--content-max); margin-inline: auto; }
+    .footer-content > .footer-section:first-child { grid-column: 1 / -1; }
+
+    /* myapproach: two columns where one would be a long thin list */
+    .ap-have__grid, .ap-need__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

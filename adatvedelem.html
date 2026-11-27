@@ -2,6 +2,7 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
+    <script>/* portrait tablets (641-1100px, portrait) get the phone layouts: one media list, used by style.css and the scripts */(function(){var V=window.VB=window.VB||{};V.PT='(min-width: 641px) and (max-width: 1100px) and (orientation: portrait)';V.PHONE='(max-width: 640px), '+V.PT;V.mqPT=window.matchMedia(V.PT);V.mqPhone=window.matchMedia(V.PHONE);V.desk=function(m,x){x=x?' and '+x:'';return '(min-width: '+m+'px) and (orientation: landscape)'+x+', (min-width: '+Math.max(1101,m)+'px)'+x;};var f=function(){document.documentElement.classList.toggle('is-portrait-tablet',V.mqPT.matches);};f();if(V.mqPT.addEventListener)V.mqPT.addEventListener('change',f);})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adatkezelési tájékoztató – VarBro</title>
     <meta name="description" content="Adatkezelési tájékoztató a VarBro weboldalhoz. GDPR-kompatibilis információk az adatok kezeléséről, cookie-król és az érintetti jogokról.">
@@ -24,7 +25,7 @@
         "serviceType": "Web Design"
     }
     </script>
-    <link rel="stylesheet" href="style.css?v=cr174">
+    <link rel="stylesheet" href="style.css?v=cr175">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="/favicon.ico" sizes="any">
@@ -261,9 +262,9 @@
 </div>
 
 <script src="https://unpkg.com/lucide@1.66.0/dist/umd/lucide.js"></script>
-<script src="script.js?v=87"></script>
+<script src="script.js?v=88"></script>
 <script src="nav.js?v=9" defer></script>
 <script src="cursor.js?v=34" defer></script>
-<script src="js/footer.js?v=17" defer></script>
+<script src="js/footer.js?v=18" defer></script>
 </body>
 </html>

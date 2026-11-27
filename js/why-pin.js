@@ -26,8 +26,8 @@
   var reduce = !!VB.reduceMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var ST = window.ScrollTrigger;
   var canPin = !!(VB.gsap && VB.hasST && ST) && !reduce;
-  var mq = window.matchMedia('(min-width: 1024px) and (min-height: 520px)');
-  var small = window.matchMedia('(max-width: 1023px)');
+  var mq = window.matchMedia(window.VB.desk(1024, '(min-height: 520px)'));
+  var small = window.matchMedia('(max-width: 1023px), ' + window.VB.PT);
   var st = null, stIn = null, snapT = 0, io = null, active = -1, lastP = 0, off = null;
   var G = { w: 0, pitch: 0, travel: 0, g: 0, vw: 0, vx: 0 };
   var DWELL_A = 0.04, DWELL_B = 0.08;

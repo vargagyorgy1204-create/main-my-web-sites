@@ -179,7 +179,7 @@
      The six cards move into one native scroll-snap row (no scroll hijacking); counter + dots under it; only the visible card's video plays; "A feladat" / "A megoldás" leave the card
      and are shown in the case-study dialog instead. TO REVERT: set PF_CAROUSEL to false (the old phone layout is the untouched default code). */
   var PF_CAROUSEL = true;
-  var carMq = window.matchMedia('(max-width: 640px)');
+  var carMq = window.matchMedia(window.VB.PHONE);
   var carouselOn = false, car = null;
 
   function carMount() {
@@ -327,7 +327,13 @@
   }
 
   if (PF_CAROUSEL) {
-    var carApply = function () { if (carMq.matches) carMount(); else { carUnmount(); scheduleActive(); } };
+    var carApply = function () {
+      if (carMq.matches) {
+        carMount();
+        /* coming from the laptop layout (a rotation): its centring transform must not stay on the Instagram phone */
+        setTimeout(function () { var pw = document.querySelector('#pf-ig .pf-phone-wrap'); if (pw && carouselOn) pw.style.transform = ''; }, 200);
+      } else { carUnmount(); scheduleActive(); }
+    };
     if (carMq.matches) carMount();
     if (carMq.addEventListener) carMq.addEventListener('change', carApply); else carMq.addListener(carApply);
   }
@@ -335,7 +341,7 @@
   /* -------------------------------------------------------- stacking + parallax */
   if (hasGsap) {
     var mm = gsap.matchMedia();
-    mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', function () {
+    mm.add(window.VB.desk(900, '(prefers-reduced-motion: no-preference)'), function () {
       stackOn = true;
       scheduleActive();
 
@@ -580,7 +586,7 @@
     var nameEl = igCard.querySelector('.pf-case__name');
     /* desktop: the panel is shorter than the phone, so the phone overflows it by --pf-ig-ov at the top and bottom (but never less tall than its own copy) */
     var panel = igCard.querySelector('.pf-ig__panel'), copy = igCard.querySelector('.pf-ig__copy'), wrap = igCard.querySelector('.pf-phone-wrap');
-    var deskMq = window.matchMedia('(min-width: 900px)');
+    var deskMq = window.matchMedia(window.VB.desk(900));
     function sizePanel() {
       panel.style.removeProperty('--pf-ig-panel-h');
       igCard.style.removeProperty('--pf-ig-slot-h');

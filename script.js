@@ -858,7 +858,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     var steps = Array.prototype.slice.call(process.querySelectorAll('.process__step'));
     var N = steps.length;
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var pinQuery = window.matchMedia('(min-width: 900px) and (min-height: 520px) and (prefers-reduced-motion: no-preference)');
+    var pinQuery = window.matchMedia(window.VB.desk(900, '(min-height: 520px) and (prefers-reduced-motion: no-preference)'));
     var ticking = false;
     var title = section.querySelector('.steps-title');
     var reel = section.querySelector('.st-reel'), counter = section.querySelector('.st-count');
@@ -872,7 +872,7 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     var th = [0, 1 / 3, 2 / 3, 1], len = 0, vertical = false;
     function measure() {
         var pr = process.getBoundingClientRect(), k = pr.width / (process.offsetWidth || 1) || 1;
-        vertical = window.innerWidth < 900;
+        vertical = window.innerWidth < 900 || window.VB.mqPT.matches;
         var c = nodes.map(function (n) { var r = n.getBoundingClientRect(); return vertical ? ((r.top + r.height / 2) - pr.top) / k : ((r.left + r.width / 2) - pr.left) / k; });
         len = Math.max(0, c[N - 1] - c[0]);
         th = c.map(function (v) { return len > 0 ? (v - c[0]) / len : 0; });
