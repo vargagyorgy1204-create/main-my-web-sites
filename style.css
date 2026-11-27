@@ -7778,7 +7778,9 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .hs__card { flex: 0 0 70vw; max-inline-size: 540px; }
 
     /* Szolgáltatások modals and the case-study dialog: the phone frame, as wide as the column */
-    .service-modal { max-width: 760px; }
+    /* a centred dialog with the backdrop around it, not an almost full-screen sheet; title + close X stay at the top, the cards scroll (the phone modal rules) */
+    .service-modal { width: min(92vw, 620px); max-width: 620px; max-height: 88svh; }
+    .service-modal-close { width: 44px; height: 44px; top: calc(var(--sm-r) + 0.766 * var(--sm-fs) - 22px); right: calc(var(--sm-px) - 16px); }
     .pf-modal__panel { max-inline-size: 820px; inset-block: max(12px, calc((100svh - 1040px) / 2)); }          /* not taller than its content needs (a 1366px tall screen left the lower half empty) */
     .pf-modal__body { max-inline-size: 760px; inline-size: 100%; margin-inline: auto; box-sizing: border-box; }
     .pf-gallery__track { block-size: min(40svh, calc((min(100vw, 820px) - 66px) / 1.6 + var(--pf-bar-h) + 8px)); }

@@ -363,3 +363,5 @@ Condition: `(min-width: 641px) and (max-width: 1100px) and (orientation: portrai
 - **Értékek heading on tablets (touch, 641-1366px):** two lines via `<br class="br-tablet">` (hidden elsewhere; heading-fx.js keeps a space before it), size `min(section heading size, --content-max / 20.6)`.
 
 - **Együttműködés on landscape touch tablets (pointer: coarse, 1024-1366px):** the 2x2 grid on every size with one progress line per row (script.js clones the track: `.process--2row`, `--p1` / `--p2`; row 1 fills over 0-0.4 of the run, step 3 at 0.6, row 2 over 0.6-1). Mouse laptops keep 4 in a row.
+
+- **Service modals on portrait tablets:** a centred dialog (`min(92vw, 620px)`, max-height 88svh) with the backdrop around it; title and the 44px close X stay at the top, cards scroll (the phone modal rules). Phones, landscape tablets and laptops unchanged.
