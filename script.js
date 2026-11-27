@@ -375,6 +375,14 @@ const setServiceView = (modal, idx) => {
     h3.textContent = (groups.length ? item.querySelector('.modal-group__title') : item.querySelector('h4')).textContent.trim();
 };
 
+// phones: the full view's title is fixed above the scrolling cards, so the scroll area starts below it: its height (it may wrap) goes to --sm-th
+const fitServiceTitle = (overlay) => {
+    const dlg = overlay && overlay.querySelector('.service-modal');
+    const h3 = dlg && dlg.querySelector('h3');
+    if (h3 && h3.offsetHeight) dlg.style.setProperty('--sm-th', h3.offsetHeight + 'px');
+};
+window.addEventListener('resize', () => fitServiceTitle(document.querySelector('.service-modal-overlay.is-open')));          // also a rotation
+
 // opens a service dialog; focusIdx (from a list row of the section) opens the single-item view of that plan / group, no focusIdx the full view
 const openServiceModal = (trigger, focusIdx) => {
     const targetModal = document.getElementById(trigger.dataset.modalTarget);
@@ -387,6 +395,8 @@ const openServiceModal = (trigger, focusIdx) => {
     targetModal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('service-modal-open');
     if (window.VB && VB.lenis) VB.lenis.stop();
+    fitServiceTitle(targetModal);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitServiceTitle(targetModal));
     const dlg = targetModal.querySelector('.service-modal');
     // the overlay fades in from visibility:hidden: focus() on a hidden element does nothing, so move focus into the dialog a moment later
     if (dlg) {
@@ -409,6 +419,7 @@ document.querySelectorAll('.modal-all-link').forEach((link) => {
         const dlg = modal.querySelector('.service-modal');
         const swap = () => {
             setServiceView(modal);
+            fitServiceTitle(modal);
             const h3 = modal.querySelector('.service-modal h3');
             if (h3) h3.focus({ preventScroll: true });
         };

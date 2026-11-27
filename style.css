@@ -7697,3 +7697,12 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 @media (max-width: 640px) {
     .process__title { margin-top: 11.8px; }          /* (48px node centre 24px) - (half the 26.4px line box 13.2px) + 1.8px: the cap-height centre of Syne 800 at 24px sits 1.8px above the line-box centre */
 }
+
+/* ===== Service modals on phones: the dialog is sized by the VISIBLE viewport (dvh + safe areas), never by 100vh (taller than the screen while the browser bar shows: the centred dialog was cut at the top);
+   in the full view the title stays put (absolute in the shell, next to the close X) and only the cards scroll under it ===== */
+@media (max-width: 640px) {
+    .service-modal-overlay { height: 100vh; height: 100dvh; box-sizing: border-box; align-items: safe center; padding: calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px)); }
+    .service-modal { max-height: 100%; min-height: 0; --sm-fs: 1.2rem; }
+    .service-modal:not([data-view="single"]) h3 { position: absolute; top: var(--sm-r); left: var(--sm-px); right: 52px; margin: 0; font-size: var(--sm-fs); line-height: 1.3; }
+    .service-modal:not([data-view="single"]) > .service-modal__scroll { margin-top: calc(var(--sm-r) + var(--sm-th, 31px) + 14px); }          /* --sm-th = the title's height (script.js; it may wrap to two lines) */
+}
