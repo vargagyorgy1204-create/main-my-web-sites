@@ -9,6 +9,6 @@ The card is rendered from `js/instagram-data.js` (`window.IG_DATA`); layout code
 4. Delete `assets/instagram/placeholder/` when it is no longer used.
 
 ## Other files
-- `avatar.webp` – profile picture (160 px, square). Currently a crop of the site photo; replace it any time. If the file is missing the site photo `contact-640.webp` is used.
+- `avatar.webp` – profile picture (160 px, square). Currently a crop of the site photo; replace it any time. If the file is missing the site photo `assets/img/contact/contact-640.webp` is used.
 - `qr.webp` / `qr@2x.webp` – the Instagram QR of @webdev_varbro (crop of the code matrix only, from `newINSTAqr.jpg`, 256 / 512px). It decodes to `https://www.instagram.com/webdev_varbro?utm_source=qr&avpt=...`. Replace both files if the profile changes.
 - Bio / name / handle / profile URL: same data file.

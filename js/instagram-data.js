@@ -20,7 +20,7 @@ window.IG_DATA = {
   name: 'Varga György',
   bio: ['Weboldalak kisvállalkozásoknak', 'Dizájn, kód és mozgás', 'varbro.pro'],
   avatar: 'assets/instagram/avatar.webp',
-  avatarFallback: 'contact-640.webp',
+  avatarFallback: 'assets/img/contact/contact-640.webp',
   qr: 'assets/instagram/qr.webp',
   retina: true,
   /* PLACEHOLDERS: crops of the portfolio screenshots (assets/instagram/placeholder/) */
