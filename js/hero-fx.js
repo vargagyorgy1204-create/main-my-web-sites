@@ -42,16 +42,7 @@
   }
 
   /* ------------------------------------------------ the living word */
-  var txt = hero.querySelector('.hero-live__txt');
-  if (txt) {
-    root.classList.add('hero-wait');
-    var go = function () { root.classList.remove('hero-wait'); };
-    var HU = 'őŐűŰáéíóöúüÁÉÍÓÖÚÜ';                                   /* Hungarian letters live in the latin-ext subset: load it too, or the headline re-measures when it arrives (layout shift) */
-    if (document.fonts && document.fonts.load && document.fonts.ready) {            /* wait for the headline faces themselves (fonts.ready alone can resolve before they were requested) */
-      Promise.all([document.fonts.load('800 40px Syne', HU), document.fonts.load('500 16px Montserrat', HU), document.fonts.load('400 16px Montserrat', HU)]).then(function () { return document.fonts.ready; }).then(function () { var chk = function () { if (document.fonts.check('800 40px Syne', HU) && document.fonts.check('400 16px Montserrat', HU)) go(); else setTimeout(chk, 40); }; chk(); }, go);      /* released only once the faces are really usable (setTimeout 3s below is the fallback) */
-      setTimeout(go, 3000);
-    } else go();
-  }
+  var txt = hero.querySelector('.hero-live__txt');          /* the headline is visible from the first paint: metric-matched fallbacks (style.css) cover the moment before the web font */
   if (txt) {
     if (reduce) {
       root.classList.add('hero-static');

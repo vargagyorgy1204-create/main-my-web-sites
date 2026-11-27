@@ -26,6 +26,20 @@
   function fallback() { bg.classList.add('is-css'); }
   if (lowPower) { fallback(); return; }
 
+  /* EXPERIMENT: phones show the CSS blobs instead of WebGL (speed). Revert: set PHONE_CSS_BG to false. Tablets and laptops keep WebGL. The Hangulat moods recolour the blobs. */
+  var PHONE_CSS_BG = true;
+  if (PHONE_CSS_BG && window.matchMedia('(max-width: 640px)').matches) {
+    fallback();
+    var blobs = bg.querySelectorAll('.hero-css i');
+    var paint = function (name) {
+      var t = window.HERO_THEMES[name];
+      if (t) [].forEach.call(blobs, function (el, k) { el.style.background = name === 'night' ? '' : 'rgb(' + t.shader[k].join(',') + ')'; });
+    };
+    try { paint(window.sessionStorage.getItem('vb-hero-mood')); } catch (e) { /* ignore */ }
+    document.addEventListener('hero:theme', function (e) { paint(e.detail && e.detail.name); });
+    return;
+  }
+
   var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   var FRAG = [
     'precision mediump float;',

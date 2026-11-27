@@ -67,7 +67,9 @@
     if (back) tl.to(back, { opacity: 1, y: 0, duration: 0.6 }, 0);
     tl.to([photo, card].filter(Boolean), { opacity: 1, y: 0, scale: 1, duration: 1, stagger: 0.12, clearProps: 'opacity,transform' }, 0.12);
 
-    if (eyebrow) {
+    if (eyebrow && window.matchMedia('(max-width: 640px)').matches) {          /* phones: a plain fade. Split letters / widened tracking wrapped the line and pushed the page down and back (CLS) */
+      tl.fromTo(eyebrow, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'none' }, 0.45);
+    } else if (eyebrow) {
       eSplit = SplitText.create(eyebrow, { type: 'chars', aria: 'auto' });
       gsap.set(eSplit.chars, { opacity: 0 });
       gsap.set(eyebrow, { letterSpacing: '0.6em' });
@@ -109,6 +111,7 @@
         var iSplit = SplitText.create(intro, { type: 'words', aria: 'none' });
         intro.setAttribute('aria-label', text);
         var words = iSplit.words, EACH = 0.1, DUR = 0.3;
+        words.forEach(function (w) { w.style.display = 'inline'; });          /* only their opacity animates: inline keeps the paragraph's own line breaks */
         gsap.set(words, { opacity: 0.3 });
         var tl = gsap.timeline({
           defaults: { ease: 'none', immediateRender: false },

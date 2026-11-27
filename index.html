@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script>/* portrait tablets (641-1100px, portrait) get the phone layouts: one media list, used by style.css and the scripts */(function(){var V=window.VB=window.VB||{};V.PT='(min-width: 641px) and (max-width: 1100px) and (orientation: portrait)';V.PHONE='(max-width: 640px), '+V.PT;V.mqPT=window.matchMedia(V.PT);V.mqPhone=window.matchMedia(V.PHONE);V.desk=function(m,x){x=x?' and '+x:'';return '(min-width: '+m+'px) and (orientation: landscape)'+x+', (min-width: '+Math.max(1101,m)+'px)'+x;};var f=function(){document.documentElement.classList.toggle('is-portrait-tablet',V.mqPT.matches);};f();if(V.mqPT.addEventListener)V.mqPT.addEventListener('change',f);})();</script>
-    <script>document.documentElement.classList.add('hero-wait');setTimeout(function(){document.documentElement.classList.remove('hero-wait')},3500);</script><!-- the headline stays hidden until its web fonts are ready (js/hero-fx.js lifts this earlier): set here, before the first paint, so the font swap can never shift it -->
+    <script>/* Syne 800 subset with only the hero heading's glyphs (SIL OFL 1.1), registered from memory so the heading is right from the first paint: no hidden state, no font jump. Changed heading text still renders (full Syne is the next family); regenerate the subset then. */(function(){if(!window.FontFace||!document.fonts)return;var d=atob('d09GMgABAAAAAAsEABAAAAAAFTwAAAqkAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGmwbh0wcgy4GYD9TVEFUKgCCCBEICpFsjWMLVAABNgIkA4EgBCAFhCYHIAwHG8kRUVSTfkimkbJw/n7w8NVc/aquCN0xzHtMPajGgRGxsC6Cvb0tp3VN/YDb+rfNKMRs+Mwi0uKs5MpAe1hYlewiovar0Kq93+zbvxdCUJloRJL6Ur/9YXf+XnpQ1F6KUZHKY1GH41wKipTUOQqXhEQhwSiUUeC/YynPA3bZm16WOML+KLNImKEncRcEksWAjz17LSYGYykiC4FBKTZDECi2o6xBYuJEyNXslrA1oaKqXSHwwQQogSllCM8YxWiMQlSC2z06UD7WZDQbkctXrg/iizft6sCHAtAaA2ivY8TadnRgJ5p2xChIxBIxsrQad1ifZYjNTMaNkwACU9MoZoqZnhkPsujvRIhb5E+CRdCDEp7UiwDf8G/hHzwUM8BnfMBbvMJzPMFD3MNt3MBVXEKSUxxhHzuI004j1QTZyGqWcoonmI+Qs90OniuPImR+G3OjSIWLz1zljpwt1fKOIw/oXKkUMct4qJ7n5QuIeV/8Vs/D8jtUjJPftmXi70I9JcvFQYMjD1uTsFMvwJHtko7oXDJFTTUOpRpPyeTgsfIeJHJcOOSLHQXiXyFENdnheylGphAXu5FiJqbDJZEyKR4Tyl0WiZhBfYOj/2hvD7Bw9CMSWj5IUag/4G7Z4N0fsSjTl70Xn3M0X7vRdyqsqgT+lHhpnLhJwyRAJllkU0gRwxg+0mjIQdhPoXAgcJGGi01cZJKdSi55kwspxEURReltSnGJyiG4nEinuNalpW1ngADKijtJEJHeND5Og9P5hV/4alk9yCeH3S7jFIM0U8lWVArSvRIBJAZIN7nki8pihrorROVQGDfiZiC3a+koyKUYSOMsEzcEZRMyivQAw9jwzf1UBDCP/jnygUJMSjEZgskw/QjD9SMoTP0dhfo7SvV3DNHfIcjXA0iKObzqFjj1H7dx4i3CHXju3LpwL6leYdO6bEnQ5siyrUGbynVLqm3Wb9i03ubI1k0bbI4EDSmLg1vXlUy/7RH1Oe21zmsd1ypuIMFL5AMEmCxxt7QkumiU+5fHI6EmNsc7W+KsZXw5X8hn09SgyAXu5A6uuKHdo6Gle6xnp3GELoKs5JVZqMcdGhq+yzDIwoeHYqVFaToNtjEwsZKMzEKQaWu6eRSsyWeGnaB69CWjvdRu32QBdIZxzuN2osBCGV8YdjCpMikr/et2TxD1rBPjbzXfLej5cTP2QfWEjZs2ruAV7JITxo2p79kE43nxow3X6+vFbzJZaPshD47UgpxQhNwbCu8S8SPZ6USYhn0+T0pTlg12sYrfzFRs8SUysBnPRNZRQTPtxOliF3s4wJd8zff8KuaKLaJM1IgDhjCskhNa9++h500TrUToZMfTpf5L/66f0vc/Zj7lLn27Hq5tbeshqYHUG6nXUy+n7vh/5P/FXx733734CUYzlolMZyZssMKJC/eYaf+tTjlcFUarUWv8tnwM22rND5HFoUaGvK4oCacziMpYF5UkO7aYc0Bjm8Bt1e2+2oErjT3LXaRLBdL97gy/q+7Mdymf4me5VCCQ4Xcoz3Sl3B5VA2LX6FHKOv3BdortnvaQN8NSpjfqjQRj3kh5zBv2RK1wU7KvTxzv77e6e3s51tPTI7r7+8Xxvj4z2cOxD3tDljSP39QnEsm+vj5xvL+/3yLVl3f3f1wVVUXYrre3Xh7ryTMdrhav22KWMq/Dlp3WLT095g/HBn3XvthrdfeX43nyvNf11fjxhSzMp564B2kaYnIMU1RZ0qxZD1TmQUzRsBvQWvHDXANl9vuCAxkoH3pwB+m4Xflu4uFu3RtAlVI/4ezPlDd49y7TYcmeM3ce6CfqL7qnP3RhC9j+2vv3T1vv5aS3+LLe4EVoX3fvVN1yZhvV6kvHBb5+tjyVlqOnpDUVO9DBCCmzN0SM6VgCqjksKecbVau/VmEKJk0IDeT6qJ4hloAamWroYIC1VbS1mroXVdDBMBv0kASXBWds5Yg+tN9NpaEGMfzvJhJpiqJE/XiDRP34FF/vwMrqT3FnPHKc/mn/Bxpz22zYsRmITTzHJj4DYcdaZLbFmtpkmdrAAlrxBqmiKlauqNrgU1y/PTCjeo6vOCM3dIy5UNZqImO7e8jYrcYyZZlIwnAkLFMJ6vNrKNFK8IVdtJQxZm6oOMPXV0zkho4xU4o3+hBV8liiaqP03IJQwtKRISkTKWWtxjK2h7uM3WpyBf8tUEcZ/no3LOhTnOXBCd/m68ap3a8luspAuLnj64Ai4SBnbMFjbk1FpqKy8hF/ycJT4tR6RLkx6kuWTZy81PLstcJSNnmwINMdTK80ko2TTR9WdpVvojlepdRSz7n5OIg+k2pSC6jPFEg+SWvWB+6m6FV7SDUJkl3UbkqMfB4y0ejYmMSbbWF/G/y6fyH433DFbWF+RXp6fuVt0YrlN0V5lenpeRU3hcvGo7OtBCwWI9s6JlppHYyzBEorGDUc2IumFG+UElWxcqJqo8+5haGEpQNTXCZWRiiE474np9X4CPGaduw3Cjw9+tf9mRdUZBnjxHVkLjz6W6yTAPAdzx7NMY32KcL0jWWJ6OyoSoO5dlM4b1ZgAXOQLmtdIYhJ0Hyw6Ux0+FtL+ne5ZrxvqXaStZjrkxa+ybE6d9A60f31azD9JCNl2zyodgr+T65A/h3RTfv0WvZJB4Sv4u0+DnqSOqTVx0EXEoX36h/8q7s/rOwq30Rz/MGXes7Nx8/uUv/gX939YWXXN38c73ebyE0Q1SEhA8krKuoqxVL/4F91VJO2lDo3u60899kFRWIyzcoV9ujusJWvfvHhjWQjcMkF6gUgWv/sTxYnRG/R/+mpBQ2QvNjd3R2MqX/tI7OTL6kCrVRQk7xIdfWw6liv6sp6FaBa8BMAynrmTdYGHL0Ewygrp+jUBhwx12sdhZsxA0vrzul/eRjLzm9MSJ25Dse1KZ0bizLeFdb6La1VwZffmhIOO7V9Y91InQ73XD0RIAUqkG5kSV54LtrhWDMwZn7B/kEpYMz8jJ1CKWABoDz0C/AAEA76NU9qRKXYdpO+R8FOsqEeUOtnfsbwwicFYZOeQpwJqFCYG8BWEXTp7zoY9vEvG55EjtJ2+z4PC5Wrn6jv62Rj231GlOzpncg3ttW5oH7y37hO9vMXi71x5DmkaJyAcO0UMHtP18CBERsN8xIY2Ot90NVghhSDF5LBGEvx1FBsu8kHKXIF2F/AuEoDBzYqTMOigbUnWg1mGAmaWDtIWanGLZRqSRCiwdgTkQAgWSBAuGDtj53RVOZAjreD3WAMjCF3MjJvoTXyZ9WaAymN/Lz6NLxvcxCwg8s5PEh8vJBjMJXkWmXOcVBAF6YmOohsHzMpsUS1h4xSmvxjYQX72MUOmlhKJ3FaqaCNCCHC7FqP30UXO5nLJD54Jy3sIJKLmZ1MbDojxJmYZ/1OISaxiZWsZxv76aCNCY5ZOe2wGd9JBzZTmVjKyXzOoX0eG9nUyBVYshu2dXaI3cRpYgfpZvbgZXTSxX6/RVDodb/JTGEONkHCNnOs99vMDjqJ0kYLrXIJuyOBEB+/E5vRUekMEWGXF/s3M5EWOkkwieYA94vSyW52MIGEOrqVNibR3sIjdEp2hjl+F/vpoo12IVsKGpMpi2n1/daxGPiM0KcfURcCAAAA'),a=new Uint8Array(d.length),i=0;for(;i<d.length;i++)a[i]=d.charCodeAt(i);document.fonts.add(new FontFace('Syne Hero',a,{weight:'800'}));})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
         <title>VarBro | Professzionális weboldal készítés kis vállalkozásoknak</title>
@@ -48,9 +48,8 @@
         }
         </script>
 
-        <link rel="stylesheet" href="style.css?v=cr187">
+        <link rel="stylesheet" href="style.css?v=cr188">
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
     
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -1020,8 +1019,8 @@
 <script src="js/heading-fx.js?v=4" defer></script>
 <script src="js/skills-fx.js?v=1" defer></script>
 <script src="js/skills-tap.js?v=1" defer></script>
-<script src="js/hero-fx.js?v=14" defer></script>
-<script src="js/hero-gl.js?v=6" defer></script>
+<script src="js/hero-fx.js?v=15" defer></script>
+<script src="js/hero-gl.js?v=7" defer></script>
 <script src="js/hero-bg-pin.js?v=2" defer></script>
 <script src="js/services.js?v=11" defer></script>
 <script src="js/contact-footer.js?v=18" defer></script>
@@ -1033,7 +1032,7 @@
 <script src="script.js?v=89"></script>
 <script src="animations.js?v=13"></script>
 <script src="nav.js?v=9" defer></script>
-<script src="cursor.js?v=34" defer></script>
+<script>/* custom cursor: mouse devices only. With a coarse primary pointer (touch) cursor.js is not loaded; it is fetched only if a real mouse moves (touch-screen laptops) */(function(){var done=false;function load(){if(done)return;done=true;var s=document.createElement('script');s.src='cursor.js?v=34';document.body.appendChild(s);}if(!window.matchMedia('(pointer: coarse)').matches){load();return;}addEventListener('pointermove',function f(e){if(e.pointerType==='mouse'){removeEventListener('pointermove',f);load();}},{passive:true});})();</script>
 <script src="js/footer.js?v=18" defer></script>
 <script src="js/privacy-modal.js?v=1" defer></script>
 </body>

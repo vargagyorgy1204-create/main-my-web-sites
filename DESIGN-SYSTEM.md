@@ -300,7 +300,7 @@ Built by `js/hero-window.js` (markup, scenes), CSS block "Hero living window" at
 
 - **Hangulat, smaller (−12%):** panel 264×175px (`placePanel()` tries 264 → 240), padding 14/12, title serif 15px, cards 75.3×100px, radius 12px, gap 7px, labels 10px, check badge 16px, sun 28px.
 
-- **Üzenet mini chat** (js/hero-os.js `buildMsg`, CSS block "Mini OS Üzenet"): same shell as Hangulat (`.hw__panel.is-mood`, 264px, `placePanel()` 264 → 240, clean edge, cursor `is-dot` over `.mc`). Header: avatar 28px (`assets/avatar-vg.webp`, 72px crop of assets/img/myworkfoto.jpg), name Space Grotesk 600 12px, status 10px with a teal dot. Left bubbles rgb(255 255 255 / .08), radius 14/14/14/4; right bubbles brand gradient, radius 14/14/4/14. Typing = 3 bouncing dots 0.8s. Composer: auto-growing textarea (max 3 lines) + 34px gradient send button; the optional e-mail field slides in (grid 0fr → 1fr) once the user types; Enter sends, Shift+Enter = new line; privacy line 9px. Formspree xeerdkob + `_gotcha`; error bubble with WhatsApp link and "Újrapróba". Heights: 176px open, ~211px with the e-mail field, ~232px with a longer log (log scrolls at 104px). The old `.hw__form` / `.hw__btn*` / `.hw__note` / `.hw__st` / `.hw__ok` / `.hw__hp` styles were removed.
+- **Üzenet mini chat** (js/hero-os.js `buildMsg`, CSS block "Mini OS Üzenet"): same shell as Hangulat (`.hw__panel.is-mood`, 264px, `placePanel()` 264 → 240, clean edge, cursor `is-dot` over `.mc`). Header: avatar 28px (`assets/avatar-vg.webp`, 72px crop of the myapproach photo), name Space Grotesk 600 12px, status 10px with a teal dot. Left bubbles rgb(255 255 255 / .08), radius 14/14/14/4; right bubbles brand gradient, radius 14/14/4/14. Typing = 3 bouncing dots 0.8s. Composer: auto-growing textarea (max 3 lines) + 34px gradient send button; the optional e-mail field slides in (grid 0fr → 1fr) once the user types; Enter sends, Shift+Enter = new line; privacy line 9px. Formspree xeerdkob + `_gotcha`; error bubble with WhatsApp link and "Újrapróba". Heights: 176px open, ~211px with the e-mail field, ~232px with a longer log (log scrolls at 104px). The old `.hw__form` / `.hw__btn*` / `.hw__note` / `.hw__st` / `.hw__ok` / `.hw__hp` styles were removed.
 
 - **Cursor `is-dot` also over** the dock (`.hw__dock`) and the floating music button (`.hw-fm`, collapsed and expanded): ring hidden, dot only; the ring returns outside.
 
@@ -379,7 +379,13 @@ Condition: `(min-width: 641px) and (max-width: 1100px) and (orientation: portrai
 - **Footer bottom row:** the three items share one baseline (20px line, 44px hit area = 12px padding taken back by -12px margin, so the text does not move).
 
 ## Images and icons (Perf A)
-- Header logo: `assets/img/brand/logo{white,black}-{88,132}.webp` (srcset 2x / 3x). `logovarbro.png` stays for og:image only.
+- Header logo: `assets/img/brand/logo{white,black}-{88,132}.webp` (srcset 2x / 3x). `logovarbro.png` (og:image only) is the one PNG logo kept.
 - myapproach photo: `assets/img/myworkfoto-{640,896}.webp`.
 - No Font Awesome: brand / envelope glyphs are `<i class="ic-b ic-b--{whatsapp|facebook-f|instagram|envelope}">` (mask in style.css, painted with currentColor); other icons are Lucide.
 - Rólam on touch loads photo 1 with the page and fetches the next one when needed (`loadLayer` in js/about-story.js).
+
+## Speed (Perf B)
+- Fonts are self-hosted (`assets/fonts/`, @font-face at the end of style.css); no Google Fonts. Add a weight there before using it. index inlines a Syne 800 subset of the hero heading's glyphs ('Syne Hero', in its head; regenerate it with Google Fonts `&text=` if the heading text changes).
+- The hero heading is never hidden while fonts load (inline subset; 'Montserrat Fallback' for body text and the subheading); phones get a 0.4s entrance without clipping.
+- `cursor.js` is loaded by a small inline loader: not on coarse-pointer devices (unless a real mouse moves).
+- Phones (<= 640px): the CSS blob background instead of WebGL (`PHONE_CSS_BG` in js/hero-gl.js).

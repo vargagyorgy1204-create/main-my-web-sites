@@ -26,8 +26,7 @@
     }
     </script>
     <script>if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("ap-pre");</script>
-    <link rel="stylesheet" href="style.css?v=cr187">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=Antonio:wght@500&family=Sacramento&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=cr188">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -258,11 +257,11 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js" defer></script>
 <script src="js/gsap-setup.js?v=1" defer></script>
 <script src="js/lenis-setup.js?v=1" defer></script>
-<script src="js/approach.js?v=4" defer></script>
+<script src="js/approach.js?v=5" defer></script>
 <script src="js/approach-faq.js?v=1" defer></script>
 <script src="script.js?v=89"></script>
 <script src="nav.js?v=9" defer></script>
-<script src="cursor.js?v=34" defer></script>
+<script>/* custom cursor: mouse devices only. With a coarse primary pointer (touch) cursor.js is not loaded; it is fetched only if a real mouse moves (touch-screen laptops) */(function(){var done=false;function load(){if(done)return;done=true;var s=document.createElement('script');s.src='cursor.js?v=34';document.body.appendChild(s);}if(!window.matchMedia('(pointer: coarse)').matches){load();return;}addEventListener('pointermove',function f(e){if(e.pointerType==='mouse'){removeEventListener('pointermove',f);load();}},{passive:true});})();</script>
 <script src="js/footer.js?v=18" defer></script>
 </body>
 </html>

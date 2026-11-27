@@ -127,7 +127,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { overflow-x: hidden; overflow-x: clip; max-width: 100%; }
-body { font-family: 'Montserrat', sans-serif; color: #333; line-height: 1.6; overflow-x: hidden; overflow-x: clip; max-width: 100%; }
+body { font-family: 'Montserrat', 'Montserrat Fallback', sans-serif; color: #333; line-height: 1.6; overflow-x: hidden; overflow-x: clip; max-width: 100%; }
 
 /* Header: fixed bar (logo + hamburger) and fullscreen menu - port of the demovarbro header */
 :root {
@@ -3181,7 +3181,7 @@ html.has-cursor .ap-row:hover .ap-row__icon::after { opacity: 1; }
 /* the block (headline, lead, buttons) hangs directly under the label (label -> headline = --eyebrow-head-gap, as in the other sections); the status line stays at the bottom */
 .hero-title { position: relative; margin: 0 0 var(--hero-title-sub); font-size: min(clamp(36px, min(8.69vw, 11.45svh), 159px), calc((100vw - 2 * var(--content-gutter)) / 10.75)); }          /* three lines: height budget, or the width of the widest line (line 3 "aki életre kelt" / line 2 "webfejlesztő," ~10.3em in Syne 800) */
 .hero-headline {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Syne Hero', 'Syne', 'Syne Fallback', sans-serif;
     font-weight: 800;
     font-size: 1em;
     line-height: 1.04;
@@ -3215,8 +3215,6 @@ html.has-cursor .ap-row:hover .ap-row__icon::after { opacity: 1; }
     -webkit-text-stroke: var(--hero-sw, 1.5px) #a5a7fb;       /* solid brand colour + a lighter tint of it as a thin outline (no gradient, no shadow, no box) */
     paint-order: stroke fill;
 }
-/* the living word waits for the web fonts (a font swap would shift it; hidden boxes are not counted as layout shift) */
-html.hero-wait .hero-live, html.hero-wait .hero-headline, html.hero-wait .hero-sub, html.hero-wait .hero-ctas { visibility: hidden; }
 /* contextual word entrances (js/hero-fx.js): NO clipping box / filter / will-change on the word (a composited layer shows as a hard-edged rectangle over the WebGL background); solid colour + a thin lighter outline, no gradient */
 .hero-live__w { position: absolute; inset: 0 auto 0 0; white-space: pre; --wc: #6366f1; --wt: #a5a7fb; --gl: 0; }
 .hero-live__w[data-wi="1"] { --wc: #9b3fd8; --wt: #cf94f0; }
@@ -3249,7 +3247,7 @@ html.hero-static .hero-live__txt { position: static; }
     margin: 0 0 clamp(16px, 3.3svh, 36px) 0;
     max-width: 52ch;
     text-wrap: balance;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', 'Montserrat Fallback', sans-serif;
     animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
 }
 
@@ -7890,6 +7888,7 @@ footer .footer-legal { padding-block: 6px; }          /* the row keeps its old h
     footer .footer-legal .footer-bottom-links .cookie-settings-link { margin-inline: 0; }
 }
 
+/* Icons: Font Awesome Free, CC BY 4.0, fontawesome.com/license/free */
 /* ===== Brand / contact glyphs (instead of the Font Awesome CDN): WhatsApp, Facebook, Instagram, envelope from Font Awesome Free 6.4.0 (https://fontawesome.com, icons CC BY 4.0).
    A mask painted with currentColor (the social links paint their sweep gradient through it); the box is the glyph's advance x 1em, like the icon font. ===== */
 i.ic-b { display: inline-block; inline-size: var(--icw, 1em); block-size: 1em; line-height: 1; vertical-align: -0.125em; background-color: currentColor; -webkit-mask: var(--ic) center / 100% 100% no-repeat; mask: var(--ic) center / 100% 100% no-repeat; }
@@ -7897,3 +7896,41 @@ i.ic-b--whatsapp { --icw: 0.875em; --ic: url("data:image/svg+xml,%3Csvg xmlns='h
 i.ic-b--facebook-f { --icw: 0.625em; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512' preserveAspectRatio='none'%3E%3Cpath d='M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z'/%3E%3C/svg%3E"); }
 i.ic-b--instagram { --icw: 0.875em; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512' preserveAspectRatio='none'%3E%3Cpath d='M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z'/%3E%3C/svg%3E"); }
 i.ic-b--envelope { --icw: 1em; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' preserveAspectRatio='none'%3E%3Cpath d='M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z'/%3E%3C/svg%3E"); }
+
+/* ===== Self-hosted web fonts (SIL OFL 1.1, see assets/fonts/README.txt): only the weights the site uses; latin + latin-ext (Hungarian). No request to Google. ===== */
+@font-face { font-family: 'Syne'; font-style: normal; font-weight: 800; font-display: swap; src: url(assets/fonts/syne-800-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Syne'; font-style: normal; font-weight: 800; font-display: swap; src: url(assets/fonts/syne-800-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/montserrat-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/montserrat-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/montserrat-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/montserrat-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/montserrat-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/montserrat-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/montserrat-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/montserrat-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/space-grotesk-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/space-grotesk-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/space-grotesk-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/space-grotesk-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/inter-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/inter-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/inter-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/inter-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/inter-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/inter-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Antonio'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/antonio-500-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Antonio'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/antonio-500-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Sacramento'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/sacramento-400-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Sacramento'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/sacramento-400-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+/* fallbacks shown until the web font arrives. Syne is far wider than any system font, so its fallback matches the cap height and the baseline (no layout shift); the subheading fallback matches the width too */
+@font-face { font-family: 'Syne Fallback'; font-weight: 800; src: local('Arial Black'), local('Arial-Black'), local('Arial Bold'), local('Arial-BoldMT'), local('Roboto Bold'), local('Roboto-Bold'); size-adjust: 89%; ascent-override: 104.4%; descent-override: 31.6%; line-gap-override: 0%; }
+@font-face { font-family: 'Montserrat Fallback'; src: local('Arial'), local('ArialMT'), local('Roboto'); size-adjust: 111.9%; ascent-override: 86.7%; descent-override: 22.3%; line-gap-override: 0%; }
+
+/* ===== Hero entrance on phones: short, no clip / no hidden start for the headline, so it paints at once ===== */
+@media (max-width: 640px) and (prefers-reduced-motion: no-preference) {
+    .hero-line__in { animation: heroLinePhone 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+    .hero-line:nth-of-type(2) .hero-line__in { animation-delay: 0.04s; }
+    .hero-line:nth-of-type(3) .hero-line__in { animation-delay: 0.08s; }
+    #hero .hero-eyebrow, .hero-sub, .hero-ctas, .hero-status { animation-duration: 0.35s; animation-delay: 0.05s; }
+}
+@keyframes heroLinePhone { from { transform: translateY(14px); } to { transform: translateY(0); } }
