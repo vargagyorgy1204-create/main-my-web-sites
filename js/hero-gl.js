@@ -1,6 +1,6 @@
 /* hero-gl.js — the hero background: a slow, living brand gradient (blue #5b5bf0 -> violet #9b3fd8 -> pink #C026A3 on #0f0b1c) flowing like liquid under frosted glass.
    One full-screen plane, a small simplex-noise fragment shader (WebGL 1), rendered at reduced resolution and capped at ~30fps. The blobs drift toward the pointer within a small
-   radius (real mouse only). Lazy start: the static CSS gradient paints first; the shader is set up on the first scroll / touch / key, or ~1s after window.load when the browser is idle (whichever is first),
+   radius (real mouse only). Lazy start: a picture of the shader's own first frame (.hero-ph, inline script in index.html) paints first; the shader is set up on the first scroll / touch / key, or ~1s after window.load when the browser is idle (whichever is first),
    then crossfades in over 0.6s. Pauses off-screen and in a hidden tab.
    Fallback (no WebGL / low-power / save-data): the CSS blobs (.hero-css, class .is-css). Reduced motion: the static CSS gradient only. */
 (function () {
@@ -19,7 +19,14 @@
   if (!canvas) return;
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce) return;                                           /* static gradient (the CSS background) */
+  /* the placeholder follows size changes until the shader runs (and, with reduced motion, mood changes) */
+  var ph = window.heroPlaceholder || function () {};
+  if (reduce) {                                                 /* no shader: the still first frame stays */
+    document.addEventListener('hero:theme', function (e) { ph(e.detail && e.detail.name); });
+    window.addEventListener('load', function () { ph(); });
+    window.addEventListener('resize', function () { ph(); });
+    return;
+  }
 
   var conn = navigator.connection || {};
   var lowPower = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) || (navigator.deviceMemory && navigator.deviceMemory <= 2) || conn.saveData;
@@ -47,7 +54,7 @@
   function start() {                                              /* everything that costs: context, shader compile, the render loop (called once, lazily: see the end of the file) */
   var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   var FRAG = [
-    'precision mediump float;',
+    '#ifdef GL_FRAGMENT_PRECISION_HIGH', 'precision highp float;', '#else', 'precision mediump float;', '#endif',          /* highp: the noise maths overflows 16-bit mediump, and the placeholder must match */
     'uniform vec2 uR;uniform float uT;uniform vec2 uM;uniform vec2 uP;uniform float uA;uniform float uE;uniform vec3 uC1;uniform vec3 uC2;uniform vec3 uC3;',
     'vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}',
     'vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}',
@@ -134,7 +141,7 @@
   }, { passive: true });
   hero.addEventListener('pointerleave', function () { clearTimeout(idleT); actT = 0; });
 
-  var visible = true, raf = 0, last = 0, t0 = performance.now(), started = false;
+  var visible = true, raf = 0, last = 0, t0 = 0, started = false;          /* the shader's clock starts at its first frame: that frame is the placeholder's picture */
   /* mood colours: eased towards the target (~1.2s); the stored mood (sessionStorage, this session only) applies instantly */
   var cc = [[91, 91, 240], [155, 63, 216], [192, 38, 163]].map(function (a) { return a.slice(); }), ct = cc.map(function (a) { return a.slice(); });
   try { var sm = window.sessionStorage.getItem('vb-hero-mood'); if (sm && window.HERO_THEMES[sm]) { ct = window.HERO_THEMES[sm].shader.map(function (a) { return a.slice(); }); cc = ct.map(function (a) { return a.slice(); }); } } catch (e0) { /* ignore */ }
@@ -145,6 +152,7 @@
     raf = requestAnimationFrame(frame);
     if (now - last < 33) return;                                /* ~30fps cap */
     last = now;
+    if (!t0) t0 = now;
     var dt = Math.min(0.1, (now - (frame.prev || now)) / 1000 || 0.033); frame.prev = now;
     var k = 1 - Math.exp(-dt / 1.2), kf = 1 - Math.exp(-dt / 0.35);    /* ~1.2s lag for the blob and the activity, ~0.35s for the light lift */
     mx += (tx - mx) * k; my += (ty - my) * k; px += (tx - px) * kf; py += (ty - py) * kf;
@@ -175,10 +183,15 @@
   function boot(e) {
     if (booted || (e && e.type === 'scroll' && window.scrollY < 2)) return;
     booted = true; clearTimeout(timer);
+    window.removeEventListener('resize', redraw);
     EVTS.forEach(function (n) { window.removeEventListener(n, boot, true); });
     start();
   }
   EVTS.forEach(function (n) { window.addEventListener(n, boot, { capture: true, passive: true }); });
+  function redraw() { ph(); }
+  redraw();
+  window.addEventListener('resize', redraw);
+  window.addEventListener('load', redraw);
   function later() { timer = setTimeout(function () { if (window.requestIdleCallback) window.requestIdleCallback(function () { boot(); }, { timeout: 1000 }); else boot(); }, 1000); }
   if (document.readyState === 'complete') later(); else window.addEventListener('load', later);
 })();

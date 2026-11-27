@@ -3124,7 +3124,7 @@ html.has-cursor .ap-row:hover .ap-row__icon::after { opacity: 1; }
     padding: calc(var(--section-top) - var(--hero-lift)) var(--content-gutter) clamp(24px, 4svh, 56px);          /* the label sits --hero-lift (16px at 1440x900) higher than the other sections' eyebrows */
 }
 
-/* background: a static CSS gradient is always there (also the fallback); the WebGL canvas fades in over it once it runs (js/hero-gl.js) */
+/* background: a static CSS gradient is always there (also the fallback); over it the picture of the shader's first frame, then the WebGL canvas fades in once it runs (js/hero-gl.js) */
 .hero-bg {
     position: absolute;
     inset: 0 0 calc(-1 * var(--hero-ext)) 0;
@@ -3137,6 +3137,8 @@ html.has-cursor .ap-row:hover .ap-row__icon::after { opacity: 1; }
         radial-gradient(60% 70% at 55% 95%, rgb(192 38 163 / 0.34), transparent 70%),
         #0f0b1c;
 }
+.hero-ph { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; display: block; }          /* the shader's first frame (index.html) */
+.hero-bg.is-css .hero-ph { display: none; }
 .hero-gl { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; display: block; opacity: 0; transition: opacity 0.6s ease; }
 .hero-bg.is-gl .hero-gl { opacity: 1; }
 .hero-css { position: absolute; inset: 0; display: none; }
