@@ -7764,9 +7764,13 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .ap, .policy-main { padding-inline: var(--gutter); }
     .ap-wrap, .policy-container { max-width: var(--content-max); margin-inline: auto; }
     .policy-container { padding-inline: 0; }
-    .about-premium-grid { max-width: var(--content-max); margin-inline: auto; }
-    /* Rólam photo: a portrait frame in the column (a full-width landscape crop cut the face) */
-    .about-photo-card { flex: none; aspect-ratio: 4 / 5; inline-size: min(100%, 520px); max-height: none; margin-inline: auto; }
+    /* Rólam: two columns, photo left (42%) / text right (58%). The text card is ~1400px tall here, so a photo stretched to it could only show a thin slice of the face: the photo keeps a
+       2:3 frame (head to chest) and stays in view (sticky) while the text scrolls past */
+    .about-premium-grid { max-width: var(--content-max); margin-inline: auto; grid-template-columns: minmax(0, 42fr) minmax(0, 58fr); column-gap: 24px; align-items: start; min-height: 0; }
+    .about-left-col { position: sticky; top: calc(var(--hdr-h) + 16px); align-self: start; }
+    .about-photo-card { flex: none; aspect-ratio: 2 / 3; inline-size: 100%; max-height: none; min-height: 0; }
+    .about-photo-card img { object-position: center 20%; }
+    .about-bio-card { padding: 28px 24px; min-inline-size: 0; }
     .sk-br { display: inline; }          /* Készségek heading: its two designed lines (joined on one line the words lost their space) */
 
     /* Értékek: wider swipe cards (~70%), the next one peeks */
