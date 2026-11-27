@@ -870,9 +870,28 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
 
     /* ---- geometry: the track runs through the centres of the nodes (x in the row layout, y in the stacked one); th[i] = where along it node i sits (0..1) ---- */
     var th = [0, 1 / 3, 2 / 3, 1], len = 0, vertical = false;
+    /* landscape touch tablets: the steps are a 2x2 grid with one line per row; the fill runs along row 1 (Egyeztetés -> Fejlesztés), then row 2 (Tesztelés -> Átadás) */
+    var rowsMq = window.matchMedia('(pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px)');
+    var ROW = 0.4, twoRows = false, track = process.querySelector('.process__track'), track2 = null;
+    function setRows(on) {
+        if (on && !track2 && track) { track2 = track.cloneNode(true); track2.classList.add('process__track--2'); process.insertBefore(track2, track.nextSibling); }
+        else if (!on && track2) { track2.remove(); track2 = null; }
+        twoRows = on && !!track2;
+        process.classList.toggle('process--2row', twoRows);
+        if (!twoRows) process.classList.remove('on-row2');
+    }
     function measure() {
         var pr = process.getBoundingClientRect(), k = pr.width / (process.offsetWidth || 1) || 1;
         vertical = window.innerWidth < 900 || window.VB.mqPT.matches;
+        setRows(rowsMq.matches && !vertical);
+        if (twoRows) {
+            var a = nodes[0].getBoundingClientRect(), b = nodes[1].getBoundingClientRect(), d = nodes[2].getBoundingClientRect();
+            len = Math.max(0, (b.left - a.left) / k);
+            th = [0, ROW, 1 - ROW, 1];
+            process.style.setProperty('--len', len.toFixed(1) + 'px');
+            process.style.setProperty('--row2', ((d.top - a.top) / k).toFixed(1) + 'px');
+            return;
+        }
         var c = nodes.map(function (n) { var r = n.getBoundingClientRect(); return vertical ? ((r.top + r.height / 2) - pr.top) / k : ((r.left + r.width / 2) - pr.left) / k; });
         len = Math.max(0, c[N - 1] - c[0]);
         th = c.map(function (v) { return len > 0 ? (v - c[0]) / len : 0; });
@@ -899,6 +918,11 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     function applyPos(pos, finAll) {
         var p = pos < 0 ? 0 : clamp01(pos);
         process.style.setProperty('--p', p.toFixed(4));
+        if (twoRows) {
+            process.style.setProperty('--p1', clamp01(p / ROW).toFixed(4));
+            process.style.setProperty('--p2', clamp01((p - (1 - ROW)) / ROW).toFixed(4));
+            process.classList.toggle('on-row2', pos >= 1 - ROW - 1e-6);
+        }
         process.classList.toggle('is-running', pos >= 0 && !(finAll && pos >= 1));
         var cur = -1;
         for (var i = 0; i < N; i++) if (pos >= 0 && pos >= th[i] - 1e-6) cur = i;

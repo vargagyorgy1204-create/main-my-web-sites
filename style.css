@@ -7804,3 +7804,16 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     #why .section-heading .br-tablet { display: inline; }
     #why .section-heading { font-size: min(calc(var(--section-heading-size) / var(--fit, 1)), calc(var(--content-max) / 20.6)); }
 }
+
+/* ===== Együttműködés on landscape touch tablets (1024-1366px): the 2x2 layout of 1024x768 on every size, one progress line per row (script.js: .process--2row, --p1 / --p2) ===== */
+@media (pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) {
+    #steps .process { --n: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: clamp(48px, 4.7vw, 64px); }
+    #steps .process__text { width: auto; max-width: min(100%, 30ch); }
+    .process--2row .process__track--2 { top: calc(23px + var(--row2, 0px)); }
+    .process--2row .process__fill { transform: scaleX(var(--p1, 0)); }
+    .process--2row .process__tip { transform: translateX(calc(var(--len) * var(--p1, 0))); }
+    .process--2row .process__track--2 .process__fill { transform: scaleX(var(--p2, 0)); }
+    .process--2row .process__track--2 .process__tip { transform: translateX(calc(var(--len) * var(--p2, 0))); opacity: 0; }
+    .process--2row.on-row2 .process__tip { opacity: 0; }
+    .process--2row.is-running.on-row2 .process__track--2 .process__tip { opacity: 1; }
+}
