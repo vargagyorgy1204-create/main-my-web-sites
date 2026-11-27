@@ -111,8 +111,12 @@
   var uR = gl.getUniformLocation(prog, 'uR'), uT = gl.getUniformLocation(prog, 'uT'), uM = gl.getUniformLocation(prog, 'uM'), uE = gl.getUniformLocation(prog, 'uE'), uC1 = gl.getUniformLocation(prog, 'uC1'), uC2 = gl.getUniformLocation(prog, 'uC2'), uC3 = gl.getUniformLocation(prog, 'uC3'), uP = gl.getUniformLocation(prog, 'uP'), uA = gl.getUniformLocation(prog, 'uA');
 
   var scale = window.innerWidth < 900 ? 0.3 : 0.45;             /* reduced resolution: the gradient is soft, the browser scales it up */
+  var cw = 0, ch = 0, hh = 1;                                   /* sizes are measured only when they change: reading them every frame would force a layout 30x a second */
+  function measure() { cw = canvas.clientWidth; ch = canvas.clientHeight; hh = Math.max(1, hero.clientHeight); }
+  measure();
+  if ('ResizeObserver' in window) { var ro = new ResizeObserver(measure); ro.observe(canvas); ro.observe(hero); } else window.addEventListener('resize', measure);
   function resize() {
-    var w = Math.max(2, Math.round(canvas.clientWidth * scale)), h = Math.max(2, Math.round(canvas.clientHeight * scale));
+    var w = Math.max(2, Math.round(cw * scale)), h = Math.max(2, Math.round(ch * scale));
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); }
   }
 
@@ -150,7 +154,7 @@
     gl.uniform3f(uC1, cc[0][0] / 255, cc[0][1] / 255, cc[0][2] / 255); gl.uniform3f(uC2, cc[1][0] / 255, cc[1][1] / 255, cc[1][2] / 255); gl.uniform3f(uC3, cc[2][0] / 255, cc[2][1] / 255, cc[2][2] / 255);
     resize();
     gl.uniform2f(uR, canvas.width, canvas.height);
-    gl.uniform1f(uE, Math.max(0, (canvas.clientHeight - hero.clientHeight) / Math.max(1, hero.clientHeight)));      /* extension below the hero, as a fraction of the hero height */
+    gl.uniform1f(uE, Math.max(0, (ch - hh) / hh));      /* extension below the hero, as a fraction of the hero height */
     gl.uniform1f(uT, (now - t0) / 1000);
     gl.uniform2f(uM, mx, my); gl.uniform2f(uP, px, py); gl.uniform1f(uA, act);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
