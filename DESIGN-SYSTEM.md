@@ -377,3 +377,9 @@ Condition: `(min-width: 641px) and (max-width: 1100px) and (orientation: portrai
 - **Instagram card on landscape touch tablets (1024-1366px):** the laptop card (the Instagram media queries and portfolio.js `sizePanel` also match it), fitted to `100svh - header - 32`, handle -> text -> button; no QR on any touch device (`pointer: coarse`). Portrait tablets / phones keep the stacked card.
 
 - **Footer bottom row:** the three items share one baseline (20px line, 44px hit area = 12px padding taken back by -12px margin, so the text does not move).
+
+## Images and icons (Perf A)
+- Header logo: `assets/img/brand/logo{white,black}-{88,132}.webp` (srcset 2x / 3x). `logovarbro.png` stays for og:image only.
+- myapproach photo: `assets/img/myworkfoto-{640,896}.webp`.
+- No Font Awesome: brand / envelope glyphs are `<i class="ic-b ic-b--{whatsapp|facebook-f|instagram|envelope}">` (mask in style.css, painted with currentColor); other icons are Lucide.
+- Rólam on touch loads photo 1 with the page and fetches the next one when needed (`loadLayer` in js/about-story.js).

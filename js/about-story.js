@@ -178,26 +178,27 @@
      A chapter photo stays invisible (opacity 0) until img.decode() has resolved, then fades in:
      a half-downloaded / half-decoded image can never be painted. Until then the outgoing photo
      simply stays visible under the reveal (the stack background is the photos' dark tone). */
-  var photosStarted = false, photosReady = null;
-  function startPhotos() {
-    if (photosStarted) return photosReady;
+  var photosStarted = false;
+  /* one chapter photo: set its real sources once; the promise resolves when it is decoded (only then it becomes visible) */
+  function loadLayer(layer) {
+    if (layer._photo) return layer._photo;
+    var img = layer.querySelector('img'), src = layer.querySelector('source');
+    if (!img.getAttribute('data-src')) return (layer._photo = Promise.resolve());          /* photo 1: in the HTML */
+    if (src && src.getAttribute('data-srcset')) src.srcset = src.getAttribute('data-srcset');
+    if (img.getAttribute('data-srcset')) img.srcset = img.getAttribute('data-srcset');
+    img.src = img.getAttribute('data-src');
+    var ready = img.decode ? img.decode() : new Promise(function (res, rej) { img.onload = res; img.onerror = rej; });
+    layer._photo = ready.then(function () { img.classList.add('is-decoded'); }, function () {
+      layer._photo = null;
+      if (!warned) { warned = true; console.warn('[VarBro] An About photo failed to load; the previous photo stays visible.'); }
+      throw img;
+    });
+    return layer._photo;
+  }
+  function startPhotos() {                                   /* the scrolled story (mouse): all of them */
+    if (photosStarted) return;
     photosStarted = true;
-    var jobs = qa('.about-layer').slice(1).map(function (layer) {
-      var img = layer.querySelector('img'), src = layer.querySelector('source');
-      if (src && src.getAttribute('data-srcset')) src.srcset = src.getAttribute('data-srcset');
-      if (img.getAttribute('data-srcset')) img.srcset = img.getAttribute('data-srcset');
-      img.src = img.getAttribute('data-src');
-      var ready = img.decode ? img.decode() : new Promise(function (res, rej) { img.onload = res; img.onerror = rej; });
-      return ready.then(function () { img.classList.add('is-decoded'); }, function () { throw img; });
-    });
-    photosReady = Promise.allSettled(jobs);
-    photosReady.then(function (res) {
-      if (res.some(function (r) { return r.status === 'rejected'; }) && !warned) {
-        warned = true;
-        console.warn('[VarBro] An About photo failed to load; its chapter keeps showing the previous photo.');
-      }
-    });
-    return photosReady;
+    qa('.about-layer').slice(1).forEach(function (layer) { loadLayer(layer).catch(function () { /* reported above */ }); });
   }
   function watchPhotos() {
     if (photosStarted) return;
@@ -404,15 +405,16 @@
     stack.appendChild(hint);
     if (window.lucide && lucide.createIcons) { try { lucide.createIcons(); } catch (e) { /* ignore */ } }
     gsap.set(layers[0], { zIndex: 2 });
-    watchPhotos();
+    /* touch: only photo 1 is loaded with the page; the next one is fetched when the card is on screen, then each following one after a change */
+    function warm(i) { loadLayer(layers[i % layers.length]).catch(function () { /* retried on the tap */ }); }
 
     if ('IntersectionObserver' in window) {
       var pio = new IntersectionObserver(function (es) {
         if (!es[0].isIntersecting) return;
-        pio.disconnect(); hint.classList.add('is-pulse');
+        pio.disconnect(); hint.classList.add('is-pulse'); warm(cur + 1);
       }, { threshold: 0.5 });
       pio.observe(card);
-    } else hint.classList.add('is-pulse');
+    } else { hint.classList.add('is-pulse'); warm(1); }
 
     function change() {
       if (busy) return;
@@ -423,7 +425,7 @@
         var done = function () {
           gsap.set(layers[out], { clipPath: 'inset(100% 0% 0% 0%)', filter: 'brightness(1)', zIndex: 1 });
           gsap.set(layers[nxt], { zIndex: 2 });
-          cur = nxt; busy = false;
+          cur = nxt; busy = false; warm(cur + 1);
         };
         if (reduced) {
           gsap.set(layers[nxt], { clipPath: 'inset(0% 0% 0% 0%)', opacity: 0 });
@@ -435,8 +437,8 @@
           photoStep(tl, layers[nxt], imgs[nxt], layers[out], 0, 0.9);
         }
       };
-      var ready = startPhotos();                                       /* make sure photos 2-4 are loading; wait (briefly) for the decode so the reveal never shows an empty frame */
-      if (ready && !imgs.every(function (im) { return im.classList.contains('is-decoded'); })) Promise.race([ready, new Promise(function (r) { setTimeout(r, 1500); })]).then(go); else go();
+      /* the change starts only when the incoming photo is decoded (no empty frame); if it cannot be loaded the current one stays */
+      loadLayer(layers[(cur + 1) % layers.length]).then(go, function () { busy = false; });
     }
     card.addEventListener('click', change);
     card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); change(); } });
