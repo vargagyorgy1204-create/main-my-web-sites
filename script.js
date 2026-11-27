@@ -606,13 +606,14 @@ document.querySelectorAll('.modal-quote-btn, .modal-quote-link').forEach((button
     document.addEventListener('click', (e) => { if (e.target.closest('[data-open-cookie-settings]') && settingsBtn) { e.preventDefault(); settingsBtn.click(); } });
 
     /* while the banner is open the footer gets room underneath, so the legal links are never hidden behind it */
-    let reserveRaf = 0;
-    const reserveSpace = () => {                                       // measured in the next frame: reading the height right after the class change forced a layout
-        cancelAnimationFrame(reserveRaf);
-        reserveRaf = requestAnimationFrame(() => {
-            document.documentElement.style.setProperty('--cb-h', banner && banner.classList.contains('is-visible') ? (banner.offsetHeight + 24) + 'px' : '0px');
-        });
+    let bannerH = 0, reserved = '';
+    const reserveSpace = () => {
+        const v = banner && banner.classList.contains('is-visible') && bannerH ? (bannerH + 24) + 'px' : '0px';
+        if (v !== reserved) { reserved = v; document.documentElement.style.setProperty('--cb-h', v); }
     };
+    // the height comes from a ResizeObserver (delivered after layout): reading offsetHeight here forced a layout of the whole page during load
+    if (banner && 'ResizeObserver' in window) new ResizeObserver((es) => { const box = es[0].borderBoxSize; bannerH = Math.round(box ? box[0].blockSize : es[0].target.offsetHeight); reserveSpace(); }).observe(banner);
+    else if (banner) requestAnimationFrame(() => { bannerH = banner.offsetHeight; reserveSpace(); });
 
     const hideBanner = () => {
         if (!banner) return;
