@@ -7733,3 +7733,19 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 .pf--carousel .pf-ig__btnwrap .hbtn, .pf--carousel .pf-ig__btnwrap .hbtn:hover { box-shadow: none; }          /* its soft dark drop shadow spilled under the panel */
 .pf--carousel .pf-ig__btnwrap { align-self: center; }
 .pf--carousel .pf-ig__btnwrap .hbtn { inline-size: auto; min-width: 0; justify-content: center; padding-inline: calc(1.5 * (var(--btn-h) - var(--btn-fs)) / 2); }
+
+/* ===== Portfólió case-study dialog on phones (<= 640px): everything on one screen where it can; only the text part scrolls if it cannot. One short swipe = one screenshot (js/portfolio.js) ===== */
+@media (max-width: 640px) {
+    #pf-modal { --pf-bar-h: 24px; }
+    .pf-modal__head { min-block-size: 0; padding: 8px 12px 6px 20px; }
+    .pf-modal__title { font-size: clamp(18px, 5.4vw, 22px); white-space: nowrap; }
+    .pf-modal__body { overflow: hidden; gap: 14px; padding: 0 20px 12px; }
+    .pf-modal__gal { block-size: auto; min-block-size: 0; display: flex; flex-direction: column; gap: 4px; }
+    .pf-gallery { display: block; }
+    .pf-gallery__track { block-size: min(32svh, calc((100vw - 66px) / 1.6 + var(--pf-bar-h) + 8px)); touch-action: pan-y; }
+    .pf-modal__foot { min-block-size: 24px; gap: 8px; }
+    .pf-modal__story { flex: 1 1 auto; min-block-size: 0; overflow-y: auto; overscroll-behavior: contain; gap: 14px; scrollbar-width: none; }
+    .pf-modal__story::-webkit-scrollbar { display: none; }
+    .pf-story__block h4 { margin-block-end: 4px; font-size: 12px; }
+    .pf-story__block p { font-size: 15px; line-height: 1.5; }
+}

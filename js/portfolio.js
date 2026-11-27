@@ -753,6 +753,39 @@
       if (moved) go(currentIndex());
     });
 
+    /* Phones: one short swipe (>= 30px, or a quick flick) = exactly one screenshot. The track is touch-action: pan-y there (CSS), so the horizontal gesture is handled here
+       (the finger drags the track) and a vertical one stays with the dialog (pointercancel). */
+    var swipe = null, settleT = 0;
+    function settle() { clearTimeout(settleT); settleT = setTimeout(function () { track.classList.remove('is-dragging'); }, reduce ? 0 : 450); }
+    track.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' || !carMq.matches || !e.isPrimary) return;
+      clearTimeout(settleT);
+      swipe = { id: e.pointerId, x: e.clientX, y: e.clientY, t: e.timeStamp, from: currentIndex(), left: track.scrollLeft, horizontal: false };
+    });
+    track.addEventListener('pointermove', function (e) {
+      if (!swipe || e.pointerId !== swipe.id) return;
+      var dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+      if (!swipe.horizontal) {
+        if (Math.abs(dx) < 6 || Math.abs(dx) <= Math.abs(dy)) return;
+        swipe.horizontal = true;
+        track.classList.add('is-dragging');
+        try { track.setPointerCapture(e.pointerId); } catch (err) { /* the pointer is already gone */ }
+      }
+      e.stopPropagation();
+      track.scrollLeft = swipe.left - dx;
+    });
+    function endSwipe(e) {
+      if (!swipe || e.pointerId !== swipe.id) return;
+      var sw = swipe; swipe = null;
+      if (!sw.horizontal) return;
+      var dx = e.clientX - sw.x, quick = e.timeStamp - sw.t < 250 && Math.abs(dx) >= 12;
+      var step = (Math.abs(dx) >= 30 || quick) ? (dx < 0 ? 1 : -1) : 0;
+      go(sw.from + step);
+      settle();
+    }
+    track.addEventListener('pointerup', endSwipe);
+    track.addEventListener('pointercancel', endSwipe);
+
     /* --- page lock ---
        html/body overflow hidden + scrollbar-width compensation (so nothing
        jumps sideways), the rest of the page inert, scrollY restored exactly.
