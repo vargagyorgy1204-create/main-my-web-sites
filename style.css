@@ -6918,7 +6918,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 
 @media (prefers-reduced-motion: reduce) { .pf-phone__track { will-change: auto; } }
 
-@media (min-width: 900px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (min-width: 1367px), (min-width: 1101px) and (pointer: fine), (min-width: 1101px) and (min-width: 1367px) {
+@media (min-width: 900px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (min-width: 1367px), (min-width: 1101px) and (pointer: fine), (min-width: 1101px) and (min-width: 1367px), (pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) {
   .pf-ig { --pf-ig-r: 24px; --pf-ig-clear: 24px; --pf-ig-ov: 50px; }      /* clear = phone <-> card edge (>= 24px to the header / neighbours); ov = how far the phone overflows the panel */
   .pf-ig .pf-case__inner { display: flex; align-items: center; padding-block: 0; }
   .pf-ig__panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: var(--pf-gap-col); align-items: center; block-size: var(--pf-ig-panel-h, 78%); }
@@ -6948,7 +6948,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
   .pf-phone { transform: rotateY(calc(18deg + var(--ty, 0deg))) rotateX(calc(6deg + var(--tx, 0deg))) rotateZ(-2deg); }
   /* upper-right: between the phone and the copy, fully outside the phone body (never over the profile header); lower-left: at the phone's lower-left */
 }
-@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) and (min-width: 641px) and (max-width: 1366px) { .pf-ig { --pf-ig-card-w: 100%; --pf-ig-inset: 12px; --pf-ig-pad: 20px; --pf-ig-r: 18px; } }
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) and (orientation: landscape) and (min-width: 641px) and (max-width: 1023px) { .pf-ig { --pf-ig-card-w: 100%; --pf-ig-inset: 12px; --pf-ig-pad: 20px; --pf-ig-r: 18px; } }
 
 /* ===== Header blur (< 1024px): a REAL progressive blur: 5 stacked layers (js/nav.js builds .nav__blur), each with its own backdrop-filter and gradient mask on the SAME element ===== */
 .nav__blur { display: none; }
@@ -6985,7 +6985,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 #portfolio { padding-block-end: calc(var(--section-bottom) + var(--ctc-r)); }
 
 /* Instagram card, mobile: phone first, then title, text, button (full-width-ish like the other mobile CTAs) */
-@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) and (min-width: 641px) and (max-width: 1366px) {
+@media (max-width: 899px), (min-width: 641px) and (max-width: 1100px) and (orientation: portrait), (pointer: coarse) and (orientation: landscape) and (min-width: 641px) and (max-width: 1023px) {
   .pf-ig__stage { order: -1; }
   .pf-ig__btnwrap { align-self: stretch; order: 6; }
   .pf-ig__btnwrap .hbtn { inline-size: 100%; }
@@ -6994,7 +6994,7 @@ html.has-cursor .skill-row:hover .skill-row__logo svg.icon--grad, .skill-row.is-
 /* the handwriting font of the Instagram QR label (self-hosted, Caveat 600, latin + latin-ext) */
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 @font-face { font-family: 'Caveat'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/caveat-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@media (min-width: 900px) and (max-width: 1199px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (max-width: 1199px) and (min-width: 1367px), (min-width: 1101px) and (max-width: 1199px) and (pointer: fine), (min-width: 1101px) and (max-width: 1199px) and (min-width: 1367px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
+@media (min-width: 900px) and (max-width: 1199px) and (orientation: landscape) and (pointer: fine), (min-width: 900px) and (max-width: 1199px) and (min-width: 1367px), (min-width: 1101px) and (max-width: 1199px) and (pointer: fine), (min-width: 1101px) and (max-width: 1199px) and (min-width: 1367px), (pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) { .pf-ig { --pf-qr-n: 124; } .pf-ig__copy { --pf-cg: calc(var(--s1) * 0.8); } }
 
 /* ═══ Hero living window (EXPERIMENT; js/hero-window.js builds the markup; delete this block + the script tag + js/hero-window.js + the mono font to remove it) ═══
    A floating, tilted browser window (decoration only: an abstract brand-coloured mini website made of CSS shapes) in the hero's bottom-right corner; its scene follows the living word
@@ -7825,7 +7825,6 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     .pf--carousel .pf-case__media { inline-size: min(100%, calc((100svh - var(--hdr-h) - 32px - 270px) * 1.6)); margin-inline: auto; }
     .pf--carousel .pf-case__name { font-size: 28px; }
     .pf--carousel .pf-case.pf-ig { margin-block-start: 8px; }
-    .pf--carousel .pf-ig__panel { inline-size: min(100% - 2 * var(--gutter), 620px); }
     .pf-modal__panel { max-inline-size: 900px; }
     .pf-modal__body { max-inline-size: 840px; inline-size: 100%; margin-inline: auto; box-sizing: border-box; }
     .pf-gallery__track { block-size: min(46svh, calc((min(100vw, 900px) - 66px) / 1.6 + var(--pf-bar-h) + 8px)); }
@@ -7861,4 +7860,20 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 }
 @media (pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) {
     #why { --why-ramp: 13svh; }
+}
+
+/* ===== Instagram card on landscape touch tablets: the laptop card (the media queries above also list them), after the swipe carousel, fitted to the viewport height. The carousel's card rules
+   must not reach it (padding, hidden text block). The QR code is only useful on a desktop: hidden on every touch device. ===== */
+@media (pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) {
+    .pf--carousel .pf-case.pf-ig { overflow: visible; }          /* the phone overflows the panel by --pf-ig-ov at the top and bottom, as on the laptop */
+    .pf--carousel .pf-ig .pf-case__inner { padding: calc(var(--pf-ig-ov) + 8px) 0; block-size: auto; }
+    .pf--carousel .pf-ig .pf-case__name, .pf--carousel .pf-ig .pf-case__block, .pf--carousel .pf-ig .pf-ig__btnwrap { order: 0; }          /* handle -> text -> button */
+    .pf--carousel .pf-ig .pf-case__block p { font-size: clamp(12.5px, 1.05vw, 16px); }
+    .pf--carousel .pf-ig .pf-case__block { display: block; }
+    .pf--carousel .pf-ig .pf-case__name { font-size: clamp(26px, 2.7vw, 52px); }
+    .pf--carousel .pf-ig__panel { padding-block-end: var(--pf-ig-pad); column-gap: clamp(24px, 3vw, 48px); }
+    .pf--carousel .pf-ig .pf-phone-wrap { block-size: min(calc(100svh - var(--hdr-h) - 32px - 16px), calc(100cqw * 0.9 * 19 / 9)); }
+}
+@media (pointer: coarse) {
+    .pf-ig__qr { display: none !important; }
 }

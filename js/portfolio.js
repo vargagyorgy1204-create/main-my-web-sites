@@ -589,7 +589,7 @@
     var nameEl = igCard.querySelector('.pf-case__name');
     /* desktop: the panel is shorter than the phone, so the phone overflows it by --pf-ig-ov at the top and bottom (but never less tall than its own copy) */
     var panel = igCard.querySelector('.pf-ig__panel'), copy = igCard.querySelector('.pf-ig__copy'), wrap = igCard.querySelector('.pf-phone-wrap');
-    var deskMq = window.matchMedia(deskQ());
+    var deskMq = window.matchMedia(deskQ() + ', (pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px)');          /* the laptop card, also on landscape touch tablets (style.css) */
     function sizePanel() {
       panel.style.removeProperty('--pf-ig-panel-h');
       igCard.style.removeProperty('--pf-ig-slot-h');
