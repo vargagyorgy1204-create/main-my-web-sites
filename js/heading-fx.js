@@ -52,7 +52,7 @@
       });
       frag.appendChild(word);
       if (wi < all.length - 1) {
-        if (all[wi + 1][1] !== wl[1]) { var br = document.createElement('br'); br.className = brs[wl[1]] || ''; frag.appendChild(br); }
+        if (all[wi + 1][1] !== wl[1]) { var br = document.createElement('br'); br.className = brs[wl[1]] || ''; if (br.className === 'br-tablet') frag.appendChild(document.createTextNode(' ')); frag.appendChild(br); }          /* br-tablet is hidden on most sizes: the words keep their space there */
         else frag.appendChild(document.createTextNode(' '));
       }
     });

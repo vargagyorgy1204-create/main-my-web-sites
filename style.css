@@ -7797,3 +7797,10 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
     /* myapproach: two columns where one would be a long thin list */
     .ap-have__grid, .ap-need__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ===== Értékek heading on tablets (touch, 641-1366px): exactly two lines, "Prémium minőség és" / "hosszú távú siker."; the size shrinks only if the first line would not fit the column ===== */
+.br-tablet { display: none; }
+@media (pointer: coarse) and (min-width: 641px) and (max-width: 1366px) {
+    #why .section-heading .br-tablet { display: inline; }
+    #why .section-heading { font-size: min(calc(var(--section-heading-size) / var(--fit, 1)), calc(var(--content-max) / 20.6)); }
+}
