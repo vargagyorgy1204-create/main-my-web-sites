@@ -7850,3 +7850,15 @@ html.has-cursor .ap-faq__item summary:hover .ap-faq__q { color: #4B1956; }
 @media (pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) {
     #about .about-photo-card { inline-size: min(100%, calc((100svh - var(--hdr-h) - 32px) * 0.75)); }          /* a short window: the sticky photo still fits under the header */
 }
+
+/* ===== Értékek on tablets: no dark band under the cards =====
+   Portrait (swipe row): the card shadow reached 64px below the card and the scroll row cut it after 22px (a hard-edged dark rectangle): a shadow that fits inside the row. The fade into
+   Együttműködés starts below the dots (the dots row has a -18px margin, so the padding is ramp + 18px).
+   Landscape (pinned): a shorter bottom ramp that starts below the cards and the counter line. */
+@media (min-width: 641px) and (max-width: 1100px) and (orientation: portrait) {
+    #why { padding-bottom: calc(var(--why-ramp) + 18px) !important; }
+    #why:not(.is-pinned) .hs__card { box-shadow: 0 6px 14px -4px rgb(0 0 0 / 0.3), inset 0 1px 0 rgb(255 255 255 / 0.06); }
+}
+@media (pointer: coarse) and (orientation: landscape) and (min-width: 1024px) and (max-width: 1366px) {
+    #why { --why-ramp: 13svh; }
+}

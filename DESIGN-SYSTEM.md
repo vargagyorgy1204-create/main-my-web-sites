@@ -371,3 +371,5 @@ Condition: `(min-width: 641px) and (max-width: 1100px) and (orientation: portrai
 - **Footer on landscape touch tablets:** `.footer-floor` margin-top = half the back-to-top badge + 24px, so the line and the badge sit above the wordmark. Portrait tablets / phones had ~100px already. Mouse laptops unchanged (the badge still reaches 4-6px into the wordmark there).
 
 - **Rólam on tablets** (portrait, and landscape touch 1024-1366px; all rules scoped to `#about`): photo left ~40% in a sticky 3:4 frame (cover, center 20%, top = header + 16px; on landscape also capped so it fits the window height), text right 60%; the photo releases at the end of the grid.
+
+- **Értékek on tablets:** portrait: a card shadow that fits inside the swipe row (the 64px shadow was cut after 22px, a dark rectangle), `padding-bottom = --why-ramp + 18px` so the dots sit on the flat colour; landscape touch: `--why-ramp: 13svh`, below the pinned cards and counter. The 22x44 `.hs__dot` is an expected tap size in tests/board-mobile.mjs (no flag).

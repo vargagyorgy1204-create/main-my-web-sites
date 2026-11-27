@@ -108,7 +108,9 @@ const AUDIT = (opts) => {
       const b = (lab || c.e).getBoundingClientRect();
       /* an inline link inside running text (the paragraph has other text around it) is exempt */
       const inline = c.e.tagName === 'A' && c.e.parentElement && getComputedStyle(c.e).display === 'inline' && txt(c.e.parentElement).length > 0;
-      if (!inline && (b.width < 44 - 0.5 || b.height < 44 - 0.5)) out.tap.push(`${sel(c.e)} ${Math.round(b.width)}×${Math.round(b.height)} "${(c.e.getAttribute('aria-label') || c.e.textContent || c.e.getAttribute('data-lucide') || '').trim().replace(/\s+/g, ' ').slice(0, 22)}"`);
+      /* expected by design, not a flag: the compact Értékek dots, 22px wide (the dot step) x 44px tall, the cards are swipeable too */
+      const expected = c.e.matches('.hs__dot') && b.width >= 22 - 0.5 && b.height >= 44 - 0.5;
+      if (!expected && !inline && (b.width < 44 - 0.5 || b.height < 44 - 0.5)) out.tap.push(`${sel(c.e)} ${Math.round(b.width)}×${Math.round(b.height)} "${(c.e.getAttribute('aria-label') || c.e.textContent || c.e.getAttribute('data-lucide') || '').trim().replace(/\s+/g, ' ').slice(0, 22)}"`);
     }
     if (!opts.menu && !inNav(c.e) && (c.own || c.inter)) {
       for (const k of ctl) { const w = Math.min(c.r.right, k.right) - Math.max(c.r.left, k.left), h = Math.min(c.r.bottom, k.bottom) - Math.max(c.r.top, k.top); if (w > 2 && h > 2) { out.header.push(`${sel(c.e)} "${(c.own || c.e.getAttribute('aria-label') || '').slice(0, 20)}" under the logo / burger`); break; } }
